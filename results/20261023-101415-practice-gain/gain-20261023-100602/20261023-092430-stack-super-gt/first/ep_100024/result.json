@@ -1,0 +1,268 @@
+{
+ "task": "stack",
+ "seed": 100024,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "xy_offset": 0.0077,
+  "z_gap": 0.0297,
+  "red_held": false,
+  "blue_z": 0.0148
+ },
+ "trace": [
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.18,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.7,
+   "call": "move_to(0.139, 0.039, 0.112, yaw=-0.390, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1385,
+     0.039,
+     0.1123
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.32,
+   "call": "move_to(0.139, 0.039, 0.032, yaw=-0.390, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1385,
+     0.039,
+     0.0324
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.82,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0266
+   }
+  },
+  {
+   "t": 2.82,
+   "call": "log",
+   "result": "Grasped red cube"
+  },
+  {
+   "t": 3.84,
+   "call": "move_to(0.139, 0.039, 0.132, yaw=2.751, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1389,
+     0.039,
+     0.1323
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 4.82,
+   "call": "move_to(0.170, -0.094, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1697,
+     -0.0937,
+     0.0995
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 7.4,
+   "call": "move_to(0.170, -0.094, 0.046, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1744,
+     -0.096,
+     0.0543
+    ],
+    "error_m": 0.0101,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 7.8,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 7.8,
+   "call": "log",
+   "result": "Released red cube onto blue cube"
+  },
+  {
+   "t": 8.84,
+   "call": "move_to(0.170, -0.094, 0.146, yaw=1.067, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1699,
+     -0.0936,
+     0.1458
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 9.5,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0002,
+     0.14
+    ],
+    "error_m": 0.0002
+   }
+  }
+ ],
+ "n_calls": 13,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 10.0,
+ "wall_time": 0.28,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1406,
+     0.0413,
+     0.0149
+    ],
+    "yaw": -0.411,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1682,
+     -0.0973,
+     0.0149
+    ],
+    "yaw": -0.448,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 10.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1769,
+     -0.0978,
+     0.0445
+    ],
+    "yaw": -0.5066,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1692,
+     -0.0981,
+     0.0148
+    ],
+    "yaw": -0.451,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {},
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1406,
+   "y": 0.0413,
+   "yaw": -0.411,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1682,
+   "y": -0.0973,
+   "yaw": -0.448,
+   "fp": 0.0225
+  }
+ }
+}

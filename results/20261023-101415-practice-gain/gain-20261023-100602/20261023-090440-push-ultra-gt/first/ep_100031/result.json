@@ -1,0 +1,165 @@
+{
+ "task": "push",
+ "seed": 100031,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "puck_to_target_xy": 0.025,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 1.66,
+   "call": "move_to(0.092, -0.080, 0.015, yaw=2.702, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0919,
+     -0.0796,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 4.38,
+   "call": "move_to(0.149, 0.042, 0.015, yaw=2.702, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1494,
+     0.0422,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 4.38,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 4.38,
+   "call": "log",
+   "result": "Puck final dist to target: 0.0276, target radius: 0.0400"
+  }
+ ],
+ "n_calls": 5,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 4.88,
+ "wall_time": 0.15,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1275,
+     -0.0063,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1745,
+     0.0841,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 4.88,
+  "gripper": {
+   "pos": [
+    0.1494,
+    0.0422,
+    0.015
+   ],
+   "yaw": 2.7014,
+   "opening": 0.0519,
+   "holding": "puck"
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1597,
+     0.064,
+     0.0099
+    ],
+    "yaw": 0.4889,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1745,
+     0.0841,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {},
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1745,
+   "y": 0.0841,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1275,
+   "y": -0.0063,
+   "yaw": 0.5678,
+   "fp": 0.035
+  }
+ }
+}

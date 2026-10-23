@@ -1,0 +1,298 @@
+{
+ "task": "push",
+ "seed": 100000,
+ "error": {
+  "type": "SafetyViolation",
+  "message": "target x=0.003 m is outside the safe workspace [0.04, 0.32] by 0.037 m",
+  "traceback": "  skill.py line 55, in run: robot.move_to(start_xy[0], start_xy[1], 0.10, speed=0.15)\nSafetyViolation: target x=0.003 m is outside the safe workspace [0.04, 0.32] by 0.037 m"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.0787,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 1.06,
+   "call": "move_to(0.189, 0.146, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1885,
+     0.146,
+     0.0999
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 2.78,
+   "call": "move_to(0.189, 0.146, 0.015, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1885,
+     0.1458,
+     0.0149
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 6.92,
+   "call": "move_to(0.121, -0.048, 0.015, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1214,
+     -0.0479,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 7.12,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 7.12,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 7.9,
+   "call": "move_to(0.058, -0.080, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0584,
+     -0.08,
+     0.1002
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 11.12,
+   "call": "move_to(0.058, -0.080, 0.015, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.0641,
+     -0.0876,
+     0.0227
+    ],
+    "error_m": 0.0123,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 15.72,
+   "call": "move_to(0.152, 0.040, 0.015, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1603,
+     0.0413,
+     0.0252
+    ],
+    "error_m": 0.0134,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 15.92,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 15.92,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 16.54,
+   "call": "move_to(0.183, 0.077, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1834,
+     0.0771,
+     0.1004
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 18.28,
+   "call": "move_to(0.183, 0.077, 0.015, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1831,
+     0.0768,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 21.6,
+   "call": "move_to(0.077, -0.049, 0.015, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.077,
+     -0.0489,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 21.8,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 21.8,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 21.8,
+   "call": "move_to(0.003, -0.054, 0.100, speed=0.150)",
+   "error": "SAFETY HALT: target x=0.003 m is outside the safe workspace [0.04, 0.32] by 0.037 m"
+  }
+ ],
+ "n_calls": 18,
+ "printed": [],
+ "safety_events": [
+  {
+   "t": 21.8,
+   "kind": "workspace",
+   "action": "halt",
+   "detail": "x=0.003 outside [0.04, 0.32] by 0.037 m"
+  }
+ ],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 1
+ },
+ "halted": "target x=0.003 m is outside the safe workspace [0.04, 0.32] by 0.037 m",
+ "sim_time": 22.3,
+ "wall_time": 0.77,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1741,
+     0.0979,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1299,
+     -0.0065,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 22.3,
+  "gripper": {
+   "pos": [
+    0.077,
+    -0.0489,
+    0.015
+   ],
+   "yaw": 1.0046,
+   "opening": 0.0522,
+   "holding": "puck"
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.0569,
+     -0.036,
+     0.0099
+    ],
+    "yaw": -0.987,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1299,
+     -0.0065,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {},
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1299,
+   "y": -0.0065,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1741,
+   "y": 0.0979,
+   "yaw": -0.7655,
+   "fp": 0.035
+  }
+ }
+}
