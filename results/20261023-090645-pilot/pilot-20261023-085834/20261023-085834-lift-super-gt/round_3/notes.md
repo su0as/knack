@@ -1,0 +1,3 @@
+- Increased lift height to guarantee ≥5 cm clearance: lift_z = max(cube_pos[2] + 0.05, 0.070).
+- Added a perception refresh after a successful grasp to obtain the actual cube height before lifting, preventing pose mismatch.
+- Kept the rest of the logic (slow approaches, verification, recovery attempts) unchanged.

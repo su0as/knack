@@ -1,0 +1,6 @@
+- Increased push margin from +0.03 to +0.08 to ensure puck reaches target zone despite slip.
+- Added a 2 cm reverse tap after the push to dampen overshoot and let puck settle.
+- Implemented start-position clearance check: ensure tool point stays at least puck_radius+0.02 from puck; if not, shift further back along -push axis.
+- Kept slow push speed (0.05) and travel speed (0.1).
+- Added MotionError catching for safety.
+- Re-observe after reverse tap for accurate verification.

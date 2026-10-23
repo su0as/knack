@@ -1,0 +1,91 @@
+import math
+
+def run(robot):
+    # Observe initial scene
+    obs = robot.observe()
+    
+    # Find blue cube and green zone
+    blue_cube = None
+    green_zone = None
+    
+    for name, obj in obs["objects"].items():
+        if obj["color"] == "blue" and obj["shape"] == "cube":
+            blue_cube = {"name": name, **obj}
+            break
+    
+    for name, fix in obs["fixtures"].items():
+        if fix["color"] == "green" and fix["kind"] == "zone":
+            green_zone = {"name": name, **fix}
+            break
+    
+    if blue_cube is None or green_zone is None:
+        robot.log("Missing blue cube or green zone")
+        return False
+    
+    cube_pos = blue_cube["pos"]
+    cube_yaw = blue_cube["yaw"]
+    zone_pos = green_zone["pos"]
+    zone_radius = green_zone["radius"]
+    
+    # Grasp height: cube center at z=0.015, finger pads reach 1.25cm below tool point
+    # So tool point at z=0.015 puts pads at cube middle
+    grasp_z = 0.015
+    # Safe lift height
+    lift_z = 0.12
+    # Approach height above zone
+    zone_approach_z = 0.10
+    # Place height (same as grasp)
+    place_z = 0.015
+    
+    try:
+        # Move above cube (approach from top)
+        robot.move_to(cube_pos[0], cube_pos[1], lift_z, yaw=cube_yaw, speed=0.15)
+        
+        # Descend to grasp height
+        robot.move_to(cube_pos[0], cube_pos[1], grasp_z, yaw=cube_yaw, speed=0.05)
+        
+        # Grasp
+        if not robot.grasp():
+            robot.log("Failed to grasp blue cube")
+            return False
+        
+        # Verify holding
+        if robot.holding() != blue_cube["name"]:
+            robot.log("Not holding blue cube after grasp")
+            return False
+        
+        # Lift cube
+        robot.move_to(cube_pos[0], cube_pos[1], lift_z, yaw=cube_yaw, speed=0.10)
+        
+        # Move above zone
+        robot.move_to(zone_pos[0], zone_pos[1], zone_approach_z, yaw=cube_yaw, speed=0.15)
+        
+        # Descend to place height
+        robot.move_to(zone_pos[0], zone_pos[1], place_z, yaw=cube_yaw, speed=0.05)
+        
+        # Release
+        robot.release()
+        
+        # Verify release (wait a moment, then check)
+        robot.wait(0.3)
+        
+        # Re-observe to verify cube is in zone
+        obs2 = robot.observe()
+        if blue_cube["name"] in obs2["objects"]:
+            cube_pos2 = obs2["objects"][blue_cube["name"]]["pos"]
+            # Check if cube center is within zone radius (with some margin)
+            dx = cube_pos2[0] - zone_pos[0]
+            dy = cube_pos2[1] - zone_pos[1]
+            dist = math.hypot(dx, dy)
+            if dist <= zone_radius * 0.9:  # 90% of radius for safety margin
+                robot.log(f"Cube placed in zone, distance={dist:.4f}, radius={zone_radius:.4f}")
+                return True
+            else:
+                robot.log(f"Cube not in zone, distance={dist:.4f}, radius={zone_radius:.4f}")
+        
+        robot.log("Could not verify cube in zone")
+        return False
+        
+    except Exception as e:
+        robot.log(f"Error during execution: {e}")
+        return False

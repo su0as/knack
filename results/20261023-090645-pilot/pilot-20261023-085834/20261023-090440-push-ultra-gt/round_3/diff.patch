@@ -1,0 +1,61 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -8,7 +8,9 @@
+     
+     puck_pos = puck["pos"]
+     target_pos = target["pos"]
++    # puck size is a dict with 'radius' and 'height'
+     puck_radius = puck["size"]["radius"]
++    puck_height = puck["size"]["height"]
+     
+     # Calculate push direction: from puck to target
+     dx = target_pos[0] - puck_pos[0]
+@@ -32,14 +34,21 @@
+     start_y = puck_pos[1] - uy * start_offset
+     start_z = 0.015  # tool point height for finger pads at puck middle
+     
+-    # Validate start position clearance: ensure tool point at least puck_radius+0.02 from puck center
++    # Validate start position horizontal clearance
+     required_clearance = puck_radius + 0.02
+     current_clearance = math.hypot(start_x - puck_pos[0], start_y - puck_pos[1])
+     if current_clearance < required_clearance:
+         shift = required_clearance - current_clearance
+         start_x -= ux * shift
+         start_y -= uy * shift
+-        robot.log(f"Adjusted start position by {shift:.4f} m for clearance")
++        robot.log(f"Adjusted start position by {shift:.4f} m for horizontal clearance")
++    
++    # Validate vertical clearance: finger pads are 0.0125 m below tool point
++    puck_top = puck_pos[2] + puck_height / 2.0
++    min_tool_z = puck_top + 0.0125 + 0.02  # 2 cm clearance above puck top
++    if start_z < min_tool_z:
++        start_z = min_tool_z
++        robot.log(f"Raised start_z to {start_z:.4f} m for vertical clearance")
+     
+     # Move to start position
+     try:
+@@ -49,20 +58,21 @@
+         return False
+     
+     # Push forward: move in push direction by push_dist + margin
+-    push_length = push_dist + 0.08  # increased margin to ensure puck enters zone
++    push_length = push_dist + 0.03  # reduced margin to avoid overshoot
+     end_x = start_x + ux * push_length
+     end_y = start_y + uy * push_length
+     
+     # Move slowly to push
+     try:
+         robot.move_to(end_x, end_y, start_z, yaw=gripper_yaw, speed=0.05)
++        robot.log(f"Push move: planned length {push_length:.4f} m")
+     except Exception as e:
+         robot.log("Push move failed:", e)
+         return False
+     
+-    # Brief reverse tap to dampen overshoot
++    # Reverse tap to dampen overshoot (increased to 0.04 m)
+     try:
+-        robot.move_by(dx=-ux*0.02, dy=-uy*0.02, speed=0.05)
++        robot.move_by(dx=-ux*0.04, dy=-uy*0.04, speed=0.05)
+     except Exception as e:
+         robot.log("Reverse tap failed:", e)
+         # continue anyway

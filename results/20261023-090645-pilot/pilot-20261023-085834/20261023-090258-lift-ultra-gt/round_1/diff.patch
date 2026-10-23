@@ -1,0 +1,77 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,74 @@
++import math
++
++def run(robot):
++    # 1. Observe scene to locate red cube
++    obs = robot.observe()
++    red_cube = obs["objects"].get("red_cube")
++    if not red_cube:
++        robot.log("Red cube not found in observation")
++        return False
++    
++    cube_pos = red_cube["pos"]
++    cube_yaw = red_cube["yaw"]
++    cube_x, cube_y, cube_z = cube_pos
++    
++    # 2. Move to a safe pre-grasp position above the cube (z=0.1)
++    pre_grasp_z = 0.1
++    try:
++        robot.move_to(cube_x, cube_y, pre_grasp_z, yaw=cube_yaw, speed=0.15)
++    except Exception as e:
++        robot.log(f"Failed to move to pre-grasp: {e}")
++        return False
++    
++    # 3. Descend to grasp height (cube center at z=0.015)
++    grasp_z = 0.015
++    try:
++        robot.move_to(cube_x, cube_y, grasp_z, yaw=cube_yaw, speed=0.05)
++    except Exception as e:
++        robot.log(f"Failed to descend to grasp height: {e}")
++        return False
++    
++    # 4. Attempt grasp (max 2 tries)
++    holding = False
++    for attempt in range(2):
++        robot.grasp()
++        # Wait a moment for grasp to settle
++        robot.wait(0.2)
++        if robot.holding() == "red_cube":
++            holding = True
++            break
++        else:
++            robot.log(f"Grasp attempt {attempt+1} failed, retrying")
++            # Slightly adjust position and retry
++            robot.move_by(dz=0.005, speed=0.02)
++            robot.wait(0.1)
++    
++    if not holding:
++        robot.log("Failed to grasp red cube after retries")
++        return False
++    
++    # 5. Lift cube to at least 5 cm above table (cube bottom at z>=0.05)
++    # Cube height is 0.03, so center at 0.065. Target tool point z=0.1 for margin.
++    lift_z = 0.1
++    try:
++        robot.move_to(cube_x, cube_y, lift_z, yaw=cube_yaw, speed=0.1)
++    except Exception as e:
++        robot.log(f"Failed to lift cube: {e}")
++        return False
++    
++    # 6. Verify still holding and height
++    if robot.holding() != "red_cube":
++        robot.log("Lost cube during lift")
++        return False
++    
++    # Check current gripper position (tool point)
++    final_obs = robot.observe()
++    gripper_z = final_obs["gripper"]["pos"][2]
++    # The cube bottom is approximately gripper_z - 0.015 (since tool point at cube center)
++    cube_bottom = gripper_z - 0.015
++    if cube_bottom >= 0.05:
++        robot.log(f"Success: cube bottom at {cube_bottom:.3f} m")
++        return True
++    else:
++        robot.log(f"Cube not high enough: bottom at {cube_bottom:.3f} m")
++        return False

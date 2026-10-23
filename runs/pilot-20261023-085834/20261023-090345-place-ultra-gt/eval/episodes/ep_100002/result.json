@@ -1,0 +1,273 @@
+{
+ "task": "place",
+ "seed": 100002,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "blue_cube_to_target_xy": 0.0061,
+  "tolerance": 0.03,
+  "blue_cube_z": 0.0149,
+  "held": false
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.7,
+   "call": "move_to(0.165, -0.024, 0.120, yaw=0.140, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1654,
+     -0.0239,
+     0.1199
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.82,
+   "call": "move_to(0.165, -0.024, 0.015, yaw=0.140, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1654,
+     -0.0239,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.32,
+   "call": "grasp()",
+   "result": {
+    "holding": "blue_cube",
+    "opening": 0.0269
+   }
+  },
+  {
+   "t": 3.32,
+   "call": "holding()",
+   "result": "blue_cube"
+  },
+  {
+   "t": 4.4,
+   "call": "move_to(0.165, -0.024, 0.120, yaw=0.140, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1654,
+     -0.0239,
+     0.1197
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 5.8,
+   "call": "move_to(0.186, 0.058, 0.100, yaw=0.140, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.186,
+     0.058,
+     0.0994
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 7.52,
+   "call": "move_to(0.186, 0.058, 0.015, yaw=0.140, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.186,
+     0.0579,
+     0.0154
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 7.92,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 8.22,
+   "call": "wait(0.30)",
+   "result": "ok"
+  },
+  {
+   "t": 8.22,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 8.22,
+   "call": "log",
+   "result": "Cube placed in zone, distance=0.0027, radius=0.0350"
+  }
+ ],
+ "n_calls": 12,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 8.72,
+ "wall_time": 1.78,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "blue_cube": {
+    "pos": [
+     0.1681,
+     -0.0275,
+     0.0149
+    ],
+    "yaw": 0.1261,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   },
+   "red_cube": {
+    "pos": [
+     0.1146,
+     -0.095,
+     0.0149
+    ],
+    "yaw": -0.6595,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1872,
+     0.0565,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.035
+   }
+  }
+ },
+ "final_obs": {
+  "time": 8.72,
+  "gripper": {
+   "pos": [
+    0.1862,
+    0.058,
+    0.015
+   ],
+   "yaw": -3.0013,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "blue_cube": {
+    "pos": [
+     0.185,
+     0.0623,
+     0.0149
+    ],
+    "yaw": 0.1401,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   },
+   "red_cube": {
+    "pos": [
+     0.1146,
+     -0.095,
+     0.0149
+    ],
+    "yaw": -0.6595,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1872,
+     0.0565,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.035
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1872,
+   "y": 0.0565,
+   "yaw": 0.0,
+   "fp": 0.045
+  },
+  "blue_cube": {
+   "x": 0.1681,
+   "y": -0.0275,
+   "yaw": 0.1261,
+   "fp": 0.0225
+  },
+  "red_cube": {
+   "x": 0.1146,
+   "y": -0.095,
+   "yaw": -0.6595,
+   "fp": 0.0225
+  }
+ }
+}

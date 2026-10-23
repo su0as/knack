@@ -1,0 +1,7 @@
+- First attempt: need to push puck from behind toward target zone.
+- Puck is at y≈-0.07, target at y≈+0.03, so push in +y direction.
+- Gripper cannot grasp puck (too wide), must push with fingers.
+- Finger pads reach 1.25cm below tool point; puck center at z≈0.01, so tool point at z=0.015 puts pads at puck middle.
+- Approach from negative y side, align yaw to push direction (0 rad = +x? Wait: world frame x forward, y left. Target is at +y relative to puck? Actually puck y=-0.072, target y=+0.027, so target is in +y direction. Push direction is +y. Gripper yaw: fingers close along yaw direction. To push in +y, need fingers oriented along +y? Actually yaw is world angle of fingers' closing direction. If yaw=0, fingers close along +x. If yaw=pi/2, fingers close along +y. To push in +y, we want the flat face of fingers to push in +y, so closing direction should be perpendicular to push? Wait: parallel gripper: two fingers move toward each other along yaw axis. The pushing surface is the flat side of fingers. If we want to push in +y, we need the finger pads to face -y (so they push forward in +y). That means the closing direction (yaw) should be along x axis (0 or pi). Let's set yaw=0 (fingers close along x, pads face ±y). We'll approach from -y side, so pads face +y.
+- Move to position behind puck (y = puck_y - 0.05), then move forward in +y pushing puck.
+- Verify puck position after push.

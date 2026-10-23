@@ -1,0 +1,60 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -22,6 +22,7 @@
+ 
+         # Desired heights
+         grasp_z = cube_pos[2]                     # tool point at cube centre
++        # Initial lift target (will be refined after grasp)
+         lift_z = max(cube_pos[2] + 0.05, 0.065)   # at least 5 cm above table
+ 
+         try:
+@@ -41,11 +42,21 @@
+             if not robot.grasp():
+                 return False
+ 
+-            # 5. Lift to the target height
+-            robot.move_to(cube_pos[0], cube_pos[1], lift_z,
++            # 5. Re‑perceive the cube to get its actual height after grasp
++            obs_after = robot.observe()
++            red_info_after = obs_after.get('objects', {}).get('red_cube')
++            if not red_info_after:
++                # If perception fails, fall back to the last known pose
++                red_info_after = red_info
++            cube_pos_after = red_info_after['pos']
++            # Compute lift height based on the actual cube position
++            lift_z = max(cube_pos_after[2] + 0.05, 0.070)  # guarantee ≥5 cm
++
++            # 6. Lift to the target height
++            robot.move_to(cube_pos_after[0], cube_pos_after[1], lift_z,
+                           yaw=cube_yaw, speed=0.15)
+ 
+-            # 6. Verify grasp and height
++            # 7. Verify grasp and height
+             if robot.holding() != 'red_cube':
+                 return False
+             grip_pose = robot.observe()['gripper']['pos']
+@@ -60,7 +71,7 @@
+     # First attempt
+     # ------------------------------------------------------------------
+     if attempt():
+-        robot.log("Pick‑up succeeded on first try.")
++        robot.log("Pick-up succeeded on first try.")
+         return True
+ 
+     # ------------------------------------------------------------------
+@@ -71,7 +82,7 @@
+     robot.log("First attempt failed; retrying...")
+ 
+     if attempt():
+-        robot.log("Pick‑up succeeded on second try.")
++        robot.log("Pick-up succeeded on second try.")
+         return True
+ 
+     # ------------------------------------------------------------------
+@@ -79,5 +90,5 @@
+     # ------------------------------------------------------------------
+     robot.release()
+     robot.home()
+-    robot.log("Pick‑up failed after two attempts.")
++    robot.log("Pick-up failed after two attempts.")
+     return False

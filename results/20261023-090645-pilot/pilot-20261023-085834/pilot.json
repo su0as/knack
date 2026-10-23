@@ -1,0 +1,179 @@
+{
+ "gate_pass": true,
+ "criterion": "held-out success >= 50% on at least 2 of 3 tasks within 4 rounds",
+ "by_model": {
+  "super": {
+   "tasks_at_50pct": [
+    "lift",
+    "place",
+    "push"
+   ],
+   "pass": true
+  },
+  "ultra": {
+   "tasks_at_50pct": [
+    "lift",
+    "place",
+    "push"
+   ],
+   "pass": true
+  }
+ },
+ "rows": [
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "lift",
+   "reward": "gt",
+   "run_id": "20261023-085834-lift-super-gt",
+   "status": "running",
+   "round_success": [
+    0.0,
+    0.75,
+    1.0
+   ],
+   "rounds_used": 3,
+   "eval_k": 50,
+   "eval_n": 50,
+   "eval_p": 1.0,
+   "eval_lo": 0.928649965826,
+   "eval_hi": 1.0,
+   "usd": 0.011292,
+   "llm_usd": 0.011292,
+   "tokens_in": 19366,
+   "tokens_out": 8625,
+   "wall_s": 120.1,
+   "self_report_true": 50,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "place",
+   "reward": "gt",
+   "run_id": "20261023-090034-place-super-gt",
+   "status": "running",
+   "round_success": [
+    1.0
+   ],
+   "rounds_used": 1,
+   "eval_k": 50,
+   "eval_n": 50,
+   "eval_p": 1.0,
+   "eval_lo": 0.928649965826,
+   "eval_hi": 1.0,
+   "usd": 0.004066,
+   "llm_usd": 0.004066,
+   "tokens_in": 4000,
+   "tokens_out": 3185,
+   "wall_s": 70.1,
+   "self_report_true": 50,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "push",
+   "reward": "gt",
+   "run_id": "20261023-090144-push-super-gt",
+   "status": "running",
+   "round_success": [
+    1.0
+   ],
+   "rounds_used": 1,
+   "eval_k": 40,
+   "eval_n": 50,
+   "eval_p": 0.8,
+   "eval_lo": 0.669626278955,
+   "eval_hi": 0.88756370054,
+   "usd": 0.004896,
+   "llm_usd": 0.004896,
+   "tokens_in": 5238,
+   "tokens_out": 3694,
+   "wall_s": 73.8,
+   "self_report_true": 49,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "ultra",
+   "model_id": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "task": "lift",
+   "reward": "gt",
+   "run_id": "20261023-090258-lift-ultra-gt",
+   "status": "running",
+   "round_success": [
+    1.0
+   ],
+   "rounds_used": 1,
+   "eval_k": 50,
+   "eval_n": 50,
+   "eval_p": 1.0,
+   "eval_lo": 0.928649965826,
+   "eval_hi": 1.0,
+   "usd": 0.006003,
+   "llm_usd": 0.006003,
+   "tokens_in": 1539,
+   "tokens_out": 1488,
+   "wall_s": 47.0,
+   "self_report_true": 50,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "ultra",
+   "model_id": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "task": "place",
+   "reward": "gt",
+   "run_id": "20261023-090345-place-ultra-gt",
+   "status": "running",
+   "round_success": [
+    1.0
+   ],
+   "rounds_used": 1,
+   "eval_k": 50,
+   "eval_n": 50,
+   "eval_p": 1.0,
+   "eval_lo": 0.928649965826,
+   "eval_hi": 1.0,
+   "usd": 0.004831,
+   "llm_usd": 0.004831,
+   "tokens_in": 1603,
+   "tokens_out": 1076,
+   "wall_s": 55.0,
+   "self_report_true": 50,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "ultra",
+   "model_id": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "task": "push",
+   "reward": "gt",
+   "run_id": "20261023-090440-push-ultra-gt",
+   "status": "running",
+   "round_success": [
+    0.875,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rounds_used": 4,
+   "eval_k": 45,
+   "eval_n": 50,
+   "eval_p": 0.9,
+   "eval_lo": 0.786395096652,
+   "eval_hi": 0.956524876008,
+   "usd": 0.064682,
+   "llm_usd": 0.064682,
+   "tokens_in": 22987,
+   "tokens_out": 17958,
+   "wall_s": 125.0,
+   "self_report_true": 45,
+   "judge": null,
+   "mock": false
+  }
+ ]
+}

@@ -1,0 +1,4 @@
+- Removed any stray characters that could cause a syntax error.
+- Ensured consistent indentation (4 spaces per level).
+- Verified that all function calls have correct parentheses and arguments.
+- Kept the original logic unchanged; only fixed formatting issues.

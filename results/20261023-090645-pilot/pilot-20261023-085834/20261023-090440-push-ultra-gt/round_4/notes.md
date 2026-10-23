@@ -1,0 +1,5 @@
+- The vertical clearance check was raising the tool point too high (0.051 m), causing the finger pads to be above the puck and resulting in no contact during the push. Fixed by setting tool point height to max(puck_center + 0.0125, puck_top + 0.005) so finger pads contact the puck's side.
+- Increased start_offset from 0.05+puck_radius to 0.10+puck_radius for better horizontal clearance and a stable push vector.
+- Changed push_length margin from fixed 0.03 to push_dist + max(0.03, target_radius*1.5) to scale with target size and ensure the puck reaches the circle.
+- Kept slow push speed (0.05), reverse tap (0.04 m), and MotionError handling.
+- Added more debug logs for push_dist, push_length, and start_z.

@@ -1,0 +1,6 @@
+- First version: perceive red cube pose, move above it, descend to grasp height (z=0.015), grasp, verify hold, lift to z=0.1 (5 cm above table), verify height.
+- Use robot.observe() to get current cube position (noisy but okay).
+- Align gripper yaw with cube yaw for better grasp.
+- Move slowly near cube (speed 0.05).
+- Retry grasp once if first attempt fails.
+- Return True if holding and height >= 0.05 (cube bottom), else False.

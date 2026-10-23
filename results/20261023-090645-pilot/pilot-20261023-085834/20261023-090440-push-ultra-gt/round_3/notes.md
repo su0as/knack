@@ -1,0 +1,6 @@
+- Reduced push margin from +0.08 to +0.03 to prevent overshoot (Mode A).
+- Increased reverse tap from 0.02 m to 0.04 m to better dampen overshoot.
+- Added vertical clearance check: compute puck top from its height, ensure tool point is at least puck_top + 0.0125 (finger offset) + 0.02 m clearance; raise start_z if needed.
+- Clamped gripper yaw to computed value for both approach and push moves; added debug log for push displacement.
+- Kept slow push speed (0.05) and travel speed (0.1).
+- Maintained MotionError catching and re-observe after reverse tap.

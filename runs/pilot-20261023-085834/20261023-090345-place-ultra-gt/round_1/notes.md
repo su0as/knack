@@ -1,0 +1,6 @@
+- First attempt at this pick-and-place task.
+- Need to observe scene, locate blue cube and green zone (target fixture).
+- Approach: move above cube, descend to grasp height (z≈0.015), grasp, lift, move above zone, descend, release.
+- Use moderate speeds for precision moves (0.05-0.10), default for travel.
+- Add verification steps: check holding after grasp, check cube position after release.
+- Handle MotionError for unreachable poses.

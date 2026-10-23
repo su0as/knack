@@ -1,0 +1,169 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Push puck</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261023-090144-push-super-gt &middot; 2026-10-23 09:02:58</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Push the orange puck so that its centre ends up inside the green circle. The puck is too wide to grasp.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; 8 practice episodes in 1 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/nemotron-3-super-120b-a12b <em>$0.30 / $0.90 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">80%</div><div>40/50 layouts &middot; Wilson 95% CI 67% to 89%</div><div class='ci'><div class='ci-band' style='left:67.0%;width:21.8%'></div><div class='ci-dot' style='left:80.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:100%'></span><em>R1<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/nemotron-3-super-120b-a12b</code></td><td>3</td><td>5,238</td><td>3,694</td><td>$0.0049</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>0</td><td>0</td><td>0</td><td>$0.0000</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>97 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>3</th><th>5,238</th><th>3,694</th><th>$0.0049</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details open><summary>Round 1: 8/8 practice episodes &middot; 0 errors &middot; $0.0049 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Removed any stray characters that could cause a syntax error.
+- Ensured consistent indentation (4 spaces per level).
+- Verified that all function calls have correct parentheses and arguments.
+- Kept the original logic unchanged; only fixed formatting issues.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,64 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    &quot;&quot;&quot;</span>
+<span class='add'>+    Push the orange puck so its centre lies inside the green circular zone.</span>
+<span class='add'>+    &quot;&quot;&quot;</span>
+<span class='add'>+    MAX_RETRIES = 2</span>
+<span class='add'>+    SAFE_Z = 0.02          # clear the puck (centre ~0.01, height 0.02)</span>
+<span class='add'>+    APPROACH_OFFSET = 0.02 # distance behind puck to start contact</span>
+<span class='add'>+    PUSH_SPEED = 0.05      # slow push for better control</span>
+<span class='add'>+    EXTRA_PUSH = 0.005     # small extra to ensure inside target</span>
+<span class='add'>+</span>
+<span class='add'>+    for attempt in range(MAX_RETRIES):</span>
+<span class='add'>+        obs = robot.observe()</span>
+<span class='add'>+        puck = obs[&quot;objects&quot;][&quot;puck&quot;]</span>
+<span class='add'>+        target = obs[&quot;fixtures&quot;][&quot;target&quot;]</span>
+<span class='add'>+</span>
+<span class='add'>+        px, py, _ = puck[&quot;pos&quot;]</span>
+<span class='add'>+        tx, ty, _ = target[&quot;pos&quot;]</span>
+<span class='add'>+        target_r = target[&quot;radius&quot;]</span>
+<span class='add'>+</span>
+<span class='add'>+        # vector from puck to target</span>
+<span class='add'>+        dx = tx - px</span>
+<span class='add'>+        dy = ty - py</span>
+<span class='add'>+        dist = math.hypot(dx, dy)</span>
+<span class='add'>+        if dist == 0:</span>
+<span class='add'>+            # already centred; consider success</span>
+<span class='add'>+            return True</span>
+<span class='add'>+</span>
+<span class='add'>+        # unit vector pointing from puck to target</span>
+<span class='add'>+        ux = dx / dist</span>
+<span class='add'>+        uy = dy / dist</span>
+<span class='add'>+</span>
+<span class='add'>+        # how far we need to move the puck to get inside the target</span>
+<span class='add'>+        needed_push = max(0.0, dist - target_r) + EXTRA_PUSH</span>
+<span class='add'>+</span>
+<span class='add'>+        # point behind the puck (opposite direction of push)</span>
+<span class='add'>+        behind_x = px - APPROACH_OFFSET * ux</span>
+<span class='add'>+        behind_y = py - APPROACH_OFFSET * uy</span>
+<span class='add'>+</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            # 1. Move to the pushing stance behind the puck</span>
+<span class='add'>+            robot.move_to(behind_x, behind_y, SAFE_Z, speed=None)</span>
+<span class='add'>+            # 2. Push forward along the puck→target direction</span>
+<span class='add'>+            push_dx = ux * (APPROACH_OFFSET + needed_push)</span>
+<span class='add'>+            push_dy = uy * (APPROACH_OFFSET + needed_push)</span>
+<span class='add'>+            robot.move_by(dx=push_dx, dy=push_dy, dz=0.0, speed=PUSH_SPEED)</span>
+<span class='add'>+        except Exception as e:</span>
+<span class='add'>+            # If movement fails (e.g., out of reach), try next attempt</span>
+<span class='add'>+            robot.log(&quot;Move failed:&quot;, e)</span>
+<span class='add'>+            continue</span>
+<span class='add'>+</span>
+<span class='add'>+        # Verify result</span>
+<span class='add'>+        obs = robot.observe()</span>
+<span class='add'>+        puck_pos = obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;]</span>
+<span class='add'>+        px, py, _ = puck_pos</span>
+<span class='add'>+        err = math.hypot(px - tx, py - ty)</span>
+<span class='add'>+        if err &lt;= target_r:</span>
+<span class='add'>+            robot.log(&quot;Success: puck inside target (err=&quot;, err, &quot;)&quot;)</span>
+<span class='add'>+            return True</span>
+<span class='add'>+        else:</span>
+<span class='add'>+            robot.log(&quot;Attempt&quot;, attempt + 1, &quot;failed, err=&quot;, err)</span>
+<span class='add'>+</span>
+<span class='add'>+    return False</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100000/end_front.jpg"><figcaption>seed 100000<br></figcaption></figure><figure><img src="eval/episodes/ep_100012/end_front.jpg"><figcaption>seed 100012<br></figcaption></figure><figure><img src="eval/episodes/ep_100017/end_front.jpg"><figcaption>seed 100017<br></figcaption></figure><figure><img src="eval/episodes/ep_100018/end_front.jpg"><figcaption>seed 100018<br></figcaption></figure><figure><img src="eval/episodes/ep_100019/end_front.jpg"><figcaption>seed 100019<br></figcaption></figure><figure><img src="eval/episodes/ep_100030/end_front.jpg"><figcaption>seed 100030<br></figcaption></figure><figure><img src="eval/episodes/ep_100033/end_front.jpg"><figcaption>seed 100033<br></figcaption></figure><figure><img src="eval/episodes/ep_100035/end_front.jpg"><figcaption>seed 100035<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    &quot;&quot;&quot;
+    Push the orange puck so its centre lies inside the green circular zone.
+    &quot;&quot;&quot;
+    MAX_RETRIES = 2
+    SAFE_Z = 0.02          # clear the puck (centre ~0.01, height 0.02)
+    APPROACH_OFFSET = 0.02 # distance behind puck to start contact
+    PUSH_SPEED = 0.05      # slow push for better control
+    EXTRA_PUSH = 0.005     # small extra to ensure inside target
+
+    for attempt in range(MAX_RETRIES):
+        obs = robot.observe()
+        puck = obs[&quot;objects&quot;][&quot;puck&quot;]
+        target = obs[&quot;fixtures&quot;][&quot;target&quot;]
+
+        px, py, _ = puck[&quot;pos&quot;]
+        tx, ty, _ = target[&quot;pos&quot;]
+        target_r = target[&quot;radius&quot;]
+
+        # vector from puck to target
+        dx = tx - px
+        dy = ty - py
+        dist = math.hypot(dx, dy)
+        if dist == 0:
+            # already centred; consider success
+            return True
+
+        # unit vector pointing from puck to target
+        ux = dx / dist
+        uy = dy / dist
+
+        # how far we need to move the puck to get inside the target
+        needed_push = max(0.0, dist - target_r) + EXTRA_PUSH
+
+        # point behind the puck (opposite direction of push)
+        behind_x = px - APPROACH_OFFSET * ux
+        behind_y = py - APPROACH_OFFSET * uy
+
+        try:
+            # 1. Move to the pushing stance behind the puck
+            robot.move_to(behind_x, behind_y, SAFE_Z, speed=None)
+            # 2. Push forward along the puck→target direction
+            push_dx = ux * (APPROACH_OFFSET + needed_push)
+            push_dy = uy * (APPROACH_OFFSET + needed_push)
+            robot.move_by(dx=push_dx, dy=push_dy, dz=0.0, speed=PUSH_SPEED)
+        except Exception as e:
+            # If movement fails (e.g., out of reach), try next attempt
+            robot.log(&quot;Move failed:&quot;, e)
+            continue
+
+        # Verify result
+        obs = robot.observe()
+        puck_pos = obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;]
+        px, py, _ = puck_pos
+        err = math.hypot(px - tx, py - ty)
+        if err &lt;= target_r:
+            robot.log(&quot;Success: puck inside target (err=&quot;, err, &quot;)&quot;)
+            return True
+        else:
+            robot.log(&quot;Attempt&quot;, attempt + 1, &quot;failed, err=&quot;, err)
+
+    return False
+</pre></section>
+</div></body></html>

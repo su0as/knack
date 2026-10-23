@@ -1,0 +1,5 @@
+- Assume the red cube is present and its pose can be obtained from observe() or get_pose().
+- Approach: move above the cube, descend to a grasp height near its centre, close the fingers, then lift to at least 5 cm above the table.
+- Use slow speeds (0.05 m/s) for the final descent and grasp to increase reliability, and default speed for transit motions.
+- Verify grasp success by checking robot.holding() and the gripper’s z‑position after lifting; retry once if the first attempt fails.
+- Always release and return to a safe home pose before exiting to leave the scene clean.

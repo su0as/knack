@@ -1,0 +1,397 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Lift</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261023-085834-lift-super-gt &middot; 2026-10-23 09:00:34</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Pick up the red cube and hold it at least 5 cm above the table.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; 24 practice episodes in 3 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/nemotron-3-super-120b-a12b <em>$0.30 / $0.90 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">100%</div><div>50/50 layouts &middot; Wilson 95% CI 93% to 100%</div><div class='ci'><div class='ci-band' style='left:92.9%;width:7.1%'></div><div class='ci-dot' style='left:100.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 15 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:2%'></span><em>R1<br>0/8</em></div><div class='bar'><span style='height:75%'></span><em>R2<br>6/8</em></div><div class='bar'><span style='height:100%'></span><em>R3<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/nemotron-3-super-120b-a12b</code></td><td>4</td><td>11,920</td><td>7,877</td><td>$0.0107</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>2</td><td>7,446</td><td>748</td><td>$0.0006</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>114 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>6</th><th>19,366</th><th>8,625</th><th>$0.0113</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details><summary>Round 1: 0/8 practice episodes &middot; 0 errors &middot; $0.0020 so far</summary><div class='muted'>coder notes</div><pre>- Assume the red cube is present and its pose can be obtained from observe() or get_pose().
+- Approach: move above the cube, descend to a grasp height near its centre, close the fingers, then lift to at least 5 cm above the table.
+- Use slow speeds (0.05 m/s) for the final descent and grasp to increase reliability, and default speed for transit motions.
+- Verify grasp success by checking robot.holding() and the gripper’s z‑position after lifting; retry once if the first attempt fails.
+- Always release and return to a safe home pose before exiting to leave the scene clean.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Height shortfall (6 episodes)**
+- **Root cause:** `lift_z` computed as `cube_pos[2] + 0.05` (line 28) assumes the cube sits exactly on the table. When the cube is already elevated (e.g., `red_cube_z ≈ 0.064`), adding 0.05 yields ~0.114 m, but the verification check at line 50 compares against `lift_z - 0.002`. The robot stops at `lift_z`, yet the observed cube height (~0.064 m) falls short of the required 0.065 m threshold.
+- **Fix:** Set `lift_z = max(cube_pos[2] + 0.05, 0.065)` to enforce the absolute 5 cm‑above‑table requirement regardless of initial cube pose.
+
+**Mode 2: Grasp opening too wide (2 episodes)**
+- **Root cause:** `grasp()` at line 40 closes fingers to ~0.026 m opening. If the cube is tilted or offset, the gripper may not fully enclose it, causing the subsequent lift to drop the object before reaching `lift_z`.
+- **Fix:** Add a pre‑grasp alignment step: `robot.move_to(cube_pos[0], cube_pos[1], cube_pos[2] + 0.02, yaw=cube_yaw, speed=0.02)` just before `grasp()` to ensure perpendicular approach.
+
+**Mode 3: Motion error on descent (1 episode)**
+- **Root cause:** `move_to` to `grasp_z` (line 37) at speed 0.05 (line 38) can overshoot when the cube is near the table edge, triggering the `MotionError` handler (line 51) and aborting the attempt.
+- **Fix:** Reduce descent speed to `0.02` for the final centimetres, or add a `try/except` around the lift step to retry with a lower target height.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,79 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    &quot;&quot;&quot;</span>
+<span class='add'>+    Pick up the red cube and hold it at least 5 cm above the table.</span>
+<span class='add'>+    Returns True if the task appears to have succeeded, otherwise False.</span>
+<span class='add'>+    &quot;&quot;&quot;</span>
+<span class='add'>+    # Start from a known safe pose</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+</span>
+<span class='add'>+    # ------------------------------------------------------------------</span>
+<span class='add'>+    # 1. Locate the red cube</span>
+<span class='add'>+    # ------------------------------------------------------------------</span>
+<span class='add'>+    obs = robot.observe()</span>
+<span class='add'>+    red_info = obs.get(&#x27;objects&#x27;, {}).get(&#x27;red_cube&#x27;)</span>
+<span class='add'>+    if red_info:</span>
+<span class='add'>+        cube_pos = red_info[&#x27;pos&#x27;]</span>
+<span class='add'>+        cube_yaw = red_info[&#x27;yaw&#x27;]</span>
+<span class='add'>+    else:</span>
+<span class='add'>+        # Fallback to direct query (should rarely be needed)</span>
+<span class='add'>+        pose = robot.get_pose(&#x27;red_cube&#x27;)</span>
+<span class='add'>+        cube_pos = pose[&#x27;pos&#x27;]</span>
+<span class='add'>+        cube_yaw = pose[&#x27;yaw&#x27;]</span>
+<span class='add'>+</span>
+<span class='add'>+    # Cube dimensions (all cubes are 0.03 m per side)</span>
+<span class='add'>+    half_size = 0.03 / 2.0          # 0.015 m</span>
+<span class='add'>+    grasp_z = cube_pos[2]           # tool point at cube centre → fingers around mid‑height</span>
+<span class='add'>+    lift_z = cube_pos[2] + 0.05     # 5 cm above the table top (cube centre + 0.05)</span>
+<span class='add'>+</span>
+<span class='add'>+    # Helper to attempt a pick‑and‑lift sequence</span>
+<span class='add'>+    def attempt():</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            # Move to a safe clearance above the cube</span>
+<span class='add'>+            robot.move_to(cube_pos[0], cube_pos[1], cube_pos[2] + 0.10,</span>
+<span class='add'>+                          yaw=cube_yaw, speed=0.15)</span>
+<span class='add'>+            # Descend slowly to the grasp height</span>
+<span class='add'>+            robot.move_to(cube_pos[0], cube_pos[1], grasp_z,</span>
+<span class='add'>+                          yaw=cube_yaw, speed=0.05)</span>
+<span class='add'>+            # Close the fingers</span>
+<span class='add'>+            if not robot.grasp():</span>
+<span class='add'>+                return False</span>
+<span class='add'>+            # Lift to the target height</span>
+<span class='add'>+            robot.move_to(cube_pos[0], cube_pos[1], lift_z,</span>
+<span class='add'>+                          yaw=cube_yaw, speed=0.15)</span>
+<span class='add'>+            # Verify that we are holding the red cube and are high enough</span>
+<span class='add'>+            if robot.holding() != &#x27;red_cube&#x27;:</span>
+<span class='add'>+                return False</span>
+<span class='add'>+            grip_pose = robot.observe()[&#x27;gripper&#x27;][&#x27;pos&#x27;]</span>
+<span class='add'>+            # Allow a small tolerance (2 mm) for noise and control error</span>
+<span class='add'>+            return grip_pose[2] &gt;= lift_z - 0.002</span>
+<span class='add'>+        except MotionError as e:</span>
+<span class='add'>+            robot.log(&quot;MotionError during attempt:&quot;, e)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # ------------------------------------------------------------------</span>
+<span class='add'>+    # 2. First attempt</span>
+<span class='add'>+    # ------------------------------------------------------------------</span>
+<span class='add'>+    if attempt():</span>
+<span class='add'>+        robot.log(&quot;Pick‑up succeeded on first try.&quot;)</span>
+<span class='add'>+        return True</span>
+<span class='add'>+</span>
+<span class='add'>+    # ------------------------------------------------------------------</span>
+<span class='add'>+    # 3. Recovery: open fingers, home, then try once more</span>
+<span class='add'>+    # ------------------------------------------------------------------</span>
+<span class='add'>+    robot.release()</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+    robot.log(&quot;First attempt failed; retrying...&quot;)</span>
+<span class='add'>+</span>
+<span class='add'>+    if attempt():</span>
+<span class='add'>+        robot.log(&quot;Pick‑up succeeded on second try.&quot;)</span>
+<span class='add'>+        return True</span>
+<span class='add'>+</span>
+<span class='add'>+    # ------------------------------------------------------------------</span>
+<span class='add'>+    # 4. Final cleanup</span>
+<span class='add'>+    # ------------------------------------------------------------------</span>
+<span class='add'>+    robot.release()</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+    robot.log(&quot;Pick‑up failed after two attempts.&quot;)</span>
+<span class='add'>+    return False</span></pre></details><details><summary>Round 2: 6/8 practice episodes &middot; 0 errors &middot; $0.0081 so far</summary><div class='muted'>coder notes</div><pre>- Fixed a syntax error by ensuring proper indentation and removing any stray characters.
+- Added a generic exception handler (catching Exception) to safely manage MotionError and other unexpected issues.
+- Kept the core logic: perceive the red cube, approach slowly, grasp, lift ≥5 cm, verify hold and height.
+- Included recovery: release, home, and a second attempt if the first fails.
+- All moves use appropriate speeds for safety and precision.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Height shortfall (2 episodes: 2000, 2005)**
+- **Root cause:** The `lift_z` calculation at line 25 uses `max(cube_pos[2] + 0.05, 0.065)`. When the cube’s z-coordinate is ≤0.015, the sum falls below 0.065, so the robot lifts to ~0.0643 m, missing the 5 cm requirement.
+- **Fix:** Change line 25 to `lift_z = max(cube_pos[2] + 0.05, 0.070)` to guarantee ≥5 cm clearance even for low cubes.
+
+**Mode 2: Perception/pose mismatch (1 episode: 2005)**
+- **Root cause:** The initial `move_to` at line 29 targets `cube_pos[2] + 0.10`, but the observed cube pose (z=0.0643) differs from the pre-grasp trajectory, causing the arm to undershoot the lift height.
+- **Fix:** Add a perception refresh after `grasp()` (before line 45) and re‑measure `lift_z` to ensure the subsequent lift uses the actual cube height.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_1/skill.py</span>
+<span class=''>+++ round_2/skill.py</span>
+<span class='hunk'>@@ -8,59 +8,63 @@</span>
+<span class=''>     # Start from a known safe pose</span>
+<span class=''>     robot.home()</span>
+<span class=''> </span>
+<span class='del'>-    # ------------------------------------------------------------------</span>
+<span class='del'>-    # 1. Locate the red cube</span>
+<span class='del'>-    # ------------------------------------------------------------------</span>
+<span class='del'>-    obs = robot.observe()</span>
+<span class='del'>-    red_info = obs.get(&#x27;objects&#x27;, {}).get(&#x27;red_cube&#x27;)</span>
+<span class='del'>-    if red_info:</span>
+<span class='add'>+    def attempt():</span>
+<span class='add'>+        &quot;&quot;&quot;Try to pick up the red cube once.&quot;&quot;&quot;</span>
+<span class='add'>+        # Fresh perception for this attempt</span>
+<span class='add'>+        obs = robot.observe()</span>
+<span class='add'>+        red_info = obs.get(&#x27;objects&#x27;, {}).get(&#x27;red_cube&#x27;)</span>
+<span class='add'>+        if not red_info:</span>
+<span class='add'>+            # Fallback to direct query (should rarely be needed)</span>
+<span class='add'>+            pose = robot.get_pose(&#x27;red_cube&#x27;)</span>
+<span class='add'>+            red_info = {&#x27;pos&#x27;: pose[&#x27;pos&#x27;], &#x27;yaw&#x27;: pose[&#x27;yaw&#x27;]}</span>
+<span class=''>         cube_pos = red_info[&#x27;pos&#x27;]</span>
+<span class=''>         cube_yaw = red_info[&#x27;yaw&#x27;]</span>
+<span class='del'>-    else:</span>
+<span class='del'>-        # Fallback to direct query (should rarely be needed)</span>
+<span class='del'>-        pose = robot.get_pose(&#x27;red_cube&#x27;)</span>
+<span class='del'>-        cube_pos = pose[&#x27;pos&#x27;]</span>
+<span class='del'>-        cube_yaw = pose[&#x27;yaw&#x27;]</span>
+<span class=''> </span>
+<span class='del'>-    # Cube dimensions (all cubes are 0.03 m per side)</span>
+<span class='del'>-    half_size = 0.03 / 2.0          # 0.015 m</span>
+<span class='del'>-    grasp_z = cube_pos[2]           # tool point at cube centre → fingers around mid‑height</span>
+<span class='del'>-    lift_z = cube_pos[2] + 0.05     # 5 cm above the table top (cube centre + 0.05)</span>
+<span class='add'>+        # Desired heights</span>
+<span class='add'>+        grasp_z = cube_pos[2]                     # tool point at cube centre</span>
+<span class='add'>+        lift_z = max(cube_pos[2] + 0.05, 0.065)   # at least 5 cm above table</span>
+<span class=''> </span>
+<span class='del'>-    # Helper to attempt a pick‑and‑lift sequence</span>
+<span class='del'>-    def attempt():</span>
+<span class=''>         try:</span>
+<span class='del'>-            # Move to a safe clearance above the cube</span>
+<span class='add'>+            # 1. Move to a safe clearance above the cube</span>
+<span class=''>             robot.move_to(cube_pos[0], cube_pos[1], cube_pos[2] + 0.10,</span>
+<span class=''>                           yaw=cube_yaw, speed=0.15)</span>
+<span class='del'>-            # Descend slowly to the grasp height</span>
+<span class='add'>+</span>
+<span class='add'>+            # 2. Pre‑grasp approach: move slowly to 2 cm above the cube</span>
+<span class='add'>+            robot.move_to(cube_pos[0], cube_pos[1], cube_pos[2] + 0.02,</span>
+<span class='add'>+                          yaw=cube_yaw, speed=0.05)</span>
+<span class='add'>+</span>
+<span class='add'>+            # 3. Descend slowly to the grasp height (final centimetres)</span>
+<span class=''>             robot.move_to(cube_pos[0], cube_pos[1], grasp_z,</span>
+<span class='del'>-                          yaw=cube_yaw, speed=0.05)</span>
+<span class='del'>-            # Close the fingers</span>
+<span class='add'>+                          yaw=cube_yaw, speed=0.02)</span>
+<span class='add'>+</span>
+<span class='add'>+            # 4. Close the fingers</span>
+<span class=''>             if not robot.grasp():</span>
+<span class=''>                 return False</span>
+<span class='del'>-            # Lift to the target height</span>
+<span class='add'>+</span>
+<span class='add'>+            # 5. Lift to the target height</span>
+<span class=''>             robot.move_to(cube_pos[0], cube_pos[1], lift_z,</span>
+<span class=''>                           yaw=cube_yaw, speed=0.15)</span>
+<span class='del'>-            # Verify that we are holding the red cube and are high enough</span>
+<span class='add'>+</span>
+<span class='add'>+            # 6. Verify grasp and height</span>
+<span class=''>             if robot.holding() != &#x27;red_cube&#x27;:</span>
+<span class=''>                 return False</span>
+<span class=''>             grip_pose = robot.observe()[&#x27;gripper&#x27;][&#x27;pos&#x27;]</span>
+<span class='del'>-            # Allow a small tolerance (2 mm) for noise and control error</span>
+<span class='add'>+            # Allow 2 mm tolerance for noise and control error</span>
+<span class=''>             return grip_pose[2] &gt;= lift_z - 0.002</span>
+<span class='del'>-        except MotionError as e:</span>
+<span class='add'>+</span>
+<span class='add'>+        except Exception as e:</span>
+<span class=''>             robot.log(&quot;MotionError during attempt:&quot;, e)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class=''>     # ------------------------------------------------------------------</span>
+<span class='del'>-    # 2. First attempt</span>
+<span class='add'>+    # First attempt</span>
+<span class=''>     # ------------------------------------------------------------------</span>
+<span class=''>     if attempt():</span>
+<span class=''>         robot.log(&quot;Pick‑up succeeded on first try.&quot;)</span>
+<span class=''>         return True</span>
+<span class=''> </span>
+<span class=''>     # ------------------------------------------------------------------</span>
+<span class='del'>-    # 3. Recovery: open fingers, home, then try once more</span>
+<span class='add'>+    # Recovery: open fingers, home, then try once more</span>
+<span class=''>     # ------------------------------------------------------------------</span>
+<span class=''>     robot.release()</span>
+<span class=''>     robot.home()</span>
+<span class='hunk'>@@ -71,7 +75,7 @@</span>
+<span class=''>         return True</span>
+<span class=''> </span>
+<span class=''>     # ------------------------------------------------------------------</span>
+<span class='del'>-    # 4. Final cleanup</span>
+<span class='add'>+    # Final cleanup</span>
+<span class=''>     # ------------------------------------------------------------------</span>
+<span class=''>     robot.release()</span>
+<span class=''>     robot.home()</span></pre></details><details open><summary>Round 3: 8/8 practice episodes &middot; 0 errors &middot; $0.0113 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Increased lift height to guarantee ≥5 cm clearance: lift_z = max(cube_pos[2] + 0.05, 0.070).
+- Added a perception refresh after a successful grasp to obtain the actual cube height before lifting, preventing pose mismatch.
+- Kept the rest of the logic (slow approaches, verification, recovery attempts) unchanged.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_2/skill.py</span>
+<span class=''>+++ round_3/skill.py</span>
+<span class='hunk'>@@ -22,6 +22,7 @@</span>
+<span class=''> </span>
+<span class=''>         # Desired heights</span>
+<span class=''>         grasp_z = cube_pos[2]                     # tool point at cube centre</span>
+<span class='add'>+        # Initial lift target (will be refined after grasp)</span>
+<span class=''>         lift_z = max(cube_pos[2] + 0.05, 0.065)   # at least 5 cm above table</span>
+<span class=''> </span>
+<span class=''>         try:</span>
+<span class='hunk'>@@ -41,11 +42,21 @@</span>
+<span class=''>             if not robot.grasp():</span>
+<span class=''>                 return False</span>
+<span class=''> </span>
+<span class='del'>-            # 5. Lift to the target height</span>
+<span class='del'>-            robot.move_to(cube_pos[0], cube_pos[1], lift_z,</span>
+<span class='add'>+            # 5. Re‑perceive the cube to get its actual height after grasp</span>
+<span class='add'>+            obs_after = robot.observe()</span>
+<span class='add'>+            red_info_after = obs_after.get(&#x27;objects&#x27;, {}).get(&#x27;red_cube&#x27;)</span>
+<span class='add'>+            if not red_info_after:</span>
+<span class='add'>+                # If perception fails, fall back to the last known pose</span>
+<span class='add'>+                red_info_after = red_info</span>
+<span class='add'>+            cube_pos_after = red_info_after[&#x27;pos&#x27;]</span>
+<span class='add'>+            # Compute lift height based on the actual cube position</span>
+<span class='add'>+            lift_z = max(cube_pos_after[2] + 0.05, 0.070)  # guarantee ≥5 cm</span>
+<span class='add'>+</span>
+<span class='add'>+            # 6. Lift to the target height</span>
+<span class='add'>+            robot.move_to(cube_pos_after[0], cube_pos_after[1], lift_z,</span>
+<span class=''>                           yaw=cube_yaw, speed=0.15)</span>
+<span class=''> </span>
+<span class='del'>-            # 6. Verify grasp and height</span>
+<span class='add'>+            # 7. Verify grasp and height</span>
+<span class=''>             if robot.holding() != &#x27;red_cube&#x27;:</span>
+<span class=''>                 return False</span>
+<span class=''>             grip_pose = robot.observe()[&#x27;gripper&#x27;][&#x27;pos&#x27;]</span>
+<span class='hunk'>@@ -60,7 +71,7 @@</span>
+<span class=''>     # First attempt</span>
+<span class=''>     # ------------------------------------------------------------------</span>
+<span class=''>     if attempt():</span>
+<span class='del'>-        robot.log(&quot;Pick‑up succeeded on first try.&quot;)</span>
+<span class='add'>+        robot.log(&quot;Pick-up succeeded on first try.&quot;)</span>
+<span class=''>         return True</span>
+<span class=''> </span>
+<span class=''>     # ------------------------------------------------------------------</span>
+<span class='hunk'>@@ -71,7 +82,7 @@</span>
+<span class=''>     robot.log(&quot;First attempt failed; retrying...&quot;)</span>
+<span class=''> </span>
+<span class=''>     if attempt():</span>
+<span class='del'>-        robot.log(&quot;Pick‑up succeeded on second try.&quot;)</span>
+<span class='add'>+        robot.log(&quot;Pick-up succeeded on second try.&quot;)</span>
+<span class=''>         return True</span>
+<span class=''> </span>
+<span class=''>     # ------------------------------------------------------------------</span>
+<span class='hunk'>@@ -79,5 +90,5 @@</span>
+<span class=''>     # ------------------------------------------------------------------</span>
+<span class=''>     robot.release()</span>
+<span class=''>     robot.home()</span>
+<span class='del'>-    robot.log(&quot;Pick‑up failed after two attempts.&quot;)</span>
+<span class='add'>+    robot.log(&quot;Pick-up failed after two attempts.&quot;)</span>
+<span class=''>     return False</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><p class="muted">No held-out failures.</p></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    &quot;&quot;&quot;
+    Pick up the red cube and hold it at least 5 cm above the table.
+    Returns True if the task appears to have succeeded, otherwise False.
+    &quot;&quot;&quot;
+    # Start from a known safe pose
+    robot.home()
+
+    def attempt():
+        &quot;&quot;&quot;Try to pick up the red cube once.&quot;&quot;&quot;
+        # Fresh perception for this attempt
+        obs = robot.observe()
+        red_info = obs.get(&#x27;objects&#x27;, {}).get(&#x27;red_cube&#x27;)
+        if not red_info:
+            # Fallback to direct query (should rarely be needed)
+            pose = robot.get_pose(&#x27;red_cube&#x27;)
+            red_info = {&#x27;pos&#x27;: pose[&#x27;pos&#x27;], &#x27;yaw&#x27;: pose[&#x27;yaw&#x27;]}
+        cube_pos = red_info[&#x27;pos&#x27;]
+        cube_yaw = red_info[&#x27;yaw&#x27;]
+
+        # Desired heights
+        grasp_z = cube_pos[2]                     # tool point at cube centre
+        # Initial lift target (will be refined after grasp)
+        lift_z = max(cube_pos[2] + 0.05, 0.065)   # at least 5 cm above table
+
+        try:
+            # 1. Move to a safe clearance above the cube
+            robot.move_to(cube_pos[0], cube_pos[1], cube_pos[2] + 0.10,
+                          yaw=cube_yaw, speed=0.15)
+
+            # 2. Pre‑grasp approach: move slowly to 2 cm above the cube
+            robot.move_to(cube_pos[0], cube_pos[1], cube_pos[2] + 0.02,
+                          yaw=cube_yaw, speed=0.05)
+
+            # 3. Descend slowly to the grasp height (final centimetres)
+            robot.move_to(cube_pos[0], cube_pos[1], grasp_z,
+                          yaw=cube_yaw, speed=0.02)
+
+            # 4. Close the fingers
+            if not robot.grasp():
+                return False
+
+            # 5. Re‑perceive the cube to get its actual height after grasp
+            obs_after = robot.observe()
+            red_info_after = obs_after.get(&#x27;objects&#x27;, {}).get(&#x27;red_cube&#x27;)
+            if not red_info_after:
+                # If perception fails, fall back to the last known pose
+                red_info_after = red_info
+            cube_pos_after = red_info_after[&#x27;pos&#x27;]
+            # Compute lift height based on the actual cube position
+            lift_z = max(cube_pos_after[2] + 0.05, 0.070)  # guarantee ≥5 cm
+
+            # 6. Lift to the target height
+            robot.move_to(cube_pos_after[0], cube_pos_after[1], lift_z,
+                          yaw=cube_yaw, speed=0.15)
+
+            # 7. Verify grasp and height
+            if robot.holding() != &#x27;red_cube&#x27;:
+                return False
+            grip_pose = robot.observe()[&#x27;gripper&#x27;][&#x27;pos&#x27;]
+            # Allow 2 mm tolerance for noise and control error
+            return grip_pose[2] &gt;= lift_z - 0.002
+
+        except Exception as e:
+            robot.log(&quot;MotionError during attempt:&quot;, e)
+            return False
+
+    # ------------------------------------------------------------------
+    # First attempt
+    # ------------------------------------------------------------------
+    if attempt():
+        robot.log(&quot;Pick-up succeeded on first try.&quot;)
+        return True
+
+    # ------------------------------------------------------------------
+    # Recovery: open fingers, home, then try once more
+    # ------------------------------------------------------------------
+    robot.release()
+    robot.home()
+    robot.log(&quot;First attempt failed; retrying...&quot;)
+
+    if attempt():
+        robot.log(&quot;Pick-up succeeded on second try.&quot;)
+        return True
+
+    # ------------------------------------------------------------------
+    # Final cleanup
+    # ------------------------------------------------------------------
+    robot.release()
+    robot.home()
+    robot.log(&quot;Pick-up failed after two attempts.&quot;)
+    return False
+</pre></section>
+</div></body></html>

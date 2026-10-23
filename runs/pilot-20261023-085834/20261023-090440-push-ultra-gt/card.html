@@ -1,0 +1,403 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Push puck</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261023-090440-push-ultra-gt &middot; 2026-10-23 09:06:45</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Push the orange puck so that its centre ends up inside the green circle. The puck is too wide to grasp.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; 32 practice episodes in 4 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/Nemotron-3-Ultra-550b-a55b <em>$1.00 / $3.00 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">90%</div><div>45/50 layouts &middot; Wilson 95% CI 79% to 96%</div><div class='ci'><div class='ci-band' style='left:78.6%;width:17.0%'></div><div class='ci-dot' style='left:90.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:87%'></span><em>R1<br>7/8</em></div><div class='bar'><span style='height:2%'></span><em>R2<br>0/8</em></div><div class='bar'><span style='height:2%'></span><em>R3<br>0/8</em></div><div class='bar'><span style='height:2%'></span><em>R4<br>0/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/Nemotron-3-Ultra-550b-a55b</code></td><td>4</td><td>13,058</td><td>16,927</td><td>$0.0638</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>3</td><td>9,929</td><td>1,031</td><td>$0.0008</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>137 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>7</th><th>22,987</th><th>17,958</th><th>$0.0647</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details open><summary>Round 1: 7/8 practice episodes &middot; 0 errors &middot; $0.0063 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- First attempt: need to push puck from behind toward target zone.
+- Puck is at y≈-0.07, target at y≈+0.03, so push in +y direction.
+- Gripper cannot grasp puck (too wide), must push with fingers.
+- Finger pads reach 1.25cm below tool point; puck center at z≈0.01, so tool point at z=0.015 puts pads at puck middle.
+- Approach from negative y side, align yaw to push direction (0 rad = +x? Wait: world frame x forward, y left. Target is at +y relative to puck? Actually puck y=-0.072, target y=+0.027, so target is in +y direction. Push direction is +y. Gripper yaw: fingers close along yaw direction. To push in +y, need fingers oriented along +y? Actually yaw is world angle of fingers&#x27; closing direction. If yaw=0, fingers close along +x. If yaw=pi/2, fingers close along +y. To push in +y, we want the flat face of fingers to push in +y, so closing direction should be perpendicular to push? Wait: parallel gripper: two fingers move toward each other along yaw axis. The pushing surface is the flat side of fingers. If we want to push in +y, we need the finger pads to face -y (so they push forward in +y). That means the closing direction (yaw) should be along x axis (0 or pi). Let&#x27;s set yaw=0 (fingers close along x, pads face ±y). We&#x27;ll approach from -y side, so pads face +y.
+- Move to position behind puck (y = puck_y - 0.05), then move forward in +y pushing puck.
+- Verify puck position after push.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode A: Overshoot / Slip** (3 episodes: 1003, 1007)
+*Root cause:* The push length (`push_length = push_dist + 0.03`) is too short relative to the required stopping precision. The puck overshoots or slips past the target before the observation is taken.
+*Fix:* Increase the push margin to `push_dist + 0.08` and add a brief reverse tap (`-0.02` m) at the end of the push trajectory to dampen overshoot.
+
+**Mode B: Gripper collision / Misalignment** (1 episode: 1003)
+*Root cause:* The gripper yaw is computed as `push_yaw + pi/2` (line 30). If the calculated start position places the gripper fingers into the puck or fixture, the robot may collide or fail to engage, resulting in `gripper holding None`.
+*Fix:* Validate the start position clearance: ensure `start_x, start_y` are at least `puck_radius + 0.02` away from any obstacle before moving. If clearance is insufficient, shift the start position further back along the `-ux` axis.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,64 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    # Observe initial scene</span>
+<span class='add'>+    obs = robot.observe()</span>
+<span class='add'>+    puck = obs[&quot;objects&quot;][&quot;puck&quot;]</span>
+<span class='add'>+    target = obs[&quot;fixtures&quot;][&quot;target&quot;]</span>
+<span class='add'>+    </span>
+<span class='add'>+    puck_pos = puck[&quot;pos&quot;]</span>
+<span class='add'>+    target_pos = target[&quot;pos&quot;]</span>
+<span class='add'>+    puck_radius = puck[&quot;size&quot;][&quot;radius&quot;]</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Calculate push direction: from puck to target</span>
+<span class='add'>+    dx = target_pos[0] - puck_pos[0]</span>
+<span class='add'>+    dy = target_pos[1] - puck_pos[1]</span>
+<span class='add'>+    push_dist = math.hypot(dx, dy)</span>
+<span class='add'>+    if push_dist &lt; 1e-3:</span>
+<span class='add'>+        return True  # already there</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Unit vector in push direction</span>
+<span class='add'>+    ux = dx / push_dist</span>
+<span class='add'>+    uy = dy / push_dist</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Yaw for gripper: fingers close along perpendicular to push direction</span>
+<span class='add'>+    # So that flat finger pads face push direction.</span>
+<span class='add'>+    # If push direction is (ux, uy), perpendicular is (-uy, ux) or (uy, -ux).</span>
+<span class='add'>+    # Choose yaw such that closing direction is perpendicular to push.</span>
+<span class='add'>+    # yaw = atan2(uy, ux) + pi/2  (rotate 90 deg)</span>
+<span class='add'>+    push_yaw = math.atan2(uy, ux)</span>
+<span class='add'>+    gripper_yaw = push_yaw + math.pi/2</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Start position: behind puck by about 5cm + puck radius</span>
+<span class='add'>+    start_offset = 0.05 + puck_radius</span>
+<span class='add'>+    start_x = puck_pos[0] - ux * start_offset</span>
+<span class='add'>+    start_y = puck_pos[1] - uy * start_offset</span>
+<span class='add'>+    start_z = 0.015  # tool point height for finger pads at puck middle</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Move to start position</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(start_x, start_y, start_z, yaw=gripper_yaw, speed=0.1)</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(&quot;Move to start failed:&quot;, e)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Push forward: move in push direction by push_dist + some margin</span>
+<span class='add'>+    push_length = push_dist + 0.03  # extra to ensure puck enters zone</span>
+<span class='add'>+    end_x = start_x + ux * push_length</span>
+<span class='add'>+    end_y = start_y + uy * push_length</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Move slowly to push</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(end_x, end_y, start_z, yaw=gripper_yaw, speed=0.05)</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(&quot;Push move failed:&quot;, e)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Verify puck position</span>
+<span class='add'>+    obs2 = robot.observe()</span>
+<span class='add'>+    puck2 = obs2[&quot;objects&quot;][&quot;puck&quot;]</span>
+<span class='add'>+    puck2_pos = puck2[&quot;pos&quot;]</span>
+<span class='add'>+    dist_to_target = math.hypot(puck2_pos[0] - target_pos[0], puck2_pos[1] - target_pos[1])</span>
+<span class='add'>+    </span>
+<span class='add'>+    robot.log(f&quot;Puck final dist to target: {dist_to_target:.4f}, target radius: {target[&#x27;radius&#x27;]:.4f}&quot;)</span>
+<span class='add'>+    return dist_to_target &lt;= target[&quot;radius&quot;]</span></pre></details><details><summary>Round 2: 0/8 practice episodes &middot; 0 errors &middot; $0.0280 so far</summary><div class='muted'>coder notes</div><pre>- Increased push margin from +0.03 to +0.08 to ensure puck reaches target zone despite slip.
+- Added a 2 cm reverse tap after the push to dampen overshoot and let puck settle.
+- Implemented start-position clearance check: ensure tool point stays at least puck_radius+0.02 from puck; if not, shift further back along -push axis.
+- Kept slow push speed (0.05) and travel speed (0.1).
+- Added MotionError catching for safety.
+- Re-observe after reverse tap for accurate verification.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode A: Overshoot (5 episodes, seeds 2000, 2002, 2005, 2007)**
+*Root cause:* The push length adds a fixed 0.08 m margin (line 52), but the puck’s inertia and the reverse tap (line 65) are insufficient to stop exactly at the target boundary. Episodes end with `puck_to_target_xy` just above 0.035 m.
+*Fix:* Reduce `push_length` margin to `push_dist + 0.03` and increase reverse tap magnitude to `0.04 m` (line 65).
+
+**Mode B: Short push (4 episodes, seeds 2001, 2003, 2004, 2006)**
+*Root cause:* Start position is computed behind the puck (line 30‑32), but the subsequent `move_to` (line 58) travels only `push_length` from that start. When the gripper yaw is misaligned (e.g., seed 2001 yaw 0.684 vs. computed), the effective push vector deviates, leaving the puck short of the target.
+*Fix:* Clamp gripper yaw to the computed `gripper_yaw` (line 27) and ensure `move_to` uses the same yaw; add a debug log at line 58 to verify actual displacement.
+
+**Mode C: Gripper collision / drop (2 episodes, seeds 2001, 2003)**
+*Root cause:* The gripper yaw offset (line 27) assumes flat finger pads face the push direction. With the puck too wide to grasp, the robot may collide or fail to release, resulting in `gripper holding None`.
+*Fix:* Add a pre‑push clearance check: before `move_to` at line 46, verify `start_z` clears the puck by ≥ 0.02 m; if not, raise `start_z` by 0.01 m.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_1/skill.py</span>
+<span class=''>+++ round_2/skill.py</span>
+<span class='hunk'>@@ -23,9 +23,6 @@</span>
+<span class=''>     </span>
+<span class=''>     # Yaw for gripper: fingers close along perpendicular to push direction</span>
+<span class=''>     # So that flat finger pads face push direction.</span>
+<span class='del'>-    # If push direction is (ux, uy), perpendicular is (-uy, ux) or (uy, -ux).</span>
+<span class='del'>-    # Choose yaw such that closing direction is perpendicular to push.</span>
+<span class='del'>-    # yaw = atan2(uy, ux) + pi/2  (rotate 90 deg)</span>
+<span class=''>     push_yaw = math.atan2(uy, ux)</span>
+<span class=''>     gripper_yaw = push_yaw + math.pi/2</span>
+<span class=''>     </span>
+<span class='hunk'>@@ -35,6 +32,15 @@</span>
+<span class=''>     start_y = puck_pos[1] - uy * start_offset</span>
+<span class=''>     start_z = 0.015  # tool point height for finger pads at puck middle</span>
+<span class=''>     </span>
+<span class='add'>+    # Validate start position clearance: ensure tool point at least puck_radius+0.02 from puck center</span>
+<span class='add'>+    required_clearance = puck_radius + 0.02</span>
+<span class='add'>+    current_clearance = math.hypot(start_x - puck_pos[0], start_y - puck_pos[1])</span>
+<span class='add'>+    if current_clearance &lt; required_clearance:</span>
+<span class='add'>+        shift = required_clearance - current_clearance</span>
+<span class='add'>+        start_x -= ux * shift</span>
+<span class='add'>+        start_y -= uy * shift</span>
+<span class='add'>+        robot.log(f&quot;Adjusted start position by {shift:.4f} m for clearance&quot;)</span>
+<span class='add'>+    </span>
+<span class=''>     # Move to start position</span>
+<span class=''>     try:</span>
+<span class=''>         robot.move_to(start_x, start_y, start_z, yaw=gripper_yaw, speed=0.1)</span>
+<span class='hunk'>@@ -42,8 +48,8 @@</span>
+<span class=''>         robot.log(&quot;Move to start failed:&quot;, e)</span>
+<span class=''>         return False</span>
+<span class=''>     </span>
+<span class='del'>-    # Push forward: move in push direction by push_dist + some margin</span>
+<span class='del'>-    push_length = push_dist + 0.03  # extra to ensure puck enters zone</span>
+<span class='add'>+    # Push forward: move in push direction by push_dist + margin</span>
+<span class='add'>+    push_length = push_dist + 0.08  # increased margin to ensure puck enters zone</span>
+<span class=''>     end_x = start_x + ux * push_length</span>
+<span class=''>     end_y = start_y + uy * push_length</span>
+<span class=''>     </span>
+<span class='hunk'>@@ -54,6 +60,13 @@</span>
+<span class=''>         robot.log(&quot;Push move failed:&quot;, e)</span>
+<span class=''>         return False</span>
+<span class=''>     </span>
+<span class='add'>+    # Brief reverse tap to dampen overshoot</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_by(dx=-ux*0.02, dy=-uy*0.02, speed=0.05)</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(&quot;Reverse tap failed:&quot;, e)</span>
+<span class='add'>+        # continue anyway</span>
+<span class='add'>+    </span>
+<span class=''>     # Verify puck position</span>
+<span class=''>     obs2 = robot.observe()</span>
+<span class=''>     puck2 = obs2[&quot;objects&quot;][&quot;puck&quot;]</span></pre></details><details><summary>Round 3: 0/8 practice episodes &middot; 0 errors &middot; $0.0428 so far</summary><div class='muted'>coder notes</div><pre>- Reduced push margin from +0.08 to +0.03 to prevent overshoot (Mode A).
+- Increased reverse tap from 0.02 m to 0.04 m to better dampen overshoot.
+- Added vertical clearance check: compute puck top from its height, ensure tool point is at least puck_top + 0.0125 (finger offset) + 0.02 m clearance; raise start_z if needed.
+- Clamped gripper yaw to computed value for both approach and push moves; added debug log for push displacement.
+- Kept slow push speed (0.05) and travel speed (0.1).
+- Maintained MotionError catching and re-observe after reverse tap.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Insufficient push length (67%)**
+*Episodes: 3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007*
+*Root cause:* The push length is `push_dist + 0.03 m` (line 61). The target radius is 0.04 m, but the required displacement varies (0.09–0.19 m). A fixed 3 cm margin is insufficient for longer pushes, leaving the puck short.
+*Fix:* Set `push_length = push_dist + max(0.03, target[&quot;radius&quot;] * 1.5)` to ensure the margin scales with target size and initial distance.
+
+**Mode 2: Start position too close to puck (33%)**
+*Episodes: 3005 (safety clamps), others with vertical log*
+*Root cause:* The start offset (line 32) is `0.05 + puck_radius`. If the puck is large or the initial clearance check (lines 38–44) shifts the start minimally, the robot may collide or push at an angle, reducing effective travel.
+*Fix:* Increase `start_offset` to `0.10 + puck_radius` to guarantee horizontal clearance and a stable push vector.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_2/skill.py</span>
+<span class=''>+++ round_3/skill.py</span>
+<span class='hunk'>@@ -8,7 +8,9 @@</span>
+<span class=''>     </span>
+<span class=''>     puck_pos = puck[&quot;pos&quot;]</span>
+<span class=''>     target_pos = target[&quot;pos&quot;]</span>
+<span class='add'>+    # puck size is a dict with &#x27;radius&#x27; and &#x27;height&#x27;</span>
+<span class=''>     puck_radius = puck[&quot;size&quot;][&quot;radius&quot;]</span>
+<span class='add'>+    puck_height = puck[&quot;size&quot;][&quot;height&quot;]</span>
+<span class=''>     </span>
+<span class=''>     # Calculate push direction: from puck to target</span>
+<span class=''>     dx = target_pos[0] - puck_pos[0]</span>
+<span class='hunk'>@@ -32,14 +34,21 @@</span>
+<span class=''>     start_y = puck_pos[1] - uy * start_offset</span>
+<span class=''>     start_z = 0.015  # tool point height for finger pads at puck middle</span>
+<span class=''>     </span>
+<span class='del'>-    # Validate start position clearance: ensure tool point at least puck_radius+0.02 from puck center</span>
+<span class='add'>+    # Validate start position horizontal clearance</span>
+<span class=''>     required_clearance = puck_radius + 0.02</span>
+<span class=''>     current_clearance = math.hypot(start_x - puck_pos[0], start_y - puck_pos[1])</span>
+<span class=''>     if current_clearance &lt; required_clearance:</span>
+<span class=''>         shift = required_clearance - current_clearance</span>
+<span class=''>         start_x -= ux * shift</span>
+<span class=''>         start_y -= uy * shift</span>
+<span class='del'>-        robot.log(f&quot;Adjusted start position by {shift:.4f} m for clearance&quot;)</span>
+<span class='add'>+        robot.log(f&quot;Adjusted start position by {shift:.4f} m for horizontal clearance&quot;)</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Validate vertical clearance: finger pads are 0.0125 m below tool point</span>
+<span class='add'>+    puck_top = puck_pos[2] + puck_height / 2.0</span>
+<span class='add'>+    min_tool_z = puck_top + 0.0125 + 0.02  # 2 cm clearance above puck top</span>
+<span class='add'>+    if start_z &lt; min_tool_z:</span>
+<span class='add'>+        start_z = min_tool_z</span>
+<span class='add'>+        robot.log(f&quot;Raised start_z to {start_z:.4f} m for vertical clearance&quot;)</span>
+<span class=''>     </span>
+<span class=''>     # Move to start position</span>
+<span class=''>     try:</span>
+<span class='hunk'>@@ -49,20 +58,21 @@</span>
+<span class=''>         return False</span>
+<span class=''>     </span>
+<span class=''>     # Push forward: move in push direction by push_dist + margin</span>
+<span class='del'>-    push_length = push_dist + 0.08  # increased margin to ensure puck enters zone</span>
+<span class='add'>+    push_length = push_dist + 0.03  # reduced margin to avoid overshoot</span>
+<span class=''>     end_x = start_x + ux * push_length</span>
+<span class=''>     end_y = start_y + uy * push_length</span>
+<span class=''>     </span>
+<span class=''>     # Move slowly to push</span>
+<span class=''>     try:</span>
+<span class=''>         robot.move_to(end_x, end_y, start_z, yaw=gripper_yaw, speed=0.05)</span>
+<span class='add'>+        robot.log(f&quot;Push move: planned length {push_length:.4f} m&quot;)</span>
+<span class=''>     except Exception as e:</span>
+<span class=''>         robot.log(&quot;Push move failed:&quot;, e)</span>
+<span class=''>         return False</span>
+<span class=''>     </span>
+<span class='del'>-    # Brief reverse tap to dampen overshoot</span>
+<span class='add'>+    # Reverse tap to dampen overshoot (increased to 0.04 m)</span>
+<span class=''>     try:</span>
+<span class='del'>-        robot.move_by(dx=-ux*0.02, dy=-uy*0.02, speed=0.05)</span>
+<span class='add'>+        robot.move_by(dx=-ux*0.04, dy=-uy*0.04, speed=0.05)</span>
+<span class=''>     except Exception as e:</span>
+<span class=''>         robot.log(&quot;Reverse tap failed:&quot;, e)</span>
+<span class=''>         # continue anyway</span></pre></details><details><summary>Round 4: 0/8 practice episodes &middot; 0 errors &middot; $0.0647 so far</summary><div class='muted'>coder notes</div><pre>- The vertical clearance check was raising the tool point too high (0.051 m), causing the finger pads to be above the puck and resulting in no contact during the push. Fixed by setting tool point height to max(puck_center + 0.0125, puck_top + 0.005) so finger pads contact the puck&#x27;s side.
+- Increased start_offset from 0.05+puck_radius to 0.10+puck_radius for better horizontal clearance and a stable push vector.
+- Changed push_length margin from fixed 0.03 to push_dist + max(0.03, target_radius*1.5) to scale with target size and ensure the puck reaches the circle.
+- Kept slow push speed (0.05), reverse tap (0.04 m), and MotionError handling.
+- Added more debug logs for push_dist, push_length, and start_z.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_3/skill.py</span>
+<span class=''>+++ round_4/skill.py</span>
+<span class='hunk'>@@ -8,7 +8,6 @@</span>
+<span class=''>     </span>
+<span class=''>     puck_pos = puck[&quot;pos&quot;]</span>
+<span class=''>     target_pos = target[&quot;pos&quot;]</span>
+<span class='del'>-    # puck size is a dict with &#x27;radius&#x27; and &#x27;height&#x27;</span>
+<span class=''>     puck_radius = puck[&quot;size&quot;][&quot;radius&quot;]</span>
+<span class=''>     puck_height = puck[&quot;size&quot;][&quot;height&quot;]</span>
+<span class=''>     </span>
+<span class='hunk'>@@ -24,17 +23,25 @@</span>
+<span class=''>     uy = dy / push_dist</span>
+<span class=''>     </span>
+<span class=''>     # Yaw for gripper: fingers close along perpendicular to push direction</span>
+<span class='del'>-    # So that flat finger pads face push direction.</span>
+<span class=''>     push_yaw = math.atan2(uy, ux)</span>
+<span class=''>     gripper_yaw = push_yaw + math.pi/2</span>
+<span class=''>     </span>
+<span class='del'>-    # Start position: behind puck by about 5cm + puck radius</span>
+<span class='del'>-    start_offset = 0.05 + puck_radius</span>
+<span class='add'>+    # Start position: behind puck by 10cm + puck radius (increased from 5cm)</span>
+<span class='add'>+    start_offset = 0.10 + puck_radius</span>
+<span class=''>     start_x = puck_pos[0] - ux * start_offset</span>
+<span class=''>     start_y = puck_pos[1] - uy * start_offset</span>
+<span class='del'>-    start_z = 0.015  # tool point height for finger pads at puck middle</span>
+<span class=''>     </span>
+<span class='del'>-    # Validate start position horizontal clearance</span>
+<span class='add'>+    # Tool point height: finger pads are 0.0125 m below tool point.</span>
+<span class='add'>+    # We want finger pads at puck center height (puck_pos[2]) for good contact.</span>
+<span class='add'>+    # Also ensure tool point clears puck top by a small margin.</span>
+<span class='add'>+    puck_top = puck_pos[2] + puck_height / 2.0</span>
+<span class='add'>+    start_z = max(puck_pos[2] + 0.0125, puck_top + 0.005)</span>
+<span class='add'>+    # Safety floor</span>
+<span class='add'>+    if start_z &lt; 0.014:</span>
+<span class='add'>+        start_z = 0.014</span>
+<span class='add'>+    robot.log(f&quot;Start_z set to {start_z:.4f} m (puck_center={puck_pos[2]:.4f}, puck_top={puck_top:.4f})&quot;)</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Validate horizontal clearance (should be satisfied with new offset)</span>
+<span class=''>     required_clearance = puck_radius + 0.02</span>
+<span class=''>     current_clearance = math.hypot(start_x - puck_pos[0], start_y - puck_pos[1])</span>
+<span class=''>     if current_clearance &lt; required_clearance:</span>
+<span class='hunk'>@@ -43,13 +50,6 @@</span>
+<span class=''>         start_y -= uy * shift</span>
+<span class=''>         robot.log(f&quot;Adjusted start position by {shift:.4f} m for horizontal clearance&quot;)</span>
+<span class=''>     </span>
+<span class='del'>-    # Validate vertical clearance: finger pads are 0.0125 m below tool point</span>
+<span class='del'>-    puck_top = puck_pos[2] + puck_height / 2.0</span>
+<span class='del'>-    min_tool_z = puck_top + 0.0125 + 0.02  # 2 cm clearance above puck top</span>
+<span class='del'>-    if start_z &lt; min_tool_z:</span>
+<span class='del'>-        start_z = min_tool_z</span>
+<span class='del'>-        robot.log(f&quot;Raised start_z to {start_z:.4f} m for vertical clearance&quot;)</span>
+<span class='del'>-    </span>
+<span class=''>     # Move to start position</span>
+<span class=''>     try:</span>
+<span class=''>         robot.move_to(start_x, start_y, start_z, yaw=gripper_yaw, speed=0.1)</span>
+<span class='hunk'>@@ -57,20 +57,22 @@</span>
+<span class=''>         robot.log(&quot;Move to start failed:&quot;, e)</span>
+<span class=''>         return False</span>
+<span class=''>     </span>
+<span class='del'>-    # Push forward: move in push direction by push_dist + margin</span>
+<span class='del'>-    push_length = push_dist + 0.03  # reduced margin to avoid overshoot</span>
+<span class='add'>+    # Push forward: move in push direction by push_dist + adaptive margin</span>
+<span class='add'>+    margin = max(0.03, target[&quot;radius&quot;] * 1.5)</span>
+<span class='add'>+    push_length = push_dist + margin</span>
+<span class=''>     end_x = start_x + ux * push_length</span>
+<span class=''>     end_y = start_y + uy * push_length</span>
+<span class='add'>+    </span>
+<span class='add'>+    robot.log(f&quot;Push dist: {push_dist:.4f}, margin: {margin:.4f}, push_length: {push_length:.4f}&quot;)</span>
+<span class=''>     </span>
+<span class=''>     # Move slowly to push</span>
+<span class=''>     try:</span>
+<span class=''>         robot.move_to(end_x, end_y, start_z, yaw=gripper_yaw, speed=0.05)</span>
+<span class='del'>-        robot.log(f&quot;Push move: planned length {push_length:.4f} m&quot;)</span>
+<span class=''>     except Exception as e:</span>
+<span class=''>         robot.log(&quot;Push move failed:&quot;, e)</span>
+<span class=''>         return False</span>
+<span class=''>     </span>
+<span class='del'>-    # Reverse tap to dampen overshoot (increased to 0.04 m)</span>
+<span class='add'>+    # Reverse tap to dampen overshoot</span>
+<span class=''>     try:</span>
+<span class=''>         robot.move_by(dx=-ux*0.04, dy=-uy*0.04, speed=0.05)</span>
+<span class=''>     except Exception as e:</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100004/end_front.jpg"><figcaption>seed 100004<br></figcaption></figure><figure><img src="eval/episodes/ep_100016/end_front.jpg"><figcaption>seed 100016<br></figcaption></figure><figure><img src="eval/episodes/ep_100026/end_front.jpg"><figcaption>seed 100026<br></figcaption></figure><figure><img src="eval/episodes/ep_100032/end_front.jpg"><figcaption>seed 100032<br></figcaption></figure><figure><img src="eval/episodes/ep_100041/end_front.jpg"><figcaption>seed 100041<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    # Observe initial scene
+    obs = robot.observe()
+    puck = obs[&quot;objects&quot;][&quot;puck&quot;]
+    target = obs[&quot;fixtures&quot;][&quot;target&quot;]
+    
+    puck_pos = puck[&quot;pos&quot;]
+    target_pos = target[&quot;pos&quot;]
+    puck_radius = puck[&quot;size&quot;][&quot;radius&quot;]
+    
+    # Calculate push direction: from puck to target
+    dx = target_pos[0] - puck_pos[0]
+    dy = target_pos[1] - puck_pos[1]
+    push_dist = math.hypot(dx, dy)
+    if push_dist &lt; 1e-3:
+        return True  # already there
+    
+    # Unit vector in push direction
+    ux = dx / push_dist
+    uy = dy / push_dist
+    
+    # Yaw for gripper: fingers close along perpendicular to push direction
+    # So that flat finger pads face push direction.
+    # If push direction is (ux, uy), perpendicular is (-uy, ux) or (uy, -ux).
+    # Choose yaw such that closing direction is perpendicular to push.
+    # yaw = atan2(uy, ux) + pi/2  (rotate 90 deg)
+    push_yaw = math.atan2(uy, ux)
+    gripper_yaw = push_yaw + math.pi/2
+    
+    # Start position: behind puck by about 5cm + puck radius
+    start_offset = 0.05 + puck_radius
+    start_x = puck_pos[0] - ux * start_offset
+    start_y = puck_pos[1] - uy * start_offset
+    start_z = 0.015  # tool point height for finger pads at puck middle
+    
+    # Move to start position
+    try:
+        robot.move_to(start_x, start_y, start_z, yaw=gripper_yaw, speed=0.1)
+    except Exception as e:
+        robot.log(&quot;Move to start failed:&quot;, e)
+        return False
+    
+    # Push forward: move in push direction by push_dist + some margin
+    push_length = push_dist + 0.03  # extra to ensure puck enters zone
+    end_x = start_x + ux * push_length
+    end_y = start_y + uy * push_length
+    
+    # Move slowly to push
+    try:
+        robot.move_to(end_x, end_y, start_z, yaw=gripper_yaw, speed=0.05)
+    except Exception as e:
+        robot.log(&quot;Push move failed:&quot;, e)
+        return False
+    
+    # Verify puck position
+    obs2 = robot.observe()
+    puck2 = obs2[&quot;objects&quot;][&quot;puck&quot;]
+    puck2_pos = puck2[&quot;pos&quot;]
+    dist_to_target = math.hypot(puck2_pos[0] - target_pos[0], puck2_pos[1] - target_pos[1])
+    
+    robot.log(f&quot;Puck final dist to target: {dist_to_target:.4f}, target radius: {target[&#x27;radius&#x27;]:.4f}&quot;)
+    return dist_to_target &lt;= target[&quot;radius&quot;]
+</pre></section>
+</div></body></html>

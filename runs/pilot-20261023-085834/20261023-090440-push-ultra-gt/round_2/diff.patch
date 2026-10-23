@@ -1,0 +1,53 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -23,9 +23,6 @@
+     
+     # Yaw for gripper: fingers close along perpendicular to push direction
+     # So that flat finger pads face push direction.
+-    # If push direction is (ux, uy), perpendicular is (-uy, ux) or (uy, -ux).
+-    # Choose yaw such that closing direction is perpendicular to push.
+-    # yaw = atan2(uy, ux) + pi/2  (rotate 90 deg)
+     push_yaw = math.atan2(uy, ux)
+     gripper_yaw = push_yaw + math.pi/2
+     
+@@ -35,6 +32,15 @@
+     start_y = puck_pos[1] - uy * start_offset
+     start_z = 0.015  # tool point height for finger pads at puck middle
+     
++    # Validate start position clearance: ensure tool point at least puck_radius+0.02 from puck center
++    required_clearance = puck_radius + 0.02
++    current_clearance = math.hypot(start_x - puck_pos[0], start_y - puck_pos[1])
++    if current_clearance < required_clearance:
++        shift = required_clearance - current_clearance
++        start_x -= ux * shift
++        start_y -= uy * shift
++        robot.log(f"Adjusted start position by {shift:.4f} m for clearance")
++    
+     # Move to start position
+     try:
+         robot.move_to(start_x, start_y, start_z, yaw=gripper_yaw, speed=0.1)
+@@ -42,8 +48,8 @@
+         robot.log("Move to start failed:", e)
+         return False
+     
+-    # Push forward: move in push direction by push_dist + some margin
+-    push_length = push_dist + 0.03  # extra to ensure puck enters zone
++    # Push forward: move in push direction by push_dist + margin
++    push_length = push_dist + 0.08  # increased margin to ensure puck enters zone
+     end_x = start_x + ux * push_length
+     end_y = start_y + uy * push_length
+     
+@@ -54,6 +60,13 @@
+         robot.log("Push move failed:", e)
+         return False
+     
++    # Brief reverse tap to dampen overshoot
++    try:
++        robot.move_by(dx=-ux*0.02, dy=-uy*0.02, speed=0.05)
++    except Exception as e:
++        robot.log("Reverse tap failed:", e)
++        # continue anyway
++    
+     # Verify puck position
+     obs2 = robot.observe()
+     puck2 = obs2["objects"]["puck"]
