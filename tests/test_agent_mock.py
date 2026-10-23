@@ -45,3 +45,27 @@ def test_custom_instruction_requires_vlm(tmp_path):
 
     with pytest.raises(ValueError):
         Learner(_cfg(tmp_path, instruction="wave hello"))
+
+
+def test_regression_reverts_to_best(tmp_path):
+    """A rewrite that scores worse is discarded; the next rewrite edits the best version again."""
+    from knack.oracles import BROKEN, ORACLES
+
+    calls = {"n": 0}
+    seen = {}
+
+    def responder(role, messages):
+        if role != "coder":
+            return "Mock summary." if role == "summarizer" else ""
+        calls["n"] += 1
+        if calls["n"] == 3:  # third coder call: must see the regression note and the round-1 (good) code
+            seen["prompt"] = messages[-1]["content"]
+        code = {1: ORACLES["lift"], 2: BROKEN}.get(calls["n"], ORACLES["lift"])
+        return f"<notes>\n- call {calls['n']}\n</notes>\n```python\n{code.strip()}\n```"
+
+    cfg = _cfg(tmp_path, rounds=3, episodes=2, eval_episodes=2, target=1.01)
+    card = Learner(cfg, responder=responder, runner=LocalRunner(workers=2)).run()
+    assert card["rounds"][0]["k"] == 2 and card["rounds"][1]["k"] == 0
+    assert "REGRESSION" in seen["prompt"]
+    assert ORACLES["lift"].strip().splitlines()[0] in seen["prompt"]
+    assert card["eval"]["k"] == 2  # best (round 1 or 3) code evaluated, not the broken one

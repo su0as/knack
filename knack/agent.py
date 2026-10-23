@@ -422,15 +422,28 @@ class Learner:
         self._set(rounds=self.rounds)
         return text
 
-    def _revise(self, k: int, code: str, rnd: dict, summary: str) -> str:
-        self._set(phase=f"rewriting skill (v{k + 1})")
+    def _regression_note(self, k: int, score: float, best: dict, bad_code: str) -> str:
+        diff = "".join(difflib.unified_diff(best["code"].splitlines(True), bad_code.splitlines(True),
+                                            f"round_{best['round']}/skill.py (best)", f"round_{k}/skill.py (worse)"))
+        if len(diff) > 3500:
+            diff = diff[:3500] + "\n... (diff truncated)"
+        return (f"REGRESSION: your round {k} version scored {score:.0%}, worse than round {best['round']} "
+                f"({best['score']:.0%}). It has been discarded. The outcomes and analysis below are from the discarded "
+                f"version; the 'Current code' is the round {best['round']} version you are editing again. "
+                f"This change made things worse, do not repeat it:\n{diff}")
+
+    def _revise(self, k: int, code: str, rnd: dict, summary: str, regression: str | None = None) -> str:
+        self._set(phase=f"rewriting skill (v{k + 1})" + (" from the best version" if regression else ""))
         results = rnd["results"]
         rec = rnd["record"]
         lines = [self._episode_line(r) for r in results]
-        self.history.append(f"round {k}: {rec['k']}/{rec['n']} success, {rec['errors']} episodes raised errors")
-        msgs = [{"role": "system", "content": prompts.CODER_SYSTEM},
-                {"role": "user", "content": prompts.revise_user(self.instruction, k, self.cfg.reward, rec["k"], rec["n"], lines, summary,
-                                                                 self._traces(results, 2, 25), self.notes, self.history[:-1], code)}]
+        self.history.append(f"round {k}: {rec['k']}/{rec['n']} success, {rec['errors']} episodes raised errors"
+                            + (f" (worse than round {rec.get('reverted_to')}: reverted)" if regression else ""))
+        user = prompts.revise_user(self.instruction, k, self.cfg.reward, rec["k"], rec["n"], lines, summary,
+                                   self._traces(results, 2, 25), self.notes, self.history[:-1], code)
+        if regression:
+            user = regression + "\n\n" + user
+        msgs = [{"role": "system", "content": prompts.CODER_SYSTEM}, {"role": "user", "content": user}]
         new, notes = self._coder(f"round_{k + 1}_rewrite", msgs)
         if notes:
             self.notes = notes
@@ -504,12 +517,23 @@ class Learner:
                     code = self._ensure_valid(code, k)
                     rnd = self._practice(k, code)
                     score = rnd["record"]["success"]
+                    prev_best = self.best
+                    regressed = prev_best is not None and score < prev_best["score"]
                     if self.best is None or score >= self.best["score"]:
                         self.best = {"code": code, "score": score, "round": k}
                     if score >= self.cfg.target or k == self.cfg.rounds:
                         break
                     summary = self._summarize(k, code, rnd)
-                    code = self._revise(k, code, rnd, summary)
+                    if regressed:
+                        # Keep what works: a rewrite that scores worse is discarded and the next rewrite
+                        # starts again from the best version. Seen live on 23 Oct 2026: Ultra on push went
+                        # 88% -> 0% -> 0% -> 0% by repeatedly editing its own broken rewrite.
+                        note = self._regression_note(k, score, prev_best, code)
+                        rnd["record"]["reverted_to"] = prev_best["round"]
+                        self._event("revert", round=k, to_round=prev_best["round"], score=score, best=prev_best["score"])
+                        code = self._revise(k, prev_best["code"], rnd, summary, regression=note)
+                    else:
+                        code = self._revise(k, code, rnd, summary)
             except BudgetExceeded as e:
                 status = "stopped (budget)"
                 self._event("budget", message=str(e))
@@ -522,7 +546,7 @@ class Learner:
             self._event("error", message=str(e), tb=traceback.format_exc()[-3000:])
             self._set(status=status, phase="failed")
             raise
-        self._set(phase="writing skill card")
+        self._set(phase="writing skill card", status=status)
         card = write_card(self)
         if status == "done" and self.cfg.save_to_library and self.eval and (self.eval["p"] >= self.cfg.library_min_success) and not self.state.get("mock"):
             SkillLibrary().add(self.task.id, self.instruction, self.best["code"], card, self.dir)
