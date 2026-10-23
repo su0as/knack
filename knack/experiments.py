@@ -245,3 +245,58 @@ def plots(paths: list[str], out_dir: str = "docs/figures") -> list[str]:
             plt.close(fig)
             written.append(str(f))
     return written
+
+
+def practice_gain(patterns: list[str], n: int | None = None, workers=None, out_root: str = "runs") -> dict:
+    """Does practice matter? Re-run each run's FIRST version (round 1, written before any feedback) on the
+    exact held-out layouts its final version was scored on, and compare. No model calls."""
+    from .agent import EVAL_SEED_BASE
+    from .runner import LocalRunner
+    from .stats import wilson
+
+    dirs = []
+    for pat in patterns:
+        for d in sorted(glob.glob(pat)):
+            if (Path(d) / "card.json").exists() and (Path(d) / "round_1" / "skill.py").exists():
+                dirs.append(Path(d))
+    out = Path(out_root) / f"gain-{_stamp()}"
+    out.mkdir(parents=True, exist_ok=True)
+    rows = []
+    for d in dirs:
+        cfg = json.loads((d / "config.json").read_text(encoding="utf-8"))
+        card = json.loads((d / "card.json").read_text(encoding="utf-8"))
+        ev = card.get("eval") or {}
+        if not ev or card.get("custom_instruction"):
+            continue
+        n_eval = int(n or ev.get("n") or cfg.get("eval_episodes", 50))
+        realism = cfg.get("realism", "sim")
+        seeds = [EVAL_SEED_BASE + int(cfg.get("seed_offset", 0)) + i for i in range(n_eval)]
+        code = (d / "round_1" / "skill.py").read_text(encoding="utf-8")
+        specs = [{"task": cfg["task"], "seed": s, "code": code, "render": {"live": False, "keyframes": False}, "realism": realism}
+                 for s in seeds]
+        res = LocalRunner(workers=workers).run_batch(specs, out / d.name / "first")
+        k1 = sum(bool(r.get("success_gt")) for r in res)
+        p1, lo1, hi1 = wilson(k1, n_eval)
+        row = {"run_id": d.name, "task": cfg["task"], "coder": cfg.get("coder"), "realism": realism,
+               "first_k": k1, "first_n": n_eval, "first_p": p1, "first_lo": lo1, "first_hi": hi1,
+               "best_round": ev.get("best_round"), "best_k": ev.get("k"), "best_n": ev.get("n"), "best_p": ev.get("p"),
+               "best_lo": ev.get("lo"), "best_hi": ev.get("hi"), "rounds_used": len(card.get("rounds") or []),
+               "usd": (card.get("receipt") or {}).get("total_usd")}
+        rows.append(row)
+        print(json.dumps({k: row[k] for k in ("run_id", "first_k", "first_n", "best_round", "best_k", "best_n")}))
+    lines = ["# Practice gain: first version vs practised version on the same held-out layouts", "",
+             "| run | task | coder | perception | first version (round 1) | practised (best round) | gain |",
+             "|---|---|---|---|---|---|---|"]
+    for r in rows:
+        if r["best_n"] == r["first_n"]:
+            gain = f"{(r['best_p'] - r['first_p']) * 100:+.0f} pts"
+        else:
+            gain = "n/a (different n)"
+        lines.append(f"| {r['run_id']} | {r['task']} | {r['coder']} | {r['realism']} | {r['first_k']}/{r['first_n']} "
+                     f"({r['first_p']:.0%}, CI {r['first_lo']:.0%}-{r['first_hi']:.0%}) | round {r['best_round']}: "
+                     f"{r['best_k']}/{r['best_n']} ({r['best_p']:.0%}, CI {r['best_lo']:.0%}-{r['best_hi']:.0%}) | {gain} |")
+    res = {"rows": rows}
+    (out / "practice_gain.json").write_text(json.dumps(res, indent=1), encoding="utf-8")
+    (out / "practice_gain.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print("\n".join(lines))
+    return res

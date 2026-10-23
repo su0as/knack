@@ -59,7 +59,7 @@ jobs:
           set -euo pipefail
           if [ -z "${NEBIUS_API_KEY}" ]; then echo "NEBIUS_API_KEY secret is missing"; exit 1; fi
           # allowlist: first word must be a known knack subcommand; no shell metacharacters
-          if ! printf '%s' "$KNACK_CMD" | grep -Eq '^(models|check|oracle|learn|pilot|exp|eval|card|replay|library)( [A-Za-z0-9_.,:/=+-]+)*$'; then
+          if ! printf '%s' "$KNACK_CMD" | grep -Eq '^(models|check|oracle|learn|pilot|exp|eval|card|replay|library)( [A-Za-z0-9_.,:/=+*-]+)*$'; then
             echo "command rejected: $KNACK_CMD"; exit 1
           fi
           if ! printf '%s' "$KNACK_LABEL" | grep -Eq '^[A-Za-z0-9-]{1,40}$'; then echo "bad label"; exit 1; fi
