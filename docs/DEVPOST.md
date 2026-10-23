@@ -37,11 +37,12 @@ The learned skill is plain Python. It runs locally with no model in the control 
 
 ## Results (fill from runs/, never from memory)
 
-- Pilot gate (Super and Ultra on lift, place, push; 4 rounds): [[pilot.md: PASS/FAIL, per-task held-out %]]
-- Model scoreboard: [[scoreboard_summary.json: mean held-out success and $/skill for nano, super, ultra, deepseek-flash]]
+- Pilot gate (Super and Ultra on lift, place, push; 4 rounds): **PASS**. Super 100% / 100% / 80%, Ultra 100% / 100% / 90% held-out on 50 unseen layouts each (`results/20261023-090645-pilot`).
+- Model scoreboard (standard perception): **Nemotron 3 Ultra solved all six scenes at 90-100% held-out for $0.004 to $0.065 per verified skill**, mostly on the first try. Super: 64-100%. Nano (3B active): 100% on tray, 64% on stack, 0% on sort. DeepSeek V4.1 Flash: 100% on stack, tray, sort (`results/20261023-093859-scoreboard-hard`).
+- Camera-grade perception (about 8 mm pose noise, wider physics randomisation): first attempts mostly fail. **Practice took Nemotron 3 Super from 3/50 (6%) to 41/50 (82%) on push for $0.028**, measured by re-running the first version on the same held-out layouts. Super lift in standard mode: 0/50 to 50/50. One published failure: Ultra on push stayed at 10-14% (`results/20261023-100205-real-stack-push`, `results/20261023-101415-practice-gain`).
 - Reward source ablation (ground truth vs vision judge vs self-report): [[ablation_summary.json]]. Self-report is included on purpose: it shows how an agent that grades itself declares success it did not achieve.
 - Vision judge vs ground truth on [[n]] stored episodes: accuracy [[x]], abstention [[y]], false-success rate [[z]] at threshold 0.6. [[judge_eval.json]]
-- Cheapest verified skill: [[task]], [[k/100]] held-out, $[[usd]] total.
+- Cheapest verified skill: tray, 50/50 held-out, $0.0007 total (Nemotron 3 Nano). Typical Ultra skill: about half a cent.
 - ASPIRE's open-weight points for context (different benchmark, LIBERO-Pro): Kimi K3 about 78% at about $55 per task, Qwen 3.8 Max about 56% at about $40 per task.
 
 ## How we built it
@@ -58,11 +59,13 @@ The learned skill is plain Python. It runs locally with no model in the control 
 
 - Our first gripper flicked cubes away; the fixtures exposed it (85% on lift, 50% on push) before any model was blamed.
 - Keeping "zero demonstrations" honest: the coder sees the task text, the API doc and one example observation. Nothing else.
-- [[what broke in the live runs]]
+- Live runs found three real problems the mock never could: Nemotron 3.5 Lightning with thinking on returned an unfinished thought as its "analysis" (now runs with thinking off); Ultra regressed itself from 88% to 0% by editing its own broken rewrite (now reverts to the best version); and 8-episode practice scores picked a "best" round that was no better on held-out (now re-checks the top versions on 16 fresh layouts).
 
 ## What we learned
 
-- [[from runs]]
+- With near-perfect perception, a strong open model writes a working pick-and-place program first time; the hard part is the noise. Under camera-grade noise, practice is what makes the difference, and it costs cents per skill.
+- Practice is not monotonic. Rewrites can make things worse and small practice batches lie, so keeping the best version and re-checking it matter as much as rewriting.
+- Reasoning settings are a design decision: thinking on for the coder, off for the summariser, which cut those calls by roughly 10x in tokens.
 
 ## Limitations
 
