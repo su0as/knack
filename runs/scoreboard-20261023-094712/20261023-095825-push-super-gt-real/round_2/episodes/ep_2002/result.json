@@ -1,0 +1,257 @@
+{
+ "task": "push",
+ "seed": 2002,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.058,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 1.06,
+   "call": "move_to(0.096, 0.109, 0.050, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.096,
+     0.109,
+     0.0499
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 3.0,
+   "call": "move_to(0.096, 0.109, 0.020, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1017,
+     0.1151,
+     0.0294
+    ],
+    "error_m": 0.0125,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 7.24,
+   "call": "move_to(0.137, -0.072, 0.020, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1449,
+     -0.0757,
+     0.0297
+    ],
+    "error_m": 0.0131,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 7.5,
+   "call": "move_to(0.145, -0.076, 0.050, yaw=1.090, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1453,
+     -0.0759,
+     0.0501
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 7.5,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 7.5,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 7.82,
+   "call": "move_to(0.165, -0.103, 0.050, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1648,
+     -0.1027,
+     0.0501
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 8.36,
+   "call": "move_to(0.165, -0.103, 0.020, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1648,
+     -0.1026,
+     0.0201
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 10.1,
+   "call": "move_to(0.105, 0.001, 0.020, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1054,
+     0.0015,
+     0.0202
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 10.38,
+   "call": "move_to(0.105, 0.001, 0.040, yaw=1.585, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1056,
+     0.0015,
+     0.0404
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 10.38,
+   "call": "observe()",
+   "result": "ok"
+  }
+ ],
+ "n_calls": 12,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 10.88,
+ "wall_time": 1.43,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1077,
+     0.0792,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.127,
+     -0.0365,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 10.88,
+  "gripper": {
+   "pos": [
+    0.1054,
+    0.0015,
+    0.0402
+   ],
+   "yaw": 1.5852,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.0829,
+     0.0012,
+     0.0099
+    ],
+    "yaw": -0.7101,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.127,
+     -0.0365,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.127,
+   "y": -0.0365,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1077,
+   "y": 0.0793,
+   "yaw": -0.2279,
+   "fp": 0.035
+  }
+ }
+}

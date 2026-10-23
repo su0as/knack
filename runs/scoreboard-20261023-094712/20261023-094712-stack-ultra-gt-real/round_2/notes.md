@@ -1,0 +1,6 @@
+- The grasp approach uses stale initial `red_pos`; re-observe immediately before descending to grasp to cancel perception noise.
+- The stack target uses fresh `blue_pos` but the code had undefined variables (`pre_grasp_z`, `grasp_z`, `stack_x`, `stack_y`) and used initial `blue_pos` for the stack XY.
+- Z-gap failures: descent to `stack_z=0.045` can contact blue top (0.03) before release. Fix: descend to `stack_z + 0.005` clearance, verify height, then release.
+- Add MotionError handling for edge-of-workspace moves.
+- Keep slow speeds (0.05) for precision moves, default for travel.
+- Verify grasp success and holding before lifting.

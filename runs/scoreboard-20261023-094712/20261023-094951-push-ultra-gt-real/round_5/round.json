@@ -1,0 +1,209 @@
+{
+ "round": 5,
+ "n": 8,
+ "k": 1,
+ "success": 0.125,
+ "gt_k": 1,
+ "self_k": 0,
+ "errors": 6,
+ "wall_s": 19.3,
+ "usd_cum": 0.07686,
+ "code": "round_5/skill.py",
+ "diff": "round_5/diff.patch",
+ "lines": 138,
+ "notes": "- Round 4 failed due to timeout (45s budget exceeded) from too many slow moves and contact-blocked pushes.\n- Two root causes: (1) start_xy clamped into walls causing joint-limit collisions; (2) push speed 0.05 too high when puck jams against target fixture.\n- Fixes: enforce 5 cm clearance from workspace bounds before clamping start_xy; reduce push speed to 0.02; if puck already close to target (<0.1 m), start farther back (approach_dist=0.08) to reduce impact force.\n- Also: limit max_attempts to 4 to stay within time budget; fix undefined variables (max_attempts, approach_base, local_push_z, rotate_vec); use robot.move_by for final push to avoid absolute coordinate drift; re-observe after each push and exit early on success.",
+ "episodes": [
+  {
+   "seed": 5000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0796,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 45 s exceeded",
+    "traceback": "  skill.py line 109, in run: robot.move_to(end_xy[0], end_xy[1], local_push_z, yaw=push_yaw, speed=0.02)\nEpisodeTimeout: time budget of 45 s exceeded"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0775,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 45 s exceeded",
+    "traceback": "  skill.py line 109, in run: robot.move_to(end_xy[0], end_xy[1], local_push_z, yaw=push_yaw, speed=0.02)\nEpisodeTimeout: time budget of 45 s exceeded"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.099,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 45 s exceeded",
+    "traceback": "  skill.py line 109, in run: robot.move_to(end_xy[0], end_xy[1], local_push_z, yaw=push_yaw, speed=0.02)\nEpisodeTimeout: time budget of 45 s exceeded"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0804,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0729,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 45 s exceeded",
+    "traceback": "  skill.py line 109, in run: robot.move_to(end_xy[0], end_xy[1], local_push_z, yaw=push_yaw, speed=0.02)\nEpisodeTimeout: time budget of 45 s exceeded"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0192,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 45 s exceeded",
+    "traceback": "  skill.py line 109, in run: robot.move_to(end_xy[0], end_xy[1], local_push_z, yaw=push_yaw, speed=0.02)\nEpisodeTimeout: time budget of 45 s exceeded"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0865,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 45 s exceeded",
+    "traceback": "  skill.py line 109, in run: robot.move_to(end_xy[0], end_xy[1], local_push_z, yaw=push_yaw, speed=0.02)\nEpisodeTimeout: time budget of 45 s exceeded"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0758,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

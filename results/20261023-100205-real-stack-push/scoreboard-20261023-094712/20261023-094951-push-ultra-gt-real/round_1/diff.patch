@@ -1,0 +1,82 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,79 @@
++import math
++import numpy as np
++
++def run(robot):
++    # Get initial observation
++    obs = robot.observe()
++    puck = obs["objects"]["puck"]
++    target = obs["fixtures"]["target"]
++    
++    puck_pos = np.array(puck["pos"])
++    target_pos = np.array(target["pos"])
++    target_radius = target["radius"]
++    puck_radius = puck["size"]["radius"]
++    
++    # Vector from puck to target
++    to_target = target_pos[:2] - puck_pos[:2]
++    dist_to_target = np.linalg.norm(to_target)
++    
++    if dist_to_target < 1e-3:
++        return True  # Already there
++    
++    push_dir = to_target / dist_to_target
++    
++    # Position behind puck: puck_center - push_dir * (puck_radius + finger_offset)
++    # Finger pads are 1.25cm below tool point, puck center at z~0.01
++    # Want tool point at puck center height so fingers hit middle of puck
++    approach_dist = puck_radius + 0.02  # 2cm behind puck edge
++    start_pos = puck_pos[:2] - push_dir * approach_dist
++    push_z = 0.015  # Middle of puck (center at ~0.01, height 0.02)
++    
++    max_attempts = 5
++    for attempt in range(max_attempts):
++        # Re-observe for current positions (noisy perception)
++        obs = robot.observe()
++        puck = obs["objects"]["puck"]
++        target = obs["fixtures"]["target"]
++        puck_pos = np.array(puck["pos"])
++        target_pos = np.array(target["pos"])
++        
++        # Check if already in target
++        to_target = target_pos[:2] - puck_pos[:2]
++        dist_to_target = np.linalg.norm(to_target)
++        if dist_to_target <= target_radius:
++            robot.log(f"Success: puck in target, dist={dist_to_target:.4f}")
++            return True
++        
++        push_dir = to_target / dist_to_target
++        
++        # Position behind puck
++        approach_dist = puck["size"]["radius"] + 0.02
++        start_xy = puck_pos[:2] - push_dir * approach_dist
++        
++        # Move to start position (above first, then down)
++        try:
++            robot.move_to(start_xy[0], start_xy[1], 0.10, speed=0.15)
++            robot.move_to(start_xy[0], start_xy[1], push_z, speed=0.05)
++        except Exception as e:
++            robot.log(f"Move to start failed: {e}")
++            continue
++        
++        # Push forward: move tool point to target x,y at same z
++        push_distance = dist_to_target + puck["size"]["radius"] + 0.02
++        end_xy = puck_pos[:2] + push_dir * push_distance
++        
++        try:
++            robot.move_to(end_xy[0], end_xy[1], push_z, speed=0.05)
++        except Exception as e:
++            robot.log(f"Push move failed: {e}")
++            continue
++        
++        robot.wait(0.2)  # Let physics settle
++    
++    # Final check
++    obs = robot.observe()
++    puck_pos = np.array(obs["objects"]["puck"]["pos"])
++    target_pos = np.array(obs["fixtures"]["target"]["pos"])
++    dist = np.linalg.norm(target_pos[:2] - puck_pos[:2])
++    robot.log(f"Final dist to target: {dist:.4f}, target radius: {target_radius:.4f}")
++    return dist <= target_radius

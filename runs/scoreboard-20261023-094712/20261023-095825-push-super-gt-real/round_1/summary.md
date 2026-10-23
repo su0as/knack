@@ -1,0 +1,7 @@
+**Mode 1: Overshoot / Collision (5 episodes: 1000, 1001, 1002, 1003, 1006)**
+*Root cause:* The push distance (`push_dist = dist + offset + 0.02`) adds a fixed 0.02 m margin beyond the target. When the robot reaches the target, contact with the puck or fixture causes the motion controller to brake early (`stopped short of the target`), leaving the puck short of the green zone. Lines 44–47.
+*Fix:* Remove the `+ 0.02` margin. Set `push_dist = dist + offset`. This ensures the gripper reaches the target plane before contacting the puck, allowing full travel distance.
+
+**Mode 2: Gripper occlusion / Puke pickup (2 episodes: 1004, 1005)**
+*Root cause:* The approach moves the gripper to `behind_x, behind_y` at `push_z = 0.02`. The puck’s radius (~0.03 m) plus clearance places the gripper at ~0.05 m from the puck centre. However, the push trajectory moves the gripper *through* the puck. If the gripper geometry or puck size is slightly larger, the gripper frames the puck and captures it instead of pushing. Lines 33–37, 44–47.
+*Fix:* Increase `push_z` to `0.05` (or higher) so the gripper passes over the puck without entering its volume, then descend to push. Alternatively, reduce `offset` to `puck_radius + 0.01` to bring the stand‑off point closer, reducing the reach‑through distance.

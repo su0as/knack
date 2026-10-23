@@ -1,0 +1,3 @@
+- Round 4 failed due to three issues: (1) release() called at LIFT_Z before stack descent executed, (2) no hold verification before transport, (3) blue cube observation lacked retry/verification.
+- Round 2 (88%) was correct in using blue_yaw for stack alignment and STACK_CLEARANCE=0.005. Round 3 regression came from switching to red_yaw and reducing clearance.
+- Fixes: move release to after verified descent at STACK_Z; add holding() check before transport; add blue cube observation retry; use move_to result to verify descent depth before release; keep blue_yaw for all stack moves; add brief waits for stability.

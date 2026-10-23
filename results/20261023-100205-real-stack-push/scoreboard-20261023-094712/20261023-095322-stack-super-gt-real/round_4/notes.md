@@ -1,0 +1,4 @@
+- Fixed a syntax error caused by missing closing parenthesis in the conditional checks of safe_move results.
+- Improved readability by storing the move result in a variable before checking its "ok" flag.
+- Added a small comment about the purpose of each major step.
+- Kept all original logic and safety checks intact.

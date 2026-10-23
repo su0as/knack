@@ -1,0 +1,96 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -4,15 +4,16 @@
+     # Home to start cleanly
+     robot.home()
+     
+-    # Get latest perception
++    # Initial perception
+     obs = robot.observe()
+     red_pose = obs["objects"]["red_cube"]
+     blue_pose = obs["objects"]["blue_cube"]
+     
+     red_pos = red_pose["pos"]
+-    blue_pos = blue_pose["pos"]
+     red_yaw = red_pose["yaw"]
+-    blue_yaw = blue_pose["yaw"]
++    # Store the initial blue pose to avoid drift‑induced errors
++    blue_pos_init = blue_pose["pos"]
++    blue_yaw_init = blue_pose["yaw"]
+     
+     CUBE_SIZE = 0.03          # side length
+     HALF = CUBE_SIZE / 2.0    # 0.015
+@@ -74,34 +75,38 @@
+         robot.home()
+         return False
+     
+-    # 7. Re‑observe blue cube pose (it may have shifted)
++    # 7. (Optional) re‑observe blue cube but do NOT update the stored init pose
+     obs = robot.observe()
+-    blue_pose = obs["objects"]["blue_cube"]
+-    blue_pos = blue_pose["pos"]
+-    blue_yaw = blue_pose["yaw"]
++    # blue_pose = obs["objects"]["blue_cube"]  # not used for positioning
+     
+-    # 8. Move above blue cube
+-    if not safe_move(blue_pos[0], blue_pos[1], ABOVE_Z, yaw=blue_yaw, speed=0.15)["ok"]:
++    # 8. Move above blue cube using the INITIAL blue pose
++    if not safe_move(blue_pos_init[0], blue_pos_init[1], ABOVE_Z, yaw=blue_yaw_init, speed=0.15)["ok"]:
+         robot.log("Failed to move above blue cube")
+         robot.release()
+         robot.home()
+         return False
+     
+     # 9. Lower to stacking height (red cube centre when stacked on blue)
+-    stack_z = blue_pos[2] + CUBE_SIZE + EPS  # centre height with tiny clearance
+-    if not safe_move(blue_pos[0], blue_pos[1], stack_z, yaw=blue_yaw, speed=0.05)["ok"]:
++    stack_z = blue_pos_init[2] + CUBE_SIZE + EPS
++    if not safe_move(blue_pos_init[0], blue_pos_init[1], stack_z, yaw=blue_yaw_init, speed=0.05)["ok"]:
+         robot.log("Failed to lower to stack height")
+         robot.release()
+         robot.home()
+         return False
+     
+-    # 10. Verify achieved stack height (allow 1 cm tolerance)
++    # 10. Verify we are still holding the red cube
++    if robot.holding() != "red_cube":
++        robot.log("Lost hold before releasing")
++        robot.home()
++        return False
++    
++    # 11. Verify achieved stack height (allow 1 cm tolerance)
+     obs = robot.observe()
+     current_z = obs["gripper"]["pos"][2]
+     if abs(current_z - stack_z) > 0.01:
+         robot.log(f"Stack height miss: current {current_z:.4f}, target {stack_z:.4f}; retrying")
+         # One retry attempt
+-        if not safe_move(blue_pos[0], blue_pos[1], stack_z, yaw=blue_yaw, speed=0.05)["ok"]:
++        if not safe_move(blue_pos_init[0], blue_pos_init[1], stack_z, yaw=blue_yaw_init, speed=0.05)["ok"]:
+             robot.log("Retry move to stack height also failed")
+             robot.release()
+             robot.home()
+@@ -115,10 +120,10 @@
+             robot.home()
+             return False
+     
+-    # 11. Brief settle to let contacts stabilize
+-    robot.wait(0.2)
++    # 12. Brief settle to let contacts stabilize
++    robot.wait(0.4)
+     
+-    # 12. Release
++    # 13. Release
+     robot.release()
+     # Verify release
+     if robot.holding() is not None:
+@@ -126,8 +131,8 @@
+         robot.home()
+         return False
+     
+-    # 13. Retreat to safe height above blue cube
+-    if not safe_move(blue_pos[0], blue_pos[1], ABOVE_Z, yaw=blue_yaw, speed=0.05)["ok"]:
++    # 14. Retreat to safe height above blue cube (using initial pose)
++    if not safe_move(blue_pos_init[0], blue_pos_init[1], ABOVE_Z, yaw=blue_yaw_init, speed=0.05)["ok"]:
+         robot.log("Failed to retreat")
+         robot.home()
+         return False

@@ -1,0 +1,4 @@
+- First round revealed three failure modes: safety violation (start_xy outside workspace), moves stopped short by contact (upright puck blocks descent), and final distance > tolerance (puck rotates sideways during push).
+- Fixes to apply: clamp all XY targets to workspace [0.04,0.32]×[-0.26,0.26]; if puck orientation (from yaw) is edge-on to push direction, increase approach distance and/or raise push_z; lead push direction by puck_radius/dist_to_target radians to compensate for sideways slide.
+- Puck radius 0.03m, target radius 0.04m, gripper opens 0.05m (can't grasp). Push from behind at puck mid-height (tool point z≈0.02). Re-observe each attempt due to perception noise.
+- Current code has undefined variables and syntax errors; rewrite cleanly with proper loop, clamping, orientation check, and lead-angle correction.

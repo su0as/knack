@@ -1,0 +1,351 @@
+{
+ "task": "push",
+ "seed": 100001,
+ "error": {
+  "type": "EpisodeTimeout",
+  "message": "time budget of 45 s exceeded",
+  "traceback": "  skill.py line 128, in run: robot.move_by(dx=push_distance * push_dir[0],\nEpisodeTimeout: time budget of 45 s exceeded"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.1027,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.64,
+   "call": "move_to(0.216, -0.046, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2165,
+     -0.0459,
+     0.1001
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.76,
+   "call": "move_to(0.216, -0.046, 0.020, yaw=2.535, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2208,
+     -0.0462,
+     0.0311
+    ],
+    "error_m": 0.0119,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 12.54,
+   "call": "move_to(0.077, 0.054, 0.031, yaw=2.536, speed=0.020)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0771,
+     0.0535,
+     0.0311
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 12.74,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 12.74,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 12.74,
+   "call": "log",
+   "result": "Attempt 1: puck dist to target = 0.1200"
+  },
+  {
+   "t": 12.74,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 14.12,
+   "call": "move_to(0.240, -0.039, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2403,
+     -0.0391,
+     0.1001
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 17.24,
+   "call": "move_to(0.240, -0.039, 0.020, yaw=2.657, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.243,
+     -0.0391,
+     0.0301
+    ],
+    "error_m": 0.0105,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 26.36,
+   "call": "move_to(0.082, 0.046, 0.030, yaw=2.657, speed=0.020)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0822,
+     0.0455,
+     0.0301
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 26.56,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 26.56,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 26.56,
+   "call": "log",
+   "result": "Attempt 2: puck dist to target = 0.0969"
+  },
+  {
+   "t": 26.56,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 27.98,
+   "call": "move_to(0.213, -0.065, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2129,
+     -0.0647,
+     0.0996
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 31.08,
+   "call": "move_to(0.213, -0.065, 0.020, yaw=2.393, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2174,
+     -0.0654,
+     0.0311
+    ],
+    "error_m": 0.012,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 39.7,
+   "call": "move_to(0.092, 0.051, 0.031, yaw=2.395, speed=0.020)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0916,
+     0.0514,
+     0.0311
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 39.9,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 39.9,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 39.9,
+   "call": "log",
+   "result": "Attempt 3: puck dist to target = 0.1035"
+  },
+  {
+   "t": 39.9,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 39.9,
+   "call": "log",
+   "result": "Adjusted start_xy to reachable: (np.float64(0.23666169772817292), np.float64(-0.04745394632371082))"
+  },
+  {
+   "t": 41.2,
+   "call": "move_to(0.237, -0.047, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2368,
+     -0.0475,
+     0.1001
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 44.32,
+   "call": "move_to(0.237, -0.047, 0.020, yaw=2.577, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2397,
+     -0.0477,
+     0.0305
+    ],
+    "error_m": 0.011,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  }
+ ],
+ "n_calls": 25,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": "time budget of 45 s exceeded",
+ "sim_time": 45.5,
+ "wall_time": 4.41,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1845,
+     -0.0206,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1154,
+     0.0545,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 45.5,
+  "gripper": {
+   "pos": [
+    0.2374,
+    -0.0461,
+    0.032
+   ],
+   "yaw": 2.572,
+   "opening": 0.0497,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1843,
+     -0.0217,
+     0.0098
+    ],
+    "yaw": -0.0048,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1154,
+     0.0545,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1154,
+   "y": 0.0545,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1845,
+   "y": -0.0206,
+   "yaw": -0.6706,
+   "fp": 0.035
+  }
+ }
+}

@@ -1,0 +1,5 @@
+- Fixed overshoot/undershoot by removing offset from push distance; push distance now based on remaining distance to target plus a small margin.
+- Fixed missed puck/wrong trajectory by re‑observing after lowering to push height, recomputing the stand‑off point from the updated puck pose, and moving to that point before pushing.
+- Added a small wait after lifting to let vibrations settle.
+- Kept the retry loop and exception handling for robustness.
+- All moves use speeds appropriate for the phase (approach fast, positioning slow).

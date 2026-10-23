@@ -1,0 +1,5 @@
+- Increased push_z from 0.02 to 0.03 m to avoid the gripper being stopped short by contact/joint limits.
+- Added a safety margin of +0.02 m to the push distance so the puck is pushed past the target centre even if slip or early stopping occurs.
+- Increased the post‑push lift from dz=0.02 to dz=0.04 m to clear the puck and prevent the gripper from retaining it.
+- Kept the perception‑action‑verify loop with two attempts and slow speeds for contact phases.
+- Retained the stand‑off height at 0.05 m to keep the gripper clear of the puck during approach.

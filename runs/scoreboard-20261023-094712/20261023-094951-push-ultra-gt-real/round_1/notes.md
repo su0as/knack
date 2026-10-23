@@ -1,0 +1,6 @@
+- First attempt at this pushing task
+- Puck radius 3cm, too wide for 5cm gripper opening (diameter 6cm > 5cm)
+- Must push from behind: position gripper on far side of puck from target, then move forward
+- Perception is noisy (~1cm position, several degrees yaw), so need to re-observe and iterate
+- Puck center z≈0.01 (on table), height 0.02, so grip at z≈0.01-0.02
+- Target zone radius 4cm, need puck center inside that circle

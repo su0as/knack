@@ -1,0 +1,4 @@
+- Round 2 (88% success) was better than round 3 (62%). The round 3 regression came from two changes: using `red_yaw` during stack approach/descent (causing XY drift) and reducing `STACK_CLEARANCE` to 0.001 (causing premature release).
+- Failure analysis for round 3 reveals two root causes that also inform improvements for round 2: (1) need to verify descent depth before release — only release when gripper is at or near `STACK_Z`; (2) keep using `blue_yaw` for stack alignment (round 2 does this correctly).
+- Current round 2 code has a grasp-retry block that works but could be cleaner; it also lacks a final descent verification before release.
+- Improvements: add a "descend until low enough" step after reaching `STACK_Z + STACK_CLEARANCE`, using the `move_to` returned position to check z; keep `blue_yaw` for stack moves; add brief waits for stability; clean up grasp retry logic.

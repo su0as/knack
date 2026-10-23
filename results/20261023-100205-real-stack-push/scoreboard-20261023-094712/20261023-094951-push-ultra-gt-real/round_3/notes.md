@@ -1,0 +1,7 @@
+- Start-position timeouts occurred because `approach_base=0.05` placed the start pose outside the arm's horizontal reach band (0.10–0.23 m). Reduced to `0.03` to keep the arm well inside the workspace.
+- End-position timeout happened when the push distance sent the wrist beyond the reachable band. Capped `push_distance` at `dist_to_target + 0.05` so the end pose stays reachable.
+- Upright pucks slid sideways because the lead-angle correction was too small. Increased scaling to `0.6 * puck_radius / dist_to_target` to steer the puck straighter.
+- Added XY clamping to the safety workspace `[0.04,0.32]×[-0.26,0.26]` for all targets.
+- When the puck is edge-on to the push direction (`face_on < 0.5`), increased approach distance by 2 cm and raised push height by 1 cm to avoid the puck blocking the descent.
+- Re-observe after each push to account for perception noise and verify success.
+- Cleaned up undefined variables, fixed syntax, and structured the loop with proper error handling.

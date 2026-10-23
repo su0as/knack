@@ -1,0 +1,462 @@
+{
+ "task": "push",
+ "seed": 4000,
+ "error": {
+  "type": "EpisodeTimeout",
+  "message": "time budget of 45 s exceeded",
+  "traceback": "  skill.py line 86, in run: robot.move_to(end_xy[0], end_xy[1], local_push_z, yaw=push_yaw, speed=0.05)\nEpisodeTimeout: time budget of 45 s exceeded"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.0444,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.66,
+   "call": "move_to(0.120, -0.077, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1197,
+     -0.0773,
+     0.0999
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 2.08,
+   "call": "move_to(0.120, -0.077, 0.030, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1198,
+     -0.0773,
+     0.03
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 6.74,
+   "call": "move_to(0.157, 0.151, 0.030, yaw=1.410, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1569,
+     0.1511,
+     0.0299
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 6.94,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 6.94,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 6.94,
+   "call": "log",
+   "result": "Attempt 0: puck dist to target = 0.1465"
+  },
+  {
+   "t": 6.94,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 7.92,
+   "call": "move_to(0.187, 0.260, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1869,
+     0.26,
+     0.1002
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 9.56,
+   "call": "move_to(0.187, 0.260, 0.020, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.187,
+     0.2602,
+     0.0206
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 14.54,
+   "call": "move_to(0.217, 0.015, 0.020, yaw=-1.451, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.217,
+     0.0148,
+     0.02
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 14.74,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 14.74,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 14.74,
+   "call": "log",
+   "result": "Attempt 1: puck dist to target = 0.0652"
+  },
+  {
+   "t": 14.74,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 15.44,
+   "call": "move_to(0.205, -0.037, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2054,
+     -0.0373,
+     0.1003
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 18.56,
+   "call": "move_to(0.205, -0.037, 0.020, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2103,
+     -0.038,
+     0.0294
+    ],
+    "error_m": 0.0107,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 24.0,
+   "call": "move_to(0.135, 0.143, 0.020, yaw=1.942, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1395,
+     0.1474,
+     0.0292
+    ],
+    "error_m": 0.0111,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 24.2,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 24.2,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 24.2,
+   "call": "log",
+   "result": "Attempt 2: puck dist to target = 0.0786"
+  },
+  {
+   "t": 24.2,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 25.06,
+   "call": "move_to(0.090, 0.204, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.09,
+     0.2038,
+     0.0999
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 26.68,
+   "call": "move_to(0.090, 0.204, 0.020, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.09,
+     0.2038,
+     0.0199
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 31.12,
+   "call": "move_to(0.234, 0.037, 0.020, yaw=-0.858, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2343,
+     0.037,
+     0.0199
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 31.32,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 31.32,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 31.32,
+   "call": "log",
+   "result": "Attempt 3: puck dist to target = 0.1450"
+  },
+  {
+   "t": 31.32,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 32.2,
+   "call": "move_to(0.320, -0.004, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.3201,
+     -0.0038,
+     0.1003
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 35.32,
+   "call": "move_to(0.320, -0.004, 0.020, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.3192,
+     -0.0037,
+     0.0181
+    ],
+    "error_m": 0.0021
+   }
+  },
+  {
+   "t": 40.22,
+   "call": "move_to(0.096, 0.092, 0.020, yaw=2.767, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0957,
+     0.0917,
+     0.02
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 40.42,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 40.42,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 40.42,
+   "call": "log",
+   "result": "Attempt 4: puck dist to target = 0.0850"
+  },
+  {
+   "t": 40.42,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 41.18,
+   "call": "move_to(0.050, 0.038, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0501,
+     0.0384,
+     0.1001
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 42.82,
+   "call": "move_to(0.050, 0.038, 0.020, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.05,
+     0.0383,
+     0.02
+    ],
+    "error_m": 0.0001
+   }
+  }
+ ],
+ "n_calls": 38,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": "time budget of 45 s exceeded",
+ "sim_time": 45.5,
+ "wall_time": 4.82,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1286,
+     -0.0121,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1753,
+     0.0808,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 45.5,
+  "gripper": {
+   "pos": [
+    0.1462,
+    0.0911,
+    0.02
+   ],
+   "yaw": 2.9234,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1533,
+     0.1194,
+     0.0099
+    ],
+    "yaw": 0.5126,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1753,
+     0.0808,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1753,
+   "y": 0.0808,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1286,
+   "y": -0.0121,
+   "yaw": 0.157,
+   "fp": 0.035
+  }
+ }
+}

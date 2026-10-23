@@ -1,0 +1,74 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -34,8 +34,6 @@
+         robot.home()
+         return False
+ 
+-    robot.wait(0.1)  # let fingers settle
+-
+     # Grasp with one retry on fresh observation
+     if not robot.grasp():
+         obs = robot.observe()
+@@ -49,10 +47,11 @@
+         except MotionError:
+             robot.home()
+             return False
+-        robot.wait(0.1)
+         if not robot.grasp():
+             robot.home()
+             return False
++
++    robot.wait(0.1)  # let fingers settle
+ 
+     # Verify holding
+     if robot.holding() != "red_cube":
+@@ -69,15 +68,27 @@
+         return False
+ 
+     # --- Stack on blue cube ---
+-    # Fresh observation for blue cube position
+-    obs = robot.observe()
+-    if "blue_cube" not in obs["objects"]:
++    # Fresh observation for blue cube position (with retry)
++    blue_pos = None
++    blue_yaw = None
++    for _ in range(2):
++        obs = robot.observe()
++        if "blue_cube" in obs["objects"]:
++            blue_pos = obs["objects"]["blue_cube"]["pos"]
++            blue_yaw = obs["objects"]["blue_cube"]["yaw"]
++            break
++        robot.wait(0.1)
++    if blue_pos is None:
+         robot.release()
+         robot.home()
+         return False
+-    blue_pos = obs["objects"]["blue_cube"]["pos"]
+-    blue_yaw = obs["objects"]["blue_cube"]["yaw"]
++
+     stack_x, stack_y = blue_pos[0], blue_pos[1]
++
++    # Verify still holding before transport
++    if robot.holding() != "red_cube":
++        robot.home()
++        return False
+ 
+     # Move above blue cube, align with blue yaw
+     try:
+@@ -108,14 +119,14 @@
+ 
+     robot.wait(0.1)  # let cube seat
+ 
+-    # Release
++    # Release at stack height
+     robot.release()
+ 
+     # Retract slightly to avoid knocking the stack
+     try:
+         robot.move_by(dz=0.03, speed=TRANSPORT_SPEED)
+     except MotionError:
+-        pass  # best effort
++        pass
+ 
+     robot.home()
+     return True

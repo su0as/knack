@@ -1,0 +1,47 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -15,7 +15,15 @@
+ 
+             puck_pos = puck["pos"]          # [x, y, z]
+             target_pos = target["pos"]      # [x, y, 0]
+-            puck_radius = puck["size"]["radius"]  # assume size dict has radius
++
++            # Extract puck radius (handle dict or list size)
++            size = puck["size"]
++            if isinstance(size, dict) and "radius" in size:
++                puck_radius = size["radius"]
++            elif isinstance(size, (list, tuple)) and len(size) > 0:
++                puck_radius = size[0] / 2.0
++            else:
++                puck_radius = 0.02  # fallback
+ 
+             # Vector from puck to target
+             dx = target_pos[0] - puck_pos[0]
+@@ -33,7 +41,7 @@
+ 
+             # Heights: high enough to clear puck, then low for pushing
+             stand_off_z = 0.05   # tool point height to avoid hitting puck
+-            push_z = 0.02        # tool point height for contact (fingertips ~0.0075 m)
++            push_z = 0.03        # increased to avoid contact‑related stop‑short
+ 
+             # 1. Move to stand‑off point above the puck
+             robot.move_to(behind_x, behind_y, stand_off_z, speed=0.15)
+@@ -41,14 +49,14 @@
+             # 2. Lower to pushing height while staying behind the puck
+             robot.move_to(behind_x, behind_y, push_z, speed=0.07)
+ 
+-            # 3. Push forward to the target (no extra margin)
+-            push_dist = dist + offset
++            # 3. Push forward to the target with safety margin
++            push_dist = dist + offset + 0.02   # extra margin to compensate slip/early stop
+             push_x = puck_pos[0] + ux * push_dist
+             push_y = puck_pos[1] + uy * push_dist
+             robot.move_to(push_x, push_y, push_z, speed=0.07)
+ 
+-            # 4. Lift slightly to avoid dragging the puck back
+-            robot.move_by(dz=0.02, speed=0.1)
++            # 4. Lift sufficiently to avoid dragging the puck back
++            robot.move_by(dz=0.04, speed=0.1)
+ 
+             # 5. Verify success
+             obs2 = robot.observe()

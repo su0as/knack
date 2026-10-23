@@ -1,0 +1,67 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,64 @@
++import math
++
++def run(robot):
++    """
++    Push the orange puck so its centre ends inside the green circular zone.
++    The puck cannot be grasped, so we approach it from the opposite side of the target
++    and move the gripper through it, simulating a push.
++    """
++    max_attempts = 2
++    for attempt in range(max_attempts):
++        try:
++            # 1. Get current poses
++            obs = robot.observe()
++            puck = obs["objects"]["puck"]
++            target = obs["fixtures"]["target"]
++
++            puck_pos = puck["pos"]          # [x, y, z]
++            target_pos = target["pos"]      # [x, y, 0]
++            # Assuming puck size dict contains a 'radius' key
++            puck_radius = puck["size"]["radius"]
++
++            # 2. Compute push direction (from puck to target)
++            dx = target_pos[0] - puck_pos[0]
++            dy = target_pos[1] - puck_pos[1]
++            dist = math.hypot(dx, dy)
++            if dist < 1e-4:  # already on target
++                return True
++            ux = dx / dist
++            uy = dy / dist
++
++            # 3. Choose a stand‑off point behind the puck
++            #    offset = puck radius + small clearance
++            offset = puck_radius + 0.02  # 0.05 m for typical radius 0.03
++            behind_x = puck_pos[0] - offset * ux
++            behind_y = puck_pos[1] - offset * uy
++            # Keep a safe height just above the puck (fingertips will be ~1.25 cm lower)
++            push_z = 0.02  # tool point height
++
++            # 4. Move to the stand‑off point (travel speed)
++            robot.move_to(behind_x, behind_y, push_z, speed=0.15)
++
++            # 5. Push through the puck toward the target (slow speed for contact)
++            #    We move a bit beyond the target to ensure contact.
++            push_dist = dist + offset + 0.02  # extra margin
++            push_x = puck_pos[0] + ux * push_dist
++            push_y = puck_pos[1] + uy * push_dist
++            robot.move_to(push_x, push_y, push_z, speed=0.07)
++
++            # 6. Retract slightly (optional) and check result
++            robot.move_by(dz=0.02, speed=0.1)  # lift a bit to avoid dragging
++            obs2 = robot.observe()
++            puck_pos2 = obs2["objects"]["puck"]["pos"]
++            dx2 = puck_pos2[0] - target_pos[0]
++            dy2 = puck_pos2[1] - target_pos[1]
++            if math.hypot(dx2, dy2) <= target["radius"]:
++                return True  # success
++
++            # If not successful, loop will retry with fresh perception
++        except Exception as e:
++            # Catch unexpected errors (e.g., MotionError) and retry
++            robot.log("Exception during push attempt:", e)
++            continue
++
++    return False

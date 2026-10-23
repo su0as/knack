@@ -1,0 +1,6 @@
+- Round 3 crashed because `puck["size"]` is a dict (with keys "radius", "height") not a list; fixed by reading `puck["size"]["radius"]` with a fallback default.
+- The push-distance cap `dist_to_target + 0.05` was too short; removed the cap and use `dist_to_target + puck_radius + 0.04` (extra margin) so the puck clears the target radius.
+- Lead-angle multiplier increased from 0.6 to 0.8 to better counteract sideways slide of edge-on pucks.
+- Kept round-3 improvements: re-observe after each push, align gripper yaw to push direction, verify success inside the loop, and structured error handling.
+- Fixed all undefined variables (`max_attempts`, `approach_dist`, `local_push_z`, `dist` vs `dist_to_target`).
+- Added safety clamp for all XY targets and proper exception handling for moves.

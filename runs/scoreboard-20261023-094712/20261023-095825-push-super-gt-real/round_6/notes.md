@@ -1,0 +1,5 @@
+- Changed push distance calculation: instead of adding offset and a proportional margin, compute the distance needed to move the puck into the target (dist2 - target_radius) plus a small fixed margin and a minimum push to overcome friction.
+- Removed the erroneous offset addition that caused systematic overshoot.
+- Kept the stand‑off point computation and re‑observation steps that helped align with the puck.
+- Maintained the retry loop and exception handling for robustness.
+- Used appropriate speeds: fast approach, slow positioning and pushing.

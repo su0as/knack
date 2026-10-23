@@ -1,0 +1,71 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -10,6 +10,7 @@
+     APPROACH_SPEED = 0.15
+     PRECISION_SPEED = 0.05
+     TRANSPORT_SPEED = 0.10
++    ALIGN_TOLERANCE = 0.02  # max xy offset before re-approach
+ 
+     # --- Pick up red cube ---
+     # Fresh observation for grasp approach
+@@ -26,6 +27,25 @@
+     except MotionError:
+         robot.home()
+         return False
++
++    # Pre-grasp alignment check: re-observe and verify position hasn't drifted
++    obs = robot.observe()
++    if "red_cube" not in obs["objects"]:
++        robot.home()
++        return False
++    fresh_red_pos = obs["objects"]["red_cube"]["pos"]
++    fresh_red_yaw = obs["objects"]["red_cube"]["yaw"]
++    dx = fresh_red_pos[0] - red_pos[0]
++    dy = fresh_red_pos[1] - red_pos[1]
++    if math.hypot(dx, dy) > ALIGN_TOLERANCE:
++        # Position drifted, re-approach with fresh pose
++        red_pos = fresh_red_pos
++        red_yaw = fresh_red_yaw
++        try:
++            robot.move_to(red_pos[0], red_pos[1], PRE_GRASP_Z, yaw=red_yaw, speed=APPROACH_SPEED)
++        except MotionError:
++            robot.home()
++            return False
+ 
+     # Descend to grasp height
+     try:
+@@ -51,8 +71,6 @@
+             robot.home()
+             return False
+ 
+-    robot.wait(0.1)  # let fingers settle
+-
+     # Verify holding
+     if robot.holding() != "red_cube":
+         robot.release()
+@@ -68,7 +86,7 @@
+         return False
+ 
+     # --- Stack on blue cube ---
+-    # Fresh observation for blue cube position (with retry)
++    # Fresh observation for blue cube position with retry
+     blue_pos = None
+     blue_yaw = None
+     for _ in range(2):
+@@ -82,7 +100,6 @@
+         robot.release()
+         robot.home()
+         return False
+-
+     stack_x, stack_y = blue_pos[0], blue_pos[1]
+ 
+     # Verify still holding before transport
+@@ -126,7 +143,7 @@
+     try:
+         robot.move_by(dz=0.03, speed=TRANSPORT_SPEED)
+     except MotionError:
+-        pass
++        pass  # best effort
+ 
+     robot.home()
+     return True

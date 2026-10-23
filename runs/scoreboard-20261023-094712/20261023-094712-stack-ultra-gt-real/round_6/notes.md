@@ -1,0 +1,3 @@
+- Round 5 (62%) regressed from round 2 (88%) due to three failure modes: grasp failures (2 eps), stack misplacement from stale blue_yaw (2 eps), and release timing (1 ep).
+- Round 2's strengths: blue_yaw for stack alignment, STACK_CLEARANCE=0.005, no errors raised.
+- Fixes to apply: (1) pre-grasp alignment check with re-observe/retry, (2) fresh blue cube observation with retry before stack moves, (3) holding() verification before transport, (4) verify descent depth via move_to result before release, (5) wait(0.1) after verified descent before release, (6) keep blue_yaw for all stack moves.

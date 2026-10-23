@@ -1,0 +1,217 @@
+{
+ "round": 3,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 0,
+ "errors": 8,
+ "wall_s": 3.3,
+ "usd_cum": 0.04879,
+ "code": "round_3/skill.py",
+ "diff": "round_3/diff.patch",
+ "lines": 101,
+ "notes": "- Start-position timeouts occurred because `approach_base=0.05` placed the start pose outside the arm's horizontal reach band (0.10\u20130.23\u202fm). Reduced to `0.03` to keep the arm well inside the workspace.\n- End-position timeout happened when the push distance sent the wrist beyond the reachable band. Capped `push_distance` at `dist_to_target + 0.05` so the end pose stays reachable.\n- Upright pucks slid sideways because the lead-angle correction was too small. Increased scaling to `0.6 * puck_radius / dist_to_target` to steer the puck straighter.\n- Added XY clamping to the safety workspace `[0.04,0.32]\u00d7[-0.26,0.26]` for all targets.\n- When the puck is edge-on to the push direction (`face_on < 0.5`), increased approach distance by 2\u202fcm and raised push height by 1\u202fcm to avoid the puck blocking the descent.\n- Re-observe after each push to account for perception noise and verify success.\n- Cleaned up undefined variables, fixed syntax, and structured the loop with proper error handling.",
+ "episodes": [
+  {
+   "seed": 3000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "KeyError",
+    "message": "0",
+    "traceback": "  skill.py line 28, in run: puck_radius = puck[\"size\"][0]   # size[0] = radius\nKeyError: 0"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.104,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "KeyError",
+    "message": "0",
+    "traceback": "  skill.py line 28, in run: puck_radius = puck[\"size\"][0]   # size[0] = radius\nKeyError: 0"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.1138,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "KeyError",
+    "message": "0",
+    "traceback": "  skill.py line 28, in run: puck_radius = puck[\"size\"][0]   # size[0] = radius\nKeyError: 0"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0975,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "KeyError",
+    "message": "0",
+    "traceback": "  skill.py line 28, in run: puck_radius = puck[\"size\"][0]   # size[0] = radius\nKeyError: 0"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0978,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "KeyError",
+    "message": "0",
+    "traceback": "  skill.py line 28, in run: puck_radius = puck[\"size\"][0]   # size[0] = radius\nKeyError: 0"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.1112,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "KeyError",
+    "message": "0",
+    "traceback": "  skill.py line 28, in run: puck_radius = puck[\"size\"][0]   # size[0] = radius\nKeyError: 0"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.1133,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "KeyError",
+    "message": "0",
+    "traceback": "  skill.py line 28, in run: puck_radius = puck[\"size\"][0]   # size[0] = radius\nKeyError: 0"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.1133,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "KeyError",
+    "message": "0",
+    "traceback": "  skill.py line 28, in run: puck_radius = puck[\"size\"][0]   # size[0] = radius\nKeyError: 0"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.1004,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

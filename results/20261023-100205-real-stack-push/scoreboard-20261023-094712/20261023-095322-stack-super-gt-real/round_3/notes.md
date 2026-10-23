@@ -1,0 +1,4 @@
+- Premature release fixed by ensuring release only occurs after a successful descent to the stacking height.
+- Insufficient stack clearance addressed by increasing EPS from 0.001 to 0.01 and re‑observing the blue cube pose immediately before the descent.
+- Added a brief settle wait after reaching the stack height before opening the gripper to improve stability.
+- Kept all existing safety checks and retries.

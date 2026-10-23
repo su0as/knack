@@ -1,0 +1,72 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -15,6 +15,7 @@
+ 
+             puck_pos = puck["pos"]          # [x, y, z]
+             target_pos = target["pos"]      # [x, y, 0]
++            target_radius = target["radius"]
+ 
+             # Extract puck radius (handle dict or list size)
+             size = puck["size"]
+@@ -29,7 +30,7 @@
+             dx = target_pos[0] - puck_pos[0]
+             dy = target_pos[1] - puck_pos[1]
+             dist = math.hypot(dx, dy)
+-            if dist < 1e-4:  # already on target
++            if dist < 1e-4:  # essentially on top of target
+                 return True
+             ux = dx / dist
+             uy = dy / dist
+@@ -52,6 +53,7 @@
+             # 3. Re‑observe to get latest puck position before pushing
+             obs2 = robot.observe()
+             puck_pos2 = obs2["objects"]["puck"]["pos"]
++
+             # Re‑compute vector from updated puck position to target
+             dx2 = target_pos[0] - puck_pos2[0]
+             dy2 = target_pos[1] - puck_pos2[1]
+@@ -61,25 +63,36 @@
+             ux2 = dx2 / dist2
+             uy2 = dy2 / dist2
+ 
+-            # Push distance with proportional margin to avoid over/under shoot
+-            margin = 0.02 * dist2
+-            if margin < 0.005:
+-                margin = 0.005
+-            push_dist = dist2 + offset + margin
++            # Re‑compute stand‑off point using the updated puck pose
++            behind_x2 = puck_pos2[0] - offset * ux2
++            behind_y2 = puck_pos2[1] - offset * uy2
++
++            # If we are not already close to the updated stand‑off point, move there
++            cur_x, cur_y, _ = robot.get_pose("gripper")["pos"]  # approximate current xy
++            if math.hypot(cur_x - behind_x2, cur_y - behind_y2) > 0.002:
++                robot.move_to(behind_x2, behind_y2, push_z, speed=0.07)
++
++            # 4. Compute push distance: move puck enough to enter target radius
++            # needed travel = max(0, dist2 - target_radius)
++            needed = max(0.0, dist2 - target_radius)
++            margin = 0.005  # small extra to ensure inside target
++            push_dist = needed + margin
+             push_x = puck_pos2[0] + ux2 * push_dist
+             push_y = puck_pos2[1] + uy2 * push_dist
++
++            # 5. Execute push at table height
+             robot.move_to(push_x, push_y, push_z, speed=0.07)
+ 
+-            # 4. Lift sufficiently to avoid dragging the puck back
++            # 6. Lift sufficiently to avoid dragging the puck back
+             robot.move_by(dz=0.04, speed=0.1)
+             robot.wait(0.1)  # brief settle time
+ 
+-            # 5. Verify success
++            # 7. Verify success
+             obs3 = robot.observe()
+             puck_pos3 = obs3["objects"]["puck"]["pos"]
+             dx3 = puck_pos3[0] - target_pos[0]
+             dy3 = puck_pos3[1] - target_pos[1]
+-            if math.hypot(dx3, dy3) <= target["radius"]:
++            if math.hypot(dx3, dy3) <= target_radius:
+                 return True
+ 
+             # If not successful, loop will retry with fresh perception

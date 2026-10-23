@@ -1,0 +1,2 @@
+- Fixed the syntax error by correcting indentation and removing any stray characters that caused an invalid token.
+- Ensured the `<notes>` block is properly closed with `

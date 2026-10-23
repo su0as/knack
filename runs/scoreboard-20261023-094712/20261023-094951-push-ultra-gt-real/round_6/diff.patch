@@ -1,0 +1,189 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -5,15 +5,13 @@
+     # Workspace bounds (safety layer)
+     X_MIN, X_MAX = 0.04, 0.32
+     Y_MIN, Y_MAX = -0.26, 0.26
+-    
++    MARGIN = 0.05               # clearance from walls
++    MAX_REACH_RADIUS = 0.25     # max horizontal distance from base (0,0)
++
+     def clamp_xy(x, y):
+         return (max(X_MIN, min(X_MAX, x)), max(Y_MIN, min(Y_MAX, y)))
+-    
+-    def rotate_vec(v, angle):
+-        ca, sa = math.cos(angle), math.sin(angle)
+-        return np.array([ca * v[0] - sa * v[1], sa * v[0] + ca * v[1]])
+-    
+-    def ensure_clearance(xy, margin=0.05):
++
++    def ensure_clearance(xy, margin=MARGIN):
+         """Shift xy away from walls if closer than margin."""
+         x, y = xy
+         shifted = False
+@@ -30,21 +28,31 @@
+             y = Y_MAX - margin
+             shifted = True
+         return (x, y) if shifted else xy
+-    
++
++    def rotate_vec(v, angle):
++        ca, sa = math.cos(angle), math.sin(angle)
++        return np.array([ca * v[0] - sa * v[1], sa * v[0] + ca * v[1]])
++
++    def is_reachable(xy):
++        return np.linalg.norm(xy) <= MAX_REACH_RADIUS
++
++    # Parameters
+     max_attempts = 4
+-    push_z = 0.02          # tool-point height: finger pads ~0.0075, puck centre ~0.01
+-    approach_dist = 0.05   # 2 cm behind puck edge (radius 0.03 + 0.02)
+-    
++    push_z = 0.02          # tool-point height for push (finger pads ~0.0075, puck centre ~0.01)
++    approach_dist = 0.05   # distance behind puck to start
++    push_margin = 0.04     # extra push past target
++    lead_factor = 0.8      # lead angle factor to counteract sideways slide
++
+     for attempt in range(max_attempts):
+         obs = robot.observe()
+         puck = obs["objects"]["puck"]
+         target = obs["fixtures"]["target"]
+-        
++
+         puck_pos = np.array(puck["pos"])
+         target_pos = np.array(target["pos"])
+         target_radius = target["radius"]
+-        
+-        # Robust radius extraction: size may be dict or list; default to 0.03 m
++
++        # Robust puck radius extraction
+         puck_size = puck.get("size", {})
+         if isinstance(puck_size, dict):
+             puck_radius = puck_size.get("radius", 0.03)
+@@ -52,80 +60,94 @@
+             puck_radius = puck_size[0]
+         else:
+             puck_radius = 0.03
++
+         puck_yaw = puck.get("yaw", 0.0)
+-        
++
+         # Vector from puck to target (XY only)
+         to_target = target_pos[:2] - puck_pos[:2]
+         dist_to_target = np.linalg.norm(to_target)
+-        
++
++        # Already in target?
+         if dist_to_target <= target_radius + 1e-3:
+             robot.log(f"Success: puck in target, dist={dist_to_target:.4f}")
+             return True
+-        
++
+         # Base push direction
+         push_dir = to_target / dist_to_target
+-        
++
+         # Lead angle to counteract sideways slide of upright puck
+-        lead_angle = 0.8 * puck_radius / max(dist_to_target, 0.01)
++        lead_angle = lead_factor * puck_radius / max(dist_to_target, 0.01)
+         push_dir = rotate_vec(push_dir, lead_angle)
+-        
+-        # Check puck orientation: yaw in [-pi/4, pi/4), 0 = faces aligned with world axes
+-        # Edge-on when |yaw| ~ pi/4. Dot product with push_dir indicates face-on vs edge-on.
++
++        # Puck orientation: yaw in [-pi/4, pi/4), 0 = faces aligned with world axes
+         puck_forward = np.array([math.cos(puck_yaw), math.sin(puck_yaw)])
+         face_on = abs(np.dot(puck_forward, push_dir))
+-        
+-        # If edge-on (face_on < 0.5), increase approach distance and raise push_z slightly
++
++        # Adjust parameters based on orientation and distance
+         local_approach_dist = approach_dist
+         local_push_z = push_z
+-        if face_on < 0.5:
++        if face_on < 0.5:               # edge-on
+             local_approach_dist += 0.02
+             local_push_z += 0.01
+-        
+-        # If puck already close to target, start farther back to reduce impact
+-        if dist_to_target < 0.1:
++        if dist_to_target < 0.1:        # puck already close to target
+             local_approach_dist = max(local_approach_dist, 0.08)
+-        
++
+         # Start position behind puck
+         start_xy = puck_pos[:2] - push_dir * local_approach_dist
+-        start_xy = ensure_clearance(start_xy, margin=0.05)
++        start_xy = ensure_clearance(start_xy, margin=MARGIN)
+         start_xy = clamp_xy(start_xy[0], start_xy[1])
+-        
+-        # End position: push past target by puck_radius + margin
+-        push_distance = dist_to_target + puck_radius + 0.04
+-        end_xy = puck_pos[:2] + push_dir * push_distance
+-        end_xy = clamp_xy(end_xy[0], end_xy[1])
+-        
+-        # Move to start: above first, then down
++
++        # Ensure start is reachable; if not, reduce approach distance
++        if not is_reachable(start_xy):
++            for scale in [0.8, 0.6, 0.4, 0.2]:
++                test_xy = puck_pos[:2] - push_dir * (local_approach_dist * scale)
++                test_xy = ensure_clearance(test_xy, margin=MARGIN)
++                test_xy = clamp_xy(test_xy[0], test_xy[1])
++                if is_reachable(test_xy):
++                    start_xy = test_xy
++                    robot.log(f"Adjusted start_xy to reachable: {start_xy}")
++                    break
++            else:
++                robot.log(f"Start position unreachable: {start_xy}")
++                continue
++
++        # Push distance: past target by puck_radius + margin
++        push_distance = dist_to_target + puck_radius + push_margin
++        push_yaw = math.atan2(push_dir[1], push_dir[0])
++
++        # Move to start: above first, then down with yaw aligned to push direction
+         try:
+             robot.move_to(start_xy[0], start_xy[1], 0.10, speed=0.15)
+-            robot.move_to(start_xy[0], start_xy[1], local_push_z, speed=0.05)
++            robot.move_to(start_xy[0], start_xy[1], local_push_z, speed=0.05, yaw=push_yaw)
+         except Exception as e:
+             robot.log(f"Move to start failed: {e}")
+             continue
+-        
+-        # Push forward with yaw aligned to push direction, slow speed to avoid jamming
+-        push_yaw = math.atan2(push_dir[1], push_dir[0])
++
++        # Push forward using relative move_by to avoid absolute coordinate drift and timeout
+         try:
+-            robot.move_to(end_xy[0], end_xy[1], local_push_z, yaw=push_yaw, speed=0.02)
++            robot.move_by(dx=push_distance * push_dir[0],
++                          dy=push_distance * push_dir[1],
++                          dz=0, speed=0.02)
+         except Exception as e:
+             robot.log(f"Push move failed: {e}")
+             continue
+-        
++
+         robot.wait(0.2)  # let physics settle
+-        
++
+         # Re-observe and check success
+         obs = robot.observe()
+         puck = obs["objects"]["puck"]
+         puck_pos = np.array(puck["pos"])
+         to_target = target_pos[:2] - puck_pos[:2]
+         dist_to_target = np.linalg.norm(to_target)
++
+         if dist_to_target <= target_radius + 1e-3:
+             robot.log(f"Success: puck in target, dist={dist_to_target:.4f}")
+             return True
+         else:
+             robot.log(f"Attempt {attempt+1}: puck dist to target = {dist_to_target:.4f}")
+-    
+-    # Final check after attempts
++
++    # Final check after all attempts
+     obs = robot.observe()
+     puck = obs["objects"]["puck"]
+     target = obs["fixtures"]["target"]

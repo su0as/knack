@@ -1,0 +1,68 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -15,7 +15,7 @@
+     
+     max_attempts = 8
+     push_z = 0.02          # tool-point height: finger pads ~0.0075, puck centre ~0.01
+-    approach_base = 0.03   # reduced from 0.05 to keep arm in reachable band
++    approach_base = 0.05   # 2 cm behind puck edge (radius 0.03 + 0.02)
+     
+     for attempt in range(max_attempts):
+         obs = robot.observe()
+@@ -25,9 +25,16 @@
+         puck_pos = np.array(puck["pos"])
+         target_pos = np.array(target["pos"])
+         target_radius = target["radius"]
+-        puck_radius = puck["size"][0]   # size[0] = radius
+-        puck_height = puck["size"][1]   # size[1] = height
+-        puck_yaw = puck["yaw"]
++        
++        # Robust radius extraction: size may be dict or list; default to 0.04 m
++        puck_size = puck.get("size", {})
++        if isinstance(puck_size, dict):
++            puck_radius = puck_size.get("radius", 0.04)
++        elif isinstance(puck_size, (list, tuple)) and len(puck_size) > 0:
++            puck_radius = puck_size[0]
++        else:
++            puck_radius = 0.04
++        puck_yaw = puck.get("yaw", 0.0)
+         
+         # Vector from puck to target (XY only)
+         to_target = target_pos[:2] - puck_pos[:2]
+@@ -41,7 +48,7 @@
+         push_dir = to_target / dist_to_target
+         
+         # Lead angle to counteract sideways slide of upright puck
+-        lead_angle = 0.6 * puck_radius / max(dist_to_target, 0.01)
++        lead_angle = 0.8 * puck_radius / max(dist_to_target, 0.01)
+         push_dir = rotate_vec(push_dir, lead_angle)
+         
+         # Check puck orientation: yaw in [-pi/4, pi/4), 0 = faces aligned with world axes
+@@ -60,9 +67,8 @@
+         start_xy = puck_pos[:2] - push_dir * approach_dist
+         start_xy = clamp_xy(start_xy[0], start_xy[1])
+         
+-        # End position: push past target by puck_radius + margin, capped to keep in reachable band
+-        push_distance = dist_to_target + puck_radius + 0.02
+-        push_distance = min(push_distance, dist_to_target + 0.05)
++        # End position: push past target by puck_radius + margin
++        push_distance = dist_to_target + puck_radius + 0.04
+         end_xy = puck_pos[:2] + push_dir * push_distance
+         end_xy = clamp_xy(end_xy[0], end_xy[1])
+         
+@@ -96,5 +102,13 @@
+         else:
+             robot.log(f"Attempt {attempt}: puck dist to target = {dist_to_target:.4f}")
+     
+-    robot.log("Max attempts reached")
+-    return False
++    # Final check after attempts
++    obs = robot.observe()
++    puck = obs["objects"]["puck"]
++    target = obs["fixtures"]["target"]
++    puck_pos = np.array(puck["pos"])
++    target_pos = np.array(target["pos"])
++    target_radius = target["radius"]
++    dist_to_target = np.linalg.norm(target_pos[:2] - puck_pos[:2])
++    robot.log(f"Final dist to target: {dist_to_target:.4f}, target radius: {target_radius:.4f}")
++    return dist_to_target <= target_radius

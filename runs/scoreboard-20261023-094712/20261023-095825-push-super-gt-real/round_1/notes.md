@@ -1,0 +1,4 @@
+- Removed stray `</returns>` tag that caused a syntax error.
+- Kept the logic: perceive puck and target, compute push direction, move behind puck then push forward slowly.
+- Added a comment about the expected size dict for clarity.
+- Ensured the function returns True on success or False after max attempts.

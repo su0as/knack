@@ -1,0 +1,6 @@
+- First version: need to pick up red cube and stack on blue cube
+- Cubes are 3cm, centers at z=0.015 on table
+- Stack height: blue top at z=0.03, red center at z=0.045
+- Must handle perception noise with re-observation and retries
+- Use slow speeds (0.05-0.10) near objects, default for travel
+- Catch MotionError for edge-of-workspace cases

@@ -1,0 +1,2 @@
+- The failure in seed 2002 was caused by two issues: (1) using the blue cube's yaw for the stack approach and descent while holding the red cube grasped with its own yaw, causing an XY offset; (2) releasing at STACK_Z + 0.005 left a small gap that, combined with the XY misalignment, let the red cube miss the blue cube and fall to the table.
+- Fixes: keep the gripper orientation constant (red_yaw) during transport and stack descent; reduce the release clearance to 0.001 m so the red cube seats firmly on the blue cube; retain fresh observations and MotionError handling.

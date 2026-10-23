@@ -1,0 +1,67 @@
+import math
+
+def run(robot):
+    # Get initial poses
+    obs = robot.observe()
+    red_pos = obs["objects"]["red_cube"]["pos"]
+    red_yaw = obs["objects"]["red_cube"]["yaw"]
+    blue_pos = obs["objects"]["blue_cube"]["pos"]
+    blue_yaw = obs["objects"]["blue_cube"]["yaw"]
+    
+    # Approach red cube from above, aligned with its yaw
+    # Pre-grasp position: above cube center
+    pre_grasp_z = 0.08  # well above cube
+    robot.move_to(red_pos[0], red_pos[1], pre_grasp_z, yaw=red_yaw, speed=0.15)
+    
+    # Descend to grasp height (cube center at z=0.015, finger pads at tool_point - 0.0125)
+    # So tool point at z=0.015 puts pads at ~0.0025, good for grasping middle
+    grasp_z = 0.015
+    robot.move_to(red_pos[0], red_pos[1], grasp_z, yaw=red_yaw, speed=0.05)
+    
+    # Grasp
+    if not robot.grasp():
+        # Retry once with fresh observation
+        obs = robot.observe()
+        red_pos = obs["objects"]["red_cube"]["pos"]
+        red_yaw = obs["objects"]["red_cube"]["yaw"]
+        robot.move_to(red_pos[0], red_pos[1], grasp_z, yaw=red_yaw, speed=0.05)
+        if not robot.grasp():
+            robot.home()
+            return False
+    
+    # Verify holding
+    if robot.holding() != "red_cube":
+        robot.release()
+        robot.home()
+        return False
+    
+    # Lift red cube
+    robot.move_to(red_pos[0], red_pos[1], 0.12, yaw=red_yaw, speed=0.10)
+    
+    # Get fresh blue cube position (may have shifted slightly in perception)
+    obs = robot.observe()
+    blue_pos = obs["objects"]["blue_cube"]["pos"]
+    blue_yaw = obs["objects"]["blue_cube"]["yaw"]
+    
+    # Move above blue cube, align with blue cube yaw for stable placement
+    stack_x, stack_y = blue_pos[0], blue_pos[1]
+    stack_z = 0.045  # red cube center height when stacked (blue top 0.03 + 0.015)
+    
+    # Approach from above
+    robot.move_to(stack_x, stack_y, 0.12, yaw=blue_yaw, speed=0.10)
+    
+    # Descend to stack height
+    try:
+        robot.move_to(stack_x, stack_y, stack_z, yaw=blue_yaw, speed=0.05)
+    except MotionError:
+        # If unreachable, try slightly higher
+        robot.move_to(stack_x, stack_y, stack_z + 0.01, yaw=blue_yaw, speed=0.05)
+    
+    # Release
+    robot.release()
+    
+    # Retract slightly to avoid knocking
+    robot.move_by(dz=0.03, speed=0.10)
+    
+    robot.home()
+    return True

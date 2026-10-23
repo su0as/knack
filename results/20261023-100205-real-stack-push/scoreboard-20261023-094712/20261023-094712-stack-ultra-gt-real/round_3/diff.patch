@@ -1,0 +1,44 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -6,7 +6,7 @@
+     GRASP_Z = 0.015         # tool point at cube center (pads at ~0.0025)
+     LIFT_Z = 0.12           # safe transport height
+     STACK_Z = 0.045         # red cube center when stacked on blue (blue top 0.03 + 0.015)
+-    STACK_CLEARANCE = 0.005 # extra height before release
++    STACK_CLEARANCE = 0.001 # tiny extra height before release
+     APPROACH_SPEED = 0.15
+     PRECISION_SPEED = 0.05
+     TRANSPORT_SPEED = 0.10
+@@ -70,28 +70,25 @@
+         robot.home()
+         return False
+     blue_pos = obs["objects"]["blue_cube"]["pos"]
+-    blue_yaw = obs["objects"]["blue_cube"]["yaw"]
+     stack_x, stack_y = blue_pos[0], blue_pos[1]
+ 
+-    # Move above blue cube, align with blue yaw
++    # Move above blue cube, keep red cube's yaw (do not rotate the held cube)
+     try:
+-        robot.move_to(stack_x, stack_y, LIFT_Z, yaw=blue_yaw, speed=TRANSPORT_SPEED)
++        robot.move_to(stack_x, stack_y, LIFT_Z, yaw=red_yaw, speed=TRANSPORT_SPEED)
+     except MotionError:
+         robot.release()
+         robot.home()
+         return False
+ 
+-    # Descend to stack height with clearance
++    # Descend to stack height with minimal clearance
+     target_z = STACK_Z + STACK_CLEARANCE
+     try:
+-        robot.move_to(stack_x, stack_y, target_z, yaw=blue_yaw, speed=PRECISION_SPEED)
++        robot.move_to(stack_x, stack_y, target_z, yaw=red_yaw, speed=PRECISION_SPEED)
+     except MotionError:
+         robot.release()
+         robot.home()
+         return False
+ 
+-    # Verify we are above the stack height before release
+-    # (robot.move_to returns achieved position; we could re-observe but move_to result is enough)
+     # Release
+     robot.release()
+ 

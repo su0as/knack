@@ -1,0 +1,223 @@
+{
+ "task": "push",
+ "seed": 5005,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.1025,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 1.0,
+   "call": "move_to(0.151, -0.127, 0.070, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1506,
+     -0.1271,
+     0.0699
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 3.16,
+   "call": "move_to(0.151, -0.127, 0.025, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1533,
+     -0.1291,
+     0.0311
+    ],
+    "error_m": 0.007
+   }
+  },
+  {
+   "t": 3.16,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 3.16,
+   "call": "get_pose('gripper')",
+   "error": "unknown name"
+  },
+  {
+   "t": 3.16,
+   "call": "log",
+   "result": "Exception during push attempt: \"unknown object or fixture 'gripper'; known: ['puck', 'target']\""
+  },
+  {
+   "t": 3.16,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 3.48,
+   "call": "move_to(0.140, -0.124, 0.070, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1398,
+     -0.1247,
+     0.0707
+    ],
+    "error_m": 0.0007
+   }
+  },
+  {
+   "t": 5.64,
+   "call": "move_to(0.140, -0.124, 0.025, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1424,
+     -0.1269,
+     0.0309
+    ],
+    "error_m": 0.0069
+   }
+  },
+  {
+   "t": 5.64,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 5.64,
+   "call": "get_pose('gripper')",
+   "error": "unknown name"
+  },
+  {
+   "t": 5.64,
+   "call": "log",
+   "result": "Exception during push attempt: \"unknown object or fixture 'gripper'; known: ['puck', 'target']\""
+  }
+ ],
+ "n_calls": 12,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 6.14,
+ "wall_time": 0.79,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1369,
+     -0.0953,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.138,
+     0.0069,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 6.14,
+  "gripper": {
+   "pos": [
+    0.1424,
+    -0.1269,
+    0.0309
+   ],
+   "yaw": 0.8438,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1378,
+     -0.0956,
+     0.0096
+    ],
+    "yaw": -0.0141,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.138,
+     0.0069,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.138,
+   "y": 0.0069,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1369,
+   "y": -0.0953,
+   "yaw": -0.5988,
+   "fp": 0.035
+  }
+ }
+}

@@ -1,0 +1,5 @@
+- Removed the extra +0.02 margin in push distance to prevent early stopping due to contact.
+- Increased stand‑off height to 0.05 m so the gripper clears the puck, then lowered to push height (0.02 m) before pushing.
+- Reduced offset to puck_radius + 0.01 m to shorten the reach‑through distance and lower chance of gripping the puck.
+- Kept slow speeds for contact phases and added a small lift after pushing to avoid dragging.
+- Maintained perception‑action‑verify loop with up to two attempts.

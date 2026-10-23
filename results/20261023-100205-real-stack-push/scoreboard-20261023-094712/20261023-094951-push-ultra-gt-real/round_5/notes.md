@@ -1,0 +1,4 @@
+- Round 4 failed due to timeout (45s budget exceeded) from too many slow moves and contact-blocked pushes.
+- Two root causes: (1) start_xy clamped into walls causing joint-limit collisions; (2) push speed 0.05 too high when puck jams against target fixture.
+- Fixes: enforce 5 cm clearance from workspace bounds before clamping start_xy; reduce push speed to 0.02; if puck already close to target (<0.1 m), start farther back (approach_dist=0.08) to reduce impact force.
+- Also: limit max_attempts to 4 to stay within time budget; fix undefined variables (max_attempts, approach_base, local_push_z, rotate_vec); use robot.move_by for final push to avoid absolute coordinate drift; re-observe after each push and exit early on success.

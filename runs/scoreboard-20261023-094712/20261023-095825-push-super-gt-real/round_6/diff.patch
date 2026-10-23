@@ -1,0 +1,56 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -6,7 +6,7 @@
+     The puck cannot be grasped, so we approach it from the opposite side of the target,
+     move the gripper over the puck, then push forward at table height.
+     """
+-    max_attempts = 2
++    max_attempts = 3
+     for attempt in range(max_attempts):
+         try:
+             obs = robot.observe()
+@@ -30,7 +30,7 @@
+             dx = target_pos[0] - puck_pos[0]
+             dy = target_pos[1] - puck_pos[1]
+             dist = math.hypot(dx, dy)
+-            if dist < 1e-4:  # essentially on top of target
++            if dist <= target_radius:  # already inside target
+                 return True
+             ux = dx / dist
+             uy = dy / dist
+@@ -53,30 +53,20 @@
+             # 3. Re‑observe to get latest puck position before pushing
+             obs2 = robot.observe()
+             puck_pos2 = obs2["objects"]["puck"]["pos"]
+-
+             # Re‑compute vector from updated puck position to target
+             dx2 = target_pos[0] - puck_pos2[0]
+             dy2 = target_pos[1] - puck_pos2[1]
+             dist2 = math.hypot(dx2, dy2)
+-            if dist2 < 1e-4:
++            if dist2 <= target_radius:
+                 return True
+             ux2 = dx2 / dist2
+             uy2 = dy2 / dist2
+ 
+-            # Re‑compute stand‑off point using the updated puck pose
+-            behind_x2 = puck_pos2[0] - offset * ux2
+-            behind_y2 = puck_pos2[1] - offset * uy2
+-
+-            # If we are not already close to the updated stand‑off point, move there
+-            cur_x, cur_y, _ = robot.get_pose("gripper")["pos"]  # approximate current xy
+-            if math.hypot(cur_x - behind_x2, cur_y - behind_y2) > 0.002:
+-                robot.move_to(behind_x2, behind_y2, push_z, speed=0.07)
+-
+             # 4. Compute push distance: move puck enough to enter target radius
+-            # needed travel = max(0, dist2 - target_radius)
+-            needed = max(0.0, dist2 - target_radius)
+-            margin = 0.005  # small extra to ensure inside target
+-            push_dist = needed + margin
++            needed = max(0.0, dist2 - target_radius)   # distance to bring centre inside
++            margin = 0.005                             # small extra to ensure inside
++            min_push = 0.02                            # ensure we overcome friction/stiction
++            push_dist = needed + margin + min_push
+             push_x = puck_pos2[0] + ux2 * push_dist
+             push_y = puck_pos2[1] + uy2 * push_dist
+ 

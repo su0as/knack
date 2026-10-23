@@ -1,0 +1,360 @@
+{
+ "task": "push",
+ "seed": 100025,
+ "error": {
+  "type": "EpisodeTimeout",
+  "message": "time budget of 45 s exceeded",
+  "traceback": "  skill.py line 128, in run: robot.move_by(dx=push_distance * push_dir[0],\nEpisodeTimeout: time budget of 45 s exceeded"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.0939,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.86,
+   "call": "move_to(0.106, 0.105, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.106,
+     0.1049,
+     0.0999
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.28,
+   "call": "move_to(0.106, 0.105, 0.030, yaw=-1.457, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1061,
+     0.1048,
+     0.03
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 12.64,
+   "call": "move_to(0.130, -0.101, 0.030, yaw=1.685, speed=0.020)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1293,
+     -0.1002,
+     0.0297
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 12.84,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 12.84,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 12.84,
+   "call": "log",
+   "result": "Attempt 1: puck dist to target = 0.0805"
+  },
+  {
+   "t": 12.84,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 12.84,
+   "call": "log",
+   "result": "Adjusted start_xy to reachable: (np.float64(0.17900593841093798), np.float64(-0.168418155480281))"
+  },
+  {
+   "t": 13.76,
+   "call": "move_to(0.179, -0.168, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.179,
+     -0.1684,
+     0.0995
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 16.86,
+   "call": "move_to(0.179, -0.168, 0.020, yaw=2.373, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.182,
+     -0.17,
+     0.0318
+    ],
+    "error_m": 0.0123,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 25.28,
+   "call": "move_to(0.061, -0.053, 0.032, yaw=2.375, speed=0.020)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0615,
+     -0.0535,
+     0.0318
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 25.48,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 25.48,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 25.48,
+   "call": "log",
+   "result": "Attempt 2: puck dist to target = 0.1060"
+  },
+  {
+   "t": 25.48,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 25.48,
+   "call": "log",
+   "result": "Adjusted start_xy to reachable: (np.float64(0.17187817717859005), np.float64(-0.17780421486010137))"
+  },
+  {
+   "t": 26.72,
+   "call": "move_to(0.172, -0.178, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.172,
+     -0.1779,
+     0.1001
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 29.84,
+   "call": "move_to(0.172, -0.178, 0.020, yaw=2.345, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1734,
+     -0.1808,
+     0.0318
+    ],
+    "error_m": 0.0123,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 38.6,
+   "call": "move_to(0.051, -0.056, 0.032, yaw=-0.798, speed=0.020)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0514,
+     -0.056,
+     0.0318
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 38.8,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 38.8,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 38.8,
+   "call": "log",
+   "result": "Attempt 3: puck dist to target = 0.1112"
+  },
+  {
+   "t": 38.8,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 38.8,
+   "call": "log",
+   "result": "Adjusted start_xy to reachable: (np.float64(0.17764251602559497), np.float64(-0.15914896470090342))"
+  },
+  {
+   "t": 40.02,
+   "call": "move_to(0.178, -0.159, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1778,
+     -0.1593,
+     0.1001
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 43.14,
+   "call": "move_to(0.178, -0.159, 0.020, yaw=2.629, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1798,
+     -0.1623,
+     0.0317
+    ],
+    "error_m": 0.0123,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  }
+ ],
+ "n_calls": 27,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": "time budget of 45 s exceeded",
+ "sim_time": 45.5,
+ "wall_time": 0.84,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1281,
+     0.018,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1065,
+     -0.0839,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 45.5,
+  "gripper": {
+   "pos": [
+    0.1604,
+    -0.1515,
+    0.0322
+   ],
+   "yaw": -0.4871,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.162,
+     -0.1596,
+     0.0099
+    ],
+    "yaw": 1.7067,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1065,
+     -0.0839,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1065,
+   "y": -0.0839,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1281,
+   "y": 0.018,
+   "yaw": 0.1571,
+   "fp": 0.035
+  }
+ }
+}

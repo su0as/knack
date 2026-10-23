@@ -1,0 +1,284 @@
+{
+ "task": "push",
+ "seed": 100020,
+ "error": null,
+ "self_report": null,
+ "returned": "np.False_",
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.0728,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.92,
+   "call": "move_to(0.091, 0.106, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0909,
+     0.1065,
+     0.0999
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.54,
+   "call": "move_to(0.091, 0.106, 0.020, yaw=-0.868, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0909,
+     0.1064,
+     0.02
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 12.48,
+   "call": "move_to(0.219, -0.045, 0.020, yaw=2.274, speed=0.020)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2189,
+     -0.0447,
+     0.0199
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 12.68,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 12.68,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 12.68,
+   "call": "log",
+   "result": "Attempt 1: puck dist to target = 0.0587"
+  },
+  {
+   "t": 12.68,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 12.68,
+   "call": "log",
+   "result": "Start position unreachable: (0.27, np.float64(0.06099251223407893))"
+  },
+  {
+   "t": 12.68,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 12.68,
+   "call": "log",
+   "result": "Adjusted start_xy to reachable: (np.float64(0.24625788539444937), np.float64(0.01275731078537087))"
+  },
+  {
+   "t": 13.48,
+   "call": "move_to(0.246, 0.013, 0.100, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2462,
+     0.0127,
+     0.1
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 14.92,
+   "call": "move_to(0.246, 0.013, 0.030, yaw=-2.165, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2469,
+     0.0126,
+     0.0318
+    ],
+    "error_m": 0.002
+   }
+  },
+  {
+   "t": 22.78,
+   "call": "move_to(0.159, -0.117, 0.032, yaw=0.976, speed=0.020)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1592,
+     -0.1172,
+     0.0318
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 22.98,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 22.98,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 22.98,
+   "call": "log",
+   "result": "Attempt 3: puck dist to target = 0.0817"
+  },
+  {
+   "t": 22.98,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 22.98,
+   "call": "log",
+   "result": "Start position unreachable: (0.27, np.float64(0.06916520615723866))"
+  },
+  {
+   "t": 22.98,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 22.98,
+   "call": "log",
+   "result": "Final dist to target: 0.0838, target radius: 0.0400"
+  }
+ ],
+ "n_calls": 21,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 23.48,
+ "wall_time": 0.68,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1469,
+     0.0696,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.182,
+     -0.0433,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 23.48,
+  "gripper": {
+   "pos": [
+    0.1592,
+    -0.1172,
+    0.0318
+   ],
+   "yaw": 0.9765,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.2393,
+     0.0017,
+     0.0099
+    ],
+    "yaw": 2.6948,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.182,
+     -0.0433,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.182,
+   "y": -0.0433,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1469,
+   "y": 0.0696,
+   "yaw": 0.1111,
+   "fp": 0.035
+  }
+ }
+}

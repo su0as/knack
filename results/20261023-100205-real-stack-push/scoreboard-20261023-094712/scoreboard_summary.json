@@ -1,0 +1,157 @@
+{
+ "table": {
+  "ultra": {
+   "model_id": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "tasks": 2,
+   "mean_success": 0.37,
+   "usd_per_skill": 0.10386400000000001,
+   "solved_50": 1
+  },
+  "super": {
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "tasks": 2,
+   "mean_success": 0.72,
+   "usd_per_skill": 0.036105,
+   "solved_50": 2
+  }
+ },
+ "rows": [
+  {
+   "model": "ultra",
+   "model_id": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "task": "stack",
+   "reward": "gt",
+   "run_id": "20261023-094712-stack-ultra-gt-real",
+   "status": "done",
+   "round_success": [
+    0.5,
+    0.875,
+    0.625,
+    0.625,
+    0.625,
+    0.5
+   ],
+   "rounds_used": 6,
+   "eval_k": 32,
+   "eval_n": 50,
+   "eval_p": 0.64,
+   "eval_lo": 0.501407620103,
+   "eval_hi": 0.758614370328,
+   "usd": 0.107867,
+   "llm_usd": 0.107867,
+   "tokens_in": 49338,
+   "tokens_out": 27965,
+   "wall_s": 158.9,
+   "self_report_true": 46,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "ultra",
+   "model_id": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "task": "push",
+   "reward": "gt",
+   "run_id": "20261023-094951-push-ultra-gt-real",
+   "status": "done",
+   "round_success": [
+    0.0,
+    0.125,
+    0.0,
+    0.0,
+    0.125,
+    0.125
+   ],
+   "rounds_used": 6,
+   "eval_k": 5,
+   "eval_n": 50,
+   "eval_p": 0.1,
+   "eval_lo": 0.043475123992,
+   "eval_hi": 0.213604903348,
+   "usd": 0.099861,
+   "llm_usd": 0.099861,
+   "tokens_in": 78959,
+   "tokens_out": 23025,
+   "wall_s": 211.0,
+   "self_report_true": 19,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "stack",
+   "reward": "gt",
+   "run_id": "20261023-095322-stack-super-gt-real",
+   "status": "done",
+   "round_success": [
+    0.125,
+    0.75,
+    0.5,
+    0.5,
+    0.75,
+    0.5
+   ],
+   "rounds_used": 6,
+   "eval_k": 31,
+   "eval_n": 50,
+   "eval_p": 0.62,
+   "eval_lo": 0.481501950224,
+   "eval_hi": 0.741374041574,
+   "usd": 0.044529,
+   "llm_usd": 0.044529,
+   "tokens_in": 69732,
+   "tokens_out": 35206,
+   "wall_s": 302.9,
+   "self_report_true": 46,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "push",
+   "reward": "gt",
+   "run_id": "20261023-095825-push-super-gt-real",
+   "status": "done",
+   "round_success": [
+    0.0,
+    0.125,
+    0.125,
+    0.125,
+    0.0,
+    0.5
+   ],
+   "rounds_used": 6,
+   "eval_k": 41,
+   "eval_n": 50,
+   "eval_p": 0.82,
+   "eval_lo": 0.692036805453,
+   "eval_hi": 0.902299172675,
+   "usd": 0.027681,
+   "llm_usd": 0.027681,
+   "tokens_in": 60845,
+   "tokens_out": 19539,
+   "wall_s": 220.5,
+   "self_report_true": 42,
+   "judge": null,
+   "mock": false
+  }
+ ],
+ "aspire_reference": [
+  {
+   "label": "Kimi K3 (ASPIRE, LIBERO-Pro)",
+   "success": 0.78,
+   "usd_per_task": 55.0
+  },
+  {
+   "label": "Qwen 3.8 Max (ASPIRE, LIBERO-Pro)",
+   "success": 0.56,
+   "usd_per_task": 40.0
+  },
+  {
+   "label": "Haiku 5.5 (ASPIRE, LIBERO-Pro)",
+   "success": 0.68,
+   "usd_per_task": 4.0
+  }
+ ]
+}

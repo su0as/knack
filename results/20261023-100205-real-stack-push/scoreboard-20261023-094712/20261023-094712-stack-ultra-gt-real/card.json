@@ -1,0 +1,250 @@
+{
+ "run_id": "20261023-094712-stack-ultra-gt-real",
+ "task": "stack",
+ "title": "Stack",
+ "instruction": "Stack the red cube on top of the blue cube and let go.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "real",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 4,
+   "success": 0.5,
+   "gt_k": 4,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 7.9,
+   "usd_cum": 0.00508,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 68,
+   "summary": "**Mode 1: XY offset miss (5 episodes: 1000, 1002, 1004, 1006, 1008)**\n*Root cause:* The approach to the red cube uses `red_pos` from the initial observation (line 6-7). If the cube shifts or is mis-detected, the robot aims at the wrong XY coordinates. The subsequent stack move (line 51) uses fresh `blue_pos` (line 43-44), but the red cube is already misplaced, causing a collision or missed stack.\n*Fix:* Re-observe the red cube pose immediately before the final approach to the stack (insert after line 44: `red_pos = obs[\"objects\"][\"red_cube\"][\"pos\"]` and use `red_pos` for the `move_to` on line 51).\n\n**Mode 2: Z-gap / release timing (2 episodes: 1001, 1003, 1005, 1007 \u2014 actually these are successes; failures have z_gap \u2248 0.0)**\n*Root cause:* Failed episodes show `z_gap=0.0` (line 55 descent hits blue cube top). The release (line 61) occurs at `stack_z=0.045`, but if the robot descends slightly too far or the blue cube is taller, the red cube contacts the blue before release, jamming the gripper.\n*Fix:* Add a small Z clearance check before release: after line 55, verify `pos.z > stack_z + 0.005`; if not, retreat to `stack_z + 0.01` before releasing."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 7,
+   "success": 0.875,
+   "gt_k": 7,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 5.8,
+   "usd_cum": 0.03004,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 106,
+   "summary": "**Mode 1: XY misalignment during stack descent**\n*Episodes: 1 (seed 2002)*\n*Root cause:* Line 78 moves to `LIFT_Z` using the blue cube's yaw, but the red cube was grasped with its own yaw (line 22). The pose mismatch causes the arm to descend offset from the target. The `move_to` at line 87 then targets the wrong XY location.\n*Fix:* Store the red cube's yaw at grasp (line 18) and use it for the approach-to-stack transition (lines 78/87), or re-observe the red cube's pose after lifting (line 59) before descending.\n\n**Mode 2: Premature release / z-gap error**\n*Episodes: 1 (seed 2002)*\n*Root cause:* Line 96 releases at `target_z` (\u22480.050m). The blue cube is only 0.015m tall; the red cube center sits at ~0.045m (line 8). Releasing at 0.050m leaves a 0.035m gap, inconsistent with the expected 0.0297m gap seen in successes, causing the red cube to rest at z=0.015m (on top of blue) but not stacked correctly, leading to `red_held=False` in checks.\n*Fix:* Lower the release target to `STACK_Z` (line 8) or `STACK_Z + STACK_CLEARANCE` (line 85) to ensure the red cube seats on the blue cube before release."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 5.9,
+   "usd_cum": 0.06179,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 103,
+   "summary": "**Mode 1: XY offset drift (3 episodes: 3002, 3004, 3006)**\n*Root cause:* The code uses the *initial* `red_yaw` from pickup throughout the stack maneuver. As the robot transports the cube, the base pose reference drifts relative to the blue cube, causing misalignment at line 77 and 86. The `move_to` at line 77 targets `stack_x, stack_y` with the old `red_yaw`, missing the target.\n*Fix:* Re-observe blue cube pose immediately before stacking (after lift) and re-compute `red_yaw` relative to the blue cube frame, or reset yaw to zero at line 77.\n\n**Mode 2: Premature release / z-gap collision (2 episodes: 3002, 3004)**\n*Root cause:* `release()` fires at line 93 while the red cube is still at `STACK_Z + STACK_CLEARANCE` (line 84-86). The cube descends during release, and the gripper opens before the cube seats on the blue cube (z_gap=0.0 in checks). This is exacerbated when the XY offset is large, causing the cube to collide with the blue cube edge and tip.\n*Fix:* Add a descent check after line 86: only release if `robot.z() < STACK_Z + 0.01`; otherwise descend further (`move_by(dz=-0.01)`) before releasing at line 93.",
+   "reverted_to": 2
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 5.9,
+   "usd_cum": 0.08441,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 122,
+   "summary": "**Mode 1: Premature release before stacking**\n* **Episodes:** 4001, 4003, 4004 (3/5 failures)\n* **Root cause:** `release()` is called at `t=6.9` (seed 4001) or `t=7.28` (seed 4004) while the robot is still at `LIFT_Z` (0.12m), far above the blue cube. The stack logic has not begun; `move_to` to `STACK_Z` never executes.\n* **Fix:** Move the `robot.release()` call to after the stack descent and `wait(0.1)` at line 109. Ensure release only happens at `STACK_Z` + clearance.\n\n**Mode 2: Grasp failure / drop during transport**\n* **Episodes:** 4000, 4005\u20134007 (5/8 successes show `red_held=False` in checks but final pos shows cube stacked; however, failures in this group likely dropped the cube before stacking).\n* **Root cause:** Inconsistent grasp or transport vibration causes the red cube to slip. The code verifies `holding()` after grasp (line 58) but does not re-verify before the `move_to` at line 65.\n* **Fix:** Add a hold verification check immediately before line 65: `if robot.holding() != \"red_cube\": robot.home(); return False`.\n\n**Mode 3: Blue cube mis-detection / pose drift**\n* **Episodes:** 4001, 4003, 4004 (failures show blue_z=0.0149, red landed at 0.015, indicating no stack).\n* **Root cause:** After release at line 112, the blue cube pose observed at line 73 may have drifted or the fresh observation missed the cube due to gripper collision or camera occlusion, causing `move_to` to a wrong or missing target.\n* **Fix:** Ensure the robot hovers at `LIFT_Z` with a wide field-of-view before the `observe()` at line 73, and add a check `if \"blue_cube\" not in obs[\"objects\"]: continue retry` before line 80.",
+   "reverted_to": 2
+  },
+  {
+   "round": 5,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 7,
+   "errors": 0,
+   "wall_s": 5.7,
+   "usd_cum": 0.09575,
+   "code": "round_5/skill.py",
+   "diff": "round_5/diff.patch",
+   "lines": 133,
+   "summary": "**Mode 1: Grasp failure (2 episodes: 5002, 5006)**\n*Root cause:* `grasp()` returned `holding: null` at lines 38 and 50. The robot descended to `GRASP_Z` but the gripper failed to close or the cube was misaligned.\n*Fix:* Add a pre-grasp alignment check. Before line 32, verify `red_pos` is within a 0.02m radius of the approach target. If not, re-observe and move_to again.\n\n**Mode 2: Stack misplacement (2 episodes: 5007, 5002 xy_offset>0.03)**\n*Root cause:* After transport to `LIFT_Z`, the robot moved to `stack_x, stack_y` using `blue_yaw` (line 95). The blue cube yaw drifted or was outdated, causing the final descent to miss the target location (xy_offset up to 0.077).\n*Fix:* Re-observe the blue cube yaw immediately before line 95. Replace `blue_yaw` with the fresh `obs[\"objects\"][\"blue_cube\"][\"yaw\"]` to ensure alignment matches the current pose.\n\n**Mode 3: Release timing (1 episode: 5007)**\n*Root cause:* `release()` at line 123 occurred while the arm was still translating downward (trace shows release at `t=8.1` after descending to `0.050`). The cube did not seat before release.\n*Fix:* Move the `robot.wait(0.1)` at line 120 immediately after the descent verification (line 118), before the `robot.release()` at line 123. This ensures the cube is stationary before letting go.",
+   "reverted_to": 2
+  },
+  {
+   "round": 6,
+   "n": 8,
+   "k": 4,
+   "success": 0.5,
+   "gt_k": 4,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 6.0,
+   "usd_cum": 0.10787,
+   "code": "round_6/skill.py",
+   "diff": "round_6/diff.patch",
+   "lines": 150
+  }
+ ],
+ "best_round": 2,
+ "eval": {
+  "n": 50,
+  "k": 32,
+  "p": 0.64,
+  "lo": 0.501407620103,
+  "hi": 0.758614370328,
+  "source": "gt",
+  "best_round": 2,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 8.26,
+  "self_report_true": 46,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100002,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0914,
+     "z_gap": -0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100002/end_front.jpg"
+   },
+   {
+    "seed": 100003,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.1304,
+     "z_gap": -0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100003/end_front.jpg"
+   },
+   {
+    "seed": 100008,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0362,
+     "z_gap": 0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100008/end_front.jpg"
+   },
+   {
+    "seed": 100009,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0379,
+     "z_gap": -0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100009/end_front.jpg"
+   },
+   {
+    "seed": 100011,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0363,
+     "z_gap": 0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100011/end_front.jpg"
+   },
+   {
+    "seed": 100012,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0162,
+     "z_gap": 0.0296,
+     "red_held": false,
+     "blue_z": 0.0148
+    },
+    "frame": "eval/episodes/ep_100012/end_front.jpg"
+   },
+   {
+    "seed": 100013,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.04,
+     "z_gap": -0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100013/end_front.jpg"
+   },
+   {
+    "seed": 100017,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.037,
+     "z_gap": 0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100017/end_front.jpg"
+   }
+  ]
+ },
+ "models": {
+  "coder": {
+   "alias": "ultra",
+   "id": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "nvidia": true,
+   "calls": 6,
+   "prompt_tokens": 28116,
+   "completion_tokens": 26002,
+   "usd": 0.106122,
+   "price_in": 1.0,
+   "price_out": 3.0
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 5,
+   "prompt_tokens": 21222,
+   "completion_tokens": 1963,
+   "usd": 0.001745,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.107867,
+  "compute_usd": 0.0,
+  "total_usd": 0.107867,
+  "calls": 11,
+  "prompt_tokens": 49338,
+  "completion_tokens": 27965,
+  "compute_seconds": 118.61,
+  "backend": "local"
+ },
+ "wall_time_s": 158.9,
+ "practice_episodes": 48,
+ "created": "2026-10-23 09:49:51",
+ "skill_file": "best_skill.py"
+}

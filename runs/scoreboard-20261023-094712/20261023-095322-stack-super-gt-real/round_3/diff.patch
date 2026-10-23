@@ -1,0 +1,48 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -18,7 +18,7 @@
+     HALF = CUBE_SIZE / 2.0    # 0.015
+     GRASP_Z = HALF            # tool point height for grasping (finger pads around middle)
+     ABOVE_Z = 0.08            # safe height to approach/release
+-    EPS = 0.001               # small clearance epsilon
++    EPS = 0.01                # increased clearance epsilon to avoid zero gap
+     
+     # Helper to move with a given speed, with basic retry on failure
+     def safe_move(x, y, z, yaw=None, speed=0.15, max_tries=3):
+@@ -77,15 +77,24 @@
+         robot.home()
+         return False
+     
+-    # 7. Lower to stacking height (red cube centre when stacked on blue)
+-    stack_z = blue_pos[2] + CUBE_SIZE + EPS  # centre height with tiny clearance
++    # 7. Re‑observe blue pose again right before stacking to capture any drift
++    obs = robot.observe()
++    blue_pose = obs["objects"]["blue_cube"]
++    blue_pos = blue_pose["pos"]
++    blue_yaw = blue_pose["yaw"]
++    
++    # 8. Lower to stacking height (red cube centre when stacked on blue)
++    stack_z = blue_pos[2] + CUBE_SIZE + EPS  # centre height with clearance
+     if not safe_move(blue_pos[0], blue_pos[1], stack_z, yaw=blue_yaw, speed=0.05)["ok"]:
+         robot.log("Failed to lower to stack height")
+         robot.release()
+         robot.home()
+         return False
+     
+-    # 8. Release
++    # Brief settle to let contacts stabilize
++    robot.wait(0.2)
++    
++    # 9. Release
+     robot.release()
+     # Verify release
+     if robot.holding() is not None:
+@@ -93,7 +102,7 @@
+         robot.home()
+         return False
+     
+-    # 9. Retreat
++    # 10. Retreat
+     if not safe_move(blue_pos[0], blue_pos[1], ABOVE_Z, yaw=blue_yaw, speed=0.05)["ok"]:
+         robot.log("Failed to retreat")
+         robot.home()
