@@ -135,7 +135,7 @@ VIEW_LABELS = {
     "start_front": "START, front camera",
     "end_front": "END, front camera",
     "end_side": "END, low side camera (good for heights and stacking)",
-    "end_overhead": "END, overhead camera (top-down, good for positions)",
+    "end_overhead": "END, high camera in front of the robot looking down (good for positions on the table)",
 }
 
 

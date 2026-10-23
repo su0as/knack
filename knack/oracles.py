@@ -88,11 +88,12 @@ def run(robot):
             break
         ux, uy = dx / d, dy / d
         yaw = math.atan2(uy, ux) + math.pi / 2  # fingers spread across the push direction
-        sx, sy = p[0] - ux * 0.06, p[1] - uy * 0.06
-        robot.release()
+        sx, sy = p[0] - ux * 0.065, p[1] - uy * 0.065
         robot.move_to(sx, sy, 0.06, yaw=yaw)
+        robot.grasp()  # closed fingers make a solid paddle (open fingers wedge the puck and tip it)
         robot.move_to(sx, sy, 0.016, yaw=yaw, speed=0.08)
-        ex, ey = t[0] - ux * 0.027, t[1] - uy * 0.027
+        # paddle face is ~1 cm ahead of the tool point, puck radius 3 cm
+        ex, ey = t[0] - ux * 0.04, t[1] - uy * 0.04
         robot.move_to(ex, ey, 0.016, yaw=yaw, speed=0.05)
         robot.move_to(ex - ux * 0.03, ey - uy * 0.03, 0.016, yaw=yaw, speed=0.05)
         robot.move_to(ex - ux * 0.03, ey - uy * 0.03, 0.07, yaw=yaw)

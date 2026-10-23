@@ -65,12 +65,12 @@ def arm_xml(g: ArmGeometry) -> str:
                 <geom name="palm" type="box" pos="{palm_cx} 0 0" size="{palm_hx} 0.034 0.013" rgba="{_BODY_RGBA}" friction="1.0 0.02 0.0001"/>
                 <body name="finger_l" pos="{g.l3} 0.004 0" gravcomp="1">
                   <inertial pos="0 0 0" mass="0.01" diaginertia="2e-6 2e-6 2e-6"/>
-                  <joint name="finger_l" type="slide" axis="0 1 0" range="0 {g.finger_travel + 0.001}" damping="2.0" armature="0.001"/>
+                  <joint name="finger_l" type="slide" axis="0 1 0" range="0 {g.finger_travel + 0.001}" damping="25.0" armature="0.002"/>
                   <geom name="finger_l" type="box" pos="-0.00375 0 0" size="0.01625 0.004 0.01" rgba="{_FINGER_RGBA}" friction="1.5 0.02 0.0001" condim="4"/>
                 </body>
                 <body name="finger_r" pos="{g.l3} -0.004 0" gravcomp="1">
                   <inertial pos="0 0 0" mass="0.01" diaginertia="2e-6 2e-6 2e-6"/>
-                  <joint name="finger_r" type="slide" axis="0 -1 0" range="0 {g.finger_travel + 0.001}" damping="2.0" armature="0.001"/>
+                  <joint name="finger_r" type="slide" axis="0 -1 0" range="0 {g.finger_travel + 0.001}" damping="25.0" armature="0.002"/>
                   <geom name="finger_r" type="box" pos="-0.00375 0 0" size="0.01625 0.004 0.01" rgba="{_FINGER_RGBA}" friction="1.5 0.02 0.0001" condim="4"/>
                 </body>
                 <site name="tcp" pos="{g.l3} 0 0" size="0.004" rgba="1 0.2 0.2 0.6" group="4"/>
@@ -150,9 +150,9 @@ def scene_xml(task: Task, layout: dict, dr: dict | None = None, g: ArmGeometry =
     <light name="key" pos="0.3 -0.4 1.2" dir="-0.2 0.3 -1" diffuse="0.6 0.6 0.6" castshadow="true"/>
     <geom name="table" type="box" size="0.5 0.45 0.02" pos="0.15 0 -0.02" material="grid" friction="0.5 0.01 0.0001"/>
     <body name="look_target" pos="0.16 0 0.03"/>
-    <camera name="overhead" pos="0.16 0 0.62" xyaxes="0 -1 0 1 0 0" fovy="50"/>
-    <camera name="front" mode="targetbody" target="look_target" pos="0.60 -0.30 0.36" fovy="42"/>
-    <camera name="side" mode="targetbody" target="look_target" pos="0.18 -0.56 0.11" fovy="42"/>
+    <camera name="overhead" mode="targetbody" target="look_target" pos="0.36 0 0.48" fovy="50"/>
+    <camera name="front" mode="targetbody" target="look_target" pos="0.47 -0.25 0.28" fovy="44"/>
+    <camera name="side" mode="targetbody" target="look_target" pos="0.17 -0.46 0.10" fovy="44"/>
 {arm_xml(g)}
 {fixtures}
 {objs}
