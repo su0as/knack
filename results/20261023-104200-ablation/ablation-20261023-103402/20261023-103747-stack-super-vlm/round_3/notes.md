@@ -1,0 +1,4 @@
+- Changed grasp target to use red_pose["pos"][2] + half_height to grasp the cube center (addresses misplaced stack).
+- Increased lift_before_release offset from 0.005 to 0.015 m and reduced speed to 0.05 m/s for the stack approach and lift before release (addresses safety clamps and placement precision).
+- Added verification that the robot is not holding anything after release.
+- Kept all other safety checks and helper function.

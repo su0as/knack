@@ -1,0 +1,8 @@
+- Revert to round 2 logic which achieved 7/8 success.
+- Fix grasp target to use cube center (no half_height addition).
+- Increase above_blue clearance to 0.08 to avoid collisions.
+- Reduce speed for stack approach and lift-before-release to 0.05 for precision.
+- Increase lift-before-release offset to 0.015 to ensure cube is clear before release.
+- Retreat to target_z + 0.015 to clear stacked cubes.
+- Verify that nothing is held after release.
+- Keep all other safety checks and helper function.

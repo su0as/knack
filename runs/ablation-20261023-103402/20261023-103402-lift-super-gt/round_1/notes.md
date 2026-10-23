@@ -1,0 +1,5 @@
+- First attempt: perceive the red cube, move above it, descend to a grasp point ~2 cm above its centre, close the gripper, then lift to ~7 cm above the centre (which guarantees >5 cm above the table).
+- Added checks for successful grasp and for the gripper’s height after lifting; return False if any step fails.
+- Wrapped the motion sequence in a try/except for MotionError to avoid crashes on unreachable poses.
+- Used a slow speed (0.05 m/s) for the descent/grasp phase and the default speed for faster travel moves.
+- No retries beyond a single re‑attempt on grasp failure; this keeps the skill simple for the first version.

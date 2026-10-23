@@ -1,0 +1,42 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -36,7 +36,7 @@
+         grasp_target = {
+             "x": red_pose["pos"][0],
+             "y": red_pose["pos"][1],
+-            "z": red_pose["pos"][2],  # center z
++            "z": red_pose["pos"][2] + half_height,  # center z
+             "yaw": red_pose["yaw"]
+         }
+         if not safe_move_to(**grasp_target, speed=0.08):
+@@ -82,22 +82,27 @@
+             "z": target_z,
+             "yaw": blue_pose["yaw"]
+         }
+-        if not safe_move_to(**stack_target, speed=0.08):
++        if not safe_move_to(**stack_target, speed=0.05):  # reduced speed for precision
+             return False
+ 
+         # Small upward lift before releasing to ensure clearance during release
+         lift_before_release = {
+             "x": blue_pose["pos"][0],
+             "y": blue_pose["pos"][1],
+-            "z": target_z + 0.005,  # 5 mm above target
++            "z": target_z + 0.015,  # increased clearance to 15 mm
+             "yaw": blue_pose["yaw"]
+         }
+-        if not safe_move_to(**lift_before_release, speed=0.08):
++        if not safe_move_to(**lift_before_release, speed=0.05):  # reduced speed
+             return False
+ 
+         # Release red cube onto blue cube
+         robot.release()
+         robot.wait(0.2)  # let it settle
++
++        # Verify release
++        if robot.holding() is not None:
++            robot.log("Still holding after release")
++            return False
+ 
+         # Retreat to clearance (above blue cube)
+         retreat = {

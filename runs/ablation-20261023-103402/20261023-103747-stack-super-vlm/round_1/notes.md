@@ -1,0 +1,5 @@
+- First attempt: pick up the red cube using a top-down grasp, then place it centered on the blue cube.
+- Compute grasp and place positions from the observed poses; do not hard‑code coordinates.
+- Use a safe clearance height (z=0.05) for travel, slower speeds (0.05‑0.10) for precise approaches.
+- Verify the grasp succeeded before lifting; if any motion fails, abort and return False.
+- After placing, release and retreat to a safe height.

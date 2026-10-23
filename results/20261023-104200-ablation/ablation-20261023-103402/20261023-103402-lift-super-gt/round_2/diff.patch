@@ -1,0 +1,58 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -13,12 +13,9 @@
+         cyaw = cube["yaw"]                # orientation (used to align fingers)
+ 
+         # 2. Define target heights relative to the cube centre
+-        #    Grasp: a little above the centre so the finger pads close around the middle
+-        grasp_z = cz + 0.02               # 2 cm above centre → finger pads ~0.5 cm below centre
+-        #    Lift: high enough to be safely >5 cm above the table (table at z=0)
+-        lift_z = cz + 0.07                # 7 cm above centre → ~8.5 cm above table
+-        #    Travel height: comfortably above the cube to avoid collisions
+-        travel_z = cz + 0.12              # 12 cm above centre
++        grasp_z = cz + 0.02               # 2 cm above centre → finger pads around middle
++        lift_z = cz + 0.10                # 10 cm above centre → safely >5 cm above table
++        travel_z = cz + 0.12              # travel height to avoid collisions
+ 
+         # 3. Move to a safe pose above the cube
+         robot.move_to(cx, cy, travel_z, yaw=cyaw, speed=0.2)
+@@ -26,25 +23,34 @@
+         # 4. Descend to the grasp position (slow for precision)
+         robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.05)
+ 
+-        # 5. Attempt to grasp
++        # 5. Attempt to grasp (with one retry)
+         if not robot.grasp():
+-            # If grasp failed, open the fingers, retreat and try once more
+             robot.release()
+             robot.move_to(cx, cy, travel_z, yaw=cyaw, speed=0.2)
+             robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.05)
+             if not robot.grasp():
+                 return False   # second attempt also failed
+ 
++        # Confirm we actually have the cube before lifting
++        if robot.holding() != "red_cube":
++            return False
++
+         # 6. Lift the cube to the target height
+         robot.move_to(cx, cy, lift_z, yaw=cyaw, speed=0.2)
+ 
+-        # 7. Verify that we are still holding something and that it is high enough
++        # 7. Post‑lift sanity check: gripper should be high enough
++        obs_after_lift = robot.observe()
++        gripper_z = obs_after_lift["gripper"]["pos"][2]
++        if gripper_z < 0.07:   # less than 7 cm above table → likely insufficient lift
++            return False
++
++        # 8. Final verification: still holding and high enough
+         if robot.holding() is None:
+             return False
+ 
+         final_obs = robot.observe()
+-        gripper_z = final_obs["gripper"]["pos"][2]
+-        if gripper_z < 0.05:   # less than 5 cm above the table
++        gripper_z_final = final_obs["gripper"]["pos"][2]
++        if gripper_z_final < 0.05:   # less than 5 cm above table
+             return False
+ 
+         return True

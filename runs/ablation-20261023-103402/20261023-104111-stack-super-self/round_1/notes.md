@@ -1,0 +1,5 @@
+- First attempt: simple pick-and-place pipeline using perceived poses.
+- Grasp at the cube's centre height (z ≈ 0.015 m) and lift to a safe clearance.
+- Place the red cube so its centre aligns with the blue cube's top surface (target z = blue_z + 0.03 m).
+- Added basic verification after grasp and release, and a retreat/home at the end.
+- Wrapped moves in try/except for MotionError to avoid crashing on unreachable targets.

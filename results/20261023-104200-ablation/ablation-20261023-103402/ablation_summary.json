@@ -1,0 +1,205 @@
+{
+ "table": {
+  "gt": {
+   "mean_heldout_success": 0.86,
+   "mean_usd": 0.006586,
+   "self_report_true_rate": 0.86
+  },
+  "vlm": {
+   "mean_heldout_success": 0.49,
+   "mean_usd": 0.0414875,
+   "self_report_true_rate": 1.0
+  },
+  "self": {
+   "mean_heldout_success": 1.0,
+   "mean_usd": 0.0015574999999999999,
+   "self_report_true_rate": 1.0
+  }
+ },
+ "rows": [
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "lift",
+   "reward": "gt",
+   "run_id": "20261023-103402-lift-super-gt",
+   "status": "done",
+   "round_success": [
+    0.0,
+    0.75,
+    0.875,
+    0.0
+   ],
+   "rounds_used": 4,
+   "eval_k": 36,
+   "eval_n": 50,
+   "eval_p": 0.72,
+   "eval_lo": 0.58334612854,
+   "eval_hi": 0.825259856423,
+   "usd": 0.011058,
+   "llm_usd": 0.011058,
+   "tokens_in": 21091,
+   "tokens_out": 8230,
+   "wall_s": 120.0,
+   "self_report_true": 36,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "stack",
+   "reward": "gt",
+   "run_id": "20261023-103602-stack-super-gt",
+   "status": "done",
+   "round_success": [
+    1.0
+   ],
+   "rounds_used": 1,
+   "eval_k": 50,
+   "eval_n": 50,
+   "eval_p": 1.0,
+   "eval_lo": 0.928649965826,
+   "eval_hi": 1.0,
+   "usd": 0.002114,
+   "llm_usd": 0.002114,
+   "tokens_in": 1535,
+   "tokens_out": 1837,
+   "wall_s": 45.6,
+   "self_report_true": 50,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "lift",
+   "reward": "vlm",
+   "run_id": "20261023-103648-lift-super-vlm",
+   "status": "done",
+   "round_success": [
+    1.0
+   ],
+   "rounds_used": 1,
+   "eval_k": 0,
+   "eval_n": 50,
+   "eval_p": 0.0,
+   "eval_lo": 0.0,
+   "eval_hi": 0.071350034174,
+   "usd": 0.025332,
+   "llm_usd": 0.025332,
+   "tokens_in": 37743,
+   "tokens_out": 15563,
+   "wall_s": 58.9,
+   "self_report_true": 50,
+   "judge": {
+    "n": 20,
+    "decided": 20,
+    "abstained": 0,
+    "abstain_rate": 0.0,
+    "accuracy": 0.0,
+    "precision": 0.0,
+    "recall": null,
+    "kappa": 0.0,
+    "tp": 0,
+    "tn": 0,
+    "fp": 20,
+    "fn": 0,
+    "false_success_rate": 1.0
+   },
+   "mock": false
+  },
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "stack",
+   "reward": "vlm",
+   "run_id": "20261023-103747-stack-super-vlm",
+   "status": "done",
+   "round_success": [
+    0.875,
+    0.875,
+    0.0,
+    0.875
+   ],
+   "rounds_used": 4,
+   "eval_k": 49,
+   "eval_n": 50,
+   "eval_p": 0.98,
+   "eval_lo": 0.895043135282,
+   "eval_hi": 0.996460831911,
+   "usd": 0.057643,
+   "llm_usd": 0.057643,
+   "tokens_in": 99234,
+   "tokens_out": 35872,
+   "wall_s": 165.1,
+   "self_report_true": 50,
+   "judge": {
+    "n": 20,
+    "decided": 20,
+    "abstained": 0,
+    "abstain_rate": 0.0,
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "kappa": null,
+    "tp": 20,
+    "tn": 0,
+    "fp": 0,
+    "fn": 0,
+    "false_success_rate": null
+   },
+   "mock": false
+  },
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "lift",
+   "reward": "self",
+   "run_id": "20261023-104032-lift-super-self",
+   "status": "done",
+   "round_success": [
+    1.0
+   ],
+   "rounds_used": 1,
+   "eval_k": 50,
+   "eval_n": 50,
+   "eval_p": 1.0,
+   "eval_lo": 0.928649965826,
+   "eval_hi": 1.0,
+   "usd": 0.00139,
+   "llm_usd": 0.00139,
+   "tokens_in": 1539,
+   "tokens_out": 1437,
+   "wall_s": 39.6,
+   "self_report_true": 50,
+   "judge": null,
+   "mock": false
+  },
+  {
+   "model": "super",
+   "model_id": "nvidia/nemotron-3-super-120b-a12b",
+   "task": "stack",
+   "reward": "self",
+   "run_id": "20261023-104111-stack-super-self",
+   "status": "done",
+   "round_success": [
+    1.0
+   ],
+   "rounds_used": 1,
+   "eval_k": 50,
+   "eval_n": 50,
+   "eval_p": 1.0,
+   "eval_lo": 0.928649965826,
+   "eval_hi": 1.0,
+   "usd": 0.001725,
+   "llm_usd": 0.001725,
+   "tokens_in": 1535,
+   "tokens_out": 1806,
+   "wall_s": 48.8,
+   "self_report_true": 50,
+   "judge": null,
+   "mock": false
+  }
+ ]
+}

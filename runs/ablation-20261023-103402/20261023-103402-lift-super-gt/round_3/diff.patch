@@ -1,0 +1,48 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -14,8 +14,8 @@
+ 
+         # 2. Define target heights relative to the cube centre
+         grasp_z = cz + 0.02               # 2 cm above centre → finger pads around middle
+-        lift_z = cz + 0.10                # 10 cm above centre → safely >5 cm above table
+-        travel_z = cz + 0.12              # travel height to avoid collisions
++        lift_z = cz + 0.15                # 15 cm above centre → safely >5 cm above table
++        travel_z = cz + 0.20              # travel height to avoid collisions
+ 
+         # 3. Move to a safe pose above the cube
+         robot.move_to(cx, cy, travel_z, yaw=cyaw, speed=0.2)
+@@ -35,22 +35,26 @@
+         if robot.holding() != "red_cube":
+             return False
+ 
+-        # 6. Lift the cube to the target height
+-        robot.move_to(cx, cy, lift_z, yaw=cyaw, speed=0.2)
++        # Let the gripper settle after a successful grasp
++        robot.wait(0.1)
+ 
+-        # 7. Post‑lift sanity check: gripper should be high enough
++        # 6. Lift the cube to the target height (slower to avoid slip)
++        robot.move_to(cx, cy, lift_z, yaw=cyaw, speed=0.1)
++
++        # 7. Post‑lift sanity check: gripper should be high enough and still holding
+         obs_after_lift = robot.observe()
+         gripper_z = obs_after_lift["gripper"]["pos"][2]
+-        if gripper_z < 0.07:   # less than 7 cm above table → likely insufficient lift
++        if gripper_z < 0.05:          # less than 5 cm above table → insufficient lift
++            return False
++        if robot.holding() != "red_cube":
+             return False
+ 
+         # 8. Final verification: still holding and high enough
+-        if robot.holding() is None:
+-            return False
+-
+         final_obs = robot.observe()
+         gripper_z_final = final_obs["gripper"]["pos"][2]
+-        if gripper_z_final < 0.05:   # less than 5 cm above table
++        if gripper_z_final < 0.05:    # less than 5 cm above table
++            return False
++        if robot.holding() is None:
+             return False
+ 
+         return True

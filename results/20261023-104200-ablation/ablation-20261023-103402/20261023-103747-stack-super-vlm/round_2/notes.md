@@ -1,0 +1,4 @@
+- Removed unnecessary intermediate move to blue cube center while holding red cube to avoid collision.
+- Added a small upward lift (5 mm) before releasing to guarantee clearance during release.
+- Added explicit checks for the `ok` flag after each `move_to` via a helper `safe_move_to`; abort on failure.
+- Kept top‑down grasp, verification, clearance lifts, and final home return.

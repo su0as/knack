@@ -1,0 +1,4 @@
+- First attempt: perceive the red cube, move above it, descend to a grasp height near its centre, close the gripper, verify hold, then lift 5 cm above the table.
+- Use slow speeds for precision near the object, default speed for travel.
+- Include basic error handling and verification after grasp.
+- If grasp fails, release and retry once before aborting.

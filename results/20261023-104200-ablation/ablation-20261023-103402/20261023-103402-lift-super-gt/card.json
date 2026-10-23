@@ -1,0 +1,229 @@
+{
+ "run_id": "20261023-103402-lift-super-gt",
+ "task": "lift",
+ "title": "Lift",
+ "instruction": "Pick up the red cube and hold it at least 5 cm above the table.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "sim",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 5,
+   "errors": 0,
+   "wall_s": 6.9,
+   "usd_cum": 0.002,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 55,
+   "summary": "**Mode 1: Insufficient lift height** (5 episodes: 1000, 1002, 1003, 1004, 1007)  \n*Root cause:* The lift height `lift_z = cz + 0.07` (line 19) places the gripper at ~8.5\u202fcm above the table, but the final observed cube z\u2011coordinate is consistently ~0.064\u202fm (6.4\u202fcm). The cube is not rising enough, likely because the grasp opening is too large or the lift speed is insufficient.  \n*Fix:* Increase `lift_z` to `cz + 0.10` (10\u202fcm above centre \u2192 ~11\u202fcm above table) and add a post\u2011lift check that `gripper_z >= 0.07` before the verification step (line 47).\n\n**Mode 2: Grasp failure / drop** (3 episodes: 1001, 1005, 1006)  \n*Root cause:* The initial grasp succeeds but the cube is left at table height (z\u22480.015\u202fm). The `grasp()` call at line 30 may close on an unstable pose, and `release()` on line 32 (retry logic) is never triggered because the code proceeds to lift without confirming a secure hold.  \n*Fix:* After `grasp()` (line 30), insert `if not robot.holding() == \"red_cube\": return False` before the lift move (line 39). This aborts early if the gripper did not secure the cube."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 6,
+   "success": 0.75,
+   "gt_k": 6,
+   "self_k": 6,
+   "errors": 0,
+   "wall_s": 5.1,
+   "usd_cum": 0.00468,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 61,
+   "summary": "**Mode 1: Premature release after failed grasp (2 episodes: 2000, 2005)**\n- **Root cause:** Line 28 releases the gripper immediately after a failed `grasp()` without re\u2011positioning. The robot lifts from a low `grasp_z` (line 16: `cz + 0.02`), so the cube slips back onto the table.\n- **Fix:** After the first failure, move to `travel_z` (line 29) before the second `grasp()` attempt (line 31). This gives clearance to re\u2011approach from above.\n\n**Mode 2: Insufficient lift height (3 episodes: 2001\u20112004, 2006\u20112007 \u2014 actually these succeed, but the check at line 44\u201145 shows the threshold is tight)**\n- **Root cause:** Line 39 lifts to `lift_z = cz + 0.10`. If the cube centre `cz` is near table height (e.g., 0.015\u202fm), `lift_z` \u2248 0.115\u202fm, yet the post\u2011lift check (line 44) flags `gripper_z < 0.07` as failure. The 5\u202fcm requirement in the task (line 53) is stricter than the code\u2019s 7\u202fcm guard, causing false fails when the cube is barely off the table.\n- **Fix:** Raise `lift_z` to `cz + 0.15` (line 17) to guarantee >5\u202fcm clearance regardless of initial cube pose."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 7,
+   "success": 0.875,
+   "gt_k": 7,
+   "self_k": 7,
+   "errors": 0,
+   "wall_s": 6.4,
+   "usd_cum": 0.00774,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 65,
+   "summary": "**Mode 1: Insufficient lift height**  \n- **Episodes:** 3001 (1 failure)  \n- **Root cause:** Line 42 lifts to `lift_z = cz + 0.15`. The cube\u2019s initial height `cz` was only 0.0049\u202fm, resulting in a final height of ~0.015\u202fm, below the 0.05\u202fm threshold (lines 47\u201348).  \n- **Fix:** Increase `lift_z` offset to `cz + 0.20` (or higher) to guarantee >5\u202fcm clearance regardless of initial cube pose.\n\n**Mode 2: Grasp failure / drop**  \n- **Episodes:** 3001 (1 failure)  \n- **Root cause:** Line 27 attempts `robot.grasp()`. If the gripper does not close fully or the cube shifts during the subsequent lift, `robot.holding()` returns `None` (lines 35, 49, 57).  \n- **Fix:** Add a post-grasp verification at line 35 and ensure `robot.wait(0.1)` (line 39) allows finger closure before lifting. If failures persist, reduce `grasp_z` offset or add a second `robot.release()`-`robot.grasp()` retry cycle."
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 5.5,
+   "usd_cum": 0.01106,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 83
+  }
+ ],
+ "best_round": 3,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 3,
+  "chosen": 3,
+  "rows": [
+   {
+    "round": 3,
+    "practice": "7/8",
+    "recheck": "11/16",
+    "total_k": 18,
+    "total_n": 24
+   },
+   {
+    "round": 2,
+    "practice": "6/8",
+    "recheck": "11/16",
+    "total_k": 17,
+    "total_n": 24
+   },
+   {
+    "round": 1,
+    "practice": "0/8",
+    "recheck": "0/16",
+    "total_k": 0,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 36,
+  "p": 0.72,
+  "lo": 0.58334612854,
+  "hi": 0.825259856423,
+  "source": "gt",
+  "best_round": 3,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 6.82,
+  "self_report_true": 36,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100001,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100001/end_front.jpg"
+   },
+   {
+    "seed": 100002,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100002/end_front.jpg"
+   },
+   {
+    "seed": 100006,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100006/end_front.jpg"
+   },
+   {
+    "seed": 100008,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100008/end_front.jpg"
+   },
+   {
+    "seed": 100016,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100016/end_front.jpg"
+   },
+   {
+    "seed": 100018,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100018/end_front.jpg"
+   },
+   {
+    "seed": 100019,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100019/end_front.jpg"
+   },
+   {
+    "seed": 100025,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100025/end_front.jpg"
+   }
+  ]
+ },
+ "models": {
+  "coder": {
+   "alias": "super",
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "nvidia": true,
+   "calls": 4,
+   "prompt_tokens": 12800,
+   "completion_tokens": 7190,
+   "usd": 0.010311,
+   "price_in": 0.3,
+   "price_out": 0.9
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 3,
+   "prompt_tokens": 8291,
+   "completion_tokens": 1040,
+   "usd": 0.000747,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.011058,
+  "compute_usd": 0.0,
+  "total_usd": 0.011058,
+  "calls": 7,
+  "prompt_tokens": 21091,
+  "completion_tokens": 8230,
+  "compute_seconds": 139.3,
+  "backend": "local"
+ },
+ "wall_time_s": 120.0,
+ "practice_episodes": 32,
+ "created": "2026-10-23 10:36:02",
+ "skill_file": "best_skill.py"
+}

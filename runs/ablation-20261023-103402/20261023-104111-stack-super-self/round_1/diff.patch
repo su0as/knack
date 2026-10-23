@@ -1,0 +1,80 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,77 @@
++import math
++
++def run(robot):
++    """
++    Stack the red cube on top of the blue cube.
++    Returns True if the maneuver appears to have succeeded, False otherwise.
++    """
++    try:
++        # Start from a known safe pose
++        robot.home()
++
++        # Obtain current poses (they may have noise)
++        red_pose = robot.get_pose("red_cube")
++        blue_pose = robot.get_pose("blue_cube")
++        if not red_pose or not blue_pose:
++            robot.log("Failed to get pose of one or both cubes")
++            return False
++
++        rx, ry, rz = red_pose["pos"]
++        bx, by, bz = blue_pose["pos"]
++
++        # Ensure gripper is open before approaching
++        robot.release()
++
++        # --- Pick red cube -------------------------------------------------
++        # Move above the red cube
++        robot.move_to(rx, ry, rz + 0.10, speed=0.2)
++        # Descend to grasp height (centre of the cube)
++        robot.move_to(rx, ry, rz, speed=0.05)
++
++        # Attempt to grasp
++        if not robot.grasp():
++            robot.log("Grasp failed on red cube")
++            robot.home()
++            return False
++
++        # Verify that we are actually holding the red cube
++        if robot.holding() != "red_cube":
++            robot.log("Not holding red cube after grasp")
++            robot.release()
++            robot.home()
++            return False
++
++        # Lift the red cube to a safe clearance
++        robot.move_to(rx, ry, rz + 0.10, speed=0.05)
++
++        # --- Place on blue cube -------------------------------------------
++        # Move above the blue cube
++        robot.move_to(bx, by, 0.10, speed=0.2)
++        # Desired centre height for the red cube when stacked:
++        # blue centre + cube height (0.03 m)
++        place_z = bz + 0.03
++        robot.move_to(bx, by, place_z, speed=0.05)
++
++        # Release the red cube onto the blue cube
++        robot.release()
++        robot.wait(0.1)  # let things settle
++
++        # Verify that we released the object
++        if robot.holding() is not None:
++            robot.log("Still holding an object after release")
++            robot.home()
++            return False
++
++        # Retreat a little and go home
++        robot.move_to(bx, by, bz + 0.10, speed=0.05)
++        robot.home()
++        return True
++
++    except Exception as e:
++        # Catch unexpected errors (including MotionError) and fail safely
++        robot.log(f"Exception during execution: {e}")
++        try:
++            robot.home()
++        except Exception:
++            pass
++        return False

@@ -1,0 +1,5 @@
+- Grasp was too low (finger pads near cube bottom) causing slip during lift; increased grasp height to target finger pads at cube's mid-height using the cube's reported size.
+- Lift height was insufficient for low initial cube poses; increased lift offset to cz + 0.20 to guarantee >5 cm clearance regardless of cube pose.
+- Added explicit verification after grasp and after lift, with a bounded retry (max 2 attempts) on grasp failure.
+- Kept slow speeds for precision moves and added a short settle wait after grasp.
+- Wrapped motion calls in try/except to catch MotionError and treat as failure.

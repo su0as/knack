@@ -1,0 +1,157 @@
+{
+ "task": "lift",
+ "seed": 4006,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": false,
+ "metrics": {
+  "red_cube_z": 0.0149,
+  "required_z": 0.065
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "move_to(0.151, 0.046, 0.266, yaw=-0.141, speed=0.200)",
+   "error": "MotionError: target (0.151, 0.046, 0.260) unreachable (wrist point is 0.339 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.157 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  }
+ ],
+ "n_calls": 2,
+ "printed": [],
+ "safety_events": [
+  {
+   "t": 0.0,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.266 clamped to 0.260"
+  }
+ ],
+ "safety_summary": {
+  "clamp": 1,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 0.5,
+ "wall_time": 0.41,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1491,
+     0.047,
+     0.0149
+    ],
+    "yaw": -0.1209,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1028,
+     0.0958,
+     0.0149
+    ],
+    "yaw": -0.296,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 0.5,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1491,
+     0.047,
+     0.0149
+    ],
+    "yaw": -0.1209,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1028,
+     0.0958,
+     0.0149
+    ],
+    "yaw": -0.296,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1491,
+   "y": 0.047,
+   "yaw": -0.1209,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1028,
+   "y": 0.0958,
+   "yaw": -0.296,
+   "fp": 0.0225
+  }
+ }
+}

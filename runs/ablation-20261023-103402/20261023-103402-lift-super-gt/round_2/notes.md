@@ -1,0 +1,5 @@
+- Lift height was insufficient; increased lift_z from cz+0.07 to cz+0.10 to ensure the cube clears the 5 cm requirement.
+- Added a check after grasping to confirm the gripper is actually holding the red cube before attempting to lift.
+- Added a post‑lift verification that the gripper is at least 7 cm above the table; if not, abort early.
+- Kept the retry logic for a failed grasp (release, retreat, second attempt) and the slow speed for descent/grasp.
+- Wrapped the whole sequence in a try/except to catch MotionError and other unexpected exceptions.

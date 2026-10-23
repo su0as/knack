@@ -1,0 +1,6 @@
+- Increased lift height to cz + 0.15 to guarantee >5 cm clearance regardless of cube pose.
+- Reduced lift speed to 0.1 m/s to prevent slipping during the lift.
+- Added a short wait after a successful grasp to let the gripper settle before lifting.
+- Kept the retry logic: on a failed grasp, release, retreat to travel height, then re‑attempt grasp.
+- Wrapped the sequence in try/except to catch MotionError and other unexpected exceptions.
+- Added post‑lift checks for both holding status and gripper height (≥0.05 m).

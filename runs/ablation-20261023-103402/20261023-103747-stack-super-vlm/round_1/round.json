@@ -1,0 +1,264 @@
+{
+ "round": 1,
+ "n": 8,
+ "k": 7,
+ "success": 0.875,
+ "gt_k": 7,
+ "self_k": 8,
+ "errors": 0,
+ "wall_s": 11.7,
+ "usd_cum": 0.00793,
+ "code": "round_1/skill.py",
+ "diff": "round_1/diff.patch",
+ "lines": 104,
+ "notes": "- First attempt: pick up the red cube using a top-down grasp, then place it centered on the blue cube.\n- Compute grasp and place positions from the observed poses; do not hard\u2011code coordinates.\n- Use a safe clearance height (z=0.05) for travel, slower speeds (0.05\u20110.10) for precise approaches.\n- Verify the grasp succeeded before lifting; if any motion fails, abort and return False.\n- After placing, release and retreat to a safe height.",
+ "judge": {
+  "n": 8,
+  "decided": 8,
+  "abstained": 0,
+  "abstain_rate": 0.0,
+  "accuracy": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "kappa": 1.0,
+  "tp": 7,
+  "tn": 1,
+  "fp": 0,
+  "fn": 0,
+  "false_success_rate": 0.0
+ },
+ "episodes": [
+  {
+   "seed": 1000,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": {
+    "success": true,
+    "confidence": 1.0,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": true, \"confidence\": 1.0, \"reason\": The red cube is stacked on top of the blue cube in the final frames, and the robot appears to have released it.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.002,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1001,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": {
+    "success": true,
+    "confidence": 0.95,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": true, \"confidence\": 0.95, \"reason\": The red cube is clearly stacked on top of the blue cube in the final frames, and the gripper is no longer holding it.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0044,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": {
+    "success": false,
+    "confidence": 1.0,
+    "reason": "The red and blue cubes are side-by-side on the table, not stacked.",
+    "abstained": false,
+    "raw": "{\"success\": false, \"confidence\": 1.0, \"reason\": \"The red and blue cubes are side-by-side on the table, not stacked.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0335,
+    "z_gap": -0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1003,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": {
+    "success": true,
+    "confidence": 1.0,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": true, \"confidence\": 1.0, \"reason\": The final frames show the red cube stacked directly on top of the blue cube, and the robot has released it.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0035,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1004,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": {
+    "success": true,
+    "confidence": 0.95,
+    "reason": "The red cube is stacked on top of the blue cube in the final frames.",
+    "abstained": false,
+    "raw": "{\"success\": true, \"confidence\": 0.95, \"reason\": \"The red cube is stacked on top of the blue cube in the final frames.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0008,
+    "z_gap": 0.0299,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": {
+    "success": true,
+    "confidence": 1.0,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": true, \"confidence\": 1.0, \"reason\": The red cube is stacked on top of the blue cube in the final frames.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.005,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": {
+    "success": true,
+    "confidence": 1.0,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": true, \"confidence\": 1.0, \"reason\": The red cube is stacked on top of the blue cube in the final frames.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0012,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1007,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": {
+    "success": true,
+    "confidence": 1.0,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": true, \"confidence\": 1.0, \"reason\": The red cube is stacked on top of the blue cube and the robot has released it.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0009,
+    "z_gap": 0.0299,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

@@ -1,0 +1,264 @@
+{
+ "round": 3,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 8,
+ "errors": 0,
+ "wall_s": 11.1,
+ "usd_cum": 0.03074,
+ "code": "round_3/skill.py",
+ "diff": "round_3/diff.patch",
+ "lines": 124,
+ "notes": "- Changed grasp target to use red_pose[\"pos\"][2] + half_height to grasp the cube center (addresses misplaced stack).\n- Increased lift_before_release offset from 0.005 to 0.015 m and reduced speed to 0.05 m/s for the stack approach and lift before release (addresses safety clamps and placement precision).\n- Added verification that the robot is not holding anything after release.\n- Kept all other safety checks and helper function.",
+ "judge": {
+  "n": 8,
+  "decided": 8,
+  "abstained": 0,
+  "abstain_rate": 0.0,
+  "accuracy": 1.0,
+  "precision": null,
+  "recall": null,
+  "kappa": null,
+  "tp": 0,
+  "tn": 8,
+  "fp": 0,
+  "fn": 0,
+  "false_success_rate": 0.0
+ },
+ "episodes": [
+  {
+   "seed": 3000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": {
+    "success": false,
+    "confidence": 1.0,
+    "reason": "The red and blue cubes are side-by-side on the table, not stacked.",
+    "abstained": false,
+    "raw": "{\"success\": false, \"confidence\": 1.0, \"reason\": \"The red and blue cubes are side-by-side on the table, not stacked.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0439,
+    "z_gap": 0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": {
+    "success": false,
+    "confidence": 1.0,
+    "reason": "The cubes are side-by-side on the table, not stacked.",
+    "abstained": false,
+    "raw": "{\"success\": false, \"confidence\": 1.0, \"reason\": \"The cubes are side-by-side on the table, not stacked.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0386,
+    "z_gap": 0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": {
+    "success": false,
+    "confidence": 1.0,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": false, \"confidence\": 1.0, \"reason\": The red and blue cubes are side-by-side on the table, not stacked.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0472,
+    "z_gap": -0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": {
+    "success": false,
+    "confidence": 1.0,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": false, \"confidence\": 1.0, \"reason\": The red and blue cubes are placed side-by-side on the table, not stacked.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0344,
+    "z_gap": 0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": {
+    "success": false,
+    "confidence": 0.95,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": false, \"confidence\": 0.95, \"reason\": The red cube is placed next to the blue cube on the table, not stacked on top of it.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0432,
+    "z_gap": -0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": {
+    "success": false,
+    "confidence": 1.0,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": false, \"confidence\": 1.0, \"reason\": The red and blue cubes remain side-by-side on the table and are not stacked.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0324,
+    "z_gap": 0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": {
+    "success": false,
+    "confidence": 1.0,
+    "reason": "The red and blue cubes remain side-by-side on the table; the red cube is not stacked on top of the blue cube.",
+    "abstained": false,
+    "raw": "{\"success\": false, \"confidence\": 1.0, \"reason\": \"The red and blue cubes remain side-by-side on the table; the red cube is not stacked on top of the blue cube.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0469,
+    "z_gap": 0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": {
+    "success": false,
+    "confidence": 1.0,
+    "reason": "",
+    "abstained": false,
+    "raw": "{\"success\": false, \"confidence\": 1.0, \"reason\": The red and blue cubes are placed side-by-side on the table, not stacked.\"}",
+    "error": null
+   },
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0393,
+    "z_gap": 0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

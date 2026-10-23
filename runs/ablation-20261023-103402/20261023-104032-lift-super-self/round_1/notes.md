@@ -1,0 +1,5 @@
+- First attempt: perceive red cube pose, move above it, descend to grasp height, close fingers, verify grasp, then lift.
+- Use small retry loop for grasp in case of missed pick-up.
+- Keep movements slow near the object (speed 0.05) and faster for transit.
+- After lift, check that the gripper is at least 0.05 m above the table (z >= 0.05) and that we are still holding the cube.
+- No fixtures present in this scene, so ignore them.

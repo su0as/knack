@@ -1,0 +1,503 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Stack</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261023-103747-stack-super-vlm &middot; 2026-10-23 10:40:32</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Stack the red cube on top of the blue cube and let go.</h2>
+<p class="muted">0 demonstrations &middot; reward: vlm &middot; perception: sim &middot; 32 practice episodes in 4 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/nemotron-3-super-120b-a12b <em>$0.30 / $0.90 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span><span class='chip'><b>JUDGE</b>nvidia/Nemotron-3.5-Super-VL <em>$0.30 / $0.90 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">98%</div><div>49/50 layouts &middot; Wilson 95% CI 90% to 100%</div><div class='ci'><div class='ci-band' style='left:89.5%;width:10.1%'></div><div class='ci-dot' style='left:98.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 15 clamps.</p><p>Vision judge vs ground truth on 20 held-out episodes: accuracy 100%, abstained 0%, false-success rate n/a.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:87%'></span><em>R1<br>7/8</em></div><div class='bar'><span style='height:87%'></span><em>R2<br>7/8</em></div><div class='bar'><span style='height:2%'></span><em>R3<br>0/8</em></div><div class='bar'><span style='height:87%'></span><em>R4<br>7/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/nemotron-3-super-120b-a12b</code></td><td>5</td><td>18,149</td><td>12,574</td><td>$0.0164</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>3</td><td>14,005</td><td>1,041</td><td>$0.0011</td></tr><tr><td>judge</td><td><code>nvidia/Nemotron-3.5-Super-VL</code></td><td>52</td><td>67,080</td><td>22,257</td><td>$0.0402</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>99 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>60</th><th>99,234</th><th>35,872</th><th>$0.0576</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details><summary>Round 1: 7/8 practice episodes &middot; 0 errors &middot; $0.0079 so far</summary><div class='muted'>coder notes</div><pre>- First attempt: pick up the red cube using a top-down grasp, then place it centered on the blue cube.
+- Compute grasp and place positions from the observed poses; do not hard‑code coordinates.
+- Use a safe clearance height (z=0.05) for travel, slower speeds (0.05‑0.10) for precise approaches.
+- Verify the grasp succeeded before lifting; if any motion fails, abort and return False.
+- After placing, release and retreat to a safe height.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Collision during descent (seed 1002)**
+- **Episodes:** 1
+- **Root cause:** Line 71 descends to `z=blue_pose[&quot;pos&quot;][2]` (center height) without accounting for the cube&#x27;s physical height. The robot drives into the red cube being held, causing a short.
+- **Fix:** Change line 71 `z` to `blue_pose[&quot;pos&quot;][2] + 0.03` to stop just above the blue cube surface.
+
+**Mode 2: Insufficient vertical lift (seeds 1003, 1007)**
+- **Episodes:** 2
+- **Root cause:** Line 75 computes `target_z = blue_pose[&quot;pos&quot;][2] + 0.03` for stacking, but the release on line 85 occurs at the held cube&#x27;s center height (line 31), not the computed stack height. The red cube lands at `z≈0.045` instead of `z≈0.048`.
+- **Fix:** Add a lift step after line 85: move to `z=target_z + 0.005` before releasing, ensuring the cube clears the blue cube during release.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,103 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    &quot;&quot;&quot;Stack the red cube on top of the blue cube.&quot;&quot;&quot;</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        # Start from a known safe pose</span>
+<span class='add'>+        robot.home()</span>
+<span class='add'>+</span>
+<span class='add'>+        # Get current poses</span>
+<span class='add'>+        obs = robot.observe()</span>
+<span class='add'>+        red_pose = robot.get_pose(&quot;red_cube&quot;)</span>
+<span class='add'>+        blue_pose = robot.get_pose(&quot;blue_cube&quot;)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Cube half-size (all cubes are 0.03 m side)</span>
+<span class='add'>+        half = 0.03 / 2.0  # 0.015 m</span>
+<span class='add'>+</span>
+<span class='add'>+        # ---- Grasp red cube ----</span>
+<span class='add'>+        # Approach from above</span>
+<span class='add'>+        above_red = {</span>
+<span class='add'>+            &quot;x&quot;: red_pose[&quot;pos&quot;][0],</span>
+<span class='add'>+            &quot;y&quot;: red_pose[&quot;pos&quot;][1],</span>
+<span class='add'>+            &quot;z&quot;: 0.05,          # clearance</span>
+<span class='add'>+            &quot;yaw&quot;: red_pose[&quot;yaw&quot;]</span>
+<span class='add'>+        }</span>
+<span class='add'>+        robot.move_to(**above_red, speed=0.15)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Descend to grasp height (center of cube)</span>
+<span class='add'>+        grasp_target = {</span>
+<span class='add'>+            &quot;x&quot;: red_pose[&quot;pos&quot;][0],</span>
+<span class='add'>+            &quot;y&quot;: red_pose[&quot;pos&quot;][1],</span>
+<span class='add'>+            &quot;z&quot;: red_pose[&quot;pos&quot;][2],  # center z</span>
+<span class='add'>+            &quot;yaw&quot;: red_pose[&quot;yaw&quot;]</span>
+<span class='add'>+        }</span>
+<span class='add'>+        robot.move_to(**grasp_target, speed=0.08)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Close fingers</span>
+<span class='add'>+        if not robot.grasp():</span>
+<span class='add'>+            robot.log(&quot;Grasp failed on red cube&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Verify hold</span>
+<span class='add'>+        if robot.holding() != &quot;red_cube&quot;:</span>
+<span class='add'>+            robot.log(&quot;Did not hold red cube after grasp&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Lift to clearance</span>
+<span class='add'>+        lift_red = {</span>
+<span class='add'>+            &quot;x&quot;: red_pose[&quot;pos&quot;][0],</span>
+<span class='add'>+            &quot;y&quot;: red_pose[&quot;pos&quot;][1],</span>
+<span class='add'>+            &quot;z&quot;: 0.05,</span>
+<span class='add'>+            &quot;yaw&quot;: red_pose[&quot;yaw&quot;]</span>
+<span class='add'>+        }</span>
+<span class='add'>+        robot.move_to(**lift_red, speed=0.15)</span>
+<span class='add'>+</span>
+<span class='add'>+        # ---- Move over blue cube ----</span>
+<span class='add'>+        above_blue = {</span>
+<span class='add'>+            &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class='add'>+            &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class='add'>+            &quot;z&quot;: 0.05,</span>
+<span class='add'>+            &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class='add'>+        }</span>
+<span class='add'>+        robot.move_to(**above_blue, speed=0.15)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Descend to just above blue cube (center)</span>
+<span class='add'>+        above_blue_center = {</span>
+<span class='add'>+            &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class='add'>+            &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class='add'>+            &quot;z&quot;: blue_pose[&quot;pos&quot;][2],  # center of blue cube</span>
+<span class='add'>+            &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class='add'>+        }</span>
+<span class='add'>+        robot.move_to(**above_blue_center, speed=0.08)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Compute target height for red cube center when stacked:</span>
+<span class='add'>+        # red_center_z = blue_center_z + cube_height (0.03)</span>
+<span class='add'>+        target_z = blue_pose[&quot;pos&quot;][2] + 0.03</span>
+<span class='add'>+        stack_target = {</span>
+<span class='add'>+            &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class='add'>+            &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class='add'>+            &quot;z&quot;: target_z,</span>
+<span class='add'>+            &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class='add'>+        }</span>
+<span class='add'>+        robot.move_to(**stack_target, speed=0.08)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Release red cube onto blue cube</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        robot.wait(0.2)  # let it settle</span>
+<span class='add'>+</span>
+<span class='add'>+        # Retreat to clearance</span>
+<span class='add'>+        retreat = {</span>
+<span class='add'>+            &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class='add'>+            &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class='add'>+            &quot;z&quot;: 0.05,</span>
+<span class='add'>+            &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class='add'>+        }</span>
+<span class='add'>+        robot.move_to(**retreat, speed=0.15)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Final safety pose</span>
+<span class='add'>+        robot.home()</span>
+<span class='add'>+        return True</span>
+<span class='add'>+</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(f&quot;Exception during stacking: {e}&quot;)</span>
+<span class='add'>+        return False</span></pre></details><details><summary>Round 2: 7/8 practice episodes &middot; 0 errors &middot; $0.0212 so far</summary><div class='muted'>coder notes</div><pre>- Removed unnecessary intermediate move to blue cube center while holding red cube to avoid collision.
+- Added a small upward lift (5 mm) before releasing to guarantee clearance during release.
+- Added explicit checks for the `ok` flag after each `move_to` via a helper `safe_move_to`; abort on failure.
+- Kept top‑down grasp, verification, clearance lifts, and final home return.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Failure modes:**
+
+1. **Misplaced stack (seed 2003)** — 1 episode. The robot descended to the table surface (z=0.013) instead of the cube center, then moved sideways to the blue cube&#x27;s position (0.136, 0.144) and released at table height. The red cube ended beside the blue cube.
+   *Root cause:* Line 39 uses `red_pose[&quot;pos&quot;][2]` (table surface) for the grasp z-target. Line 78 computes `target_z` correctly from blue pose, but the earlier low descent caused the robot to lose the cube or release at the wrong location.
+   *Fix:* Change line 39 `z: red_pose[&quot;pos&quot;][2]` to `z: red_pose[&quot;pos&quot;][2] + half_height` to target the cube center.
+
+2. **Grasp/contact failure (seeds 2001, 2002, 2004, 2005)** — 4 episodes. Final positions show red cube slightly offset or tilted; all have safety clamps triggered, suggesting the robot aborted or slipped during approach/release.
+   *Root cause:* Insufficient clearance or speed control during the final stack approach (lines 79-86) or release (line 99) caused the gripper to catch on the blue cube edge.
+   *Fix:* Increase `lift_before_release` z-offset on line 92 from `0.005` to `0.015` and reduce speed to `0.05` on lines 85 and 95 to improve placement precision.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_1/skill.py</span>
+<span class=''>+++ round_2/skill.py</span>
+<span class='hunk'>@@ -7,12 +7,19 @@</span>
+<span class=''>         robot.home()</span>
+<span class=''> </span>
+<span class=''>         # Get current poses</span>
+<span class='del'>-        obs = robot.observe()</span>
+<span class=''>         red_pose = robot.get_pose(&quot;red_cube&quot;)</span>
+<span class=''>         blue_pose = robot.get_pose(&quot;blue_cube&quot;)</span>
+<span class=''> </span>
+<span class='del'>-        # Cube half-size (all cubes are 0.03 m side)</span>
+<span class='del'>-        half = 0.03 / 2.0  # 0.015 m</span>
+<span class='add'>+        cube_height = 0.03          # all cubes are 0.03 m side</span>
+<span class='add'>+        half_height = cube_height / 2.0</span>
+<span class='add'>+</span>
+<span class='add'>+        # Helper to perform a move and verify success</span>
+<span class='add'>+        def safe_move_to(**kwargs):</span>
+<span class='add'>+            res = robot.move_to(**kwargs)</span>
+<span class='add'>+            if not res.get(&quot;ok&quot;, False):</span>
+<span class='add'>+                robot.log(f&quot;Move failed: {res}&quot;)</span>
+<span class='add'>+                return False</span>
+<span class='add'>+            return True</span>
+<span class=''> </span>
+<span class=''>         # ---- Grasp red cube ----</span>
+<span class=''>         # Approach from above</span>
+<span class='hunk'>@@ -22,7 +29,8 @@</span>
+<span class=''>             &quot;z&quot;: 0.05,          # clearance</span>
+<span class=''>             &quot;yaw&quot;: red_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class='del'>-        robot.move_to(**above_red, speed=0.15)</span>
+<span class='add'>+        if not safe_move_to(**above_red):</span>
+<span class='add'>+            return False</span>
+<span class=''> </span>
+<span class=''>         # Descend to grasp height (center of cube)</span>
+<span class=''>         grasp_target = {</span>
+<span class='hunk'>@@ -31,7 +39,8 @@</span>
+<span class=''>             &quot;z&quot;: red_pose[&quot;pos&quot;][2],  # center z</span>
+<span class=''>             &quot;yaw&quot;: red_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class='del'>-        robot.move_to(**grasp_target, speed=0.08)</span>
+<span class='add'>+        if not safe_move_to(**grasp_target, speed=0.08):</span>
+<span class='add'>+            return False</span>
+<span class=''> </span>
+<span class=''>         # Close fingers</span>
+<span class=''>         if not robot.grasp():</span>
+<span class='hunk'>@@ -50,49 +59,55 @@</span>
+<span class=''>             &quot;z&quot;: 0.05,</span>
+<span class=''>             &quot;yaw&quot;: red_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class='del'>-        robot.move_to(**lift_red, speed=0.15)</span>
+<span class='add'>+        if not safe_move_to(**lift_red):</span>
+<span class='add'>+            return False</span>
+<span class=''> </span>
+<span class='del'>-        # ---- Move over blue cube ----</span>
+<span class='add'>+        # ---- Move over blue cube and stack ----</span>
+<span class='add'>+        # Approach from above</span>
+<span class=''>         above_blue = {</span>
+<span class=''>             &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class=''>             &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class=''>             &quot;z&quot;: 0.05,</span>
+<span class=''>             &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class='del'>-        robot.move_to(**above_blue, speed=0.15)</span>
+<span class='del'>-</span>
+<span class='del'>-        # Descend to just above blue cube (center)</span>
+<span class='del'>-        above_blue_center = {</span>
+<span class='del'>-            &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class='del'>-            &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class='del'>-            &quot;z&quot;: blue_pose[&quot;pos&quot;][2],  # center of blue cube</span>
+<span class='del'>-            &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class='del'>-        }</span>
+<span class='del'>-        robot.move_to(**above_blue_center, speed=0.08)</span>
+<span class='add'>+        if not safe_move_to(**above_blue):</span>
+<span class='add'>+            return False</span>
+<span class=''> </span>
+<span class=''>         # Compute target height for red cube center when stacked:</span>
+<span class='del'>-        # red_center_z = blue_center_z + cube_height (0.03)</span>
+<span class='del'>-        target_z = blue_pose[&quot;pos&quot;][2] + 0.03</span>
+<span class='add'>+        # red_center_z = blue_center_z + cube_height</span>
+<span class='add'>+        target_z = blue_pose[&quot;pos&quot;][2] + cube_height</span>
+<span class=''>         stack_target = {</span>
+<span class=''>             &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class=''>             &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class=''>             &quot;z&quot;: target_z,</span>
+<span class=''>             &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class='del'>-        robot.move_to(**stack_target, speed=0.08)</span>
+<span class='add'>+        if not safe_move_to(**stack_target, speed=0.08):</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Small upward lift before releasing to ensure clearance during release</span>
+<span class='add'>+        lift_before_release = {</span>
+<span class='add'>+            &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class='add'>+            &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class='add'>+            &quot;z&quot;: target_z + 0.005,  # 5 mm above target</span>
+<span class='add'>+            &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class='add'>+        }</span>
+<span class='add'>+        if not safe_move_to(**lift_before_release, speed=0.08):</span>
+<span class='add'>+            return False</span>
+<span class=''> </span>
+<span class=''>         # Release red cube onto blue cube</span>
+<span class=''>         robot.release()</span>
+<span class=''>         robot.wait(0.2)  # let it settle</span>
+<span class=''> </span>
+<span class='del'>-        # Retreat to clearance</span>
+<span class='add'>+        # Retreat to clearance (above blue cube)</span>
+<span class=''>         retreat = {</span>
+<span class=''>             &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class=''>             &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class=''>             &quot;z&quot;: 0.05,</span>
+<span class=''>             &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class='del'>-        robot.move_to(**retreat, speed=0.15)</span>
+<span class='add'>+        if not safe_move_to(**retreat):</span>
+<span class='add'>+            return False</span>
+<span class=''> </span>
+<span class=''>         # Final safety pose</span>
+<span class=''>         robot.home()</span></pre></details><details><summary>Round 3: 0/8 practice episodes &middot; 0 errors &middot; $0.0307 so far</summary><div class='muted'>coder notes</div><pre>- Changed grasp target to use red_pose[&quot;pos&quot;][2] + half_height to grasp the cube center (addresses misplaced stack).
+- Increased lift_before_release offset from 0.005 to 0.015 m and reduced speed to 0.05 m/s for the stack approach and lift before release (addresses safety clamps and placement precision).
+- Added verification that the robot is not holding anything after release.
+- Kept all other safety checks and helper function.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Release before stacking (5 episodes: 3000, 3001, 3002, 3003, 3004)**
+- **Root cause:** `robot.release()` executes at line 99 while the red cube is still at the approach height (z=0.05) above the blue cube, not at the stack target height (z ≈ 0.065). The cube slides off the side.
+- **Fix:** Insert a lift to `target_z + 0.015` (line 89-96 block) *before* the `release()` call at line 99. This ensures the cube is clear of the blue cube before letting go.
+
+**Mode 2: Insufficient approach height (2 episodes: 3005, 3006)**
+- **Root cause:** The approach waypoint `above_blue` (lines 67-72) uses `z: 0.05`. With cube thickness 0.03 m, the robot descends to z ≈ 0.045 for grasping, leaving only 5 mm clearance. Collisions or inaccurate poses prevent stacking.
+- **Fix:** Raise `above_blue` z to `0.08` (increase clearance by 30 mm) to guarantee safe transit over the cubes.
+
+**Mode 3: Gripper collision/retreat failure (1 episode: 3007)**
+- **Root cause:** After release, the retreat move (lines 108-115) targets `z: 0.05`, which is below the stacked cube height (~0.065). The robot crashes into the stack.
+- **Fix:** Change retreat `z` to `target_z + 0.015` (≈0.08) to clear the stacked cubes.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_2/skill.py</span>
+<span class=''>+++ round_3/skill.py</span>
+<span class='hunk'>@@ -36,7 +36,7 @@</span>
+<span class=''>         grasp_target = {</span>
+<span class=''>             &quot;x&quot;: red_pose[&quot;pos&quot;][0],</span>
+<span class=''>             &quot;y&quot;: red_pose[&quot;pos&quot;][1],</span>
+<span class='del'>-            &quot;z&quot;: red_pose[&quot;pos&quot;][2],  # center z</span>
+<span class='add'>+            &quot;z&quot;: red_pose[&quot;pos&quot;][2] + half_height,  # center z</span>
+<span class=''>             &quot;yaw&quot;: red_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class=''>         if not safe_move_to(**grasp_target, speed=0.08):</span>
+<span class='hunk'>@@ -82,22 +82,27 @@</span>
+<span class=''>             &quot;z&quot;: target_z,</span>
+<span class=''>             &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class='del'>-        if not safe_move_to(**stack_target, speed=0.08):</span>
+<span class='add'>+        if not safe_move_to(**stack_target, speed=0.05):  # reduced speed for precision</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class=''>         # Small upward lift before releasing to ensure clearance during release</span>
+<span class=''>         lift_before_release = {</span>
+<span class=''>             &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class=''>             &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class='del'>-            &quot;z&quot;: target_z + 0.005,  # 5 mm above target</span>
+<span class='add'>+            &quot;z&quot;: target_z + 0.015,  # increased clearance to 15 mm</span>
+<span class=''>             &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class='del'>-        if not safe_move_to(**lift_before_release, speed=0.08):</span>
+<span class='add'>+        if not safe_move_to(**lift_before_release, speed=0.05):  # reduced speed</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class=''>         # Release red cube onto blue cube</span>
+<span class=''>         robot.release()</span>
+<span class=''>         robot.wait(0.2)  # let it settle</span>
+<span class='add'>+</span>
+<span class='add'>+        # Verify release</span>
+<span class='add'>+        if robot.holding() is not None:</span>
+<span class='add'>+            robot.log(&quot;Still holding after release&quot;)</span>
+<span class='add'>+            return False</span>
+<span class=''> </span>
+<span class=''>         # Retreat to clearance (above blue cube)</span>
+<span class=''>         retreat = {</span></pre></details><details open><summary>Round 4: 7/8 practice episodes &middot; 0 errors &middot; $0.0428 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Revert to round 2 logic which achieved 7/8 success.
+- Fix grasp target to use cube center (no half_height addition).
+- Increase above_blue clearance to 0.08 to avoid collisions.
+- Reduce speed for stack approach and lift-before-release to 0.05 for precision.
+- Increase lift-before-release offset to 0.015 to ensure cube is clear before release.
+- Retreat to target_z + 0.015 to clear stacked cubes.
+- Verify that nothing is held after release.
+- Keep all other safety checks and helper function.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_3/skill.py</span>
+<span class=''>+++ round_4/skill.py</span>
+<span class='hunk'>@@ -36,7 +36,7 @@</span>
+<span class=''>         grasp_target = {</span>
+<span class=''>             &quot;x&quot;: red_pose[&quot;pos&quot;][0],</span>
+<span class=''>             &quot;y&quot;: red_pose[&quot;pos&quot;][1],</span>
+<span class='del'>-            &quot;z&quot;: red_pose[&quot;pos&quot;][2] + half_height,  # center z</span>
+<span class='add'>+            &quot;z&quot;: red_pose[&quot;pos&quot;][2],  # center z</span>
+<span class=''>             &quot;yaw&quot;: red_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class=''>         if not safe_move_to(**grasp_target, speed=0.08):</span>
+<span class='hunk'>@@ -63,11 +63,11 @@</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class=''>         # ---- Move over blue cube and stack ----</span>
+<span class='del'>-        # Approach from above</span>
+<span class='add'>+        # Approach from above (increased clearance)</span>
+<span class=''>         above_blue = {</span>
+<span class=''>             &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class=''>             &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class='del'>-            &quot;z&quot;: 0.05,</span>
+<span class='add'>+            &quot;z&quot;: 0.08,          # increased clearance</span>
+<span class=''>             &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class=''>         if not safe_move_to(**above_blue):</span>
+<span class='hunk'>@@ -104,11 +104,11 @@</span>
+<span class=''>             robot.log(&quot;Still holding after release&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # Retreat to clearance (above blue cube)</span>
+<span class='add'>+        # Retreat to clearance (above stacked cubes)</span>
+<span class=''>         retreat = {</span>
+<span class=''>             &quot;x&quot;: blue_pose[&quot;pos&quot;][0],</span>
+<span class=''>             &quot;y&quot;: blue_pose[&quot;pos&quot;][1],</span>
+<span class='del'>-            &quot;z&quot;: 0.05,</span>
+<span class='add'>+            &quot;z&quot;: target_z + 0.015,  # clear the stacked cubes</span>
+<span class=''>             &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]</span>
+<span class=''>         }</span>
+<span class=''>         if not safe_move_to(**retreat):</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100027/end_front.jpg"><figcaption>seed 100027<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    &quot;&quot;&quot;Stack the red cube on top of the blue cube.&quot;&quot;&quot;
+    try:
+        # Start from a known safe pose
+        robot.home()
+
+        # Get current poses
+        red_pose = robot.get_pose(&quot;red_cube&quot;)
+        blue_pose = robot.get_pose(&quot;blue_cube&quot;)
+
+        cube_height = 0.03          # all cubes are 0.03 m side
+        half_height = cube_height / 2.0
+
+        # Helper to perform a move and verify success
+        def safe_move_to(**kwargs):
+            res = robot.move_to(**kwargs)
+            if not res.get(&quot;ok&quot;, False):
+                robot.log(f&quot;Move failed: {res}&quot;)
+                return False
+            return True
+
+        # ---- Grasp red cube ----
+        # Approach from above
+        above_red = {
+            &quot;x&quot;: red_pose[&quot;pos&quot;][0],
+            &quot;y&quot;: red_pose[&quot;pos&quot;][1],
+            &quot;z&quot;: 0.05,          # clearance
+            &quot;yaw&quot;: red_pose[&quot;yaw&quot;]
+        }
+        if not safe_move_to(**above_red):
+            return False
+
+        # Descend to grasp height (center of cube)
+        grasp_target = {
+            &quot;x&quot;: red_pose[&quot;pos&quot;][0],
+            &quot;y&quot;: red_pose[&quot;pos&quot;][1],
+            &quot;z&quot;: red_pose[&quot;pos&quot;][2],  # center z
+            &quot;yaw&quot;: red_pose[&quot;yaw&quot;]
+        }
+        if not safe_move_to(**grasp_target, speed=0.08):
+            return False
+
+        # Close fingers
+        if not robot.grasp():
+            robot.log(&quot;Grasp failed on red cube&quot;)
+            return False
+
+        # Verify hold
+        if robot.holding() != &quot;red_cube&quot;:
+            robot.log(&quot;Did not hold red cube after grasp&quot;)
+            return False
+
+        # Lift to clearance
+        lift_red = {
+            &quot;x&quot;: red_pose[&quot;pos&quot;][0],
+            &quot;y&quot;: red_pose[&quot;pos&quot;][1],
+            &quot;z&quot;: 0.05,
+            &quot;yaw&quot;: red_pose[&quot;yaw&quot;]
+        }
+        if not safe_move_to(**lift_red):
+            return False
+
+        # ---- Move over blue cube and stack ----
+        # Approach from above (increased clearance)
+        above_blue = {
+            &quot;x&quot;: blue_pose[&quot;pos&quot;][0],
+            &quot;y&quot;: blue_pose[&quot;pos&quot;][1],
+            &quot;z&quot;: 0.08,          # increased clearance
+            &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]
+        }
+        if not safe_move_to(**above_blue):
+            return False
+
+        # Compute target height for red cube center when stacked:
+        # red_center_z = blue_center_z + cube_height
+        target_z = blue_pose[&quot;pos&quot;][2] + cube_height
+        stack_target = {
+            &quot;x&quot;: blue_pose[&quot;pos&quot;][0],
+            &quot;y&quot;: blue_pose[&quot;pos&quot;][1],
+            &quot;z&quot;: target_z,
+            &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]
+        }
+        if not safe_move_to(**stack_target, speed=0.05):  # reduced speed for precision
+            return False
+
+        # Small upward lift before releasing to ensure clearance during release
+        lift_before_release = {
+            &quot;x&quot;: blue_pose[&quot;pos&quot;][0],
+            &quot;y&quot;: blue_pose[&quot;pos&quot;][1],
+            &quot;z&quot;: target_z + 0.015,  # increased clearance to 15 mm
+            &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]
+        }
+        if not safe_move_to(**lift_before_release, speed=0.05):  # reduced speed
+            return False
+
+        # Release red cube onto blue cube
+        robot.release()
+        robot.wait(0.2)  # let it settle
+
+        # Verify release
+        if robot.holding() is not None:
+            robot.log(&quot;Still holding after release&quot;)
+            return False
+
+        # Retreat to clearance (above stacked cubes)
+        retreat = {
+            &quot;x&quot;: blue_pose[&quot;pos&quot;][0],
+            &quot;y&quot;: blue_pose[&quot;pos&quot;][1],
+            &quot;z&quot;: target_z + 0.015,  # clear the stacked cubes
+            &quot;yaw&quot;: blue_pose[&quot;yaw&quot;]
+        }
+        if not safe_move_to(**retreat):
+            return False
+
+        # Final safety pose
+        robot.home()
+        return True
+
+    except Exception as e:
+        robot.log(f&quot;Exception during stacking: {e}&quot;)
+        return False
+</pre></section>
+</div></body></html>

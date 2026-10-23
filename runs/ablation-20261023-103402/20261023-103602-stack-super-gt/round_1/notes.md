@@ -1,0 +1,4 @@
+- First version: perceive both cubes, grasp red cube above its center, lift, position over blue cube, lower to stacking height (red center = blue center + cube height), release, retreat.
+- Use observed poses to avoid hard‑coding coordinates.
+- Add simple retry logic for grasp and moves, with slow speeds near objects.
+- No prior results to incorporate yet.
