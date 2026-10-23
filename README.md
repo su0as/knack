@@ -137,14 +137,16 @@ For comparison, the hand-written reference fixtures under the same noise score 5
 | run | first version | after practice | gain |
 |---|---|---|---|
 | Super, push, camera-grade | 3/50 (6%) | 41/50 (82%), round 6 | **+76 pts** |
+| Super, push, camera-grade (repeat run) | 12/50 (24%) | 32/50 (64%), round 6 | **+40 pts** |
 | Super, lift | 0/50 (0%) | 50/50 (100%), round 3 | **+100 pts** |
 | Super, tray | 23/50 (46%) | 32/50 (64%), round 4 | +18 pts |
 | Super, stack, camera-grade | 29/50 (58%) | 31/50 (62%), round 5 | +4 pts (within noise) |
+| Super, stack, camera-grade (repeat run) | 34/50 (68%) | 31/50 (62%), round 5 | -6 pts (within noise) |
 | Ultra, stack, camera-grade | 32/50 (64%) | 32/50 (64%), round 2 | 0 |
 | Ultra, push, camera-grade | 7/50 (14%) | 5/50 (10%), round 6 | -4 pts |
 | 16 other runs | solved in round 1 | | 0 |
 
-Source: `results/20261023-101415-practice-gain/gain-*/practice_gain.md`. Two lessons went straight back into the code: an 8-episode practice score is too noisy to pick the best version (Ultra's "88%" round equalled its first version on held-out), so Knack now re-checks the top versions on 16 fresh layouts before the final evaluation; and a rewrite that scores worse is discarded (see 4).
+Sources: `results/20261023-101415-practice-gain`, repeat runs in `results/*-real-super-replicate` and `results/*-gain-replicate`. The push gain repeats (+76 and +40 points); on stack under camera noise practice did not beat the first version, and both sit near the hand-written reference (57%), which suggests the noise, not the code, is the limit there. Two lessons went straight back into the code: an 8-episode practice score is too noisy to pick the best version (Ultra's "88%" round equalled its first version on held-out), so Knack now re-checks the top versions on 16 fresh layouts before the final evaluation; and a rewrite that scores worse is discarded (see 4).
 
 **4. Four things the live runs changed in the code** (each in the commit history):
 - Nemotron 3.5 Lightning with thinking on spent its whole 4000-token budget reasoning and returned the unfinished thought as the "analysis". The summariser now runs with `enable_thinking: false` (about 460 output tokens, about 4 s).
