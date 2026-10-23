@@ -139,10 +139,10 @@ def scene_xml(task: Task, layout: dict, dr: dict | None = None, g: ArmGeometry =
   <visual>
     <global offwidth="960" offheight="720"/>
     <quality shadowsize="2048"/>
-    <headlight ambient="0.45 0.45 0.45" diffuse="0.45 0.45 0.45" specular="0.05 0.05 0.05"/>
+    <headlight ambient="0.40 0.40 0.40" diffuse="0.32 0.32 0.32" specular="0.03 0.03 0.03"/>
   </visual>
   <asset>
-    <texture name="grid" type="2d" builtin="checker" rgb1="0.86 0.87 0.88" rgb2="0.80 0.81 0.83" width="512" height="512"/>
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.74 0.75 0.77" rgb2="0.66 0.67 0.70" width="512" height="512"/>
     <material name="grid" texture="grid" texrepeat="10 10" reflectance="0.04"/>
     <texture name="sky" type="skybox" builtin="gradient" rgb1="0.20 0.22 0.26" rgb2="0.06 0.07 0.09" width="256" height="256"/>
   </asset>
