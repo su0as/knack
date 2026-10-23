@@ -30,11 +30,24 @@
 
 <main class="layout">
   <section class="arena">
+    <ol id="loop" class="loop" aria-label="the practice loop">
+      <li data-step="write"><b>WRITE</b><span>coder writes skill.py</span><i data-role="coder"></i></li>
+      <li data-step="practise"><b>PRACTISE</b><span>N robots, random layouts</span><i>MuJoCo, CPU</i></li>
+      <li data-step="judge"><b>SCORE</b><span>ground truth or camera judge</span><i data-role="judge"></i></li>
+      <li data-step="analyse"><b>ANALYSE</b><span>failure modes, cited lines</span><i data-role="summarizer"></i></li>
+      <li data-step="rewrite"><b>REWRITE</b><span>fix, keep what works</span><i data-role="coder"></i></li>
+      <li data-step="verify"><b>VERIFY</b><span>held-out layouts, 95% CI</span><i>no model</i></li>
+    </ol>
     <div class="arena-head">
       <div><span id="roundlbl" class="big">-</span> <span id="phase" class="phase">pick a scene and press PRACTISE</span></div>
       <div class="legend"><i class="sw run"></i>running <i class="sw ok"></i>success <i class="sw bad"></i>fail <i class="sw unk"></i>judge unsure</div>
     </div>
     <div id="tiles" class="tiles"></div>
+    <div id="empty" class="empty">
+      <div class="empty-h">No run selected.</div>
+      <p>Pick a scene, keep or rewrite the task sentence, and press <b>PRACTISE</b>. Every robot tile below is one randomised layout running the current version of the skill.</p>
+      <p class="muted">No API key yet? Tick <b>offline mock</b> to watch the full pipeline with canned code and zero tokens.</p>
+    </div>
   </section>
 
   <aside class="side">
@@ -47,7 +60,7 @@
       <div id="summary" class="summary muted">No failures analysed yet.</div>
     </div>
     <div class="panel grow">
-      <div class="ph">SKILL CODE
+      <div class="ph">SKILL CODE <span id="coderound" class="sub"></span>
         <span class="tabs"><button data-view="code" class="on">code</button><button data-view="diff">diff</button><button data-view="notes">notes</button></span>
       </div>
       <pre id="code" class="code"></pre>
@@ -67,6 +80,10 @@
     <div class="cell">
       <div class="lbl">RECEIPT</div>
       <table id="receipt" class="receipt"></table>
+    </div>
+    <div class="cell wide">
+      <div class="lbl">HOW IT GOT THERE <span class="muted">click a round to see its code diff</span></div>
+      <div id="history" class="history"></div>
     </div>
     <div class="cell wide">
       <div class="lbl">FAILURE GALLERY</div>

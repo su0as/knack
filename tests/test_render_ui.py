@@ -19,6 +19,20 @@ def test_render_cameras():
     env.close()
 
 
+def test_console_ids_exist():
+    """Every $("id") used by app.js must exist in index.html."""
+    import re
+    from pathlib import Path
+
+    static = Path(__file__).resolve().parent.parent / "knack" / "ui" / "static"
+    js = (static / "app.js").read_text(encoding="utf-8")
+    html = (static / "index.html").read_text(encoding="utf-8")
+    ids = set(re.findall(r'\$\("([a-zA-Z0-9_-]+)"\)', js))
+    assert ids, "no ids found"
+    missing = sorted(i for i in ids if f'id="{i}"' not in html)
+    assert not missing, missing
+
+
 def test_ui_server_endpoints(tmp_path):
     from http.server import ThreadingHTTPServer
 

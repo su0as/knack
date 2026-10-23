@@ -108,6 +108,28 @@ def card_html(card: dict, run_dir: Path) -> str:
     judge_line = (f"<p>Vision judge vs ground truth on {j['n']} held-out episodes: accuracy {_pct(j['accuracy'])}, "
                   f"abstained {_pct(j['abstain_rate'])}, false-success rate {_pct(j['false_success_rate'])}.</p>") if j.get("decided") else ""
     mock = "<p class='warn'>MOCK RUN: canned code, estimated tokens. Plumbing test only.</p>" if card.get("mock") else ""
+    chips = "".join(
+        f"<span class='chip'><b>{esc(role.upper())}</b>{esc(m['id'])} <em>${m.get('price_in', 0):.2f} / ${m.get('price_out', 0):.2f} per M</em></span>"
+        for role, m in card["models"].items())
+    history = ""
+    for rd in card["rounds"]:
+        k = rd["round"]
+        diff_p = run_dir / f"round_{k}" / "diff.patch"
+        sum_p = run_dir / f"round_{k}" / "summary.md"
+        notes_p = run_dir / f"round_{k}" / "notes.md"
+        diff = diff_p.read_text(encoding="utf-8") if diff_p.exists() else ""
+        summ = sum_p.read_text(encoding="utf-8") if sum_p.exists() else (rd.get("summary") or "")
+        notes = notes_p.read_text(encoding="utf-8") if notes_p.exists() else ""
+        diff_html = "\n".join(
+            f"<span class='{('add' if ln.startswith('+') and not ln.startswith('+++') else 'del' if ln.startswith('-') and not ln.startswith('---') else 'hunk' if ln.startswith('@@') else '')}'>{esc(ln)}</span>"
+            for ln in diff.splitlines())
+        best = " &middot; <b class='k'>best</b>" if card.get("best_round") == k else ""
+        history += (f"<details{' open' if k == card.get('best_round') else ''}><summary>Round {k}: {rd['k']}/{rd['n']} practice episodes "
+                    f"&middot; {rd['errors']} errors &middot; ${rd['usd_cum']:.4f} so far{best}</summary>"
+                    + (f"<div class='muted'>coder notes</div><pre>{esc(notes)}</pre>" if notes.strip() else "")
+                    + (f"<div class='muted'>failure analysis (summariser)</div><pre>{esc(summ)}</pre>" if summ.strip() else "")
+                    + (f"<div class='muted'>code change that went into this round</div><pre class='diff'>{diff_html}</pre>" if diff.strip() else "")
+                    + "</details>")
     return f"""<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: {esc(card['title'])}</title>
 <style>
 body{{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}}
@@ -121,13 +143,18 @@ table{{border-collapse:collapse;width:100%}} td,th{{border-bottom:1px solid #232
 .bars{{display:flex;gap:10px;align-items:flex-end;height:140px}} .bar{{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}}
 .bar span{{display:block;background:#c6ff3d}} .bar em{{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}}
 figure{{display:inline-block;margin:0 8px 8px 0;width:220px}} figure img{{width:220px;border:1px solid #ff5d3d}} figcaption{{font-size:11px;color:#7d8794}}
-pre{{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33}} .warn{{color:#ffb020}}
+pre{{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap}} .warn{{color:#ffb020}}
+.chip{{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}}
+.chip b{{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px}} .chip em{{color:#7d8794;font-style:normal;margin-left:6px}}
+details{{border-top:1px solid #232a33;padding:8px 0}} summary{{cursor:pointer;font:12px ui-monospace,Consolas,monospace}}
+.diff .add{{color:#c6ff3d}} .diff .del{{color:#ff5d3d}} .diff .hunk{{color:#8a94a3}}
 </style></head><body><div class="wrap">
 <h1><span class="k">KNACK</span> / skill card</h1>
 <div class="muted">{esc(card['run_id'])} &middot; {esc(card['created'])}</div>
 {mock}
 <section><div class="muted">TASK</div><h2 style="margin:4px 0 0">{esc(card['instruction'])}</h2>
-<p class="muted">0 demonstrations &middot; reward: {esc(card['reward'])} &middot; {card['practice_episodes']} practice episodes in {len(card['rounds'])} rounds</p></section>
+<p class="muted">0 demonstrations &middot; reward: {esc(card['reward'])} &middot; {card['practice_episodes']} practice episodes in {len(card['rounds'])} rounds</p>
+<div>{chips}</div></section>
 <div class="grid"><section><div class="muted">HELD-OUT SUCCESS ({esc(ev.get('source', 'n/a'))})</div>
 <div class="big">{_pct(ev.get('p'))}</div><div>{ev.get('k', '-')}/{ev.get('n', '-')} layouts &middot; Wilson 95% CI {_pct(ev.get('lo'))} to {_pct(ev.get('hi'))}</div>{ci}
 <p class="muted">Safety layer: {ev.get('halts', 0)} halts, {ev.get('safety_clamps', 0)} clamps.</p>{judge_line}</section>
@@ -135,6 +162,7 @@ pre{{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px s
 <section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr>{rows}
 <tr><td>compute</td><td>{esc(str(r.get('backend')))}</td><td></td><td></td><td>{r.get('compute_seconds', 0):.0f} s</td><td>${r['compute_usd']:.4f}</td></tr>
 <tr><th>total</th><th></th><th>{r['calls']}</th><th>{r['prompt_tokens']:,}</th><th>{r['completion_tokens']:,}</th><th>${r['total_usd']:.4f}</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div>{history or '<p class="muted">No rounds.</p>'}</section>
 <section><div class="muted">FAILURE GALLERY</div>{gallery or '<p class="muted">No held-out failures.</p>'}</section>
 <section><div class="muted">SKILL (best_skill.py)</div><pre>{esc(code)}</pre></section>
 </div></body></html>"""

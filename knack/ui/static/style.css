@@ -46,6 +46,29 @@ select:focus,input:focus{outline:1px solid var(--lime)}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
 .tile{position:relative;background:var(--ink3);border:1px solid var(--line2);overflow:hidden}
 .tile img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:#000}
+.tile img:not([src]){visibility:hidden}
+.tile .ph-img{position:absolute;left:0;right:0;top:0;aspect-ratio:4/3;background:repeating-linear-gradient(135deg,var(--ink3) 0 8px,var(--ink2) 8px 16px);display:flex;align-items:center;justify-content:center;font:11px var(--mono);color:var(--muted);letter-spacing:.1em}
+.tile img[src] + .ph-img{display:none}
+
+.loop{list-style:none;margin:0 0 14px;padding:0;display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--line)}
+.loop li{padding:8px 10px;border-right:1px solid var(--line);position:relative;background:var(--ink2);transition:background .2s}
+.loop li:last-child{border-right:0}
+.loop li:not(:last-child)::after{content:"";position:absolute;right:-6px;top:50%;width:10px;height:10px;transform:translateY(-50%) rotate(45deg);background:inherit;border-top:1px solid var(--line);border-right:1px solid var(--line);z-index:1}
+.loop b{display:block;font:700 11px var(--mono);letter-spacing:.14em;color:var(--muted)}
+.loop span{display:block;font:11px var(--sans);color:var(--muted);margin-top:2px}
+.loop i{display:block;font:10px var(--mono);font-style:normal;color:var(--line2);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.loop li.on{background:#1b2309}
+.loop li.on b{color:var(--lime)} .loop li.on span{color:var(--text)} .loop li.on i{color:var(--lime)}
+.loop li.done b{color:var(--text)}
+.empty{border:1px dashed var(--line2);padding:28px;max-width:640px;margin:30px auto;font-size:13px}
+.empty-h{font:700 16px var(--mono);color:#fff;margin-bottom:8px}
+.history{display:flex;flex-direction:column;gap:6px}
+.hrow{display:grid;grid-template-columns:70px 140px 1fr 90px;gap:12px;align-items:center;padding:6px 8px;border:1px solid var(--line);cursor:pointer;font:11px var(--mono)}
+.hrow:hover{border-color:var(--lime)}
+.hrow .hbar{height:8px;background:var(--ink3);position:relative}
+.hrow .hbar span{position:absolute;left:0;top:0;bottom:0;background:var(--lime)}
+.hrow .hsum{font:12px var(--sans);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl.future .col{background:transparent;border:1px dashed var(--line2);height:100%!important}
 .tile .bar{display:flex;justify-content:space-between;align-items:center;padding:5px 7px;font:11px var(--mono);border-top:1px solid var(--line)}
 .tile .err{font:10px var(--mono);color:var(--coral);padding:0 7px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tile.running{border-color:var(--amber)}

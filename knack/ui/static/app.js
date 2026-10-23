@@ -66,7 +66,7 @@ async function start() {
 
 function selectRun(id) {
   if (!id) return;
-  S.run = id; S.state = null; S.codeRound = null; S.codeCache = {};
+  S.run = id; S.state = null; S.codeRound = null; S.codeCache = {}; S.pinRound = null;
   $("runpick").value = id;
   clearInterval(S.pollT);
   poll();
@@ -83,8 +83,37 @@ async function poll() {
   if (st.status !== "running" && st.status !== "starting") { clearInterval(S.pollT); S.pollT = setInterval(poll, 5000); }
 }
 
+const LOOP_ORDER = ["write", "practise", "judge", "analyse", "rewrite", "verify"];
+function phaseStep(phase, status) {
+  const p = (phase || "").toLowerCase();
+  if (status === "done" || p === "done" || p.startsWith("writing skill card")) return "done";
+  if (p.startsWith("reading") || p.startsWith("exploring") || p.startsWith("writing skill") || p.startsWith("fixing code")) return "write";
+  if (p.startsWith("practising")) return "practise";
+  if (p.startsWith("judging") && p.includes("held-out")) return "verify";
+  if (p.startsWith("judging")) return "judge";
+  if (p.startsWith("summarising")) return "analyse";
+  if (p.startsWith("rewriting")) return "rewrite";
+  if (p.startsWith("evaluating")) return "verify";
+  return null;
+}
+
+function renderLoop(st) {
+  const step = phaseStep(st.phase, st.status);
+  const idx = step === "done" ? LOOP_ORDER.length : LOOP_ORDER.indexOf(step);
+  document.querySelectorAll("#loop li").forEach((li, i) => {
+    li.classList.toggle("on", li.dataset.step === step);
+    li.classList.toggle("done", idx > i);
+  });
+  document.querySelectorAll("#loop i[data-role]").forEach((el) => {
+    const m = (st.models || {})[el.dataset.role];
+    el.textContent = m ? m.id.split("/").pop() : (el.dataset.role === "judge" ? (st.reward === "gt" ? "simulator check" : "-") : "-");
+  });
+}
+
 function render() {
   const st = S.state;
+  $("empty").classList.add("hidden");
+  renderLoop(st);
   $("roundlbl").textContent = st.phase && st.phase.startsWith("evaluating") ? "EVAL" : `ROUND ${st.round || 0}/${st.rounds_max}`;
   $("phase").textContent = `${st.phase || ""}  ${st.elapsed ? Math.round(st.elapsed) + " s" : ""}${st.mock ? "  (mock run)" : ""}${st.error ? "  " + st.error : ""}`;
   $("spend").textContent = usd((st.cost || {}).total_usd);
@@ -120,7 +149,7 @@ function renderTiles(st) {
   const ts = Date.now();
   if (el.dataset.key !== S.run + ":" + eps.map((e) => e.seed).join(",")) {
     el.dataset.key = S.run + ":" + eps.map((e) => e.seed).join(",");
-    el.innerHTML = eps.map((e) => `<div class="tile" id="t${e.seed}"><img alt="seed ${e.seed}"><div class="bar"><span>seed ${e.seed}</span><span class="b"></span></div><div class="err"></div></div>`).join("");
+    el.innerHTML = eps.map((e) => `<div class="tile" id="t${e.seed}"><img alt=""><div class="ph-img">WAITING</div><div class="bar"><span>seed ${e.seed}</span><span class="b"></span></div><div class="err"></div></div>`).join("");
   }
   for (const e of eps) {
     const t = document.getElementById("t" + e.seed);
@@ -147,19 +176,29 @@ function renderTimeline(st) {
   const bars = [];
   for (let i = 1; i <= st.rounds_max; i++) {
     const r = rs.find((x) => x.round === i);
-    const cur = !r && st.round === i;
+    const cur = !r && st.round === i && st.status === "running";
+    if (!r && !cur && st.status !== "running" && st.status !== "starting") continue; // stopped early: target reached
     const h = r ? Math.max(2, r.success * 100) : 0;
-    bars.push(`<div class="tl ${cur ? "cur" : ""}" title="${r ? `${r.k}/${r.n} | ${usd(r.usd_cum)} so far` : ""}"><div class="col" style="height:${cur ? 4 : h}%"></div><em>R${i}<br>${r ? r.k + "/" + r.n : cur ? "..." : ""}</em></div>`);
+    bars.push(`<div class="tl ${cur ? "cur" : r ? "" : "future"}" title="${r ? `${r.k}/${r.n} | ${usd(r.usd_cum)} so far` : ""}"><div class="col" style="height:${cur ? 4 : h}%"></div><em>R${i}<br>${r ? r.k + "/" + r.n : cur ? "..." : ""}</em></div>`);
   }
   if (st.eval) bars.push(`<div class="tl" title="held-out"><div class="col" style="height:${Math.max(2, st.eval.p * 100)}%;background:#fff"></div><em>HELD<br>${st.eval.k}/${st.eval.n}</em></div>`);
   $("timeline").innerHTML = bars.join("");
 }
 
+function showRoundDiff(k) {
+  S.pinRound = k;
+  S.view = "diff";
+  document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("on", x.dataset.view === "diff"));
+  renderCode(true);
+  $("code").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
 async function renderCode(force) {
   const st = S.state;
   if (!st) return;
-  const k = st.round || 0;
+  const k = S.pinRound || st.round || 0;
   if (!k) { $("code").textContent = "(the coder has not produced code yet)"; return; }
+  $("coderound").textContent = `round ${k}` + (S.pinRound ? " (pinned)" : "");
   const key = `${S.run}:${k}:${S.view}`;
   if (!force && S.codeRound === key) return;
   S.codeRound = key;
@@ -198,7 +237,12 @@ async function renderCard(st) {
   rows.push(`<tr><td>COMPUTE</td><td>${esc(rc.backend)}</td><td class="r">${Math.round(rc.compute_seconds || 0)} s</td><td class="r">${usd(rc.compute_usd)}</td></tr>`);
   rows.push(`<tr><th>TOTAL</th><th></th><th class="r">${(rc.prompt_tokens + rc.completion_tokens).toLocaleString()}</th><th class="r">${usd(rc.total_usd)}</th></tr>`);
   $("receipt").innerHTML = `<tr><th>role</th><th>model</th><th class="r">tokens</th><th class="r">USD</th></tr>` + rows.join("");
-  $("gallery").innerHTML = (ev.failures || []).map((f) => `<figure>${f.frame ? `<img src="${fileURL(f.frame)}">` : ""}<figcaption>seed ${f.seed}<br>${esc(f.error || JSON.stringify(f.metrics || {}))}</figcaption></figure>`).join("") || '<span class="muted">No held-out failures.</span>';
+  $("history").innerHTML = (card.rounds || []).map((r) => `<div class="hrow" data-round="${r.round}"><span>ROUND ${r.round}</span>` +
+    `<span>${r.k}/${r.n} <span class="hbar" style="display:inline-block;width:70px;vertical-align:middle"><span style="width:${Math.round(r.success * 100)}%"></span></span></span>` +
+    `<span class="hsum">${esc((r.summary || (r.k === r.n ? "all practice episodes passed" : "")).split("\n")[0])}</span>` +
+    `<span class="r">${usd(r.usd_cum)}</span></div>`).join("") || '<span class="muted">No rounds recorded.</span>';
+  document.querySelectorAll("#history .hrow").forEach((row) => (row.onclick = () => showRoundDiff(+row.dataset.round)));
+  $("gallery").innerHTML = (ev.failures || []).map((f) => `<figure>${f.frame ? `<img src="${fileURL(f.frame)}" onerror="this.remove()">` : ""}<figcaption>seed ${f.seed}<br>${esc(f.error || JSON.stringify(f.metrics || {}))}</figcaption></figure>`).join("") || '<span class="muted">No held-out failures.</span>';
   $("cardlink").href = fileURL("card.html");
 }
 
