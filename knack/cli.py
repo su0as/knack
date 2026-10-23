@@ -90,7 +90,8 @@ def cmd_oracle(a):
     tasks = list(ORACLES) if a.task == "all" else [a.task]
     rc = 0
     for t in tasks:
-        specs = [{"task": t, "seed": 500_000 + i, "code": ORACLES[t], "render": {"live": False, "keyframes": a.frames}} for i in range(a.n)]
+        specs = [{"task": t, "seed": 500_000 + i, "code": ORACLES[t], "render": {"live": False, "keyframes": a.frames},
+                  "realism": a.realism} for i in range(a.n)]
         out = Path(a.out) / f"oracle-{t}"
         t0 = time.time()
         res = run_inline(specs, out) if a.inline else LocalRunner(workers=a.workers).run_batch(specs, out)
@@ -130,7 +131,7 @@ def cmd_learn(a):
     cfg = LearnConfig(task=a.task, instruction=a.instruction, coder=a.coder, summarizer=a.summarizer, judge_model=a.judge,
                       reward=a.reward, rounds=a.rounds, episodes=a.n, eval_episodes=a.eval, target=a.target,
                       judge_mode=a.judge_mode, judge_thinking={"on": True, "off": False}.get(a.judge_think), use_library=a.library, probe=a.probe, backend=a.backend, workers=a.workers,
-                      budget_usd=a.budget, run_id=a.run_id, runs_root=a.runs, mock=a.mock, seed_offset=a.seed_offset,
+                      budget_usd=a.budget, run_id=a.run_id, runs_root=a.runs, mock=a.mock, seed_offset=a.seed_offset, realism=a.realism,
                       max_tokens=a.max_tokens)
     learner = Learner(cfg)
     print(f"run {learner.run_id} -> {learner.dir}")
@@ -147,7 +148,7 @@ def cmd_pilot(a):
     from .experiments import pilot
 
     res = pilot(models=tuple(a.models.split(",")), rounds=a.rounds, episodes=a.n, eval_episodes=a.eval,
-                budget_usd=a.budget, runs_root=a.runs, workers=a.workers, mock=a.mock)
+                budget_usd=a.budget, runs_root=a.runs, workers=a.workers, mock=a.mock, realism=a.realism)
     return 0 if res["gate_pass"] else 2
 
 
@@ -156,10 +157,12 @@ def cmd_exp(a):
 
     if a.which == "scoreboard":
         _print_json(ex.scoreboard(models=tuple(a.models.split(",")), tasks=tuple(a.tasks.split(",")), rounds=a.rounds,
-                                  episodes=a.n, eval_episodes=a.eval, budget_usd=a.budget, runs_root=a.runs, workers=a.workers, mock=a.mock)["table"])
+                                  episodes=a.n, eval_episodes=a.eval, budget_usd=a.budget, runs_root=a.runs, workers=a.workers, mock=a.mock,
+                                  realism=a.realism)["table"])
     elif a.which == "ablation":
         _print_json(ex.ablation(tasks=tuple(a.tasks.split(",")), coder=a.coder, rounds=a.rounds, episodes=a.n,
-                                eval_episodes=a.eval, budget_usd=a.budget, runs_root=a.runs, workers=a.workers, mock=a.mock)["table"])
+                                eval_episodes=a.eval, budget_usd=a.budget, runs_root=a.runs, workers=a.workers, mock=a.mock,
+                                realism=a.realism)["table"])
     elif a.which == "judge":
         res = ex.judge_eval(a.paths or [a.runs], n=a.n_judge, budget_usd=a.budget, out_root=a.runs)
         _print_json({k: v for k, v in res.items() if k != "rows"})
@@ -254,6 +257,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--verbose", "-v", action="store_true", help="print metrics and the last robot calls of failed seeds")
     p.add_argument("--min", type=float, default=1.0, help="exit non-zero if any scene's success is below this")
     p.add_argument("--out", default="runs/_oracle")
+    p.add_argument("--realism", default="sim", choices=["sim", "real"])
     p.set_defaults(fn=cmd_oracle)
 
     p = sub.add_parser("eval", help="evaluate a skill file on held-out layouts (ground truth)")
@@ -267,6 +271,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     def learn_args(p):
         p.add_argument("--rounds", type=int, default=4)
+        p.add_argument("--realism", default="sim", choices=["sim", "real"],
+                       help="real = camera-grade perception noise (~8 mm) and wider mass/friction/grip randomisation")
         p.add_argument("--n", type=int, default=8, help="parallel practice episodes per round")
         p.add_argument("--eval", type=int, default=100, help="held-out evaluation episodes")
         p.add_argument("--budget", type=float, default=1.0, help="hard USD cap for this command")

@@ -83,13 +83,15 @@ def _wrap_quarter(yaw: float) -> float:
 class SimRobot:
     """Robot API bound to a SimEnv. All internals are underscored so skills can't reach them."""
 
-    def __init__(self, env: SimEnv, shield: SafetyShield | None = None, *, max_time: float = 45.0, obs_noise: float = 0.002, trace_limit: int = 400):
+    def __init__(self, env: SimEnv, shield: SafetyShield | None = None, *, max_time: float = 45.0, obs_noise: float = 0.002, trace_limit: int = 400,
+                 yaw_noise: float = 0.02):
         self._env = env
         self._g = env.geometry
         self._shield = shield or SafetyShield(geometry=env.geometry)
         self._shield._clock = lambda: env.time
         self._max_time = float(max_time)
         self._obs_noise = float(obs_noise)
+        self._yaw_noise = float(yaw_noise)
         self._noise_rng = np.random.default_rng(env.seed + 7_000_003)
         self._trace: list[dict] = []
         self._trace_limit = trace_limit
@@ -139,7 +141,7 @@ class SimRobot:
         pos, yaw = env.object_pose(name)
         if noisy:
             pos = self._noisy(pos)
-            yaw = yaw + (self._noise_rng.normal(0.0, 0.02) if self._obs_noise > 0 else 0.0)
+            yaw = yaw + (self._noise_rng.normal(0.0, self._yaw_noise) if self._obs_noise > 0 else 0.0)
         if spec.shape == "cube":
             yaw = _wrap_quarter(yaw)
             size = [spec.size[0]] * 3

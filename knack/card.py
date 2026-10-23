@@ -33,6 +33,7 @@ def build_card(learner) -> dict:
         "instruction": learner.instruction,
         "custom_instruction": learner.custom,
         "reward": cfg.reward,
+        "realism": getattr(cfg, "realism", "sim"),
         "status": learner.state.get("status"),
         "mock": learner.state.get("mock", False),
         "demonstrations": 0,
@@ -58,6 +59,7 @@ def card_markdown(card: dict) -> str:
         "",
         f"- Demonstrations used: **0**",
         f"- Reward during practice: `{card['reward']}`" + (" (custom instruction, vision judge only)" if card.get("custom_instruction") else ""),
+        f"- Perception and physics: `{card.get('realism', 'sim')}`" + (" (camera-grade noise, about 8 mm; wider mass, friction and grip randomisation)" if card.get("realism") == "real" else " (about 2 mm noise, light randomisation)"),
         f"- Practice: {len(card['rounds'])} rounds, {card['practice_episodes']} episodes; best version from round {card.get('best_round')}",
     ]
     if ev:
@@ -153,7 +155,7 @@ details{{border-top:1px solid #232a33;padding:8px 0}} summary{{cursor:pointer;fo
 <div class="muted">{esc(card['run_id'])} &middot; {esc(card['created'])}</div>
 {mock}
 <section><div class="muted">TASK</div><h2 style="margin:4px 0 0">{esc(card['instruction'])}</h2>
-<p class="muted">0 demonstrations &middot; reward: {esc(card['reward'])} &middot; {card['practice_episodes']} practice episodes in {len(card['rounds'])} rounds</p>
+<p class="muted">0 demonstrations &middot; reward: {esc(card['reward'])} &middot; perception: {esc(card.get('realism', 'sim'))} &middot; {card['practice_episodes']} practice episodes in {len(card['rounds'])} rounds</p>
 <div>{chips}</div></section>
 <div class="grid"><section><div class="muted">HELD-OUT SUCCESS ({esc(ev.get('source', 'n/a'))})</div>
 <div class="big">{_pct(ev.get('p'))}</div><div>{ev.get('k', '-')}/{ev.get('n', '-')} layouts &middot; Wilson 95% CI {_pct(ev.get('lo'))} to {_pct(ev.get('hi'))}</div>{ci}

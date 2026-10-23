@@ -55,6 +55,12 @@ def first_user(instruction: str, title: str, example_obs: dict, library: list | 
     return "\n".join(parts)
 
 
+REAL_PERCEPTION_NOTE = ("Perception note for this scene: object poses come from an overhead camera, not from the simulator. "
+                        "Positions can be off by about a centimetre and yaw by several degrees, and every observe() or "
+                        "get_pose() call gives a fresh noisy reading. Object mass, friction and grip force also vary more "
+                        "than usual between episodes.")
+
+
 REWARD_NOTES = {
     "gt": "Success is measured by the simulator's ground-truth check.",
     "vlm": ("Success is judged by a vision model looking at camera frames of the final scene. It can be wrong. "

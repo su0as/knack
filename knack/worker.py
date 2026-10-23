@@ -17,7 +17,7 @@ from .safety import Limits, RobotHalt, SafetyShield
 
 
 def run_episode(spec: dict, out_dir) -> dict:
-    """spec: {task, seed, code, max_time?, render?: {live, keyframes, gif, width, height}, obs_noise?}"""
+    """spec: {task, seed, code, max_time?, render?: {live, keyframes, gif, width, height}, obs_noise?, realism?}"""
     from .recorder import Recorder
     from .robot import SimRobot
     from .sandbox import SkillCompileError, compile_skill, skill_traceback
@@ -30,10 +30,14 @@ def run_episode(spec: dict, out_dir) -> dict:
     task = get_task(spec["task"])
     render = spec.get("render") or {}
     size = (int(render.get("width", 320)), int(render.get("height", 240)))
-    env = SimEnv(task, int(spec["seed"]), render_size=size)
+    from .sim import REALISM
+
+    realism = spec.get("realism") or "sim"
+    env = SimEnv(task, int(spec["seed"]), render_size=size, realism=realism)
     shield = SafetyShield(Limits(), env.geometry)
     max_time = float(spec.get("max_time") or task.max_time)
-    robot = SimRobot(env, shield, max_time=max_time, obs_noise=float(spec.get("obs_noise", 0.002)))
+    robot = SimRobot(env, shield, max_time=max_time, obs_noise=float(spec.get("obs_noise", REALISM[realism]["pos_noise"])),
+                     yaw_noise=REALISM[realism]["yaw_noise"])
     rec = None
     if render.get("live", True) or render.get("keyframes", True) or render.get("gif"):
         rec = Recorder(env, out, live_every=0.5 if render.get("live", True) else 0.0,
@@ -146,7 +150,8 @@ def main(argv=None):
     batch = json.loads(Path(args.batch).read_text(encoding="utf-8"))
     specs = [
         {"task": batch["task"], "seed": s, "code": batch["code"], "max_time": batch.get("max_time"),
-         "render": batch.get("render", {"live": False, "keyframes": True}), "obs_noise": batch.get("obs_noise", 0.002)}
+         "render": batch.get("render", {"live": False, "keyframes": True}), "obs_noise": batch.get("obs_noise", 0.002),
+         "realism": batch.get("realism", "sim")}
         for s in batch["seeds"]
     ]
     t0 = time.time()

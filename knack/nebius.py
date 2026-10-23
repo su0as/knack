@@ -210,7 +210,7 @@ class NebiusJobRunner:
         first = specs[0]
         batch = {"task": first["task"], "code": first["code"], "seeds": [s["seed"] for s in specs],
                  "max_time": first.get("max_time"), "render": {"live": False, "keyframes": True},
-                 "obs_noise": first.get("obs_noise", 0.002)}
+                 "obs_noise": first.get("obs_noise", 0.002), "realism": first.get("realism", "sim")}
         s3 = self._s3()
         s3.put_object(Bucket=self.bucket, Key=prefix + "knack-src.tar.gz", Body=source_tarball())
         s3.put_object(Bucket=self.bucket, Key=prefix + "batch.json", Body=json.dumps(batch).encode())

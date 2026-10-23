@@ -60,6 +60,7 @@ class LearnConfig:
     library_min_success: float = 0.5
     mock: bool = False
     live_eval_tiles: int = 16
+    realism: str = "sim"  # sim | real (camera-grade noise, wider physics randomisation)
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -116,7 +117,7 @@ class Learner:
             raise ValueError("reward must be gt, vlm or self")
         if self.custom and cfg.reward == "gt":
             raise ValueError("a custom instruction has no ground-truth check; use --reward vlm")
-        run_id = cfg.run_id or f"{_now()}-{cfg.task}-{_slug(cfg.coder)}-{cfg.reward}"
+        run_id = cfg.run_id or f"{_now()}-{cfg.task}-{_slug(cfg.coder)}-{cfg.reward}" + ("-real" if cfg.realism == "real" else "")
         self.run_id = run_id
         self.dir = Path(cfg.runs_root) / run_id
         self.dir.mkdir(parents=True, exist_ok=True)
@@ -142,7 +143,7 @@ class Learner:
         self.started = time.time()
         self.state = {
             "run_id": run_id, "task": self.task.id, "title": self.task.title, "instruction": self.instruction,
-            "custom_instruction": self.custom, "reward": cfg.reward, "status": "starting", "phase": "starting",
+            "custom_instruction": self.custom, "reward": cfg.reward, "realism": cfg.realism, "status": "starting", "phase": "starting",
             "round": 0, "rounds_max": cfg.rounds, "n": cfg.episodes, "episodes": [], "rounds": [], "eval": None,
             "models": self._model_chips(), "cost": {}, "backend": getattr(self.runner, "name", cfg.backend),
             "mock": bool(cfg.mock or responder is not None), "started": time.time(), "error": None,
@@ -243,7 +244,7 @@ class Learner:
         for i, s in enumerate(seeds):
             live = live_tiles is None or i < live_tiles
             specs.append({"task": self.task.id, "seed": s, "code": code, "max_time": self.task.max_time,
-                          "render": {"live": live, "keyframes": True}, "obs_noise": 0.002})
+                          "render": {"live": live, "keyframes": True}, "realism": self.cfg.realism})
         before = getattr(self.runner, "compute_seconds", 0.0)
         results = self.runner.run_batch(specs, out, on_update=self._on_episode)
         spent = getattr(self.runner, "compute_seconds", 0.0) - before
@@ -351,8 +352,10 @@ class Learner:
             self._set(phase="exploring with tools")
             probe_log = run_probe(self.llm, self.cfg.coder, self.task, self.instruction, TRAIN_SEED_BASE + self.cfg.seed_offset, self.dir)
         self._set(phase="writing skill v1")
-        msgs = [{"role": "system", "content": prompts.CODER_SYSTEM},
-                {"role": "user", "content": prompts.first_user(self.instruction, self.task.title, example, lib, probe_log)}]
+        first = prompts.first_user(self.instruction, self.task.title, example, lib, probe_log)
+        if self.cfg.realism == "real":
+            first = prompts.REAL_PERCEPTION_NOTE + "\n\n" + first
+        msgs = [{"role": "system", "content": prompts.CODER_SYSTEM}, {"role": "user", "content": first}]
         code, notes = self._coder("round_1_write", msgs)
         if notes:
             self.notes = notes

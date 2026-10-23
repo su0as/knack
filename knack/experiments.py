@@ -73,8 +73,8 @@ def _sweep(name: str, combos: list, budget_usd: float, runs_root: str, common: d
 
 
 def pilot(models=("super", "ultra"), tasks=PILOT_TASKS, rounds=4, episodes=8, eval_episodes=50, budget_usd=0.9,
-          runs_root="runs", workers=None, mock=False) -> dict:
-    common = dict(rounds=rounds, episodes=episodes, eval_episodes=eval_episodes, workers=workers, mock=mock)
+          runs_root="runs", workers=None, mock=False, realism="sim") -> dict:
+    common = dict(rounds=rounds, episodes=episodes, eval_episodes=eval_episodes, workers=workers, mock=mock, realism=realism)
     out, rows = _sweep("pilot", [(m, t, "gt") for m in models for t in tasks], budget_usd, runs_root, common)
     verdict = {}
     for m in models:
@@ -99,8 +99,9 @@ def pilot(models=("super", "ultra"), tasks=PILOT_TASKS, rounds=4, episodes=8, ev
 
 
 def scoreboard(models=("nano", "super", "ultra", "deepseek-flash"), tasks=("lift", "place", "push", "stack", "tray"),
-               rounds=4, episodes=8, eval_episodes=100, budget_usd=5.0, runs_root="runs", workers=None, mock=False) -> dict:
-    common = dict(rounds=rounds, episodes=episodes, eval_episodes=eval_episodes, workers=workers, mock=mock)
+               rounds=4, episodes=8, eval_episodes=100, budget_usd=5.0, runs_root="runs", workers=None, mock=False,
+               realism="sim") -> dict:
+    common = dict(rounds=rounds, episodes=episodes, eval_episodes=eval_episodes, workers=workers, mock=mock, realism=realism)
     out, rows = _sweep("scoreboard", [(m, t, "gt") for m in models for t in tasks], budget_usd, runs_root, common)
     table = {}
     for m in models:
@@ -116,8 +117,8 @@ def scoreboard(models=("nano", "super", "ultra", "deepseek-flash"), tasks=("lift
 
 
 def ablation(tasks=("lift", "place", "stack"), coder="super", rewards=("gt", "vlm", "self"), rounds=4, episodes=8,
-             eval_episodes=100, budget_usd=3.0, runs_root="runs", workers=None, mock=False) -> dict:
-    common = dict(rounds=rounds, episodes=episodes, eval_episodes=eval_episodes, workers=workers, mock=mock)
+             eval_episodes=100, budget_usd=3.0, runs_root="runs", workers=None, mock=False, realism="sim") -> dict:
+    common = dict(rounds=rounds, episodes=episodes, eval_episodes=eval_episodes, workers=workers, mock=mock, realism=realism)
     out, rows = _sweep("ablation", [(coder, t, rw) for rw in rewards for t in tasks], budget_usd, runs_root, common)
     table = {}
     for rw in rewards:

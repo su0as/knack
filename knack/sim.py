@@ -172,26 +172,37 @@ def scene_xml(task: Task, layout: dict, dr: dict | None = None, g: ArmGeometry =
 </mujoco>"""
 
 
-def sample_dr(task: Task, rng: np.random.Generator) -> dict:
-    """Light domain randomisation (mass, friction, grip force)."""
+# "sim": light randomisation. "real": closer to a cheap arm with an overhead camera
+# (wider mass/friction/grip ranges here; ~8 mm position and ~0.08 rad yaw noise in robot.py).
+REALISM = {
+    "sim": {"mass": (0.8, 1.25), "friction": (0.85, 1.15), "grip": (5.0, 7.0), "pos_noise": 0.002, "yaw_noise": 0.02},
+    "real": {"mass": (0.6, 2.0), "friction": (0.5, 1.1), "grip": (3.5, 6.5), "pos_noise": 0.008, "yaw_noise": 0.08},
+}
+
+
+def sample_dr(task: Task, rng: np.random.Generator, realism: str = "sim") -> dict:
+    """Domain randomisation (mass, friction, grip force). Ranges depend on the realism preset."""
+    r = REALISM[realism]
     dr = {}
     for o in task.objects:
-        dr[f"{o.name}_mass"] = float(rng.uniform(0.8, 1.25))
-        dr[f"{o.name}_friction"] = float(rng.uniform(0.85, 1.15))
-    dr["grip_force"] = float(rng.uniform(5.0, 7.0))
+        dr[f"{o.name}_mass"] = float(rng.uniform(*r["mass"]))
+        dr[f"{o.name}_friction"] = float(rng.uniform(*r["friction"]))
+    dr["grip_force"] = float(rng.uniform(*r["grip"]))
     return dr
 
 
 class SimEnv:
     """One randomised scene. Deterministic given (task, seed)."""
 
-    def __init__(self, task: Task, seed: int, *, randomize: bool = True, render_size=(320, 240), geometry: ArmGeometry = SIM_ARM):
+    def __init__(self, task: Task, seed: int, *, randomize: bool = True, render_size=(320, 240), geometry: ArmGeometry = SIM_ARM,
+                 realism: str = "sim"):
         self.task = task
+        self.realism = realism
         self.seed = int(seed)
         self.geometry = geometry
         self.rng = np.random.default_rng(self.seed)
         self.layout = task.sample_layout(self.rng)
-        self.dr = sample_dr(task, self.rng) if randomize else {}
+        self.dr = sample_dr(task, self.rng, realism) if randomize else {}
         self.xml = scene_xml(task, self.layout, self.dr, geometry)
         self.model = mujoco.MjModel.from_xml_string(self.xml)
         self.data = mujoco.MjData(self.model)
