@@ -27,6 +27,7 @@ from .stats import judge_metrics, wilson
 from .tasks import get_task
 
 TRAIN_SEED_BASE = 1000
+SELECT_SEED_BASE = 50_000  # fresh layouts used only to choose between candidate versions
 EVAL_SEED_BASE = 100_000
 
 
@@ -61,6 +62,7 @@ class LearnConfig:
     mock: bool = False
     live_eval_tiles: int = 16
     realism: str = "sim"  # sim | real (camera-grade noise, wider physics randomisation)
+    select_episodes: int = 16  # re-check the top practice versions on fresh layouts before the final eval (gt only)
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -139,6 +141,8 @@ class Learner:
         self.rounds: list[dict] = []
         self.codes: list[str] = []
         self.best: dict | None = None
+        self.candidates: list[dict] = []
+        self.selection: dict | None = None
         self.eval: dict | None = None
         self.started = time.time()
         self.state = {
@@ -455,6 +459,39 @@ class Learner:
             return code
         return new
 
+    def _select_best(self):
+        """Practice scores come from 8 layouts and are noisy (live, 23 Oct 2026: Ultra's 'best' round scored 88% in
+        practice and exactly the same as round 1 on held-out). Re-check the top versions on fresh layouts and keep
+        the one with the most successes overall. Simulator check only, so it costs compute, not tokens."""
+        n = self.cfg.select_episodes
+        if n <= 0 or self.cfg.reward != "gt" or self.custom:
+            return
+        uniq, seen = [], set()
+        for c in sorted(self.candidates, key=lambda c: (-c["k"] / max(1, c["n"]), c["round"])):
+            if c["code"] not in seen:
+                uniq.append(c)
+                seen.add(c["code"])
+        top = uniq[:3]
+        if len(top) < 2:
+            return
+        self._set(phase=f"re-checking the top {len(top)} versions on {n} fresh layouts")
+        seeds = [SELECT_SEED_BASE + self.cfg.seed_offset + i for i in range(n)]
+        rows = []
+        for c in top:
+            res = self._run_batch(c["code"], seeds, self.dir / "select" / f"round_{c['round']}", live_tiles=0)
+            ks = sum(bool(r.get("success_gt")) for r in res)
+            rows.append({"round": c["round"], "practice": f"{c['k']}/{c['n']}", "recheck": f"{ks}/{n}",
+                         "total_k": c["k"] + ks, "total_n": c["n"] + n, "code": c["code"]})
+        best = max(rows, key=lambda r: (r["total_k"] / r["total_n"], -r["round"]))
+        prev = self.best["round"]
+        self.best = {"code": best["code"], "score": best["total_k"] / best["total_n"], "round": best["round"]}
+        self.selection = {"episodes": n, "previous_choice": prev, "chosen": best["round"],
+                          "rows": [{k: v for k, v in r.items() if k != "code"} for r in rows]}
+        (self.dir / "select").mkdir(exist_ok=True)
+        (self.dir / "select" / "selection.json").write_text(json.dumps(self.selection, indent=1), encoding="utf-8")
+        self._event("selection", **self.selection)
+        self._set(selection=self.selection)
+
     def _final_eval(self):
         best = self.best
         n = self.cfg.eval_episodes
@@ -524,6 +561,7 @@ class Learner:
                     regressed = prev_best is not None and score < prev_best["score"]
                     if self.best is None or score >= self.best["score"]:
                         self.best = {"code": code, "score": score, "round": k}
+                    self.candidates.append({"round": k, "code": code, "k": rnd["record"]["k"], "n": rnd["record"]["n"]})
                     if score >= self.cfg.target or k == self.cfg.rounds:
                         break
                     summary = self._summarize(k, code, rnd)
@@ -541,6 +579,10 @@ class Learner:
                 status = "stopped (budget)"
                 self._event("budget", message=str(e))
             if self.best:
+                try:
+                    self._select_best()
+                except BudgetExceeded:
+                    pass
                 (self.dir / "best_skill.py").write_text(self.best["code"], encoding="utf-8")
                 self._final_eval()
         except Exception as e:

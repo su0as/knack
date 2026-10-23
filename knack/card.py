@@ -39,6 +39,7 @@ def build_card(learner) -> dict:
         "demonstrations": 0,
         "rounds": [{k: v for k, v in r.items() if k not in ("notes",)} for r in learner.rounds],
         "best_round": (learner.best or {}).get("round"),
+        "selection": getattr(learner, "selection", None),
         "eval": ev,
         "models": models,
         "receipt": {**{k: led[k] for k in ("llm_usd", "compute_usd", "total_usd", "calls", "prompt_tokens", "completion_tokens", "compute_seconds")},

@@ -131,7 +131,7 @@ def cmd_learn(a):
     cfg = LearnConfig(task=a.task, instruction=a.instruction, coder=a.coder, summarizer=a.summarizer, judge_model=a.judge,
                       reward=a.reward, rounds=a.rounds, episodes=a.n, eval_episodes=a.eval, target=a.target,
                       judge_mode=a.judge_mode, judge_thinking={"on": True, "off": False}.get(a.judge_think), use_library=a.library, probe=a.probe, backend=a.backend, workers=a.workers,
-                      budget_usd=a.budget, run_id=a.run_id, runs_root=a.runs, mock=a.mock, seed_offset=a.seed_offset, realism=a.realism,
+                      budget_usd=a.budget, run_id=a.run_id, runs_root=a.runs, mock=a.mock, seed_offset=a.seed_offset, realism=a.realism, select_episodes=a.select,
                       max_tokens=a.max_tokens)
     learner = Learner(cfg)
     print(f"run {learner.run_id} -> {learner.dir}")
@@ -273,6 +273,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     def learn_args(p):
         p.add_argument("--rounds", type=int, default=4)
+        p.add_argument("--select", type=int, default=16, help="fresh layouts used to re-check the top practice versions (0 = off)")
         p.add_argument("--realism", default="sim", choices=["sim", "real"],
                        help="real = camera-grade perception noise (~8 mm) and wider mass/friction/grip randomisation")
         p.add_argument("--n", type=int, default=8, help="parallel practice episodes per round")

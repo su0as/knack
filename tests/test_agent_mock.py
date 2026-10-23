@@ -69,3 +69,11 @@ def test_regression_reverts_to_best(tmp_path):
     assert "REGRESSION" in seen["prompt"]
     assert ORACLES["lift"].strip().splitlines()[0] in seen["prompt"]
     assert card["eval"]["k"] == 2  # best (round 1 or 3) code evaluated, not the broken one
+
+
+def test_selection_rechecks_top_versions(tmp_path):
+    """With two different candidate versions, the top ones are re-checked on fresh layouts before the final eval."""
+    card = Learner(_cfg(tmp_path, rounds=2, episodes=2, eval_episodes=2, select_episodes=4), runner=LocalRunner(workers=2)).run()
+    sel = card.get("selection")
+    assert sel and sel["episodes"] == 4 and len(sel["rows"]) == 2
+    assert sel["chosen"] == 2  # the fixture (round 2) beats the broken v1 on the re-check
