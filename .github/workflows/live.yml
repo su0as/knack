@@ -51,6 +51,9 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq libosmesa6 libgl1
       - name: Install
         run: pip install -e ".[dev]"
+      - name: Bring in earlier results (read-only, for replay/eval/plots of past runs)
+        run: |
+          git fetch -q origin results && git checkout origin/results -- results && git reset -q results || echo "no results branch yet"
       - name: Validate command
         run: |
           set -euo pipefail
@@ -81,7 +84,7 @@ jobs:
               rel = p.relative_to(src)
               if "episodes" in rel.parts:  # per-episode frames and traces stay in the artifact only
                   continue
-              if p.name in keep_names or (p.suffix in (".json", ".md", ".png") and p.stat().st_size < 2_000_000):
+              if p.name in keep_names or (p.suffix in (".json", ".md", ".png", ".gif") and p.stat().st_size < 8_000_000):
                   out = dst / rel
                   out.parent.mkdir(parents=True, exist_ok=True)
                   shutil.copy2(p, out)
@@ -102,6 +105,7 @@ jobs:
           git config user.name "knack-live"
           git config user.email "knack-live@users.noreply.github.com"
           mv results_out /tmp/results_out
+          rm -rf results  # read-only copy brought in earlier; the branch checkout below restores it
           git fetch origin results || true
           if git rev-parse --verify origin/results >/dev/null 2>&1; then
             git checkout -B results origin/results
