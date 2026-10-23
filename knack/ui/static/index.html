@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Knack console</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="mark">KNACK</span><span class="tag">practice, not demonstrations</span></div>
+  <div id="chips" class="chips" aria-label="which model does what"></div>
+  <div class="spend"><span class="lbl">SPENT</span><span id="spend" class="num">$0.0000</span></div>
+  <select id="runpick" title="previous runs"></select>
+</header>
+
+<section class="composer" aria-label="start a run">
+  <div class="field scene"><label for="task">SCENE</label><select id="task"></select></div>
+  <div class="field instr"><label for="instruction">TASK <span class="hint" title="Leave as is to use the simulator's ground-truth check. Change the words and the vision judge becomes the only reward.">?</span></label>
+    <input id="instruction" type="text" autocomplete="off"></div>
+  <div class="field"><label for="coder">CODER</label>
+    <select id="coder"><option value="ultra">Nemotron 3 Ultra</option><option value="super">Nemotron 3 Super</option><option value="nano">Nemotron 3 Nano</option><option value="deepseek-flash">DeepSeek V4.1 Flash (baseline)</option></select></div>
+  <div class="field"><label for="reward">REWARD <span class="hint" title="gt: simulator check. vlm: Nemotron 3.5 Super VL judges camera frames. self: the skill grades itself (shows why you need a judge).">?</span></label>
+    <select id="reward"><option value="gt">ground truth</option><option value="vlm">vision judge</option><option value="self">self-report</option></select></div>
+  <div class="field small"><label for="n">ROBOTS</label><input id="n" type="number" min="1" max="32" value="8"></div>
+  <div class="field small"><label for="rounds">ROUNDS</label><input id="rounds" type="number" min="1" max="8" value="4"></div>
+  <label class="mock"><input id="mock" type="checkbox"> offline mock</label>
+  <button id="go" class="go">PRACTISE</button>
+</section>
+
+<main class="layout">
+  <section class="arena">
+    <div class="arena-head">
+      <div><span id="roundlbl" class="big">-</span> <span id="phase" class="phase">pick a scene and press PRACTISE</span></div>
+      <div class="legend"><i class="sw run"></i>running <i class="sw ok"></i>success <i class="sw bad"></i>fail <i class="sw unk"></i>judge unsure</div>
+    </div>
+    <div id="tiles" class="tiles"></div>
+  </section>
+
+  <aside class="side">
+    <div class="panel">
+      <div class="ph">PRACTICE CURVE <span class="sub">success per round</span></div>
+      <div id="timeline" class="timeline"></div>
+    </div>
+    <div class="panel">
+      <div class="ph">FAILURE ANALYSIS <span class="sub" id="sumby">trace summariser</span></div>
+      <div id="summary" class="summary muted">No failures analysed yet.</div>
+    </div>
+    <div class="panel grow">
+      <div class="ph">SKILL CODE
+        <span class="tabs"><button data-view="code" class="on">code</button><button data-view="diff">diff</button><button data-view="notes">notes</button></span>
+      </div>
+      <pre id="code" class="code"></pre>
+    </div>
+  </aside>
+</main>
+
+<section id="card" class="card hidden" aria-label="skill card">
+  <div class="card-grid">
+    <div class="cell hero">
+      <div class="lbl">HELD-OUT SUCCESS <span id="evsrc"></span></div>
+      <div id="evp" class="huge">-</div>
+      <div id="evk" class="muted"></div>
+      <div class="ci"><div id="ciband" class="ci-band"></div><div id="cidot" class="ci-dot"></div></div>
+      <div id="evextra" class="muted small"></div>
+    </div>
+    <div class="cell">
+      <div class="lbl">RECEIPT</div>
+      <table id="receipt" class="receipt"></table>
+    </div>
+    <div class="cell wide">
+      <div class="lbl">FAILURE GALLERY</div>
+      <div id="gallery" class="gallery"></div>
+    </div>
+  </div>
+  <div class="card-foot"><a id="cardlink" target="_blank">open standalone skill card</a> <span class="muted">0 demonstrations used</span></div>
+</section>
+
+<div id="onboard" class="onboard hidden">
+  <div class="ob">
+    <div class="mark">KNACK</div>
+    <ol>
+      <li><b>Type a task</b> for a scene. No demonstrations, no reference code.</li>
+      <li><b>Watch it practise.</b> Nemotron writes the robot's code, many simulated robots try it in parallel, a trace summariser explains the failures and the code is rewritten.</li>
+      <li><b>Get a verified skill card:</b> held-out success with a confidence interval, a dollar receipt and a failure gallery.</li>
+    </ol>
+    <p class="muted">Every motion passes through a fixed safety layer (workspace, speed, force limits) that the AI cannot override.</p>
+    <button id="obok" class="go">GOT IT</button>
+  </div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>
