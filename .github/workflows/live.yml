@@ -1,0 +1,115 @@
+name: live
+
+# Runs a real Knack command (paid Token Factory calls) on a GitHub-hosted Linux runner.
+# Needs the repository secret NEBIUS_API_KEY. Every command still has its own --budget cap.
+# Start it from the Actions tab ("Run workflow") or:
+#   gh workflow run live.yml -f command="learn lift --coder super --budget 0.30"
+# Outputs: the full runs/ tree as an artifact, and (optional) the small summary files
+# committed to the `results` branch so numbers in the README trace back to files.
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "knack subcommand and flags, e.g. 'pilot --budget 0.9' or 'learn lift --coder super --budget 0.3'"
+        required: true
+        default: "models --remote"
+      label:
+        description: "short label for the results folder (letters, digits, dashes)"
+        required: false
+        default: "run"
+      commit_results:
+        description: "commit summary JSON/MD to the results branch"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-spend  # never two paid runs at once
+  cancel-in-progress: false
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      MUJOCO_GL: osmesa
+      PYOPENGL_PLATFORM: osmesa
+      NEBIUS_API_KEY: ${{ secrets.NEBIUS_API_KEY }}
+      KNACK_CMD: ${{ inputs.command }}
+      KNACK_LABEL: ${{ inputs.label }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: System libraries for headless rendering
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libosmesa6 libgl1
+      - name: Install
+        run: pip install -e ".[dev]"
+      - name: Validate command
+        run: |
+          set -euo pipefail
+          if [ -z "${NEBIUS_API_KEY}" ]; then echo "NEBIUS_API_KEY secret is missing"; exit 1; fi
+          # allowlist: first word must be a known knack subcommand; no shell metacharacters
+          if ! printf '%s' "$KNACK_CMD" | grep -Eq '^(models|check|oracle|learn|pilot|exp|eval|card|replay|library)( [A-Za-z0-9_.,:/=+-]+)*$'; then
+            echo "command rejected: $KNACK_CMD"; exit 1
+          fi
+          if ! printf '%s' "$KNACK_LABEL" | grep -Eq '^[A-Za-z0-9-]{1,40}$'; then echo "bad label"; exit 1; fi
+      - name: Run
+        run: |
+          set -o pipefail
+          mkdir -p runs
+          # shellcheck disable=SC2086
+          python -m knack $KNACK_CMD 2>&1 | tee runs/live_stdout.txt
+      - name: Collect summaries
+        if: always()
+        run: |
+          python - <<'EOF'
+          import os, shutil, time, pathlib
+          src = pathlib.Path("runs")
+          dst = pathlib.Path("results_out") / (time.strftime("%Y%m%d-%H%M%S") + "-" + os.environ.get("KNACK_LABEL", "run"))
+          keep_names = {"card.json", "card.md", "config.json", "ledger.jsonl", "events.jsonl", "round.json", "summary.md",
+                        "notes.md", "diff.patch", "skill.py", "best_skill.py", "eval.json", "live_stdout.txt"}
+          for p in src.rglob("*"):
+              if not p.is_file():
+                  continue
+              rel = p.relative_to(src)
+              if "episodes" in rel.parts:  # per-episode frames and traces stay in the artifact only
+                  continue
+              if p.name in keep_names or (p.suffix in (".json", ".md", ".png") and p.stat().st_size < 2_000_000):
+                  out = dst / rel
+                  out.parent.mkdir(parents=True, exist_ok=True)
+                  shutil.copy2(p, out)
+          (dst / "COMMAND.txt").parent.mkdir(parents=True, exist_ok=True)
+          (dst / "COMMAND.txt").write_text(os.environ.get("KNACK_CMD", "") + "\n", encoding="utf-8")
+          print("summaries in", dst)
+          EOF
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-${{ inputs.label }}-${{ github.run_id }}
+          path: runs/
+          retention-days: 30
+      - name: Commit summaries to the results branch
+        if: always() && inputs.commit_results
+        run: |
+          set -euo pipefail
+          git config user.name "knack-live"
+          git config user.email "knack-live@users.noreply.github.com"
+          mv results_out /tmp/results_out
+          git fetch origin results || true
+          if git rev-parse --verify origin/results >/dev/null 2>&1; then
+            git checkout -B results origin/results
+          else
+            git checkout --orphan results && git rm -rqf . && git clean -fdq
+            printf '# Knack live results\n\nWritten by .github/workflows/live.yml. One folder per run.\n' > README.md
+          fi
+          mkdir -p results && cp -r /tmp/results_out/* results/
+          # never commit anything that looks like a key
+          if grep -rIl 'v1\.[A-Za-z0-9_-]\{40,\}' results/ ; then echo "possible key in results, aborting"; exit 1; fi
+          git add -A && git commit -qm "live: ${KNACK_LABEL}: ${KNACK_CMD}" && git push -q origin results
