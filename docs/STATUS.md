@@ -1,14 +1,17 @@
 # Status and test checklist
 
-Last updated: 23 Oct 2026, 10:30 SGT.
+Last updated: 23 Oct 2026, 18:30 SGT.
 
 ## State
 
 - Code complete for the core loop, console, skill card, experiments, MCP server, Serverless Jobs runner and SO-101 backend.
 - CI green on Linux and Windows. Reference fixtures (hand-written test skills, never shown to the model) solve all 6 scenes on 20/20 layouts each.
 - Offline mock run of the full pipeline passes in CI (canned coder, no tokens).
-- Token Factory key created and stored only in `D:\dev\knack\.env` (gitignored). Model IDs verified with the free `/models` call. **No paid model call has been made yet.**
-- Not yet run: any live Nemotron call, the pilot gate, the Serverless Jobs backend (paid), the real arm.
+- Token Factory keys: one on the Windows laptop (`D:\dev\knack\.env`, gitignored) and one stored only as the GitHub Actions secret `NEBIUS_API_KEY` (key name "knack-github-actions (Aside)").
+- **Live runs now go through `.github/workflows/live.yml`** (Actions tab, "Run workflow", or `gh workflow run live.yml -f command="..."`). Each run uploads `runs/` as an artifact and commits the small summary files to the `results` branch. One paid run at a time (concurrency group), every command still has `--budget`.
+- **Pilot gate: PASS** (23 Oct): Super 100/100/80% and Ultra 100/100/90% held-out on lift/place/push. Scoreboard on stack/tray/sort done. Camera-grade (`--realism real`) runs done for stack and push. See README Results.
+- Spent so far: about $0.50 of the $1 trial. Promo code form submitted (code arrives by email to suhas.cse20@gmail.com, $25); AI Builder Program application submitted (another $25 after review, "within two business days").
+- Not yet run: reward ablation, judge accuracy, Kimi K3 reference, the Serverless Jobs backend (paid), the real arm.
 
 ## Your test checklist (in order, cheapest first)
 
@@ -26,7 +29,7 @@ Each session afterwards: `. D:\dev\knack\scripts\env_windows.ps1`
 
 ## Decisions pending (yours)
 
-- Apply the Token Factory promo code `NEBIUS-DEVPOST-GLOBAL26` (Billing page) before step 6, or keep to the $1 trial.
+- When the promo-code email arrives, redeem it in Token Factory (Billing), then the remaining experiments can run.
 - SO-101 purchase (after the pilot result).
 - Making the repo public (it is private now). Before that: `git log -p | Select-String NEBIUS_API_KEY=v1` must return nothing.
 

@@ -7,7 +7,7 @@
 
 Built for the Nebius x NVIDIA Global AI Hackathon (Physical AI track). Runs on **NVIDIA Nemotron open models served by Nebius Token Factory**, with an optional **Nebius AI Cloud Serverless Jobs** backend for parallel practice.
 
-> Status (23 Oct 2026): code complete for the core loop; CI green on Linux and Windows; hand-written reference skills solve all six scenes on 20/20 layouts (proves the simulator, not the agent). **No live Nemotron results are published yet**; every number in the Results section will come from files in this repo once the experiments are run. Nothing below is a projected or invented number.
+> Status (23 Oct 2026): first live results are in (below). Every number comes from a file on the [`results` branch](https://github.com/su0as/knack/tree/results/results), written by the [`live` workflow](.github/workflows/live.yml) on a GitHub-hosted runner calling Nebius Token Factory. Nothing here is projected or estimated.
 
 ---
 
@@ -106,16 +106,46 @@ Every command that calls a model takes `--budget` (USD) and stops cleanly when i
 
 ## Results
 
-Not run yet. The experiments are scripted so each number traces to a JSON file:
+All runs on 23 Oct 2026, zero demonstrations, 8 parallel practice episodes per round, held-out success on **50 unseen layouts** with a Wilson 95% interval. Cost is the exact Token Factory bill for the whole run (every model call), from `ledger.jsonl`.
+
+**1. Nemotron 3 Ultra programs all six scenes for under 7 cents each.** Standard perception (about 2 mm pose noise):
+
+| scene | Nemotron 3 Nano (3B active) | Nemotron 3 Super | Nemotron 3 Ultra | DeepSeek V4.1 Flash (baseline) |
+|---|---|---|---|---|
+| lift | | 100% · $0.011 | 100% · $0.006 | |
+| place in circle | | 100% · $0.004 | 100% · $0.005 | |
+| push puck | | 80% · $0.005 | 90% · $0.065 | |
+| stack | 64% · $0.006 | 72% · $0.028 | 100% · $0.004 | 100% · $0.005 |
+| into the tray | 100% · $0.001 | 64% · $0.013 | 100% · $0.005 | 100% · $0.009 |
+| sort by colour | 0% · $0.006 | 100% · $0.003 | 100% · $0.006 | 100% · $0.003 |
+
+Sources: `results/20261023-090645-pilot`, `results/20261023-093859-scoreboard-hard`. For context only (different benchmark, LIBERO-Pro): ASPIRE's published chart puts open-weight coding agents at about $40 to $55 per task. The honest reading is that Knack's scenes with near-perfect perception are easy for a strong coder: Ultra and DeepSeek solved them on the first try, and practice mattered only for the smaller models.
+
+**2. With camera-grade perception, first attempts fail and practice is what gets the skill working.** `--realism real` adds about 8 mm of pose noise per reading, 0.08 rad of yaw noise and wider mass, friction and grip randomisation (what a cheap arm with an overhead camera sees):
+
+| run | practice rounds (success on 8 layouts) | held-out (50 layouts) | cost |
+|---|---|---|---|
+| Super, push | 0% → 12% → 12% → 12% → 0% → 50% | **82%** (CI 69% to 90%) | $0.028 |
+| Super, stack | 12% → 75% → 50% → 50% → 75% → 50% | **62%** (CI 48% to 74%) | $0.045 |
+| Ultra, stack | 50% → 88% → 62% → 62% → 62% → 50% | **64%** (CI 50% to 76%) | $0.108 |
+| Ultra, push | 0% → 12% → 0% → 0% → 12% → 12% | 10% (CI 4% to 21%) | $0.100 |
+
+For comparison, the hand-written reference fixtures under the same noise score 57% on stack and 87% on push (30 layouts each). Source: `results/20261023-100205-real-stack-push`. Ultra on push is a failure we publish on purpose: its rewrites kept adding clearance logic that drove the arm into its workspace limits.
+
+**3. What practice adds, measured directly.** `knack exp gain` re-runs each run's *first* version (written before any feedback) on the exact held-out layouts the practised version was scored on. See `results/*-practice-gain/practice_gain.md` (table added below when the run finishes).
+
+**4. Three things the live runs changed in the code** (each in the commit history):
+- Nemotron 3.5 Lightning with thinking on spent its whole 4000-token budget reasoning and returned the unfinished thought as the "analysis". The summariser now runs with `enable_thinking: false` (about 460 output tokens, about 4 s).
+- Ultra once edited its own broken rewrite three times in a row (88% → 0% → 0% → 0%). A rewrite that scores worse is now discarded and the next rewrite starts from the best version, with the harmful diff shown to the coder.
+- The overhead judge camera was washed out; the floor and headlight were toned down so the vision judge can see positions.
+
+Still to run: reward-source ablation (ground truth vs vision judge vs self-report), vision-judge accuracy and abstention vs ground truth, Kimi K3 as a second reference coder, and a Serverless Jobs run. Commands:
 
 | Finding | Command | Output |
 |---|---|---|
-| Success vs practice rounds | `knack pilot`, `knack exp scoreboard` | `runs/*/pilot.json`, per-round success in each `card.json` |
-| Cheapest Nemotron that can program a robot ($ per skill) | `knack exp scoreboard` | `scoreboard_summary.json`, `docs/figures/scoreboard.png` |
 | Ground truth vs vision judge vs self-report as the reward | `knack exp ablation` | `ablation_summary.json` |
-| Vision-judge accuracy and abstention vs ground truth | `knack exp judge runs/` | `judge_eval.json`, `docs/figures/judge_coverage.png` |
-
-The scoreboard chart also shows the open-weight points from ASPIRE's published success-vs-API-cost chart as hollow markers. They were measured on LIBERO-Pro, a different benchmark, so they are context, not a head-to-head comparison.
+| Vision-judge accuracy and abstention vs ground truth | `knack exp judge runs/` | `judge_eval.json`, `judge_coverage.png` |
+| What practice adds | `knack exp gain "runs/**/*-gt*"` | `practice_gain.md` |
 
 ## Real arm (experimental)
 
