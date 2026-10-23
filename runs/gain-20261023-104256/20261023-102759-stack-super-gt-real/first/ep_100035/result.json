@@ -1,0 +1,191 @@
+{
+ "task": "stack",
+ "seed": 100035,
+ "error": {
+  "type": "SafetyViolation",
+  "message": "target z=-0.006 m is outside the safe workspace [0.014, 0.26] by 0.021 m",
+  "traceback": "  skill.py line 42, in run: if not safe_move(x=grasp_pos[0], y=grasp_pos[1], z=grasp_pos[2],\n  skill.py line 12, in safe_move: res = robot.move_to(**kwargs) if 'x' in kwargs else robot.move_by(**kwargs)\nSafetyViolation: target z=-0.006 m is outside the safe workspace [0.014, 0.26] by 0.021 m"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "xy_offset": 0.1052,
+  "z_gap": -0.0,
+  "red_held": false,
+  "blue_z": 0.0149
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Attempt 1/3"
+  },
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.28,
+   "call": "wait(0.10)",
+   "result": "ok"
+  },
+  {
+   "t": 0.28,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.66,
+   "call": "move_to(0.122, 0.023, 0.150, yaw=-0.751)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1218,
+     0.0231,
+     0.1501
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 0.66,
+   "call": "move_to(0.122, 0.023, -0.006, yaw=-0.751, speed=0.050)",
+   "error": "SAFETY HALT: target z=-0.006 m is outside the safe workspace [0.014, 0.26] by 0.021 m"
+  }
+ ],
+ "n_calls": 6,
+ "printed": [],
+ "safety_events": [
+  {
+   "t": 0.66,
+   "kind": "workspace",
+   "action": "halt",
+   "detail": "z=-0.006 outside [0.014, 0.26] by 0.021 m"
+  }
+ ],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 1
+ },
+ "halted": "target z=-0.006 m is outside the safe workspace [0.014, 0.26] by 0.021 m",
+ "sim_time": 1.16,
+ "wall_time": 0.06,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1204,
+     0.0241,
+     0.0149
+    ],
+    "yaw": 0.7554,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1824,
+     -0.0608,
+     0.0149
+    ],
+    "yaw": 0.2215,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 1.16,
+  "gripper": {
+   "pos": [
+    0.1219,
+    0.0231,
+    0.15
+   ],
+   "yaw": 2.391,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1204,
+     0.0241,
+     0.0149
+    ],
+    "yaw": 0.7554,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1824,
+     -0.0608,
+     0.0149
+    ],
+    "yaw": 0.2215,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {},
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1204,
+   "y": 0.0241,
+   "yaw": 0.7554,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1824,
+   "y": -0.0608,
+   "yaw": 0.2215,
+   "fp": 0.0225
+  }
+ }
+}
