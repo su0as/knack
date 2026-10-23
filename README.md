@@ -132,12 +132,25 @@ Sources: `results/20261023-090645-pilot`, `results/20261023-093859-scoreboard-ha
 
 For comparison, the hand-written reference fixtures under the same noise score 57% on stack and 87% on push (30 layouts each). Source: `results/20261023-100205-real-stack-push`. Ultra on push is a failure we publish on purpose: its rewrites kept adding clearance logic that drove the arm into its workspace limits.
 
-**3. What practice adds, measured directly.** `knack exp gain` re-runs each run's *first* version (written before any feedback) on the exact held-out layouts the practised version was scored on. See `results/*-practice-gain/practice_gain.md` (table added below when the run finishes).
+**3. What practice adds, measured directly.** `knack exp gain` re-runs each run's *first* version (written before any feedback) on the exact 50 held-out layouts the practised version was scored on. Where the best version was round 1 the two numbers match exactly, which checks that the comparison is like for like.
 
-**4. Three things the live runs changed in the code** (each in the commit history):
+| run | first version | after practice | gain |
+|---|---|---|---|
+| Super, push, camera-grade | 3/50 (6%) | 41/50 (82%), round 6 | **+76 pts** |
+| Super, lift | 0/50 (0%) | 50/50 (100%), round 3 | **+100 pts** |
+| Super, tray | 23/50 (46%) | 32/50 (64%), round 4 | +18 pts |
+| Super, stack, camera-grade | 29/50 (58%) | 31/50 (62%), round 5 | +4 pts (within noise) |
+| Ultra, stack, camera-grade | 32/50 (64%) | 32/50 (64%), round 2 | 0 |
+| Ultra, push, camera-grade | 7/50 (14%) | 5/50 (10%), round 6 | -4 pts |
+| 16 other runs | solved in round 1 | | 0 |
+
+Source: `results/20261023-101415-practice-gain/gain-*/practice_gain.md`. Two lessons went straight back into the code: an 8-episode practice score is too noisy to pick the best version (Ultra's "88%" round equalled its first version on held-out), so Knack now re-checks the top versions on 16 fresh layouts before the final evaluation; and a rewrite that scores worse is discarded (see 4).
+
+**4. Four things the live runs changed in the code** (each in the commit history):
 - Nemotron 3.5 Lightning with thinking on spent its whole 4000-token budget reasoning and returned the unfinished thought as the "analysis". The summariser now runs with `enable_thinking: false` (about 460 output tokens, about 4 s).
 - Ultra once edited its own broken rewrite three times in a row (88% → 0% → 0% → 0%). A rewrite that scores worse is now discarded and the next rewrite starts from the best version, with the harmful diff shown to the coder.
 - The overhead judge camera was washed out; the floor and headlight were toned down so the vision judge can see positions.
+- Practice scores on 8 layouts picked the wrong "best" version; the top versions are now re-checked on 16 fresh layouts (simulator only, no tokens).
 
 Still to run: reward-source ablation (ground truth vs vision judge vs self-report), vision-judge accuracy and abstention vs ground truth, Kimi K3 as a second reference coder, and a Serverless Jobs run. Commands:
 
