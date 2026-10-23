@@ -1,0 +1,5 @@
+- Increased back_offset from 0.02 m to 0.05 m to give the robot a clear approach path and avoid early contact‑stop errors.
+- Added a lateral‑corridor check: when the puck is far off‑center in y (|py‑ty| > 0.15 m) we reduce the push distance to 0.02 m for that attempt, preventing the arm from hitting side obstacles/joint limits.
+- Kept the rest of the proven logic (unit‑vector approach, move‑to start pose, push forward, wait, retry up to max_attempts, final verification).
+- Fixed the erroneous nested‑target reference that appeared in the discarded version; we now use the target pose directly from obs['fixtures']['target']['pos'].
+- Maintained proper exception handling and variable scope.

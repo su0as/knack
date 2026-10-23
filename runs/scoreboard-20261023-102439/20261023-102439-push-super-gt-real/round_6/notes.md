@@ -1,0 +1,6 @@
+- Increase back_offset to 0.10 m to avoid collisions/joint‑limit stops when approaching the puck.
+- Increase base push distance to 0.06 m to give the puck enough momentum per cycle.
+- Remove the lateral‑corridor push‑distance reduction; it caused unreachable poses and did not help success.
+- Lengthen the settle wait after each push to 0.5 s and re‑observe before the final check to mitigate observation noise.
+- Keep the core loop structure (attempts, unit‑vector approach, move‑to start, push, wait) and proper exception handling.
+- Final verification uses a fresh observation and directly compares puck distance to target radius.

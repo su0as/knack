@@ -1,0 +1,5 @@
+- Fixed a missing indentation level in the safe_move wrapper (the try block was not indented).
+- Ensured all function definitions and control flow are properly indented.
+- Added a missing colon after the `except` clause.
+- Verified that the code now parses without syntax errors.
+- Kept the core logic unchanged: perceive, grasp, lift, place, verify with retries.

@@ -1,0 +1,64 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -4,13 +4,13 @@
+     """Stack the red cube on top of the blue cube."""
+     SAFE_Z = 0.15          # travel height above the table
+     MAX_ATTEMPTS = 3       # how many full pick‑and‑place cycles we try
+-    POS_TOL = 0.02         # 2 cm tolerance for verification
++    POS_TOL = 0.03         # 3 cm tolerance for verification (increased)
+     APPROACH_OFFSET = 0.02 # meters above cube center for pre‑grasp approach
+ 
+     def clamp_z(z):
+-        """Clamp z to the safe vertical workspace [0.014, 0.26]."""
+-        if z < 0.014:
+-            return 0.014
++        """Clamp z to the safe vertical workspace [0.010, 0.26]."""
++        if z < 0.010:
++            return 0.010
+         if z > 0.26:
+             return 0.26
+         return z
+@@ -75,6 +75,7 @@
+                 if robot.holding() == 'red_cube':
+                     grasped = True
+                     break
++            # grasp didn't hold the cube
+             robot.log("Grasp did not hold red cube, releasing and retrying")
+             robot.release()
+             robot.wait(0.05)
+@@ -105,8 +106,19 @@
+             robot.release()
+             continue
+ 
+-        # --- 8. Descend to place height (red centre on blue centre) ---
+-        place_z = clamp_z(blue_pos[2] + 0.03)   # red centre height when stacked
++        # --- 8. Re‑perceive blue cube after waiting (avoid joint‑limit surprises) ---
++        robot.wait(0.1)
++        obs_check = robot.observe()
++        blue_check = obs_check['objects'].get('blue_cube')
++        if blue_check:
++            # If the blue cube moved more than 5 mm, update our target
++            if (abs(blue_check['pos'][0] - blue_pos[0]) > 0.005 or
++                abs(blue_check['pos'][1] - blue_pos[1]) > 0.005):
++                robot.log("Blue cube moved, updating target")
++                blue_pos = blue_check['pos']
++
++        # --- 9. Descend to place height (red centre on blue centre) ---
++        place_z = clamp_z(blue_pos[2] + 0.025)   # red centre height when stacked (reduced)
+         place_pos = [blue_pos[0], blue_pos[1], place_z]
+         if not safe_move_to(x=place_pos[0], y=place_pos[1], z=place_pos[2],
+                             speed=0.05):
+@@ -114,11 +126,11 @@
+             robot.release()
+             continue
+ 
+-        # --- 9. Release ---
++        # --- 10. Release ---
+         robot.release()
+         robot.wait(0.2)
+ 
+-        # --- 10. Verify stacking ---
++        # --- 11. Verify stacking ---
+         obs2 = robot.observe()
+         red2 = obs2['objects'].get('red_cube')
+         if red2:

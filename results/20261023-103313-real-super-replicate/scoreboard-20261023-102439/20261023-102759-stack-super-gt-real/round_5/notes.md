@@ -1,0 +1,3 @@
+- The place height was too low, causing the arm to collide with the blue cube or table during descent. Increased place_z to blue_pos[2] + 0.035 (desired centre height + 5 mm clearance) to avoid collision while still allowing the red cube to settle correctly after release.
+- Kept all other successful elements: safe move wrapper, retries, perception updates, and verification tolerance.
+- No changes to grasp or lift logic; they were working well.

@@ -1,0 +1,13 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -118,7 +118,9 @@
+                 blue_pos = blue_check['pos']
+ 
+         # --- 9. Descend to place height (red centre on blue centre) ---
+-        place_z = clamp_z(blue_pos[2] + 0.025)   # red centre height when stacked (reduced)
++        # Desired centre height when stacked: blue centre + cube side length (~0.030)
++        # Add a small clearance (0.005 m) to avoid collision during descent.
++        place_z = clamp_z(blue_pos[2] + 0.030 + 0.005)  # blue centre + 0.035 m
+         place_pos = [blue_pos[0], blue_pos[1], place_z]
+         if not safe_move_to(x=place_pos[0], y=place_pos[1], z=place_pos[2],
+                             speed=0.05):

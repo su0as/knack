@@ -1,0 +1,6 @@
+- The puck cannot be grasped, so we push it toward the target zone.
+- We compute the vector from puck to target, stand a short distance behind the puck along that vector, then move forward to push.
+- Safety constraints require the tool point to stay above z=0.014 m; we use a fixed safe height of 0.02 m.
+- We repeat the push a few times, re‑checking the puck pose after each attempt to accommodate perception noise and variations in mass/friction.
+- If a move is unreachable we catch MotionError and try the next attempt (the alternate side will be tried on the next loop iteration).
+- After the pushes we perform a final check; success is declared when the puck centre lies inside the green zone’s radius.

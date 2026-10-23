@@ -1,0 +1,7 @@
+- Perception is noisy (~1 cm position, several degrees yaw) and object properties vary, so we must re‑read poses after each major action and allow retries.
+- The strategy: home → locate cubes → grasp red cube (align yaw, slow descent) → lift → move above blue cube → descend to the stacking height (red centre = blue centre + cube size) → release → verify stacking.
+- Use a safe travel height (SAFE_Z = 0.15 m) to avoid collisions.
+- Wrap moves in a helper that catches MotionError and treats a failed move as a retry signal.
+- After release, re‑observe and check that the red cube’s pose is within ~2 cm of the target; if not, retry the whole sequence a few times.
+- Grasp may fail due to slip or mass/friction changes; we retry the grasp a couple of times before aborting the attempt.
+- All speeds are kept low (0.05 m/s) for precision approaches and the default speed for longer travels.

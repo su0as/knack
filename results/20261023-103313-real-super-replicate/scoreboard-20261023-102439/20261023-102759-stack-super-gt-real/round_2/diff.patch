@@ -1,0 +1,93 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -9,7 +9,11 @@
+     def safe_move(**kwargs):
+         """Wrapper around robot.move_to/move_by that catches MotionError."""
+         try:
+-            res = robot.move_to(**kwargs) if 'x' in kwargs else robot.move_by(**kwargs)
++            # Determine whether to call move_to or move_by
++            if 'x' in kwargs:
++                res = robot.move_to(**kwargs)
++            else:
++                res = robot.move_by(**kwargs)
+             return res.get('ok', False)
+         except Exception:   # MotionError or any other unexpected error
+             return False
+@@ -17,7 +21,8 @@
+     for attempt in range(MAX_ATTEMPTS):
+         robot.log(f"Attempt {attempt+1}/{MAX_ATTEMPTS}")
+         robot.home()
+-        robot.wait(0.1)
++        # Let vision settle before reading poses
++        robot.wait(0.5)
+ 
+         # --- 1. Perceive current cube poses ---
+         obs = robot.observe()
+@@ -37,11 +42,16 @@
+             robot.log("Failed to move above red cube")
+             continue
+ 
+-        # --- 3. Descend to grasp height (center of red cube) ---
++        # --- 3. Descend to grasp height (center of red cube (center) ---
+         grasp_pos = [red_pos[0], red_pos[1], red_pos[2]]
+         if not safe_move(x=grasp_pos[0], y=grasp_pos[1], z=grasp_pos[2],
+                          yaw=red_yaw, speed=0.05):
+             robot.log("Failed to descend to grasp red cube")
++            continue
++
++        # --- 3b. Lift slightly to avoid interference during grasp ---
++        if not safe_move(dz=0.02, speed=0.05):
++            robot.log("Failed to lift slightly before grasp")
+             continue
+ 
+         # --- 4. Grasp (may need a couple tries) ---
+@@ -60,7 +70,14 @@
+             safe_move(dz=0.04, speed=0.05)
+             continue
+ 
+-        # --- 5. Lift red cube to safe height ---
++        # --- 5. Lower to grasp center (optional, ensures secure hold) ---
++        if not safe_move(x=grasp_pos[0], y=grasp_pos[1], z=grasp_pos[2],
++                         yaw=red_yaw, speed=0.05):
++            robot.log("Failed to lower to grasp center")
++            robot.release()
++            continue
++
++        # --- 6. Lift red cube to safe height ---
+         lift_pos = [red_pos[0], red_pos[1], SAFE_Z]
+         if not safe_move(x=lift_pos[0], y=lift_pos[1], z=lift_pos[2],
+                          yaw=red_yaw, speed=0.05):
+@@ -68,15 +85,16 @@
+             robot.release()
+             continue
+ 
+-        # --- 6. Move above blue cube ---
++        # --- 7. Move above blue cube ---
+         above_blue = [blue_pos[0], blue_pos[1], SAFE_Z]
+         if not safe_move(x=above_blue[0], y=above_blue[1], z=above_blue[2]):
+             robot.log("Failed to move above blue cube")
+             robot.release()
+             continue
+ 
+-        # --- 7. Descend to place height (red centre on blue centre) ---
+-        place_z = blue_pos[2] + 0.03   # red centre height when stacked
++        # --- 8. Descend to place height (red centre on blue centre) ---
++        # Increased clearance to avoid collision with the blue cube during descent
++        place_z = blue_pos[2] + 0.05
+         place_pos = [blue_pos[0], blue_pos[1], place_z]
+         if not safe_move(x=place_pos[0], y=place_pos[1], z=place_pos[2],
+                          speed=0.05):
+@@ -84,11 +102,11 @@
+             robot.release()
+             continue
+ 
+-        # --- 8. Release ---
++        # --- 9. Release ---
+         robot.release()
+         robot.wait(0.2)
+ 
+-        # --- 9. Verify stacking ---
++        # --- 10. Verify stacking ---
+         obs2 = robot.observe()
+         red2 = obs2['objects'].get('red_cube')
+         if red2:

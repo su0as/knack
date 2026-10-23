@@ -1,0 +1,276 @@
+{
+ "run_id": "20261023-102759-stack-super-gt-real",
+ "task": "stack",
+ "title": "Stack",
+ "instruction": "Stack the red cube on top of the blue cube and let go.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "real",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 7,
+   "errors": 0,
+   "wall_s": 11.4,
+   "usd_cum": 0.00294,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 109,
+   "summary": "**Mode 1: Descent blocked (5 episodes: 1003, 1004, 1005, 1007)**\n- **Root cause:** The robot attempts to move to `place_z = blue_pos[2] + 0.03` (line 79) but the target z is too low, causing a collision/contact stop before reaching the cube. Seed 1004 succeeds on first attempt because the initial `place_z` happens to clear obstacles.\n- **Fix:** Increase `place_z` clearance to `blue_pos[2] + 0.05` (line 79) to guarantee safe descent over the blue cube.\n\n**Mode 2: Grasp failure (2 episodes: 1006, 1007)**\n- **Root cause:** The grasp loop (lines 49\u201156) retries twice, but if the gripper opens too wide or contacts the blue cube, `holding()` returns `None`. Seed 1007 logs \u201csafety clamps: 1\u201d, indicating mechanical interference.\n- **Fix:** Add a pre-grasp `safe_move(dz=0.02)` (after line 60) to lift the red cube slightly, avoiding collision with the blue cube during closure.\n\n**Mode 3: Pose drift (1 episode: 1003)**\n- **Root cause:** After a failed place, the robot re-homes and perceives shifted cube positions (line 23), leading to large xy offsets (0.0346) on subsequent attempts.\n- **Fix:** Freeze cube poses after first successful perception (line 23) or add a `robot.wait(0.5)` before `observe()` to let vision stabilize."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 3,
+   "success": 0.375,
+   "gt_k": 3,
+   "self_k": 3,
+   "errors": 1,
+   "wall_s": 12.5,
+   "usd_cum": 0.01112,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 127,
+   "summary": "**Mode 1: Grasp failure (5 episodes)**\n*Root cause:* Insufficient approach depth or cube pose mismatch prevents reliable enclosure. Lines 58\u201171 retry grasp twice, but if the arm arrives off\u2011axis or too high, the gripper slips.\n*Fix:* Before each grasp attempt, move to `z = red_pos[2] + 0.01` (above cube center) using `safe_move(z=...)` to ensure proper approach angle.\n\n**Mode 2: Collision during descent (3 episodes)**\n*Root cause:* `safe_move` to `grasp_pos[2]` (cube bottom) impacts the opposite cube or workspace boundary. Lines 74\u201178 lower red cube onto blue cube without checking interference.\n*Fix:* Add a pre\u2011descent check: `if red_pos[2] < blue_pos[2] + 0.04: safe_move(dz=-0.02)` at line 74 to back off before lowering.\n\n**Mode 3: Safety violation (1 episode)**\n*Root cause:* Target `z = -0.010 m` falls below the safe workspace `[0.014, 0.26]`. Line 47 passes a negative `z` when `grasp_pos[2]` is computed from a mis\u2011perceived cube pose.\n*Fix:* Clamp `z` in `safe_move` calls: `z = max(grasp_pos[2], 0.015)` before line 47 to keep all moves within limits.",
+   "reverted_to": 1
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 7,
+   "errors": 0,
+   "wall_s": 11.4,
+   "usd_cum": 0.01992,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 139,
+   "summary": "**Mode 1: Grasp failure (2 episodes, seeds 3001, 3004)**  \n*Root cause:* Descent to grasp height overshoots or stops short due to joint limits/contact, preventing closure. Seed\u202f3001 descends to z=0.017 (line\u202f66) and succeeds, but seed\u202f3004 stops at z=0.016 (line\u202f66) and later at z=0.022 (line\u202f83) with error_m\u202f0.0168, indicating the robot cannot reach the target pose.  \n*Fix:* Lower `grasp_z` clamping floor to `0.010` (line\u202f12) and add a retreat check after `robot.grasp()` (line\u202f74) to verify `holding()=='red_cube'` before lifting; if not, retreat to `SAFE_Z` (line\u202f82) immediately rather than looping.\n\n**Mode 2: Place mis\u2011alignment (2 episodes, seeds 3005, 3006)**  \n*Root cause:* Release occurs at `place_z = blue_pos[2] + 0.03` (line\u202f109) which sets the red cube centre at ~0.045\u202fm. The verification tolerance `POS_TOL=0.02` (line\u202f7) then fails if the red cube settles slightly off\u2011center or the blue cube shifts during release.  \n*Fix:* Reduce `place_z` offset to `0.025` (line\u202f109) so the red cube sits lower, and increase `POS_TOL` to `0.03` (line\u202f7) to accept minor settling variance.\n\n**Mode 3: Stack collision / joint limit (1 episode, seed 3005)**  \n*Root cause:* Moving above blue cube (line\u202f102\u2011103) from a distant pre\u2011grasp pose causes a joint limit when descending to `place_z`. The trace shows a successful release despite the error, but the subsequent verify fails.  \n*Fix:* After `safe_move_to` above blue cube (line\u202f103), add a `robot.wait(0.1)` and re\u2011check `obs['objects']['blue_cube']` position before descending; if the pose changed, re\u2011perceive (line\u202f38) before proceeding."
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 6,
+   "success": 0.75,
+   "gt_k": 6,
+   "self_k": 7,
+   "errors": 0,
+   "wall_s": 9.9,
+   "usd_cum": 0.02751,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 151,
+   "summary": "**Mode 1: Place\u2011height collision (2 episodes, seeds 4003, 4004)**  \n*Root cause:* The robot descends to `place_z = blue_pos[2] + 0.025` (line 121) but the blue cube sits at `z \u2248 0.015`. The calculated `place_z \u2248 0.040` drives the arm into the table or the red cube, triggering a \u201cstopped short\u201d error (lines 123\u2011127).  \n*Fix:* Change `place_z` to `clamp_z(blue_pos[2] + 0.010)` so the arm stops just above the blue cube, avoiding table contact.\n\n**Mode 2: Grasp\u2011then\u2011place mis\u2011alignment (2 episodes, seeds 4003, 4004)**  \n*Root cause:* After releasing the red cube (line 130), the verification step (lines 134\u2011146) checks tolerance but the red cube lands offset (`dx=0.038, dy=-0.014`). The place height is too low, letting gravity tip the cube before it settles.  \n*Fix:* Raise the place height to `blue_pos[2] + 0.040` (line 121) to give the red cube room to settle centered before gravity pulls it down.\n\nBoth fixes keep the arm within safe z\u2011limits while ensuring the red cube lands on top of the blue cube without collision."
+  },
+  {
+   "round": 5,
+   "n": 8,
+   "k": 6,
+   "success": 0.75,
+   "gt_k": 6,
+   "self_k": 7,
+   "errors": 0,
+   "wall_s": 10.1,
+   "usd_cum": 0.03438,
+   "code": "round_5/skill.py",
+   "diff": "round_5/diff.patch",
+   "lines": 153,
+   "summary": "**Mode 1: Placement misalignment (seeds 5004, 5006)**  \n*Episodes:* 2  \n*Root cause:* After release, the red cube lands outside the 3\u202fcm POS_TOL. In seed\u202f5004 the descent to `place_z` stopped short (line\u202f125) due to a joint limit, leaving the cube at `z=0.015` instead of the intended `0.045`. The subsequent verify (line\u202f138\u2011142) flags a large `dz`.  \n*Fix:* Add a post\u2011release `safe_move_to` to nudge the red cube into position before verification (e.g., move to `place_pos` with `speed=0.05` after `robot.release()` at line\u202f132).\n\n**Mode 2: Descent collision/blocked (seed 5004)**  \n*Episodes:* 1  \n*Root cause:* Line\u202f125 `safe_move_to` descends to `place_z` but the robot hits a joint limit or contact, reporting `ok: false` (trace t=16.1). The code then releases the cube at that unsafe height, causing the final mis\u2011placement.  \n*Fix:* Wrap the place\u2011descent in a retry loop (max\u202f2 attempts) that retreats to `SAFE_Z` on failure before re\u2011trying the descent, preventing release at a blocked pose."
+  },
+  {
+   "round": 6,
+   "n": 8,
+   "k": 3,
+   "success": 0.375,
+   "gt_k": 3,
+   "self_k": 7,
+   "errors": 0,
+   "wall_s": 9.8,
+   "usd_cum": 0.04289,
+   "code": "round_6/skill.py",
+   "diff": "round_6/diff.patch",
+   "lines": 172
+  }
+ ],
+ "best_round": 5,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 5,
+  "chosen": 5,
+  "rows": [
+   {
+    "round": 4,
+    "practice": "6/8",
+    "recheck": "10/16",
+    "total_k": 16,
+    "total_n": 24
+   },
+   {
+    "round": 5,
+    "practice": "6/8",
+    "recheck": "13/16",
+    "total_k": 19,
+    "total_n": 24
+   },
+   {
+    "round": 1,
+    "practice": "5/8",
+    "recheck": "13/16",
+    "total_k": 18,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 31,
+  "p": 0.62,
+  "lo": 0.481501950224,
+  "hi": 0.741374041574,
+  "source": "gt",
+  "best_round": 5,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 33,
+  "mean_sim_time": 16.62,
+  "self_report_true": 42,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100001,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0166,
+     "z_gap": 0.0295,
+     "red_held": false,
+     "blue_z": 0.0148
+    },
+    "frame": "eval/episodes/ep_100001/end_front.jpg"
+   },
+   {
+    "seed": 100009,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0217,
+     "z_gap": 0.0287,
+     "red_held": false,
+     "blue_z": 0.0148
+    },
+    "frame": "eval/episodes/ep_100009/end_front.jpg"
+   },
+   {
+    "seed": 100011,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0251,
+     "z_gap": 0.0263,
+     "red_held": false,
+     "blue_z": 0.0148
+    },
+    "frame": "eval/episodes/ep_100011/end_front.jpg"
+   },
+   {
+    "seed": 100012,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0176,
+     "z_gap": 0.0295,
+     "red_held": false,
+     "blue_z": 0.0148
+    },
+    "frame": "eval/episodes/ep_100012/end_front.jpg"
+   },
+   {
+    "seed": 100014,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0213,
+     "z_gap": 0.0283,
+     "red_held": false,
+     "blue_z": 0.0147
+    },
+    "frame": "eval/episodes/ep_100014/end_front.jpg"
+   },
+   {
+    "seed": 100016,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0335,
+     "z_gap": 0.0014,
+     "red_held": false,
+     "blue_z": 0.0139
+    },
+    "frame": "eval/episodes/ep_100016/end_front.jpg"
+   },
+   {
+    "seed": 100017,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0219,
+     "z_gap": 0.0281,
+     "red_held": false,
+     "blue_z": 0.0148
+    },
+    "frame": "eval/episodes/ep_100017/end_front.jpg"
+   },
+   {
+    "seed": 100021,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0239,
+     "z_gap": 0.0277,
+     "red_held": false,
+     "blue_z": 0.0148
+    },
+    "frame": "eval/episodes/ep_100021/end_front.jpg"
+   }
+  ]
+ },
+ "models": {
+  "coder": {
+   "alias": "super",
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "nvidia": true,
+   "calls": 10,
+   "prompt_tokens": 43632,
+   "completion_tokens": 30571,
+   "usd": 0.040604,
+   "price_in": 0.3,
+   "price_out": 0.9
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 5,
+   "prompt_tokens": 30464,
+   "completion_tokens": 1908,
+   "usd": 0.002285,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.042889,
+  "compute_usd": 0.0,
+  "total_usd": 0.042889,
+  "calls": 15,
+  "prompt_tokens": 74096,
+  "completion_tokens": 32479,
+  "compute_seconds": 253.09,
+  "backend": "local"
+ },
+ "wall_time_s": 313.4,
+ "practice_episodes": 48,
+ "created": "2026-10-23 10:33:13",
+ "skill_file": "best_skill.py"
+}

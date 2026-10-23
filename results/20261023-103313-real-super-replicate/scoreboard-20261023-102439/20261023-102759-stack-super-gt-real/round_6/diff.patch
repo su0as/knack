@@ -1,0 +1,58 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -4,8 +4,9 @@
+     """Stack the red cube on top of the blue cube."""
+     SAFE_Z = 0.15          # travel height above the table
+     MAX_ATTEMPTS = 3       # how many full pick‑and‑place cycles we try
+-    POS_TOL = 0.03         # 3 cm tolerance for verification (increased)
++    POS_TOL = 0.03         # 3 cm tolerance for verification
+     APPROACH_OFFSET = 0.02 # meters above cube center for pre‑grasp approach
++    MAX_PLACE_RETRIES = 2  # retries for the descent to place height
+ 
+     def clamp_z(z):
+         """Clamp z to the safe vertical workspace [0.010, 0.26]."""
+@@ -117,14 +118,26 @@
+                 robot.log("Blue cube moved, updating target")
+                 blue_pos = blue_check['pos']
+ 
+-        # --- 9. Descend to place height (red centre on blue centre) ---
++        # --- 9. Descend to place height with retries ---
+         # Desired centre height when stacked: blue centre + cube side length (~0.030)
+         # Add a small clearance (0.005 m) to avoid collision during descent.
+         place_z = clamp_z(blue_pos[2] + 0.030 + 0.005)  # blue centre + 0.035 m
+         place_pos = [blue_pos[0], blue_pos[1], place_z]
+-        if not safe_move_to(x=place_pos[0], y=place_pos[1], z=place_pos[2],
++
++        place_success = False
++        for place_try in range(MAX_PLACE_RETRIES):
++            if safe_move_to(x=place_pos[0], y=place_pos[1], z=place_pos[2],
+                             speed=0.05):
+-            robot.log("Failed to descend to place position")
++                place_success = True
++                break
++            else:
++                robot.log(f"Place descent attempt {place_try+1} failed, retreating to safe height")
++                retreat_pos = [blue_pos[0], blue_pos[1], SAFE_Z]
++                # Try to retreat; if this also fails we still continue to next try
++                safe_move_to(x=retreat_pos[0], y=retreat_pos[1], z=retreat_pos[2],
++                             speed=0.05)
++        if not place_success:
++            robot.log("Failed to reach place height after retries")
+             robot.release()
+             continue
+ 
+@@ -132,7 +145,13 @@
+         robot.release()
+         robot.wait(0.2)
+ 
+-        # --- 11. Verify stacking ---
++        # --- 11. Optional nudge to ensure proper seating ---
++        # Move slowly back to the intended place position to let the cube settle.
++        if not safe_move_to(x=place_pos[0], y=place_pos[1], z=place_pos[2],
++                            speed=0.05):
++            robot.log("Failed to nudge after release")
++
++        # --- 12. Verify stacking ---
+         obs2 = robot.observe()
+         red2 = obs2['objects'].get('red_cube')
+         if red2:

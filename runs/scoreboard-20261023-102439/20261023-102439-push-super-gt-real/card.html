@@ -1,0 +1,661 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Push puck</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261023-102439-push-super-gt-real &middot; 2026-10-23 10:27:59</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Push the orange puck so that its centre ends up inside the green circle. The puck is too wide to grasp.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: real &middot; 48 practice episodes in 6 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/nemotron-3-super-120b-a12b <em>$0.30 / $0.90 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">64%</div><div>32/50 layouts &middot; Wilson 95% CI 50% to 76%</div><div class='ci'><div class='ci-band' style='left:50.1%;width:25.7%'></div><div class='ci-dot' style='left:64.0%'></div></div>
+<p class="muted">Safety layer: 1 halts, 3 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:50%'></span><em>R1<br>4/8</em></div><div class='bar'><span style='height:2%'></span><em>R2<br>0/8</em></div><div class='bar'><span style='height:25%'></span><em>R3<br>2/8</em></div><div class='bar'><span style='height:2%'></span><em>R4<br>0/8</em></div><div class='bar'><span style='height:25%'></span><em>R5<br>2/8</em></div><div class='bar'><span style='height:75%'></span><em>R6<br>6/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/nemotron-3-super-120b-a12b</code></td><td>8</td><td>31,364</td><td>11,824</td><td>$0.0201</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>5</td><td>28,505</td><td>1,736</td><td>$0.0021</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>219 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>13</th><th>59,869</th><th>13,560</th><th>$0.0222</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details><summary>Round 1: 4/8 practice episodes &middot; 0 errors &middot; $0.0025 so far</summary><div class='muted'>coder notes</div><pre>- The puck cannot be grasped, so we push it toward the target zone.
+- We compute the vector from puck to target, stand a short distance behind the puck along that vector, then move forward to push.
+- Safety constraints require the tool point to stay above z=0.014 m; we use a fixed safe height of 0.02 m.
+- We repeat the push a few times, re‑checking the puck pose after each attempt to accommodate perception noise and variations in mass/friction.
+- If a move is unreachable we catch MotionError and try the next attempt (the alternate side will be tried on the next loop iteration).
+- After the pushes we perform a final check; success is declared when the puck centre lies inside the green zone’s radius.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Systematic short-stops (5 episodes: 1000, 1002, 1003, 1006, 1007)**
+*Root cause:* The `robot.move_to` calls repeatedly halt early with `&quot;stopped short of the target (blocked by contact or joint limit)&quot;`. The code treats this as a transient error and retries from the same approach vector, never adjusting aim.
+*Fix:* After a short-stop, recompute the unit vector `ux, uy` from the *new* observed puck position before the next `move_to` (lines 31‑32). This steers around the obstacle rather than replaying a blocked trajectory.
+
+**Mode 2: Overshoot / loss of puck (2 episodes: 1003, 1006)**
+*Root cause:* After a successful `move_to`, the puck shifts during `wait(0.2)` or subsequent observation, but the code uses the *initial* `px, py` for the final check (lines 59‑65). In seed 1006 the puck ends outside the circle despite earlier success.
+*Fix:* Re-read `puck[&#x27;pos&#x27;]` immediately before the final distance check (line 61) rather than relying on stale variables from earlier iterations.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,65 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    &quot;&quot;&quot;Push the orange puck until its centre lies inside the green zone.&quot;&quot;&quot;</span>
+<span class='add'>+    max_attempts = 5          # how many push cycles we will try</span>
+<span class='add'>+    back_offset = 0.02        # distance behind the puck to start the push (m)</span>
+<span class='add'>+    push_distance = 0.04      # how far we move forward while pushing (m)</span>
+<span class='add'>+    safe_z = 0.02             # safe height for the tool point (m)</span>
+<span class='add'>+</span>
+<span class='add'>+    for attempt in range(max_attempts):</span>
+<span class='add'>+        # 1️⃣  Get latest noisy observations</span>
+<span class='add'>+        obs = robot.observe()</span>
+<span class='add'>+        puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class='add'>+        target = obs[&#x27;fixtures&#x27;][&#x27;target&#x27;]</span>
+<span class='add'>+</span>
+<span class='add'>+        px, py, pz = puck[&#x27;pos&#x27;]</span>
+<span class='add'>+        tx, ty, _ = target[&#x27;pos&#x27;]</span>
+<span class='add'>+</span>
+<span class='add'>+        # 2️⃣  Already inside the target?</span>
+<span class='add'>+        dx = tx - px</span>
+<span class='add'>+        dy = ty - py</span>
+<span class='add'>+        dist_to_target = math.hypot(dx, dy)</span>
+<span class='add'>+        if dist_to_target &lt;= target[&#x27;radius&#x27;]:</span>
+<span class='add'>+            return True</span>
+<span class='add'>+</span>
+<span class='add'>+        # Avoid division by zero if puck and target coincide (unlikely but safe)</span>
+<span class='add'>+        if dist_to_target &lt; 1e-6:</span>
+<span class='add'>+            return True</span>
+<span class='add'>+</span>
+<span class='add'>+        # Unit vector from puck to target</span>
+<span class='add'>+        ux = dx / dist_to_target</span>
+<span class='add'>+        uy = dy / dist_to_target</span>
+<span class='add'>+</span>
+<span class='add'>+        # 3️⃣  Position behind the puck (the &quot;push start&quot;)</span>
+<span class='add'>+        approach_x = px - ux * back_offset</span>
+<span class='add'>+        approach_y = py - uy * back_offset</span>
+<span class='add'>+</span>
+<span class='add'>+        # 4️⃣  Move to the start pose</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(approach_x, approach_y, safe_z,</span>
+<span class='add'>+                          yaw=math.atan2(uy, ux))</span>
+<span class='add'>+        except Exception:   # MotionError or any unexpected issue</span>
+<span class='add'>+            # If we can&#x27;t reach this side, try again – the next loop may pick a different side</span>
+<span class='add'>+            continue</span>
+<span class='add'>+</span>
+<span class='add'>+        # 5️⃣  Push forward</span>
+<span class='add'>+        push_x = approach_x + ux * push_distance</span>
+<span class='add'>+        push_y = approach_y + uy * push_distance</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(push_x, push_y, safe_z,</span>
+<span class='add'>+                          yaw=math.atan2(uy, ux))</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            continue</span>
+<span class='add'>+</span>
+<span class='add'>+        # 6️⃣  Let the puck settle after the push</span>
+<span class='add'>+        robot.wait(0.2)</span>
+<span class='add'>+</span>
+<span class='add'>+    # Final verification after all attempts</span>
+<span class='add'>+    obs = robot.observe()</span>
+<span class='add'>+    puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class='add'>+    px, py, _ = puck[&#x27;pos&#x27;]</span>
+<span class='add'>+    tx, ty, _ = target[&#x27;fixtures&#x27;][&#x27;target&#x27;][&#x27;pos&#x27;] if isinstance(target, dict) and &#x27;fixtures&#x27; in target else target[&#x27;pos&#x27;]</span>
+<span class='add'>+    # The above line is defensive; simpler:</span>
+<span class='add'>+    tx, ty, _ = target[&#x27;pos&#x27;]</span>
+<span class='add'>+    return math.hypot(tx - px, ty - py) &lt;= target[&#x27;radius&#x27;]</span></pre></details><details><summary>Round 2: 0/8 practice episodes &middot; 0 errors &middot; $0.0074 so far</summary><div class='muted'>coder notes</div><pre>- Removed stray markup (`</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Systematic undershoot (6 episodes)**
+*Root cause:* The push distance (0.04 m) is too short to overcome friction and reach the target radius. The robot stops short of the target every attempt.
+*Code cite:* Line 7 (`push_distance = 0.04`) and lines 50–54 (push execution).
+*Fix:* Increase `push_distance` to 0.08 m. This doubles the travel per attempt and should close the ~0.12 m gap within 2–3 tries.
+
+**Mode 2: Approach blocked by contact (4 episodes)**
+*Root cause:* The starting position (`approach_x/y`, lines 35–36) places the robot too close to the puck, causing immediate collision on `move_to`. The `back_offset` of 0.02 m is insufficient given the puck’s width.
+*Code cite:* Lines 6–7 (`back_offset = 0.02`) and lines 35–44 (approach and collision handling).
+*Fix:* Increase `back_offset` to 0.05 m. This gives the robot clearance to reach the push start pose without contacting the puck.
+
+**Mode 3: Observation noise misaligns push direction (2 episodes)**
+*Root cause:* Noisy `observe()` returns a puck position offset from true location, causing the unit vector (lines 31–32) to point slightly off-target. Repeated pushes drift the puck away from the circle.
+*Code cite:* Lines 12–14 (observation) and 31–32 (direction calculation).
+*Fix:* Apply a simple moving average to the puck position over the last 3 observations before computing `ux, uy`. This stabilizes the push direction at negligible compute cost.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_1/skill.py</span>
+<span class=''>+++ round_2/skill.py</span>
+<span class='hunk'>@@ -7,7 +7,7 @@</span>
+<span class=''>     push_distance = 0.04      # how far we move forward while pushing (m)</span>
+<span class=''>     safe_z = 0.02             # safe height for the tool point (m)</span>
+<span class=''> </span>
+<span class='del'>-    for attempt in range(max_attempts):</span>
+<span class='add'>+    for _ in range(max_attempts):</span>
+<span class=''>         # 1️⃣  Get latest noisy observations</span>
+<span class=''>         obs = robot.observe()</span>
+<span class=''>         puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class='hunk'>@@ -37,29 +37,33 @@</span>
+<span class=''> </span>
+<span class=''>         # 4️⃣  Move to the start pose</span>
+<span class=''>         try:</span>
+<span class='del'>-            robot.move_to(approach_x, approach_y, safe_z,</span>
+<span class='del'>-                          yaw=math.atan2(uy, ux))</span>
+<span class='del'>-        except Exception:   # MotionError or any unexpected issue</span>
+<span class='del'>-            # If we can&#x27;t reach this side, try again – the next loop may pick a different side</span>
+<span class='add'>+            res = robot.move_to(approach_x, approach_y, safe_z,</span>
+<span class='add'>+                                yaw=math.atan2(uy, ux))</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            # Unreachable or blocked – try next attempt with fresh observation</span>
+<span class='add'>+            continue</span>
+<span class='add'>+        if not res[&#x27;ok&#x27;]:</span>
+<span class='add'>+            # Blocked by contact/joint limit – give up this attempt</span>
+<span class=''>             continue</span>
+<span class=''> </span>
+<span class=''>         # 5️⃣  Push forward</span>
+<span class=''>         push_x = approach_x + ux * push_distance</span>
+<span class=''>         push_y = approach_y + uy * push_distance</span>
+<span class=''>         try:</span>
+<span class='del'>-            robot.move_to(push_x, push_y, safe_z,</span>
+<span class='del'>-                          yaw=math.atan2(uy, ux))</span>
+<span class='add'>+            res2 = robot.move_to(push_x, push_y, safe_z,</span>
+<span class='add'>+                                 yaw=math.atan2(uy, ux))</span>
+<span class=''>         except Exception:</span>
+<span class='add'>+            continue</span>
+<span class='add'>+        if not res2[&#x27;ok&#x27;]:</span>
+<span class=''>             continue</span>
+<span class=''> </span>
+<span class=''>         # 6️⃣  Let the puck settle after the push</span>
+<span class=''>         robot.wait(0.2)</span>
+<span class=''> </span>
+<span class='del'>-    # Final verification after all attempts</span>
+<span class='add'>+    # Final verification after all attempts – use fresh observation</span>
+<span class=''>     obs = robot.observe()</span>
+<span class=''>     puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class='add'>+    target = obs[&#x27;fixtures&#x27;][&#x27;target&#x27;]</span>
+<span class=''>     px, py, _ = puck[&#x27;pos&#x27;]</span>
+<span class='del'>-    tx, ty, _ = target[&#x27;fixtures&#x27;][&#x27;target&#x27;][&#x27;pos&#x27;] if isinstance(target, dict) and &#x27;fixtures&#x27; in target else target[&#x27;pos&#x27;]</span>
+<span class='del'>-    # The above line is defensive; simpler:</span>
+<span class=''>     tx, ty, _ = target[&#x27;pos&#x27;]</span>
+<span class=''>     return math.hypot(tx - px, ty - py) &lt;= target[&#x27;radius&#x27;]</span></pre></details><details><summary>Round 3: 2/8 practice episodes &middot; 0 errors &middot; $0.0109 so far</summary><div class='muted'>coder notes</div><pre>- Increased back_offset from 0.02 m to 0.05 m to avoid colliding with the puck when positioning behind it.
+- Increased push_distance from 0.04 m to 0.08 m to overcome friction and reach the target radius within the allowed attempts.
+- Added a short moving‑average (last 3 observations) of the puck’s xy position to reduce noise‑induced drift in the push direction.
+- Checked the `ok` flag returned by `robot.move_to` and continue on failure, matching the pattern that worked in round 1.
+- Kept the rest of the logic (early exit if already inside, yaw alignment, wait after push) unchanged.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Systematic short-stops** (seeds 3000, 3003, 3004, 3005, 3007)
+- **Count:** 5 episodes
+- **Root cause:** The `move_to` calls repeatedly report `&quot;stopped short of the target (blocked by contact or joint limit)&quot;`. The robot cannot reach the computed `approach_x/y` or `push_x/y` poses, likely because the `back_offset=0.05m` positions the tool into the puck or a fixture, or the `push_distance=0.08m` overshoots a physical stop.
+- **Fix:** Reduce `back_offset` to `0.02m` (line 7) and/or reduce `push_distance` to `0.04m` (line 8) to keep motions within reachable space.
+
+**Mode 2: Overshoot / missed target** (seeds 3001, 3002, 3006)
+- **Count:** 3 episodes
+- **Root cause:** Successful motions still leave `puck_to_target_xy` near the tolerance boundary (0.023–0.048m). The push distance may be too large or direction slightly off, failing to guarantee entry on every attempt.
+- **Fix:** Add a final micro-push after the loop (after line 75) that moves `push_distance/2` toward the target if `dist_to_target &gt; 0.02m`, using the smoothed puck position from the last observation.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_2/skill.py</span>
+<span class=''>+++ round_3/skill.py</span>
+<span class='hunk'>@@ -1,49 +1,63 @@</span>
+<span class=''> import math</span>
+<span class='add'>+from collections import deque</span>
+<span class=''> </span>
+<span class=''> def run(robot):</span>
+<span class=''>     &quot;&quot;&quot;Push the orange puck until its centre lies inside the green zone.&quot;&quot;&quot;</span>
+<span class=''>     max_attempts = 5          # how many push cycles we will try</span>
+<span class='del'>-    back_offset = 0.02        # distance behind the puck to start the push (m)</span>
+<span class='del'>-    push_distance = 0.04      # how far we move forward while pushing (m)</span>
+<span class='add'>+    back_offset = 0.05        # distance behind the puck to start the push (m)</span>
+<span class='add'>+    push_distance = 0.08      # how far we move forward while pushing (m)</span>
+<span class=''>     safe_z = 0.02             # safe height for the tool point (m)</span>
+<span class=''> </span>
+<span class='del'>-    for _ in range(max_attempts):</span>
+<span class='add'>+    # history of recent puck positions for smoothing (max 3 samples)</span>
+<span class='add'>+    pos_history = deque(maxlen=3)</span>
+<span class='add'>+</span>
+<span class='add'>+    for attempt in range(max_attempts):</span>
+<span class=''>         # 1️⃣  Get latest noisy observations</span>
+<span class=''>         obs = robot.observe()</span>
+<span class=''>         puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class=''>         target = obs[&#x27;fixtures&#x27;][&#x27;target&#x27;]</span>
+<span class=''> </span>
+<span class='del'>-        px, py, pz = puck[&#x27;pos&#x27;]</span>
+<span class='del'>-        tx, ty, _ = target[&#x27;pos&#x27;]</span>
+<span class='add'>+        # raw puck position</span>
+<span class='add'>+        raw_x, raw_y, _ = puck[&#x27;pos&#x27;]</span>
+<span class='add'>+        pos_history.append((raw_x, raw_y))</span>
+<span class='add'>+</span>
+<span class='add'>+        # compute smoothed position (average of available samples)</span>
+<span class='add'>+        if pos_history:</span>
+<span class='add'>+            sx = sum(p[0] for p in pos_history)</span>
+<span class='add'>+            sy = sum(p[1] for p in pos_history)</span>
+<span class='add'>+            cnt = len(pos_history)</span>
+<span class='add'>+            puck_x = sx / cnt</span>
+<span class='add'>+            puck_y = sy / cnt</span>
+<span class='add'>+        else:</span>
+<span class='add'>+            puck_x, puck_y = raw_x, raw_y</span>
+<span class='add'>+</span>
+<span class='add'>+        # target position</span>
+<span class='add'>+        tgt_x, tgt_y, _ = target[&#x27;pos&#x27;]</span>
+<span class=''> </span>
+<span class=''>         # 2️⃣  Already inside the target?</span>
+<span class='del'>-        dx = tx - px</span>
+<span class='del'>-        dy = ty - py</span>
+<span class='add'>+        dx = tgt_x - puck_x</span>
+<span class='add'>+        dy = tgt_y - puck_y</span>
+<span class=''>         dist_to_target = math.hypot(dx, dy)</span>
+<span class=''>         if dist_to_target &lt;= target[&#x27;radius&#x27;]:</span>
+<span class=''>             return True</span>
+<span class='del'>-</span>
+<span class='del'>-        # Avoid division by zero if puck and target coincide (unlikely but safe)</span>
+<span class='del'>-        if dist_to_target &lt; 1e-6:</span>
+<span class='add'>+        if dist_to_target &lt; 1e-6:  # avoid division by zero</span>
+<span class=''>             return True</span>
+<span class=''> </span>
+<span class='del'>-        # Unit vector from puck to target</span>
+<span class='add'>+        # Unit vector from puck to target (using smoothed puck position)</span>
+<span class=''>         ux = dx / dist_to_target</span>
+<span class=''>         uy = dy / dist_to_target</span>
+<span class=''> </span>
+<span class=''>         # 3️⃣  Position behind the puck (the &quot;push start&quot;)</span>
+<span class='del'>-        approach_x = px - ux * back_offset</span>
+<span class='del'>-        approach_y = py - uy * back_offset</span>
+<span class='add'>+        approach_x = puck_x - ux * back_offset</span>
+<span class='add'>+        approach_y = puck_y - uy * back_offset</span>
+<span class=''> </span>
+<span class=''>         # 4️⃣  Move to the start pose</span>
+<span class=''>         try:</span>
+<span class=''>             res = robot.move_to(approach_x, approach_y, safe_z,</span>
+<span class=''>                                 yaw=math.atan2(uy, ux))</span>
+<span class='del'>-        except Exception:</span>
+<span class='del'>-            # Unreachable or blocked – try next attempt with fresh observation</span>
+<span class='add'>+        except Exception:   # MotionError or any unexpected issue</span>
+<span class=''>             continue</span>
+<span class=''>         if not res[&#x27;ok&#x27;]:</span>
+<span class='del'>-            # Blocked by contact/joint limit – give up this attempt</span>
+<span class=''>             continue</span>
+<span class=''> </span>
+<span class=''>         # 5️⃣  Push forward</span>
+<span class='hunk'>@@ -60,7 +74,7 @@</span>
+<span class=''>         # 6️⃣  Let the puck settle after the push</span>
+<span class=''>         robot.wait(0.2)</span>
+<span class=''> </span>
+<span class='del'>-    # Final verification after all attempts – use fresh observation</span>
+<span class='add'>+    # Final verification after all attempts (use fresh observation)</span>
+<span class=''>     obs = robot.observe()</span>
+<span class=''>     puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class=''>     target = obs[&#x27;fixtures&#x27;][&#x27;target&#x27;]</span></pre></details><details><summary>Round 4: 0/8 practice episodes &middot; 0 errors &middot; $0.0160 so far</summary><div class='muted'>coder notes</div><pre>- Fixed indentation and removed stray whitespace that caused a SyntaxError.
+- Ensured all try/except blocks are properly closed and variables are defined before use.
+- Added a missing import for math (already present) and kept the logic unchanged.
+- Verified that the function ends with a return statement.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Systematic undershoot (6 episodes, seeds 4000‑4006)**
+- **Root cause:** The approach point (`back_offset=0.02`) is too close to the puck. The robot stops short (`error_m≈0.012`) because the `move_to` collision detection triggers before reaching the intended push pose (lines 41‑46). The puck never receives enough impulse.
+- **Fix:** Increase `back_offset` to `0.05 m` (line 6) to give the robot a clearer path and more push distance before contact.
+
+**Mode 2: Wide lateral spread (seeds 4003‑4005)**
+- **Root cause:** Large initial `y` offsets (e.g., puck at `y≈0.14`) cause the unit vector `uy` to dominate, steering the robot into side obstacles or joint limits, resulting in repeated short stops (lines 32‑33, 42).
+- **Fix:** Add a lateral corridor check before `move_to`: if `|py‑ty| &gt; 0.15`, reduce `push_distance` to `0.02 m` and retry, or nudge the approach point sideways (line 36‑37) to keep the trajectory centered.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_3/skill.py</span>
+<span class=''>+++ round_4/skill.py</span>
+<span class='hunk'>@@ -1,15 +1,12 @@</span>
+<span class=''> import math</span>
+<span class='del'>-from collections import deque</span>
+<span class=''> </span>
+<span class=''> def run(robot):</span>
+<span class=''>     &quot;&quot;&quot;Push the orange puck until its centre lies inside the green zone.&quot;&quot;&quot;</span>
+<span class='del'>-    max_attempts = 5          # how many push cycles we will try</span>
+<span class='del'>-    back_offset = 0.05        # distance behind the puck to start the push (m)</span>
+<span class='del'>-    push_distance = 0.08      # how far we move forward while pushing (m)</span>
+<span class='add'>+    max_attempts = 6          # allow a few extra tries</span>
+<span class='add'>+    back_offset = 0.02        # distance behind the puck to start the push (m)</span>
+<span class='add'>+    push_distance = 0.04      # normal push distance (m)</span>
+<span class='add'>+    micro_push_factor = 0.5   # fraction of push_distance for the final micro‑push</span>
+<span class=''>     safe_z = 0.02             # safe height for the tool point (m)</span>
+<span class='del'>-</span>
+<span class='del'>-    # history of recent puck positions for smoothing (max 3 samples)</span>
+<span class='del'>-    pos_history = deque(maxlen=3)</span>
+<span class=''> </span>
+<span class=''>     for attempt in range(max_attempts):</span>
+<span class=''>         # 1️⃣  Get latest noisy observations</span>
+<span class='hunk'>@@ -17,46 +14,34 @@</span>
+<span class=''>         puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class=''>         target = obs[&#x27;fixtures&#x27;][&#x27;target&#x27;]</span>
+<span class=''> </span>
+<span class='del'>-        # raw puck position</span>
+<span class='del'>-        raw_x, raw_y, _ = puck[&#x27;pos&#x27;]</span>
+<span class='del'>-        pos_history.append((raw_x, raw_y))</span>
+<span class='del'>-</span>
+<span class='del'>-        # compute smoothed position (average of available samples)</span>
+<span class='del'>-        if pos_history:</span>
+<span class='del'>-            sx = sum(p[0] for p in pos_history)</span>
+<span class='del'>-            sy = sum(p[1] for p in pos_history)</span>
+<span class='del'>-            cnt = len(pos_history)</span>
+<span class='del'>-            puck_x = sx / cnt</span>
+<span class='del'>-            puck_y = sy / cnt</span>
+<span class='del'>-        else:</span>
+<span class='del'>-            puck_x, puck_y = raw_x, raw_y</span>
+<span class='del'>-</span>
+<span class='del'>-        # target position</span>
+<span class='del'>-        tgt_x, tgt_y, _ = target[&#x27;pos&#x27;]</span>
+<span class='add'>+        px, py, _ = puck[&#x27;pos&#x27;]</span>
+<span class='add'>+        tx, ty, _ = target[&#x27;pos&#x27;]</span>
+<span class=''> </span>
+<span class=''>         # 2️⃣  Already inside the target?</span>
+<span class='del'>-        dx = tgt_x - puck_x</span>
+<span class='del'>-        dy = tgt_y - puck_y</span>
+<span class='add'>+        dx = tx - px</span>
+<span class='add'>+        dy = ty - py</span>
+<span class=''>         dist_to_target = math.hypot(dx, dy)</span>
+<span class=''>         if dist_to_target &lt;= target[&#x27;radius&#x27;]:</span>
+<span class=''>             return True</span>
+<span class='del'>-        if dist_to_target &lt; 1e-6:  # avoid division by zero</span>
+<span class='add'>+</span>
+<span class='add'>+        # Avoid division by zero if puck and target coincide (unlikely but safe)</span>
+<span class='add'>+        if dist_to_target &lt; 1e-6:</span>
+<span class=''>             return True</span>
+<span class=''> </span>
+<span class='del'>-        # Unit vector from puck to target (using smoothed puck position)</span>
+<span class='add'>+        # Unit vector from puck to target</span>
+<span class=''>         ux = dx / dist_to_target</span>
+<span class=''>         uy = dy / dist_to_target</span>
+<span class=''> </span>
+<span class=''>         # 3️⃣  Position behind the puck (the &quot;push start&quot;)</span>
+<span class='del'>-        approach_x = puck_x - ux * back_offset</span>
+<span class='del'>-        approach_y = puck_y - uy * back_offset</span>
+<span class='add'>+        approach_x = px - ux * back_offset</span>
+<span class='add'>+        approach_y = py - uy * back_offset</span>
+<span class=''> </span>
+<span class=''>         # 4️⃣  Move to the start pose</span>
+<span class=''>         try:</span>
+<span class=''>             res = robot.move_to(approach_x, approach_y, safe_z,</span>
+<span class=''>                                 yaw=math.atan2(uy, ux))</span>
+<span class='del'>-        except Exception:   # MotionError or any unexpected issue</span>
+<span class='del'>-            continue</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            continue          # try again next attempt</span>
+<span class=''>         if not res[&#x27;ok&#x27;]:</span>
+<span class=''>             continue</span>
+<span class=''> </span>
+<span class='hunk'>@@ -74,10 +59,51 @@</span>
+<span class=''>         # 6️⃣  Let the puck settle after the push</span>
+<span class=''>         robot.wait(0.2)</span>
+<span class=''> </span>
+<span class='del'>-    # Final verification after all attempts (use fresh observation)</span>
+<span class='add'>+    # After the main loop, try one final micro‑push if still outside</span>
+<span class=''>     obs = robot.observe()</span>
+<span class=''>     puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class=''>     target = obs[&#x27;fixtures&#x27;][&#x27;target&#x27;]</span>
+<span class=''>     px, py, _ = puck[&#x27;pos&#x27;]</span>
+<span class=''>     tx, ty, _ = target[&#x27;pos&#x27;]</span>
+<span class='add'>+    dx = tx - px</span>
+<span class='add'>+    dy = ty - py</span>
+<span class='add'>+    dist_to_target = math.hypot(dx, dy)</span>
+<span class='add'>+    if dist_to_target &lt;= target[&#x27;radius&#x27;]:</span>
+<span class='add'>+        return True</span>
+<span class='add'>+    if dist_to_target &lt; 1e-6:</span>
+<span class='add'>+        return True</span>
+<span class='add'>+</span>
+<span class='add'>+    ux = dx / dist_to_target</span>
+<span class='add'>+    uy = dy / dist_to_target</span>
+<span class='add'>+</span>
+<span class='add'>+    # micro‑push: same approach point, shorter push</span>
+<span class='add'>+    approach_x = px - ux * back_offset</span>
+<span class='add'>+    approach_y = py - uy * back_offset</span>
+<span class='add'>+    micro_push = push_distance * micro_push_factor</span>
+<span class='add'>+    push_x = approach_x + ux * micro_push</span>
+<span class='add'>+    push_y = approach_y + uy * micro_push</span>
+<span class='add'>+</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        res = robot.move_to(approach_x, approach_y, safe_z,</span>
+<span class='add'>+                            yaw=math.atan2(uy, ux))</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    if not res[&#x27;ok&#x27;]:</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        res2 = robot.move_to(push_x, push_y, safe_z,</span>
+<span class='add'>+                             yaw=math.atan2(uy, ux))</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    if not res2[&#x27;ok&#x27;]:</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    robot.wait(0.2)</span>
+<span class='add'>+</span>
+<span class='add'>+    # Final verification</span>
+<span class='add'>+    obs = robot.observe()</span>
+<span class='add'>+    puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class='add'>+    px, py, _ = puck[&#x27;pos&#x27;]</span>
+<span class='add'>+    tx, ty, _ = target[&#x27;pos&#x27;]</span>
+<span class=''>     return math.hypot(tx - px, ty - py) &lt;= target[&#x27;radius&#x27;]</span></pre></details><details><summary>Round 5: 2/8 practice episodes &middot; 0 errors &middot; $0.0192 so far</summary><div class='muted'>coder notes</div><pre>- Increased back_offset from 0.02 m to 0.05 m to give the robot a clear approach path and avoid early contact‑stop errors.
+- Added a lateral‑corridor check: when the puck is far off‑center in y (|py‑ty| &gt; 0.15 m) we reduce the push distance to 0.02 m for that attempt, preventing the arm from hitting side obstacles/joint limits.
+- Kept the rest of the proven logic (unit‑vector approach, move‑to start pose, push forward, wait, retry up to max_attempts, final verification).
+- Fixed the erroneous nested‑target reference that appeared in the discarded version; we now use the target pose directly from obs[&#x27;fixtures&#x27;][&#x27;target&#x27;][&#x27;pos&#x27;].
+- Maintained proper exception handling and variable scope.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Motion blocked (5 episodes)**
+*Root cause:* The `move_to` calls repeatedly fail with &quot;stopped short of the target (blocked by contact or joint limit)&quot; (e.g., seed 5000 lines 46–51). The robot cannot reach the calculated `approach_x/y` because the puck’s wide profile or the lateral corridor adjustment forces it into an unreachable pose.
+*Fix:* Increase `back_offset` from 0.05 m to ~0.10 m (line 6) to start farther from the puck, or remove the lateral shortcut (lines 39–42) that shortens `push_distance` when `py` deviates from `ty`.
+
+**Mode 2: Insufficient push distance (3 episodes)**
+*Root cause:* After reaching the start pose, the puck does not travel far enough. In seed 5001 the final `puck_to_target_xy` is 0.11 m (line 68 check), exceeding the 0.035 m tolerance. The `push_distance` of 0.04 m (line 7) is too short for the observed initial offsets.
+*Fix:* Raise `base_push_distance` from 0.04 m to 0.06 m (line 7) to give the puck more momentum per cycle.
+
+**Mode 3: Observation noise / missed target (2 episodes)**
+*Root cause:* The final check (line 68) shows `puck_to_target_xy` just above tolerance, suggesting the puck settles slightly off‑center despite `wait(0.2)` (line 65). Noise in `observe()` may misplace the perceived target position.
+*Fix:* Extend the settle wait from 0.2 s to 0.5 s (line 65) or add a second `observe()` after `wait` before the final check (lines 68–73).</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_4/skill.py</span>
+<span class=''>+++ round_5/skill.py</span>
+<span class='hunk'>@@ -2,10 +2,9 @@</span>
+<span class=''> </span>
+<span class=''> def run(robot):</span>
+<span class=''>     &quot;&quot;&quot;Push the orange puck until its centre lies inside the green zone.&quot;&quot;&quot;</span>
+<span class='del'>-    max_attempts = 6          # allow a few extra tries</span>
+<span class='del'>-    back_offset = 0.02        # distance behind the puck to start the push (m)</span>
+<span class='del'>-    push_distance = 0.04      # normal push distance (m)</span>
+<span class='del'>-    micro_push_factor = 0.5   # fraction of push_distance for the final micro‑push</span>
+<span class='add'>+    max_attempts = 5          # how many push cycles we will try</span>
+<span class='add'>+    back_offset = 0.05        # distance behind the puck to start the push (m) – increased for clearance</span>
+<span class='add'>+    base_push_distance = 0.04 # nominal push distance (m)</span>
+<span class=''>     safe_z = 0.02             # safe height for the tool point (m)</span>
+<span class=''> </span>
+<span class=''>     for attempt in range(max_attempts):</span>
+<span class='hunk'>@@ -14,7 +13,7 @@</span>
+<span class=''>         puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class=''>         target = obs[&#x27;fixtures&#x27;][&#x27;target&#x27;]</span>
+<span class=''> </span>
+<span class='del'>-        px, py, _ = puck[&#x27;pos&#x27;]</span>
+<span class='add'>+        px, py, pz = puck[&#x27;pos&#x27;]</span>
+<span class=''>         tx, ty, _ = target[&#x27;pos&#x27;]</span>
+<span class=''> </span>
+<span class=''>         # 2️⃣  Already inside the target?</span>
+<span class='hunk'>@@ -36,12 +35,18 @@</span>
+<span class=''>         approach_x = px - ux * back_offset</span>
+<span class=''>         approach_y = py - uy * back_offset</span>
+<span class=''> </span>
+<span class='add'>+        # Optional lateral corridor adjustment: reduce push if puck is far off‑center in y</span>
+<span class='add'>+        lateral_offset = abs(py - ty)</span>
+<span class='add'>+        push_distance = base_push_distance</span>
+<span class='add'>+        if lateral_offset &gt; 0.15:</span>
+<span class='add'>+            push_distance = 0.02  # shorter push to avoid side obstacles/joint limits</span>
+<span class='add'>+</span>
+<span class=''>         # 4️⃣  Move to the start pose</span>
+<span class=''>         try:</span>
+<span class=''>             res = robot.move_to(approach_x, approach_y, safe_z,</span>
+<span class=''>                                 yaw=math.atan2(uy, ux))</span>
+<span class='del'>-        except Exception:</span>
+<span class='del'>-            continue          # try again next attempt</span>
+<span class='add'>+        except Exception:   # MotionError or any unexpected issue</span>
+<span class='add'>+            continue        # try again next attempt</span>
+<span class=''>         if not res[&#x27;ok&#x27;]:</span>
+<span class=''>             continue</span>
+<span class=''> </span>
+<span class='hunk'>@@ -59,51 +64,10 @@</span>
+<span class=''>         # 6️⃣  Let the puck settle after the push</span>
+<span class=''>         robot.wait(0.2)</span>
+<span class=''> </span>
+<span class='del'>-    # After the main loop, try one final micro‑push if still outside</span>
+<span class='add'>+    # Final verification after all attempts</span>
+<span class=''>     obs = robot.observe()</span>
+<span class=''>     puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class=''>     target = obs[&#x27;fixtures&#x27;][&#x27;target&#x27;]</span>
+<span class=''>     px, py, _ = puck[&#x27;pos&#x27;]</span>
+<span class=''>     tx, ty, _ = target[&#x27;pos&#x27;]</span>
+<span class='del'>-    dx = tx - px</span>
+<span class='del'>-    dy = ty - py</span>
+<span class='del'>-    dist_to_target = math.hypot(dx, dy)</span>
+<span class='del'>-    if dist_to_target &lt;= target[&#x27;radius&#x27;]:</span>
+<span class='del'>-        return True</span>
+<span class='del'>-    if dist_to_target &lt; 1e-6:</span>
+<span class='del'>-        return True</span>
+<span class='del'>-</span>
+<span class='del'>-    ux = dx / dist_to_target</span>
+<span class='del'>-    uy = dy / dist_to_target</span>
+<span class='del'>-</span>
+<span class='del'>-    # micro‑push: same approach point, shorter push</span>
+<span class='del'>-    approach_x = px - ux * back_offset</span>
+<span class='del'>-    approach_y = py - uy * back_offset</span>
+<span class='del'>-    micro_push = push_distance * micro_push_factor</span>
+<span class='del'>-    push_x = approach_x + ux * micro_push</span>
+<span class='del'>-    push_y = approach_y + uy * micro_push</span>
+<span class='del'>-</span>
+<span class='del'>-    try:</span>
+<span class='del'>-        res = robot.move_to(approach_x, approach_y, safe_z,</span>
+<span class='del'>-                            yaw=math.atan2(uy, ux))</span>
+<span class='del'>-    except Exception:</span>
+<span class='del'>-        return False</span>
+<span class='del'>-    if not res[&#x27;ok&#x27;]:</span>
+<span class='del'>-        return False</span>
+<span class='del'>-</span>
+<span class='del'>-    try:</span>
+<span class='del'>-        res2 = robot.move_to(push_x, push_y, safe_z,</span>
+<span class='del'>-                             yaw=math.atan2(uy, ux))</span>
+<span class='del'>-    except Exception:</span>
+<span class='del'>-        return False</span>
+<span class='del'>-    if not res2[&#x27;ok&#x27;]:</span>
+<span class='del'>-        return False</span>
+<span class='del'>-</span>
+<span class='del'>-    robot.wait(0.2)</span>
+<span class='del'>-</span>
+<span class='del'>-    # Final verification</span>
+<span class='del'>-    obs = robot.observe()</span>
+<span class='del'>-    puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]</span>
+<span class='del'>-    px, py, _ = puck[&#x27;pos&#x27;]</span>
+<span class='del'>-    tx, ty, _ = target[&#x27;pos&#x27;]</span>
+<span class=''>     return math.hypot(tx - px, ty - py) &lt;= target[&#x27;radius&#x27;]</span></pre></details><details open><summary>Round 6: 6/8 practice episodes &middot; 0 errors &middot; $0.0222 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Increase back_offset to 0.10 m to avoid collisions/joint‑limit stops when approaching the puck.
+- Increase base push distance to 0.06 m to give the puck enough momentum per cycle.
+- Remove the lateral‑corridor push‑distance reduction; it caused unreachable poses and did not help success.
+- Lengthen the settle wait after each push to 0.5 s and re‑observe before the final check to mitigate observation noise.
+- Keep the core loop structure (attempts, unit‑vector approach, move‑to start, push, wait) and proper exception handling.
+- Final verification uses a fresh observation and directly compares puck distance to target radius.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_5/skill.py</span>
+<span class=''>+++ round_6/skill.py</span>
+<span class='hunk'>@@ -3,8 +3,8 @@</span>
+<span class=''> def run(robot):</span>
+<span class=''>     &quot;&quot;&quot;Push the orange puck until its centre lies inside the green zone.&quot;&quot;&quot;</span>
+<span class=''>     max_attempts = 5          # how many push cycles we will try</span>
+<span class='del'>-    back_offset = 0.05        # distance behind the puck to start the push (m) – increased for clearance</span>
+<span class='del'>-    base_push_distance = 0.04 # nominal push distance (m)</span>
+<span class='add'>+    back_offset = 0.10        # distance behind the puck to start the push (m)</span>
+<span class='add'>+    base_push_distance = 0.06 # nominal push distance per attempt (m)</span>
+<span class=''>     safe_z = 0.02             # safe height for the tool point (m)</span>
+<span class=''> </span>
+<span class=''>     for attempt in range(max_attempts):</span>
+<span class='hunk'>@@ -35,34 +35,25 @@</span>
+<span class=''>         approach_x = px - ux * back_offset</span>
+<span class=''>         approach_y = py - uy * back_offset</span>
+<span class=''> </span>
+<span class='del'>-        # Optional lateral corridor adjustment: reduce push if puck is far off‑center in y</span>
+<span class='del'>-        lateral_offset = abs(py - ty)</span>
+<span class='del'>-        push_distance = base_push_distance</span>
+<span class='del'>-        if lateral_offset &gt; 0.15:</span>
+<span class='del'>-            push_distance = 0.02  # shorter push to avoid side obstacles/joint limits</span>
+<span class='del'>-</span>
+<span class=''>         # 4️⃣  Move to the start pose</span>
+<span class=''>         try:</span>
+<span class='del'>-            res = robot.move_to(approach_x, approach_y, safe_z,</span>
+<span class='del'>-                                yaw=math.atan2(uy, ux))</span>
+<span class='add'>+            robot.move_to(approach_x, approach_y, safe_z,</span>
+<span class='add'>+                          yaw=math.atan2(uy, ux))</span>
+<span class=''>         except Exception:   # MotionError or any unexpected issue</span>
+<span class='del'>-            continue        # try again next attempt</span>
+<span class='del'>-        if not res[&#x27;ok&#x27;]:</span>
+<span class='add'>+            # If we can&#x27;t reach this side, try again – the next loop may pick a different side</span>
+<span class=''>             continue</span>
+<span class=''> </span>
+<span class='del'>-        # 5️⃣  Push forward</span>
+<span class='del'>-        push_x = approach_x + ux * push_distance</span>
+<span class='del'>-        push_y = approach_y + uy * push_distance</span>
+<span class='add'>+        # 5️⃣  Push forward (use the full push distance)</span>
+<span class='add'>+        push_x = approach_x + ux * base_push_distance</span>
+<span class='add'>+        push_y = approach_y + uy * base_push_distance</span>
+<span class=''>         try:</span>
+<span class='del'>-            res2 = robot.move_to(push_x, push_y, safe_z,</span>
+<span class='del'>-                                 yaw=math.atan2(uy, ux))</span>
+<span class='add'>+            robot.move_to(push_x, push_y, safe_z,</span>
+<span class='add'>+                          yaw=math.atan2(uy, ux))</span>
+<span class=''>         except Exception:</span>
+<span class='del'>-            continue</span>
+<span class='del'>-        if not res2[&#x27;ok&#x27;]:</span>
+<span class=''>             continue</span>
+<span class=''> </span>
+<span class=''>         # 6️⃣  Let the puck settle after the push</span>
+<span class='del'>-        robot.wait(0.2)</span>
+<span class='add'>+        robot.wait(0.5)</span>
+<span class=''> </span>
+<span class=''>     # Final verification after all attempts</span>
+<span class=''>     obs = robot.observe()</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100000/end_front.jpg"><figcaption>seed 100000<br></figcaption></figure><figure><img src="eval/episodes/ep_100003/end_front.jpg"><figcaption>seed 100003<br></figcaption></figure><figure><img src="eval/episodes/ep_100004/end_front.jpg"><figcaption>seed 100004<br></figcaption></figure><figure><img src="eval/episodes/ep_100011/end_front.jpg"><figcaption>seed 100011<br>SafetyViolation: target x=0.015 m is outside the safe workspace [0.04, 0.32] by 0.025 m [skill.py line 40, in run: robot.move_to(approach_x, approach_y, safe_z,]</figcaption></figure><figure><img src="eval/episodes/ep_100015/end_front.jpg"><figcaption>seed 100015<br></figcaption></figure><figure><img src="eval/episodes/ep_100020/end_front.jpg"><figcaption>seed 100020<br></figcaption></figure><figure><img src="eval/episodes/ep_100021/end_front.jpg"><figcaption>seed 100021<br></figcaption></figure><figure><img src="eval/episodes/ep_100024/end_front.jpg"><figcaption>seed 100024<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    &quot;&quot;&quot;Push the orange puck until its centre lies inside the green zone.&quot;&quot;&quot;
+    max_attempts = 5          # how many push cycles we will try
+    back_offset = 0.10        # distance behind the puck to start the push (m)
+    base_push_distance = 0.06 # nominal push distance per attempt (m)
+    safe_z = 0.02             # safe height for the tool point (m)
+
+    for attempt in range(max_attempts):
+        # 1️⃣  Get latest noisy observations
+        obs = robot.observe()
+        puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]
+        target = obs[&#x27;fixtures&#x27;][&#x27;target&#x27;]
+
+        px, py, pz = puck[&#x27;pos&#x27;]
+        tx, ty, _ = target[&#x27;pos&#x27;]
+
+        # 2️⃣  Already inside the target?
+        dx = tx - px
+        dy = ty - py
+        dist_to_target = math.hypot(dx, dy)
+        if dist_to_target &lt;= target[&#x27;radius&#x27;]:
+            return True
+
+        # Avoid division by zero if puck and target coincide (unlikely but safe)
+        if dist_to_target &lt; 1e-6:
+            return True
+
+        # Unit vector from puck to target
+        ux = dx / dist_to_target
+        uy = dy / dist_to_target
+
+        # 3️⃣  Position behind the puck (the &quot;push start&quot;)
+        approach_x = px - ux * back_offset
+        approach_y = py - uy * back_offset
+
+        # 4️⃣  Move to the start pose
+        try:
+            robot.move_to(approach_x, approach_y, safe_z,
+                          yaw=math.atan2(uy, ux))
+        except Exception:   # MotionError or any unexpected issue
+            # If we can&#x27;t reach this side, try again – the next loop may pick a different side
+            continue
+
+        # 5️⃣  Push forward (use the full push distance)
+        push_x = approach_x + ux * base_push_distance
+        push_y = approach_y + uy * base_push_distance
+        try:
+            robot.move_to(push_x, push_y, safe_z,
+                          yaw=math.atan2(uy, ux))
+        except Exception:
+            continue
+
+        # 6️⃣  Let the puck settle after the push
+        robot.wait(0.5)
+
+    # Final verification after all attempts
+    obs = robot.observe()
+    puck = obs[&#x27;objects&#x27;][&#x27;puck&#x27;]
+    target = obs[&#x27;fixtures&#x27;][&#x27;target&#x27;]
+    px, py, _ = puck[&#x27;pos&#x27;]
+    tx, ty, _ = target[&#x27;pos&#x27;]
+    return math.hypot(tx - px, ty - py) &lt;= target[&#x27;radius&#x27;]
+</pre></section>
+</div></body></html>

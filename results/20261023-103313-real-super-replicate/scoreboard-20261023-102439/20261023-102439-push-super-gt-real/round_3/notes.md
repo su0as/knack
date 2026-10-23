@@ -1,0 +1,5 @@
+- Increased back_offset from 0.02 m to 0.05 m to avoid colliding with the puck when positioning behind it.
+- Increased push_distance from 0.04 m to 0.08 m to overcome friction and reach the target radius within the allowed attempts.
+- Added a short moving‑average (last 3 observations) of the puck’s xy position to reduce noise‑induced drift in the push direction.
+- Checked the `ok` flag returned by `robot.move_to` and continue on failure, matching the pattern that worked in round 1.
+- Kept the rest of the logic (early exit if already inside, yaw alignment, wait after push) unchanged.

@@ -1,0 +1,4 @@
+- Fixed indentation and removed stray whitespace that caused a SyntaxError.
+- Ensured all try/except blocks are properly closed and variables are defined before use.
+- Added a missing import for math (already present) and kept the logic unchanged.
+- Verified that the function ends with a return statement.

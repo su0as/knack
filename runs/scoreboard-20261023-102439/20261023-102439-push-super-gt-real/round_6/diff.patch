@@ -1,0 +1,57 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -3,8 +3,8 @@
+ def run(robot):
+     """Push the orange puck until its centre lies inside the green zone."""
+     max_attempts = 5          # how many push cycles we will try
+-    back_offset = 0.05        # distance behind the puck to start the push (m) – increased for clearance
+-    base_push_distance = 0.04 # nominal push distance (m)
++    back_offset = 0.10        # distance behind the puck to start the push (m)
++    base_push_distance = 0.06 # nominal push distance per attempt (m)
+     safe_z = 0.02             # safe height for the tool point (m)
+ 
+     for attempt in range(max_attempts):
+@@ -35,34 +35,25 @@
+         approach_x = px - ux * back_offset
+         approach_y = py - uy * back_offset
+ 
+-        # Optional lateral corridor adjustment: reduce push if puck is far off‑center in y
+-        lateral_offset = abs(py - ty)
+-        push_distance = base_push_distance
+-        if lateral_offset > 0.15:
+-            push_distance = 0.02  # shorter push to avoid side obstacles/joint limits
+-
+         # 4️⃣  Move to the start pose
+         try:
+-            res = robot.move_to(approach_x, approach_y, safe_z,
+-                                yaw=math.atan2(uy, ux))
++            robot.move_to(approach_x, approach_y, safe_z,
++                          yaw=math.atan2(uy, ux))
+         except Exception:   # MotionError or any unexpected issue
+-            continue        # try again next attempt
+-        if not res['ok']:
++            # If we can't reach this side, try again – the next loop may pick a different side
+             continue
+ 
+-        # 5️⃣  Push forward
+-        push_x = approach_x + ux * push_distance
+-        push_y = approach_y + uy * push_distance
++        # 5️⃣  Push forward (use the full push distance)
++        push_x = approach_x + ux * base_push_distance
++        push_y = approach_y + uy * base_push_distance
+         try:
+-            res2 = robot.move_to(push_x, push_y, safe_z,
+-                                 yaw=math.atan2(uy, ux))
++            robot.move_to(push_x, push_y, safe_z,
++                          yaw=math.atan2(uy, ux))
+         except Exception:
+-            continue
+-        if not res2['ok']:
+             continue
+ 
+         # 6️⃣  Let the puck settle after the push
+-        robot.wait(0.2)
++        robot.wait(0.5)
+ 
+     # Final verification after all attempts
+     obs = robot.observe()

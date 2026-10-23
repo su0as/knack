@@ -1,0 +1,54 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -7,7 +7,7 @@
+     push_distance = 0.04      # how far we move forward while pushing (m)
+     safe_z = 0.02             # safe height for the tool point (m)
+ 
+-    for attempt in range(max_attempts):
++    for _ in range(max_attempts):
+         # 1️⃣  Get latest noisy observations
+         obs = robot.observe()
+         puck = obs['objects']['puck']
+@@ -37,29 +37,33 @@
+ 
+         # 4️⃣  Move to the start pose
+         try:
+-            robot.move_to(approach_x, approach_y, safe_z,
+-                          yaw=math.atan2(uy, ux))
+-        except Exception:   # MotionError or any unexpected issue
+-            # If we can't reach this side, try again – the next loop may pick a different side
++            res = robot.move_to(approach_x, approach_y, safe_z,
++                                yaw=math.atan2(uy, ux))
++        except Exception:
++            # Unreachable or blocked – try next attempt with fresh observation
++            continue
++        if not res['ok']:
++            # Blocked by contact/joint limit – give up this attempt
+             continue
+ 
+         # 5️⃣  Push forward
+         push_x = approach_x + ux * push_distance
+         push_y = approach_y + uy * push_distance
+         try:
+-            robot.move_to(push_x, push_y, safe_z,
+-                          yaw=math.atan2(uy, ux))
++            res2 = robot.move_to(push_x, push_y, safe_z,
++                                 yaw=math.atan2(uy, ux))
+         except Exception:
++            continue
++        if not res2['ok']:
+             continue
+ 
+         # 6️⃣  Let the puck settle after the push
+         robot.wait(0.2)
+ 
+-    # Final verification after all attempts
++    # Final verification after all attempts – use fresh observation
+     obs = robot.observe()
+     puck = obs['objects']['puck']
++    target = obs['fixtures']['target']
+     px, py, _ = puck['pos']
+-    tx, ty, _ = target['fixtures']['target']['pos'] if isinstance(target, dict) and 'fixtures' in target else target['pos']
+-    # The above line is defensive; simpler:
+     tx, ty, _ = target['pos']
+     return math.hypot(tx - px, ty - py) <= target['radius']
