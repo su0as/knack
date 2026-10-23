@@ -1,0 +1,30 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -55,10 +55,25 @@
+             robot.log("Not holding red cube after grasp")
+             return False
+         
++        # Re‑observe to get up‑to‑date cube position and size
++        obs2 = robot.observe()
++        cube_info2 = obs2["objects"].get("red_cube")
++        if cube_info2 is None:
++            # Fallback to original observation if red_cube disappeared (should not happen)
++            cz_current = cz
++            half_size_current = half_size
++        else:
++            cz_current = cube_info2["pos"][2]
++            size2 = cube_info2.get("size")
++            if size2 is None or len(size2) == 0:
++                half_size_current = half_size
++            else:
++                half_size_current = size2[0] / 2.0
++        
+         # Lift the cube to a safe height (at least 5 cm above table)
+         # Table is at z=0, so bottom clearance of 0.05 requires center height = 0.05 + half_size
+-        lift_z = 0.05 + half_size + 0.001  # small margin for simulation variation
+-        move_up = robot.move_to(cx, cy, lift_z, speed=0.15)
++        lift_z = cz_current + 0.05 + half_size_current + 0.001  # small margin for simulation variation
++        move_up = robot.move_to(cx, cy, lift_z, speed=0.15)  # keep x,y from original grasp point
+         if not move_up["ok"]:
+             robot.log("Failed to lift cube")
+             return False

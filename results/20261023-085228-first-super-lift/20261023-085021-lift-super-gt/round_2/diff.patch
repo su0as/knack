@@ -1,0 +1,44 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -18,13 +18,16 @@
+         
+         # Extract position (center of cube)
+         cx, cy, cz = cube_info["pos"]
+-        # Cube half-size (assuming cube shape)
+-        half_size = cube_info["size"][0] / 2.0  # all sides equal for a cube
++        # Cube half-size (assuming cube shape); fallback if size missing
++        size = cube_info.get("size")
++        if size is None or len(size) == 0:
++            robot.log("Cube size missing, using default 0.03 m")
++            half_size = 0.015
++        else:
++            half_size = size[0] / 2.0  # all sides equal for a cube
+         
+-        # Desired grasp height: slightly above the table so finger pads contact cube mid-height
+-        # For a cube resting on the table, its center is at z = half_size (~0.015).
+-        # We'll target the center position for grasping.
+-        grasp_z = cz  # center height
++        # Desired grasp height: center of cube (finger pads around mid-height)
++        grasp_z = cz
+         
+         # Approach pose: above the cube, safe clearance
+         approach_z = grasp_z + 0.08  # 8 cm above center
+@@ -47,15 +50,14 @@
+             robot.log("Grasp attempt returned False")
+             return False
+         
+-        # Verify that we are actually holding something
++        # Verify that we are actually holding the red cube
+         if robot.holding() != "red_cube":
+             robot.log("Not holding red cube after grasp")
+             return False
+         
+         # Lift the cube to a safe height (at least 5 cm above table)
+-        # Table is at z=0, cube half-size ~0.015, so to have bottom 0.05 above table:
+-        # needed center height = 0.05 + half_size = 0.065
+-        lift_z = max(grasp_z + 0.05, 0.065)  # ensure at least 5 cm clearance
++        # Table is at z=0, so bottom clearance of 0.05 requires center height = 0.05 + half_size
++        lift_z = 0.05 + half_size + 0.001  # small margin for simulation variation
+         move_up = robot.move_to(cx, cy, lift_z, speed=0.15)
+         if not move_up["ok"]:
+             robot.log("Failed to lift cube")

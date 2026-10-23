@@ -1,0 +1,2 @@
+- First attempt: perceive the red cube, move above it, descend to grasp height, close gripper, verify grasp, then lift to a safe height.
+- No prior results to incorporate; this is the initial version.

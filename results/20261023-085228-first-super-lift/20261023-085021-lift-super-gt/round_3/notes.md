@@ -1,0 +1,4 @@
+- The lift height was computed from stale initial observations, causing occasional insufficient clearance when the cube's estimated size or position was off.
+- After grasping, we now re‑observe the scene to get the current cube height and size, then recompute the target lift height as `cz + 0.05 + half_size + small_margin`.
+- This ensures the cube is lifted at least 5 cm above the table even if the initial size/position estimate was slightly off.
+- All other successful steps (approach, descend, grasp, verify) are kept unchanged.
