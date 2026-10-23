@@ -1,0 +1,7 @@
+- First version: no prior results yet, so I'll build a straightforward perceive→pick→place→verify loop.
+- Read all poses at run time from observe(); never hard-code coordinates.
+- Approach each cube from above at z≈0.10, descend slowly (speed 0.06) to the cube centre z, grasp, verify with robot.holding().
+- Align finger yaw with the cube's reported yaw so the pads meet the faces.
+- Carry at a safe height, descend into the tray centre to z≈0.015 (cube resting height), release, then retreat.
+- Wrap risky moves in try/except Exception (MotionError) and retry each pick once after re-observing.
+- Return True only if both cubes ended up held-then-placed without a failed grasp.

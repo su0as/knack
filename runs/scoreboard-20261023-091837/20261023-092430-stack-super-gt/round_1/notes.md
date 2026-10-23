@@ -1,0 +1,4 @@
+- First attempt: perceive both cubes, grasp the red cube, lift it, move above the blue cube, lower to the calculated stacking height (blue center + cube height), release, then retreat.
+- Use observed poses; no hard‑coded coordinates.
+- Add simple error handling for unreachable moves and a single grasp retry.
+- Keep approach speeds safe (0.05 m/s for precision moves, default for travel).

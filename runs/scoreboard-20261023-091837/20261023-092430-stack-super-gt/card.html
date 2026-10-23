@@ -1,0 +1,614 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Stack</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261023-092430-stack-super-gt &middot; 2026-10-23 09:28:00</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Stack the red cube on top of the blue cube and let go.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; 32 practice episodes in 4 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/nemotron-3-super-120b-a12b <em>$0.30 / $0.90 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">72%</div><div>36/50 layouts &middot; Wilson 95% CI 58% to 83%</div><div class='ci'><div class='ci-band' style='left:58.3%;width:24.2%'></div><div class='ci-dot' style='left:72.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 48 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:62%'></span><em>R1<br>5/8</em></div><div class='bar'><span style='height:75%'></span><em>R2<br>6/8</em></div><div class='bar'><span style='height:2%'></span><em>R3<br>0/8</em></div><div class='bar'><span style='height:62%'></span><em>R4<br>5/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/nemotron-3-super-120b-a12b</code></td><td>4</td><td>18,484</td><td>23,273</td><td>$0.0265</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>3</td><td>16,797</td><td>1,293</td><td>$0.0013</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>146 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>7</th><th>35,281</th><th>24,566</th><th>$0.0278</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details><summary>Round 1: 5/8 practice episodes &middot; 0 errors &middot; $0.0020 so far</summary><div class='muted'>coder notes</div><pre>- First attempt: perceive both cubes, grasp the red cube, lift it, move above the blue cube, lower to the calculated stacking height (blue center + cube height), release, then retreat.
+- Use observed poses; no hard‑coded coordinates.
+- Add simple error handling for unreachable moves and a single grasp retry.
+- Keep approach speeds safe (0.05 m/s for precision moves, default for travel).</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: XY misplacement (3 episodes: 1001, 1005, 1006)**
+*Root cause:* The `grasp_cube` function moves to the cube’s observed pose without correcting for initial robot offset. When the red cube is not precisely at the origin, the subsequent `move_to(bx, by, ...)` on line 48 targets the blue cube’s pose from the *grasp position*, causing a drift. The release then lands offset.
+*Fix:* After `robot.home()` (line 7), run a short `robot.move_by(dx=..., dy=...)` to align the gripper with the cube’s true world coordinates before grasping.
+
+**Mode 2: Premature release (2 episodes: 1006, 1001)**
+*Root cause:* `release()` is called at line 56 after descending to `target_z` (line 53). If the gripper’s approach trajectory (line 23) or grasp z-offset (line 27) mis-estimates the cube thickness, the red cube contacts the blue cube off‑center and slips off before the fingers fully open.
+*Fix:* Increase the descent speed or add a brief `robot.move_by(dz=-0.01, speed=0.02)` on line 52 to ensure the red cube sits flush on the blue cube before `release()`.
+
+**Mode 3: Large initial offset (2 episodes: 1001, 1005)**
+*Root cause:* Episodes start with the robot at `home()` (line 7) but the observed poses already include world-frame positions. If the robot’s zero‑point shifts between episodes, the hard‑coded `approach_z = cz + 0.10` (line 21) may place the tool above or below the cube, causing grasp failure or mis‑stack.
+*Fix:* Calibrate the robot zero‑point once per session and store the offset, or add a post‑home correction `robot.move_to(0, 0, 0.20)` before observing (after line 7).</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,73 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    &quot;&quot;&quot;Stack the red cube on top of the blue cube.&quot;&quot;&quot;</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        # Start from a known safe pose</span>
+<span class='add'>+        robot.home()</span>
+<span class='add'>+</span>
+<span class='add'>+        # Observe the scene to get current poses</span>
+<span class='add'>+        obs = robot.observe()</span>
+<span class='add'>+        red_pose = obs[&#x27;objects&#x27;][&#x27;red_cube&#x27;]</span>
+<span class='add'>+        blue_pose = obs[&#x27;objects&#x27;][&#x27;blue_cube&#x27;]</span>
+<span class='add'>+</span>
+<span class='add'>+        def grasp_cube(pose, desc=&quot;&quot;):</span>
+<span class='add'>+            &quot;&quot;&quot;Attempt to grasp a cube given its pose dictionary.&quot;&quot;&quot;</span>
+<span class='add'>+            # Position of the cube centre</span>
+<span class='add'>+            cx, cy, cz = pose[&#x27;pos&#x27;]</span>
+<span class='add'>+            yaw = pose[&#x27;yaw&#x27;]</span>
+<span class='add'>+</span>
+<span class='add'>+            # Safety offset above the cube for approach</span>
+<span class='add'>+            approach_z = max(cz + 0.10, 0.10)  # at least 10 cm high</span>
+<span class='add'>+            # Approach from above</span>
+<span class='add'>+            robot.move_to(cx, cy, approach_z, yaw=yaw, speed=0.15)</span>
+<span class='add'>+</span>
+<span class='add'>+            # Descend to a point where the fingertips can close around the middle</span>
+<span class='add'>+            # Fingertips sit ~1.25 cm below the tool point; we aim for the cube centre.</span>
+<span class='add'>+            grasp_z = cz + 0.02  # a little above centre to avoid hitting the table</span>
+<span class='add'>+            robot.move_to(cx, cy, grasp_z, yaw=yaw, speed=0.05)</span>
+<span class='add'>+</span>
+<span class='add'>+            # Close the fingers</span>
+<span class='add'>+            if not robot.grasp():</span>
+<span class='add'>+                # If grasp failed, retreat and try once more</span>
+<span class='add'>+                robot.move_by(dz=0.05, speed=0.05)</span>
+<span class='add'>+                if not robot.grasp():</span>
+<span class='add'>+                    robot.log(f&quot;Failed to grasp {desc}&quot;)</span>
+<span class='add'>+                    return False</span>
+<span class='add'>+            robot.log(f&quot;Grasped {desc}&quot;)</span>
+<span class='add'>+            # Lift the cube clear of the table</span>
+<span class='add'>+            robot.move_by(dz=0.10, speed=0.10)</span>
+<span class='add'>+            return True</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- Grasp the red cube ---</span>
+<span class='add'>+        if not grasp_cube(red_pose, &quot;red cube&quot;):</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- Move above the blue cube ---</span>
+<span class='add'>+        bx, by, bz = blue_pose[&#x27;pos&#x27;]</span>
+<span class='add'>+        robot.move_to(bx, by, 0.10, yaw=None, speed=0.15)  # travel height</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- Lower to stacking height ---</span>
+<span class='add'>+        # Desired centre height of the red cube = blue centre + cube height (0.03 m)</span>
+<span class='add'>+        target_z = bz + 0.03</span>
+<span class='add'>+        robot.move_to(bx, by, target_z, yaw=None, speed=0.05)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Release the red cube onto the blue one</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        robot.log(&quot;Released red cube onto blue cube&quot;)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Retreat to a safe height</span>
+<span class='add'>+        robot.move_by(dz=0.10, speed=0.10)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Optional: return home</span>
+<span class='add'>+        robot.home()</span>
+<span class='add'>+        return True</span>
+<span class='add'>+</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        # Unexpected errors – log and fail safely</span>
+<span class='add'>+        robot.log(f&quot;Exception: {e}&quot;)</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.home()</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            pass</span>
+<span class='add'>+        return False</span></pre></details><details open><summary>Round 2: 6/8 practice episodes &middot; 0 errors &middot; $0.0113 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Fixed XY drift by moving the gripper horizontally using the observed offset between the red and blue cubes after grasping, rather than relying on absolute coordinates that could be affected by robot zero‑point shifts.
+- Improved grasp reliability: compute grasp height from the actual cube size (half‑size + small epsilon), retreat and retry once if the first grasp fails, and lift a fixed amount after grasping.
+- Prevented premature release by moving to a tool‑point height that accounts for the grasp offset and lift height, ensuring the red cube’s centre ends exactly at the blue cube’s top face when the fingers open.
+- Added a short wait after release to let the cube settle before retreating.
+- Wrapped critical moves in try‑except to handle unexpected MotionError and fall back to a slower approach if needed.
+- Kept all movements within safe speeds (0.05 m/s for precision, 0.15 m/s for travel) and retained the original home‑and‑observe structure.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Horizontal offset miss (2 episodes: 2000, 2005)**
+*Root cause:* The code moves horizontally at the *current* gripper height (line 61), but after lifting the red cube 0.10 m (line 43) the gripper is too high to reach the stacking pose. The subsequent `move_to` (line 78) attempts to go to `target_z_tool` computed from the original blue pose, but the horizontal displacement `dx,dy` was already applied at the lifted height, causing a mis‑aligned release.
+*Fix:* Reset the gripper z‑coordinate to the cube centre height before the horizontal move. After `grasp_cube` (line 48), add `robot.move_to(cur_x, cur_y, red_pose[&#x27;pos&#x27;][2] + red_pose[&#x27;size&#x27;][2]/2 + 0.01, speed=0.15)` (new lines after 52) to bring the tool to the red cube top before the `move_by` at line 61.
+
+**Mode 2: Reach‑limit violation (1 episode: 2005)**
+*Root cause:* The stacking height calculation (line 73) yields `target_z_tool ≈ 0.260 m`, which exceeds the arm’s maximum reach (0.251 m, line 81 error). The code falls back to a slower speed but still collides with the workspace limit.
+*Fix:* Cap the target height at the arm’s reachable maximum (≈0.245 m). Modify line 73 to `target_z_tool = min(blue_pose[&#x27;pos&#x27;][2] + 1.5*h_red + epsilon + lift_height, 0.245)`.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_1/skill.py</span>
+<span class=''>+++ round_2/skill.py</span>
+<span class='hunk'>@@ -12,29 +12,33 @@</span>
+<span class=''>         blue_pose = obs[&#x27;objects&#x27;][&#x27;blue_cube&#x27;]</span>
+<span class=''> </span>
+<span class=''>         def grasp_cube(pose, desc=&quot;&quot;):</span>
+<span class='del'>-            &quot;&quot;&quot;Attempt to grasp a cube given its pose dictionary.&quot;&quot;&quot;</span>
+<span class='del'>-            # Position of the cube centre</span>
+<span class='add'>+            &quot;&quot;&quot;Grasp a cube given its pose dictionary.&quot;&quot;&quot;</span>
+<span class=''>             cx, cy, cz = pose[&#x27;pos&#x27;]</span>
+<span class=''>             yaw = pose[&#x27;yaw&#x27;]</span>
+<span class='add'>+            size = pose[&#x27;size&#x27;]          # [x, y, z] dimensions</span>
+<span class='add'>+            half_z = size[2] / 2.0       # half height of the cube</span>
+<span class='add'>+            epsilon = 0.005              # small clearance above the centre</span>
+<span class=''> </span>
+<span class=''>             # Safety offset above the cube for approach</span>
+<span class='del'>-            approach_z = max(cz + 0.10, 0.10)  # at least 10 cm high</span>
+<span class='add'>+            approach_z = cz + half_z + epsilon + 0.05   # a bit higher than grasp point</span>
+<span class='add'>+            # Desired grasp point (a little above the cube centre)</span>
+<span class='add'>+            grasp_z = cz + half_z + epsilon</span>
+<span class='add'>+</span>
+<span class=''>             # Approach from above</span>
+<span class=''>             robot.move_to(cx, cy, approach_z, yaw=yaw, speed=0.15)</span>
+<span class=''> </span>
+<span class='del'>-            # Descend to a point where the fingertips can close around the middle</span>
+<span class='del'>-            # Fingertips sit ~1.25 cm below the tool point; we aim for the cube centre.</span>
+<span class='del'>-            grasp_z = cz + 0.02  # a little above centre to avoid hitting the table</span>
+<span class='add'>+            # Descend to grasp height</span>
+<span class=''>             robot.move_to(cx, cy, grasp_z, yaw=yaw, speed=0.05)</span>
+<span class=''> </span>
+<span class=''>             # Close the fingers</span>
+<span class=''>             if not robot.grasp():</span>
+<span class='del'>-                # If grasp failed, retreat and try once more</span>
+<span class='add'>+                # Retreat a bit and try once more</span>
+<span class=''>                 robot.move_by(dz=0.05, speed=0.05)</span>
+<span class=''>                 if not robot.grasp():</span>
+<span class=''>                     robot.log(f&quot;Failed to grasp {desc}&quot;)</span>
+<span class=''>                     return False</span>
+<span class=''>             robot.log(f&quot;Grasped {desc}&quot;)</span>
+<span class='add'>+</span>
+<span class=''>             # Lift the cube clear of the table</span>
+<span class=''>             robot.move_by(dz=0.10, speed=0.10)</span>
+<span class=''>             return True</span>
+<span class='hunk'>@@ -43,20 +47,45 @@</span>
+<span class=''>         if not grasp_cube(red_pose, &quot;red cube&quot;):</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # --- Move above the blue cube ---</span>
+<span class='del'>-        bx, by, bz = blue_pose[&#x27;pos&#x27;]</span>
+<span class='del'>-        robot.move_to(bx, by, 0.10, yaw=None, speed=0.15)  # travel height</span>
+<span class='add'>+        # --- Get current gripper pose after grasp and lift ---</span>
+<span class='add'>+        obs2 = robot.observe()</span>
+<span class='add'>+        grip = obs2[&#x27;gripper&#x27;]</span>
+<span class='add'>+        cur_x, cur_y, cur_z = grip[&#x27;pos&#x27;]</span>
+<span class=''> </span>
+<span class='del'>-        # --- Lower to stacking height ---</span>
+<span class='del'>-        # Desired centre height of the red cube = blue centre + cube height (0.03 m)</span>
+<span class='del'>-        target_z = bz + 0.03</span>
+<span class='del'>-        robot.move_to(bx, by, target_z, yaw=None, speed=0.05)</span>
+<span class='add'>+        # --- Compute horizontal offset from red to blue cube ---</span>
+<span class='add'>+        dx = blue_pose[&#x27;pos&#x27;][0] - red_pose[&#x27;pos&#x27;][0]</span>
+<span class='add'>+        dy = blue_pose[&#x27;pos&#x27;][1] - red_pose[&#x27;pos&#x27;][1]</span>
+<span class=''> </span>
+<span class='del'>-        # Release the red cube onto the blue one</span>
+<span class='add'>+        # --- Move horizontally at current height ---</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_by(dx, dy, speed=0.15)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            # Fallback: explicit move_to at same height</span>
+<span class='add'>+            robot.move_to(cur_x + dx, cur_y + dy, cur_z, speed=0.15)</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- Compute target tool‑point height for proper stacking ---</span>
+<span class='add'>+        h_red = red_pose[&#x27;size&#x27;][2]          # cube height</span>
+<span class='add'>+        epsilon = 0.005</span>
+<span class='add'>+        lift_height = 0.10                   # performed after grasp</span>
+<span class='add'>+        # Tool point must be above the red cube centre by:</span>
+<span class='add'>+        #   (grasp_z - red_z) + lift_height = half_z + epsilon + lift_height</span>
+<span class='add'>+        # Desired red cube centre = blue_z + h_red (sit on top of blue cube)</span>
+<span class='add'>+        target_z_tool = blue_pose[&#x27;pos&#x27;][2] + h_red + (h_red / 2.0) + epsilon + lift_height</span>
+<span class='add'>+        # Simplified: target_z_tool = blue_z + 1.5*h_red + epsilon + lift_height</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- Move to the stacking height ---</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(cur_x + dx, cur_y + dy, target_z_tool, speed=0.05)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            # Try a slower speed if the first attempt fails</span>
+<span class='add'>+            robot.move_to(cur_x + dx, cur_y + dy, target_z_tool, speed=0.02)</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- Release the red cube onto the blue one ---</span>
+<span class=''>         robot.release()</span>
+<span class=''>         robot.log(&quot;Released red cube onto blue cube&quot;)</span>
+<span class='add'>+        robot.wait(0.2)   # allow the cube to settle</span>
+<span class=''> </span>
+<span class='del'>-        # Retreat to a safe height</span>
+<span class='add'>+        # --- Retreat to a safe height ---</span>
+<span class=''>         robot.move_by(dz=0.10, speed=0.10)</span>
+<span class=''> </span>
+<span class=''>         # Optional: return home</span>
+<span class='hunk'>@@ -64,7 +93,6 @@</span>
+<span class=''>         return True</span>
+<span class=''> </span>
+<span class=''>     except Exception as e:</span>
+<span class='del'>-        # Unexpected errors – log and fail safely</span>
+<span class=''>         robot.log(f&quot;Exception: {e}&quot;)</span>
+<span class=''>         try:</span>
+<span class=''>             robot.home()</span></pre></details><details><summary>Round 3: 0/8 practice episodes &middot; 0 errors &middot; $0.0187 so far</summary><div class='muted'>coder notes</div><pre>- Fixed horizontal offset miss by lowering to a safe height just above the red cube before moving sideways, preventing the arm from being too high during the XY move.
+- Prevented reach‑limit violations by capping the target stacking height at a safe maximum (0.245 m) and computing the height from the actual cube sizes.
+- Improved grasp reliability: grasp from above, retreat and retry once if needed, then lift only a small clearance (0.02 m) to keep the arm low.
+- Used observed poses after grasping to compute the true XY offset, avoiding reliance on stale absolute coordinates.
+- Wrapped critical moves in try‑except blocks with slower fallback speeds to handle unexpected MotionError.
+- Kept speeds conservative (0.05 m/s for precision, 0.15 m/s for travel) and added a short wait after release for settling.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Premature release (5 episodes)**
+- **Root cause:** `release()` at line 123 fires while the gripper is still translating horizontally. The code moves to `red_top_z` (line 58) then immediately computes a horizontal offset using `get_pose(&#x27;red_cube&#x27;)` (line 68). The pose update lags; the robot releases before reaching the target x/y, dropping the cube at the start position.
+- **Fix:** Insert `robot.move_by(dx, dy, speed=0.15)` (line 74) *before* `release()`, ensuring horizontal arrival is confirmed.
+
+**Mode 2: Stack height overflow (3 episodes)**
+- **Root cause:** `target_z_tool` (line 97) computes `blue_z + 1.5*h_red + ...`. With `h_red ≈ 0.05` and `blue_z ≈ 0.015`, the result ≈ 0.092 m, but `MAX_Z = 0.245` clips it. However, the subsequent `move_to` (line 113) targets the capped height, yet the gripper is already offset from the blue cube centre, causing a miss.
+- **Fix:** After horizontal move (line 74), re-observe blue pose and recompute `target_z_tool` using the actual `blue_pose` before the final `move_to` (line 113).
+
+**Mode 3: XY offset drift (2 episodes)**
+- **Root cause:** Horizontal move (line 74) uses `dx, dy` computed from `red_current` (line 68-70). If `red_current` is stale or the robot’s base pose shifts, the offset misaligns with the blue cube. The released cube lands offset (xy_offset ~0.04 m).
+- **Fix:** After `grasp_cube`, re-query `obs2` (line 51) for fresh red pose before computing `dx, dy`, ensuring the horizontal move targets the current red position.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_2/skill.py</span>
+<span class=''>+++ round_3/skill.py</span>
+<span class='hunk'>@@ -39,46 +39,85 @@</span>
+<span class=''>                     return False</span>
+<span class=''>             robot.log(f&quot;Grasped {desc}&quot;)</span>
+<span class=''> </span>
+<span class='del'>-            # Lift the cube clear of the table</span>
+<span class='del'>-            robot.move_by(dz=0.10, speed=0.10)</span>
+<span class='add'>+            # Lift a little to clear the table (small clearance)</span>
+<span class='add'>+            robot.move_by(dz=0.02, speed=0.10)</span>
+<span class=''>             return True</span>
+<span class=''> </span>
+<span class=''>         # --- Grasp the red cube ---</span>
+<span class=''>         if not grasp_cube(red_pose, &quot;red cube&quot;):</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # --- Get current gripper pose after grasp and lift ---</span>
+<span class='add'>+        # --- Get current gripper pose after grasp and small lift ---</span>
+<span class=''>         obs2 = robot.observe()</span>
+<span class=''>         grip = obs2[&#x27;gripper&#x27;]</span>
+<span class=''>         cur_x, cur_y, cur_z = grip[&#x27;pos&#x27;]</span>
+<span class=''> </span>
+<span class='del'>-        # --- Compute horizontal offset from red to blue cube ---</span>
+<span class='del'>-        dx = blue_pose[&#x27;pos&#x27;][0] - red_pose[&#x27;pos&#x27;][0]</span>
+<span class='del'>-        dy = blue_pose[&#x27;pos&#x27;][1] - red_pose[&#x27;pos&#x27;][1]</span>
+<span class='add'>+        # --- Move to a height suitable for horizontal movement (just above red cube top) ---</span>
+<span class='add'>+        red_top_z = red_pose[&#x27;pos&#x27;][2] + red_pose[&#x27;size&#x27;][2] / 2.0 + 0.01</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(cur_x, cur_y, red_top_z, speed=0.15)</span>
+<span class='add'>+        except Exception as e:</span>
+<span class='add'>+            robot.log(f&quot;Failed to move to horizontal height: {e}&quot;)</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                robot.move_to(cur_x, cur_y, red_top_z, speed=0.05)</span>
+<span class='add'>+            except Exception as e2:</span>
+<span class='add'>+                robot.log(f&quot;Still failed to reach horizontal height: {e2}&quot;)</span>
+<span class='add'>+                return False</span>
+<span class=''> </span>
+<span class='del'>-        # --- Move horizontally at current height ---</span>
+<span class='add'>+        # --- Compute horizontal offset from red to blue cube using current red pose ---</span>
+<span class='add'>+        red_current = robot.get_pose(&#x27;red_cube&#x27;)</span>
+<span class='add'>+        dx = blue_pose[&#x27;pos&#x27;][0] - red_current[&#x27;pos&#x27;][0]</span>
+<span class='add'>+        dy = blue_pose[&#x27;pos&#x27;][1] - red_current[&#x27;pos&#x27;][1]</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- Move horizontally at the current height ---</span>
+<span class=''>         try:</span>
+<span class=''>             robot.move_by(dx, dy, speed=0.15)</span>
+<span class='del'>-        except Exception:</span>
+<span class='add'>+        except Exception as e:</span>
+<span class='add'>+            robot.log(f&quot;Horizontal move failed: {e}&quot;)</span>
+<span class=''>             # Fallback: explicit move_to at same height</span>
+<span class='del'>-            robot.move_to(cur_x + dx, cur_y + dy, cur_z, speed=0.15)</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                robot.move_to(</span>
+<span class='add'>+                    red_current[&#x27;pos&#x27;][0] + dx,</span>
+<span class='add'>+                    red_current[&#x27;pos&#x27;][1] + dy,</span>
+<span class='add'>+                    red_current[&#x27;pos&#x27;][2],</span>
+<span class='add'>+                    speed=0.15,</span>
+<span class='add'>+                )</span>
+<span class='add'>+            except Exception as e2:</span>
+<span class='add'>+                robot.log(f&quot;Fallback horizontal move failed: {e2}&quot;)</span>
+<span class='add'>+                return False</span>
+<span class=''> </span>
+<span class=''>         # --- Compute target tool‑point height for proper stacking ---</span>
+<span class='del'>-        h_red = red_pose[&#x27;size&#x27;][2]          # cube height</span>
+<span class='add'>+        h_red = red_pose[&#x27;size&#x27;][2]          # cube height (unchanged)</span>
+<span class=''>         epsilon = 0.005</span>
+<span class='del'>-        lift_height = 0.10                   # performed after grasp</span>
+<span class=''>         # Tool point must be above the red cube centre by:</span>
+<span class='del'>-        #   (grasp_z - red_z) + lift_height = half_z + epsilon + lift_height</span>
+<span class='add'>+        #   (grasp_z - red_z) + lift_after_grasp = half_z + epsilon + 0.02</span>
+<span class=''>         # Desired red cube centre = blue_z + h_red (sit on top of blue cube)</span>
+<span class='del'>-        target_z_tool = blue_pose[&#x27;pos&#x27;][2] + h_red + (h_red / 2.0) + epsilon + lift_height</span>
+<span class='del'>-        # Simplified: target_z_tool = blue_z + 1.5*h_red + epsilon + lift_height</span>
+<span class='add'>+        # Hence target_z_tool = blue_z + h_red + (half_z + epsilon + 0.02)</span>
+<span class='add'>+        # Simplified: target_z_tool = blue_z + 1.5*h_red + epsilon + 0.02</span>
+<span class='add'>+        target_z_tool = blue_pose[&#x27;pos&#x27;][2] + 1.5 * h_red + epsilon + 0.02</span>
+<span class='add'>+</span>
+<span class='add'>+        # Cap at a safe maximum reachable height (empirically ~0.245 m)</span>
+<span class='add'>+        MAX_Z = 0.245</span>
+<span class='add'>+        if target_z_tool &gt; MAX_Z:</span>
+<span class='add'>+            target_z_tool = MAX_Z</span>
+<span class='add'>+        # Ensure we stay above the table</span>
+<span class='add'>+        MIN_Z = 0.02</span>
+<span class='add'>+        if target_z_tool &lt; MIN_Z:</span>
+<span class='add'>+            target_z_tool = MIN_Z</span>
+<span class=''> </span>
+<span class=''>         # --- Move to the stacking height ---</span>
+<span class='add'>+        obs3 = robot.observe()</span>
+<span class='add'>+        grip2 = obs3[&#x27;gripper&#x27;]</span>
+<span class='add'>+        cur_x2, cur_y2, cur_z2 = grip2[&#x27;pos&#x27;]</span>
+<span class=''>         try:</span>
+<span class='del'>-            robot.move_to(cur_x + dx, cur_y + dy, target_z_tool, speed=0.05)</span>
+<span class='del'>-        except Exception:</span>
+<span class='del'>-            # Try a slower speed if the first attempt fails</span>
+<span class='del'>-            robot.move_to(cur_x + dx, cur_y + dy, target_z_tool, speed=0.02)</span>
+<span class='add'>+            robot.move_to(cur_x2, cur_y2, target_z_tool, speed=0.05)</span>
+<span class='add'>+        except Exception as e:</span>
+<span class='add'>+            robot.log(f&quot;Vertical move to stack height failed: {e}&quot;)</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                robot.move_to(cur_x2, cur_y2, target_z_tool, speed=0.02)</span>
+<span class='add'>+            except Exception as e2:</span>
+<span class='add'>+                robot.log(f&quot;Still failed to reach stack height: {e2}&quot;)</span>
+<span class='add'>+                return False</span>
+<span class=''> </span>
+<span class=''>         # --- Release the red cube onto the blue one ---</span>
+<span class=''>         robot.release()</span>
+<span class='hunk'>@@ -86,10 +125,17 @@</span>
+<span class=''>         robot.wait(0.2)   # allow the cube to settle</span>
+<span class=''> </span>
+<span class=''>         # --- Retreat to a safe height ---</span>
+<span class='del'>-        robot.move_by(dz=0.10, speed=0.10)</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_by(dz=0.10, speed=0.10)</span>
+<span class='add'>+        except Exception as e:</span>
+<span class='add'>+            robot.log(f&quot;Retreat failed: {e}&quot;)</span>
+<span class=''> </span>
+<span class=''>         # Optional: return home</span>
+<span class='del'>-        robot.home()</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.home()</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            pass</span>
+<span class='add'>+</span>
+<span class=''>         return True</span>
+<span class=''> </span>
+<span class=''>     except Exception as e:</span></pre></details><details><summary>Round 4: 5/8 practice episodes &middot; 0 errors &middot; $0.0278 so far</summary><div class='muted'>coder notes</div><pre>- Changed grasp to lift to a fixed safe height (0.10 m) after grasping, ensuring clearance for horizontal moves.
+- After grasp, re‑observe the red cube’s pose (while held) to compute the XY offset to the blue cube, eliminating drift caused by stale poses.
+- Perform the horizontal move at the safe height, then compute the target stacking height as blue_z + 2·h_red + ε (derived from grasp kinematics) and move vertically to that height before releasing.
+- Added explicit error handling with slower fallbacks for critical moves and a short wait after release to let the cube settle.
+- These changes address the three failure modes: premature release (now release only after vertical move), stack height overflow (correct target height), and XY offset drift (using up‑to‑date red pose).</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_3/skill.py</span>
+<span class=''>+++ round_4/skill.py</span>
+<span class='hunk'>@@ -39,82 +39,59 @@</span>
+<span class=''>                     return False</span>
+<span class=''>             robot.log(f&quot;Grasped {desc}&quot;)</span>
+<span class=''> </span>
+<span class='del'>-            # Lift a little to clear the table (small clearance)</span>
+<span class='del'>-            robot.move_by(dz=0.02, speed=0.10)</span>
+<span class='add'>+            # Lift to a safe height for horizontal movement</span>
+<span class='add'>+            safe_z = 0.10   # well above the cube tops (~0.065 m)</span>
+<span class='add'>+            robot.move_to(cx, cy, safe_z, yaw=yaw, speed=0.10)</span>
+<span class=''>             return True</span>
+<span class=''> </span>
+<span class=''>         # --- Grasp the red cube ---</span>
+<span class=''>         if not grasp_cube(red_pose, &quot;red cube&quot;):</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # --- Get current gripper pose after grasp and small lift ---</span>
+<span class='add'>+        # --- Get current poses after grasp and lift to safe height ---</span>
+<span class=''>         obs2 = robot.observe()</span>
+<span class='del'>-        grip = obs2[&#x27;gripper&#x27;]</span>
+<span class='del'>-        cur_x, cur_y, cur_z = grip[&#x27;pos&#x27;]</span>
+<span class='add'>+        red_current = obs2[&#x27;objects&#x27;][&#x27;red_cube&#x27;]</span>
+<span class='add'>+        blue_current = obs2[&#x27;objects&#x27;][&#x27;blue_cube&#x27;]   # blue cube is static, but refresh for safety</span>
+<span class=''> </span>
+<span class='del'>-        # --- Move to a height suitable for horizontal movement (just above red cube top) ---</span>
+<span class='del'>-        red_top_z = red_pose[&#x27;pos&#x27;][2] + red_pose[&#x27;size&#x27;][2] / 2.0 + 0.01</span>
+<span class='del'>-        try:</span>
+<span class='del'>-            robot.move_to(cur_x, cur_y, red_top_z, speed=0.15)</span>
+<span class='del'>-        except Exception as e:</span>
+<span class='del'>-            robot.log(f&quot;Failed to move to horizontal height: {e}&quot;)</span>
+<span class='del'>-            try:</span>
+<span class='del'>-                robot.move_to(cur_x, cur_y, red_top_z, speed=0.05)</span>
+<span class='del'>-            except Exception as e2:</span>
+<span class='del'>-                robot.log(f&quot;Still failed to reach horizontal height: {e2}&quot;)</span>
+<span class='del'>-                return False</span>
+<span class='add'>+        # --- Compute horizontal offset from red to blue using current red pose ---</span>
+<span class='add'>+        dx = blue_current[&#x27;pos&#x27;][0] - red_current[&#x27;pos&#x27;][0]</span>
+<span class='add'>+        dy = blue_current[&#x27;pos&#x27;][1] - red_current[&#x27;pos&#x27;][1]</span>
+<span class=''> </span>
+<span class='del'>-        # --- Compute horizontal offset from red to blue cube using current red pose ---</span>
+<span class='del'>-        red_current = robot.get_pose(&#x27;red_cube&#x27;)</span>
+<span class='del'>-        dx = blue_pose[&#x27;pos&#x27;][0] - red_current[&#x27;pos&#x27;][0]</span>
+<span class='del'>-        dy = blue_pose[&#x27;pos&#x27;][1] - red_current[&#x27;pos&#x27;][1]</span>
+<span class='del'>-</span>
+<span class='del'>-        # --- Move horizontally at the current height ---</span>
+<span class='add'>+        # --- Move horizontally at the safe height ---</span>
+<span class=''>         try:</span>
+<span class=''>             robot.move_by(dx, dy, speed=0.15)</span>
+<span class=''>         except Exception as e:</span>
+<span class=''>             robot.log(f&quot;Horizontal move failed: {e}&quot;)</span>
+<span class=''>             # Fallback: explicit move_to at same height</span>
+<span class='add'>+            grip = obs2[&#x27;gripper&#x27;]</span>
+<span class='add'>+            cur_x, cur_y, cur_z = grip[&#x27;pos&#x27;]</span>
+<span class=''>             try:</span>
+<span class='del'>-                robot.move_to(</span>
+<span class='del'>-                    red_current[&#x27;pos&#x27;][0] + dx,</span>
+<span class='del'>-                    red_current[&#x27;pos&#x27;][1] + dy,</span>
+<span class='del'>-                    red_current[&#x27;pos&#x27;][2],</span>
+<span class='del'>-                    speed=0.15,</span>
+<span class='del'>-                )</span>
+<span class='add'>+                robot.move_to(cur_x + dx, cur_y + dy, cur_z, speed=0.15)</span>
+<span class=''>             except Exception as e2:</span>
+<span class=''>                 robot.log(f&quot;Fallback horizontal move failed: {e2}&quot;)</span>
+<span class=''>                 return False</span>
+<span class=''> </span>
+<span class='add'>+        # --- Re‑observe to get precise gripper pose after horizontal move ---</span>
+<span class='add'>+        obs3 = robot.observe()</span>
+<span class='add'>+        grip = obs3[&#x27;gripper&#x27;]</span>
+<span class='add'>+        cur_x, cur_y, cur_z = grip[&#x27;pos&#x27;]</span>
+<span class='add'>+</span>
+<span class=''>         # --- Compute target tool‑point height for proper stacking ---</span>
+<span class='del'>-        h_red = red_pose[&#x27;size&#x27;][2]          # cube height (unchanged)</span>
+<span class='add'>+        h_red = red_current[&#x27;size&#x27;][2]          # cube height</span>
+<span class=''>         epsilon = 0.005</span>
+<span class='del'>-        # Tool point must be above the red cube centre by:</span>
+<span class='del'>-        #   (grasp_z - red_z) + lift_after_grasp = half_z + epsilon + 0.02</span>
+<span class='add'>+        blue_z = blue_current[&#x27;pos&#x27;][2]</span>
+<span class='add'>+        # Tool point must be above the red cube centre by (half_z + epsilon)</span>
+<span class=''>         # Desired red cube centre = blue_z + h_red (sit on top of blue cube)</span>
+<span class='del'>-        # Hence target_z_tool = blue_z + h_red + (half_z + epsilon + 0.02)</span>
+<span class='del'>-        # Simplified: target_z_tool = blue_z + 1.5*h_red + epsilon + 0.02</span>
+<span class='del'>-        target_z_tool = blue_pose[&#x27;pos&#x27;][2] + 1.5 * h_red + epsilon + 0.02</span>
+<span class='del'>-</span>
+<span class='del'>-        # Cap at a safe maximum reachable height (empirically ~0.245 m)</span>
+<span class='del'>-        MAX_Z = 0.245</span>
+<span class='del'>-        if target_z_tool &gt; MAX_Z:</span>
+<span class='del'>-            target_z_tool = MAX_Z</span>
+<span class='del'>-        # Ensure we stay above the table</span>
+<span class='del'>-        MIN_Z = 0.02</span>
+<span class='del'>-        if target_z_tool &lt; MIN_Z:</span>
+<span class='del'>-            target_z_tool = MIN_Z</span>
+<span class='add'>+        # Hence target_z = blue_z + h_red + (half_z + epsilon) = blue_z + 2*h_red + epsilon</span>
+<span class='add'>+        target_z = blue_z + 2.0 * h_red + epsilon</span>
+<span class=''> </span>
+<span class=''>         # --- Move to the stacking height ---</span>
+<span class='del'>-        obs3 = robot.observe()</span>
+<span class='del'>-        grip2 = obs3[&#x27;gripper&#x27;]</span>
+<span class='del'>-        cur_x2, cur_y2, cur_z2 = grip2[&#x27;pos&#x27;]</span>
+<span class=''>         try:</span>
+<span class='del'>-            robot.move_to(cur_x2, cur_y2, target_z_tool, speed=0.05)</span>
+<span class='add'>+            robot.move_to(cur_x, cur_y, target_z, speed=0.05)</span>
+<span class=''>         except Exception as e:</span>
+<span class=''>             robot.log(f&quot;Vertical move to stack height failed: {e}&quot;)</span>
+<span class=''>             try:</span>
+<span class='del'>-                robot.move_to(cur_x2, cur_y2, target_z_tool, speed=0.02)</span>
+<span class='add'>+                robot.move_to(cur_x, cur_y, target_z, speed=0.02)</span>
+<span class=''>             except Exception as e2:</span>
+<span class=''>                 robot.log(f&quot;Still failed to reach stack height: {e2}&quot;)</span>
+<span class=''>                 return False</span>
+<span class='hunk'>@@ -125,17 +102,10 @@</span>
+<span class=''>         robot.wait(0.2)   # allow the cube to settle</span>
+<span class=''> </span>
+<span class=''>         # --- Retreat to a safe height ---</span>
+<span class='del'>-        try:</span>
+<span class='del'>-            robot.move_by(dz=0.10, speed=0.10)</span>
+<span class='del'>-        except Exception as e:</span>
+<span class='del'>-            robot.log(f&quot;Retreat failed: {e}&quot;)</span>
+<span class='add'>+        robot.move_by(dz=0.10, speed=0.10)</span>
+<span class=''> </span>
+<span class=''>         # Optional: return home</span>
+<span class='del'>-        try:</span>
+<span class='del'>-            robot.home()</span>
+<span class='del'>-        except Exception:</span>
+<span class='del'>-            pass</span>
+<span class='del'>-</span>
+<span class='add'>+        robot.home()</span>
+<span class=''>         return True</span>
+<span class=''> </span>
+<span class=''>     except Exception as e:</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100001/end_front.jpg"><figcaption>seed 100001<br></figcaption></figure><figure><img src="eval/episodes/ep_100002/end_front.jpg"><figcaption>seed 100002<br></figcaption></figure><figure><img src="eval/episodes/ep_100006/end_front.jpg"><figcaption>seed 100006<br></figcaption></figure><figure><img src="eval/episodes/ep_100008/end_front.jpg"><figcaption>seed 100008<br></figcaption></figure><figure><img src="eval/episodes/ep_100016/end_front.jpg"><figcaption>seed 100016<br></figcaption></figure><figure><img src="eval/episodes/ep_100018/end_front.jpg"><figcaption>seed 100018<br></figcaption></figure><figure><img src="eval/episodes/ep_100019/end_front.jpg"><figcaption>seed 100019<br></figcaption></figure><figure><img src="eval/episodes/ep_100025/end_front.jpg"><figcaption>seed 100025<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    &quot;&quot;&quot;Stack the red cube on top of the blue cube.&quot;&quot;&quot;
+    try:
+        # Start from a known safe pose
+        robot.home()
+
+        # Observe the scene to get current poses
+        obs = robot.observe()
+        red_pose = obs[&#x27;objects&#x27;][&#x27;red_cube&#x27;]
+        blue_pose = obs[&#x27;objects&#x27;][&#x27;blue_cube&#x27;]
+
+        def grasp_cube(pose, desc=&quot;&quot;):
+            &quot;&quot;&quot;Grasp a cube given its pose dictionary.&quot;&quot;&quot;
+            cx, cy, cz = pose[&#x27;pos&#x27;]
+            yaw = pose[&#x27;yaw&#x27;]
+            size = pose[&#x27;size&#x27;]          # [x, y, z] dimensions
+            half_z = size[2] / 2.0       # half height of the cube
+            epsilon = 0.005              # small clearance above the centre
+
+            # Safety offset above the cube for approach
+            approach_z = cz + half_z + epsilon + 0.05   # a bit higher than grasp point
+            # Desired grasp point (a little above the cube centre)
+            grasp_z = cz + half_z + epsilon
+
+            # Approach from above
+            robot.move_to(cx, cy, approach_z, yaw=yaw, speed=0.15)
+
+            # Descend to grasp height
+            robot.move_to(cx, cy, grasp_z, yaw=yaw, speed=0.05)
+
+            # Close the fingers
+            if not robot.grasp():
+                # Retreat a bit and try once more
+                robot.move_by(dz=0.05, speed=0.05)
+                if not robot.grasp():
+                    robot.log(f&quot;Failed to grasp {desc}&quot;)
+                    return False
+            robot.log(f&quot;Grasped {desc}&quot;)
+
+            # Lift the cube clear of the table
+            robot.move_by(dz=0.10, speed=0.10)
+            return True
+
+        # --- Grasp the red cube ---
+        if not grasp_cube(red_pose, &quot;red cube&quot;):
+            return False
+
+        # --- Get current gripper pose after grasp and lift ---
+        obs2 = robot.observe()
+        grip = obs2[&#x27;gripper&#x27;]
+        cur_x, cur_y, cur_z = grip[&#x27;pos&#x27;]
+
+        # --- Compute horizontal offset from red to blue cube ---
+        dx = blue_pose[&#x27;pos&#x27;][0] - red_pose[&#x27;pos&#x27;][0]
+        dy = blue_pose[&#x27;pos&#x27;][1] - red_pose[&#x27;pos&#x27;][1]
+
+        # --- Move horizontally at current height ---
+        try:
+            robot.move_by(dx, dy, speed=0.15)
+        except Exception:
+            # Fallback: explicit move_to at same height
+            robot.move_to(cur_x + dx, cur_y + dy, cur_z, speed=0.15)
+
+        # --- Compute target tool‑point height for proper stacking ---
+        h_red = red_pose[&#x27;size&#x27;][2]          # cube height
+        epsilon = 0.005
+        lift_height = 0.10                   # performed after grasp
+        # Tool point must be above the red cube centre by:
+        #   (grasp_z - red_z) + lift_height = half_z + epsilon + lift_height
+        # Desired red cube centre = blue_z + h_red (sit on top of blue cube)
+        target_z_tool = blue_pose[&#x27;pos&#x27;][2] + h_red + (h_red / 2.0) + epsilon + lift_height
+        # Simplified: target_z_tool = blue_z + 1.5*h_red + epsilon + lift_height
+
+        # --- Move to the stacking height ---
+        try:
+            robot.move_to(cur_x + dx, cur_y + dy, target_z_tool, speed=0.05)
+        except Exception:
+            # Try a slower speed if the first attempt fails
+            robot.move_to(cur_x + dx, cur_y + dy, target_z_tool, speed=0.02)
+
+        # --- Release the red cube onto the blue one ---
+        robot.release()
+        robot.log(&quot;Released red cube onto blue cube&quot;)
+        robot.wait(0.2)   # allow the cube to settle
+
+        # --- Retreat to a safe height ---
+        robot.move_by(dz=0.10, speed=0.10)
+
+        # Optional: return home
+        robot.home()
+        return True
+
+    except Exception as e:
+        robot.log(f&quot;Exception: {e}&quot;)
+        try:
+            robot.home()
+        except Exception:
+            pass
+        return False
+</pre></section>
+</div></body></html>

@@ -1,0 +1,101 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,98 @@
++# skill module
++import math
++import itertools
++
++def run(robot):
++    """
++    Stack the red cube on top of the blue cube and let go.
++    The function must return True if the stacking succeeded, otherwise False.
++    """
++
++    # ------------------------------------------------------------------
++    # 1. Perceive the scene
++    # ------------------------------------------------------------------
++    obs = robot.observe()
++    red_name = None
++    blue_name = None
++    for name, obj in obs["objects"].items():
++        if obj["color"] == "red":
++            red_name = name
++        elif obj["color"] == "blue":
++            blue_name = name
++
++    if red_name is None or blue_name is None:
++        robot.log("Red or blue cube not found")
++        return False
++
++    # ------------------------------------------------------------------
++    # 2. Get precise poses (includes ~2 mm noise)
++    # ------------------------------------------------------------------
++    red_pose = robot.get_pose(red_name)   # {"pos": [...], "yaw": ...}
++    blue_pose = robot.get_pose(blue_name)
++
++    red_x, red_y, red_z = red_pose["pos"]
++    red_yaw = red_pose["yaw"]
++    blue_x, blue_y, blue_z = blue_pose["pos"]
++
++    # ------------------------------------------------------------------
++    # 3. Move to red cube and grasp it
++    # ------------------------------------------------------------------
++    # Approach from above, aligning fingers with the cube's faces
++    try:
++        robot.move_to(red_x, red_y, red_z, yaw=red_yaw, speed=0.07)
++    except Exception as e:  # MotionError or other safety halt
++        robot.log(f"Move to red failed: {e}")
++        return False
++
++    # Close fingers; verify that we are actually holding the red cube
++    if not robot.grasp():
++        robot.log("Grasp command failed")
++        return False
++
++    # Verify hold; retry a few times if needed
++    max_retries = 3
++    for i in range(max_retries):
++        if robot.holding() == red_name:
++            break
++        robot.log(f"Hold verification failed, retry {i+1}/{max_retries}")
++        robot.wait(0.5)
++    else:
++        robot.log("Failed to hold red cube after retries")
++        robot.release()
++        return False
++
++    # ------------------------------------------------------------------
++    # 4. Lift and translate above the blue cube
++    # ------------------------------------------------------------------
++    # Target centre height for the red cube when placed on top of the blue cube:
++    #   blue_z + (cube_height/2) + (red_cube_height/2) = blue_z + 0.015 + 0.015 = blue_z + 0.03
++    place_center_z = blue_z + 0.03
++
++    # First move to a safe height above the blue cube
++    safe_z = blue_z + 0.05  # a little clearance
++    try:
++        robot.move_to(blue_x, blue_y, safe_z, yaw=red_yaw, speed=0.07)
++    except Exception as e:
++        robot.log(f"Move to safe height failed: {e}")
++        robot.release()
++        return False
++
++    # Lower slowly to the placement height
++    try:
++        robot.move_to(blue_x, blue_y, place_center_z, yaw=red_yaw, speed=0.05)
++    except Exception as e:
++        robot.log(f"Move to placement height failed: {e}")
++        robot.release()
++        return False
++
++    # ------------------------------------------------------------------
++    # 5. Release the red cube
++    # ------------------------------------------------------------------
++    robot.release()
++    robot.wait(0.2)  # give time for the release to settle
++
++    # ------------------------------------------------------------------
++    # 6. Optional: return to a neutral pose and report success
++    # ------------------------------------------------------------------
++    robot.home()
++    return True

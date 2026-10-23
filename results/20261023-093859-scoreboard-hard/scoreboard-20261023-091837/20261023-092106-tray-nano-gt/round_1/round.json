@@ -1,0 +1,193 @@
+{
+ "round": 1,
+ "n": 8,
+ "k": 8,
+ "success": 1.0,
+ "gt_k": 8,
+ "self_k": 8,
+ "errors": 0,
+ "wall_s": 11.1,
+ "usd_cum": 0.00074,
+ "code": "round_1/skill.py",
+ "diff": "round_1/diff.patch",
+ "lines": 101,
+ "notes": "- Each episode randomises object poses, so the skill must read the current observation to find the *yellow_cube* and the *tray* \u2013 no hard\u2011coded coordinates.\n- Strategy: (1) lift above the cube, (2) descend to the cube\u2019s centre height, (3) close the gripper and verify that `holding()` returns `\"yellow_cube\"`, (4) move above the tray centre, (5) lower to a release height inside the tray, (6) open the gripper and confirm the object is no longer held.\n- Use low approach speeds (\u22480.07\u202fm/s) when closing in on objects and a slightly faster default speed for transport; keep moves short and retry a few times on transient failures.\n- All poses are obtained via `robot.observe()` / `robot.get_pose()`; targets are computed from the perceived `[x, y, z]` of the relevant object or fixture.\n- The first version includes simple retry loops (max\u202f3 attempts) and logs useful debug information, while staying within the allowed imports and avoiding bare `except`.",
+ "episodes": [
+  {
+   "seed": 1000,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0036,
+    "yellow_cube_tray_dy": 0.0033,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1001,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0029,
+    "yellow_cube_tray_dy": 0.0043,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1002,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0041,
+    "yellow_cube_tray_dy": 0.0038,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1003,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0008,
+    "yellow_cube_tray_dy": 0.0035,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1004,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0005,
+    "yellow_cube_tray_dy": 0.0023,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0051,
+    "yellow_cube_tray_dy": 0.0042,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0108,
+    "yellow_cube_tray_dy": 0.0001,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1007,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0026,
+    "yellow_cube_tray_dy": 0.007,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

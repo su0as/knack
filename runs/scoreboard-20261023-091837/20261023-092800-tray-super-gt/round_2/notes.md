@@ -1,0 +1,4 @@
+- Increased placement height to tz+0.025 to avoid joint/contact limits (Mode 2).
+- After reaching the tray centre at placement height, move to the cube's original (cx, cy) at that height before releasing to reduce off‑target placement (Mode 1).
+- Ensure the arm completes the full transfer path before calling release (Mode 3).
+- Keep slow speeds near objects and retain basic error handling.

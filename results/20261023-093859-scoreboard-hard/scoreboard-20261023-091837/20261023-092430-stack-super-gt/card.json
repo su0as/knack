@@ -1,0 +1,217 @@
+{
+ "run_id": "20261023-092430-stack-super-gt",
+ "task": "stack",
+ "title": "Stack",
+ "instruction": "Stack the red cube on top of the blue cube and let go.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 9.6,
+   "usd_cum": 0.00199,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 74,
+   "summary": "**Mode 1: XY misplacement (3 episodes: 1001, 1005, 1006)**\n*Root cause:* The `grasp_cube` function moves to the cube\u2019s observed pose without correcting for initial robot offset. When the red cube is not precisely at the origin, the subsequent `move_to(bx, by, ...)` on line 48 targets the blue cube\u2019s pose from the *grasp position*, causing a drift. The release then lands offset.\n*Fix:* After `robot.home()` (line 7), run a short `robot.move_by(dx=..., dy=...)` to align the gripper with the cube\u2019s true world coordinates before grasping.\n\n**Mode 2: Premature release (2 episodes: 1006, 1001)**\n*Root cause:* `release()` is called at line 56 after descending to `target_z` (line 53). If the gripper\u2019s approach trajectory (line 23) or grasp z-offset (line 27) mis-estimates the cube thickness, the red cube contacts the blue cube off\u2011center and slips off before the fingers fully open.\n*Fix:* Increase the descent speed or add a brief `robot.move_by(dz=-0.01, speed=0.02)` on line 52 to ensure the red cube sits flush on the blue cube before `release()`.\n\n**Mode 3: Large initial offset (2 episodes: 1001, 1005)**\n*Root cause:* Episodes start with the robot at `home()` (line 7) but the observed poses already include world-frame positions. If the robot\u2019s zero\u2011point shifts between episodes, the hard\u2011coded `approach_z = cz + 0.10` (line 21) may place the tool above or below the cube, causing grasp failure or mis\u2011stack.\n*Fix:* Calibrate the robot zero\u2011point once per session and store the offset, or add a post\u2011home correction `robot.move_to(0, 0, 0.20)` before observing (after line 7)."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 6,
+   "success": 0.75,
+   "gt_k": 6,
+   "self_k": 3,
+   "errors": 0,
+   "wall_s": 8.4,
+   "usd_cum": 0.01127,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 102,
+   "summary": "**Mode 1: Horizontal offset miss (2 episodes: 2000, 2005)**\n*Root cause:* The code moves horizontally at the *current* gripper height (line 61), but after lifting the red cube 0.10\u202fm (line 43) the gripper is too high to reach the stacking pose. The subsequent `move_to` (line 78) attempts to go to `target_z_tool` computed from the original blue pose, but the horizontal displacement `dx,dy` was already applied at the lifted height, causing a mis\u2011aligned release.\n*Fix:* Reset the gripper z\u2011coordinate to the cube centre height before the horizontal move. After `grasp_cube` (line 48), add `robot.move_to(cur_x, cur_y, red_pose['pos'][2] + red_pose['size'][2]/2 + 0.01, speed=0.15)` (new lines after 52) to bring the tool to the red cube top before the `move_by` at line 61.\n\n**Mode 2: Reach\u2011limit violation (1 episode: 2005)**\n*Root cause:* The stacking height calculation (line 73) yields `target_z_tool \u2248 0.260\u202fm`, which exceeds the arm\u2019s maximum reach (0.251\u202fm, line 81 error). The code falls back to a slower speed but still collides with the workspace limit.\n*Fix:* Cap the target height at the arm\u2019s reachable maximum (\u22480.245\u202fm). Modify line 73 to `target_z_tool = min(blue_pose['pos'][2] + 1.5*h_red + epsilon + lift_height, 0.245)`."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 9.4,
+   "usd_cum": 0.0187,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 148,
+   "summary": "**Mode 1: Premature release (5 episodes)**\n- **Root cause:** `release()` at line 123 fires while the gripper is still translating horizontally. The code moves to `red_top_z` (line 58) then immediately computes a horizontal offset using `get_pose('red_cube')` (line 68). The pose update lags; the robot releases before reaching the target x/y, dropping the cube at the start position.\n- **Fix:** Insert `robot.move_by(dx, dy, speed=0.15)` (line 74) *before* `release()`, ensuring horizontal arrival is confirmed.\n\n**Mode 2: Stack height overflow (3 episodes)**\n- **Root cause:** `target_z_tool` (line 97) computes `blue_z + 1.5*h_red + ...`. With `h_red \u2248 0.05` and `blue_z \u2248 0.015`, the result \u2248 0.092 m, but `MAX_Z = 0.245` clips it. However, the subsequent `move_to` (line 113) targets the capped height, yet the gripper is already offset from the blue cube centre, causing a miss.\n- **Fix:** After horizontal move (line 74), re-observe blue pose and recompute `target_z_tool` using the actual `blue_pose` before the final `move_to` (line 113).\n\n**Mode 3: XY offset drift (2 episodes)**\n- **Root cause:** Horizontal move (line 74) uses `dx, dy` computed from `red_current` (line 68-70). If `red_current` is stale or the robot\u2019s base pose shifts, the offset misaligns with the blue cube. The released cube lands offset (xy_offset ~0.04 m).\n- **Fix:** After `grasp_cube`, re-query `obs2` (line 51) for fresh red pose before computing `dx, dy`, ensuring the horizontal move targets the current red position.",
+   "reverted_to": 2
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 8.4,
+   "usd_cum": 0.02781,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 118
+  }
+ ],
+ "best_round": 2,
+ "eval": {
+  "n": 50,
+  "k": 36,
+  "p": 0.72,
+  "lo": 0.58334612854,
+  "hi": 0.825259856423,
+  "source": "gt",
+  "best_round": 2,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 48,
+  "mean_sim_time": 7.49,
+  "self_report_true": 27,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100001,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.1776,
+     "z_gap": -0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100001/end_front.jpg"
+   },
+   {
+    "seed": 100002,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.1246,
+     "z_gap": -0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100002/end_front.jpg"
+   },
+   {
+    "seed": 100006,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.1001,
+     "z_gap": 0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100006/end_front.jpg"
+   },
+   {
+    "seed": 100008,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.118,
+     "z_gap": -0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100008/end_front.jpg"
+   },
+   {
+    "seed": 100016,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.1209,
+     "z_gap": 0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100016/end_front.jpg"
+   },
+   {
+    "seed": 100018,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0975,
+     "z_gap": 0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100018/end_front.jpg"
+   },
+   {
+    "seed": 100019,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.1756,
+     "z_gap": -0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100019/end_front.jpg"
+   },
+   {
+    "seed": 100025,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.1322,
+     "z_gap": 0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100025/end_front.jpg"
+   }
+  ]
+ },
+ "models": {
+  "coder": {
+   "alias": "super",
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "nvidia": true,
+   "calls": 4,
+   "prompt_tokens": 18484,
+   "completion_tokens": 23273,
+   "usd": 0.026491,
+   "price_in": 0.3,
+   "price_out": 0.9
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 3,
+   "prompt_tokens": 16797,
+   "completion_tokens": 1293,
+   "usd": 0.001318,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.027809,
+  "compute_usd": 0.0,
+  "total_usd": 0.027809,
+  "calls": 7,
+  "prompt_tokens": 35281,
+  "completion_tokens": 24566,
+  "compute_seconds": 145.7,
+  "backend": "local"
+ },
+ "wall_time_s": 210.1,
+ "practice_episodes": 32,
+ "created": "2026-10-23 09:28:00",
+ "skill_file": "best_skill.py"
+}

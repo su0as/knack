@@ -1,0 +1,237 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Into the tray</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261023-093601-tray-deepseek-flash-gt &middot; 2026-10-23 09:37:32</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Put the yellow cube into the tray and let go of it.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; 8 practice episodes in 1 rounds</p>
+<div><span class='chip'><b>CODER</b>deepseek-ai/DeepSeek-V4.1-Flash <em>$0.30 / $1.20 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">100%</div><div>50/50 layouts &middot; Wilson 95% CI 93% to 100%</div><div class='ci'><div class='ci-band' style='left:92.9%;width:7.1%'></div><div class='ci-dot' style='left:100.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:100%'></span><em>R1<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>deepseek-ai/DeepSeek-V4.1-Flash</code></td><td>1</td><td>1,627</td><td>7,654</td><td>$0.0094</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>0</td><td>0</td><td>0</td><td>$0.0000</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>102 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>1</th><th>1,627</th><th>7,654</th><th>$0.0094</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details open><summary>Round 1: 8/8 practice episodes &middot; 0 errors &middot; $0.0094 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- First version: no prior results, so I designed from the API spec and the example layout.
+- Find the yellow cube by colour and the tray by kind, never hard-coding coordinates.
+- Grasp strategy: approach above the cube at z=0.10, descend slowly (speed 0.05) to z=0.015 so the pads sit around the cube&#x27;s middle, then close the fingers.
+- Align the gripper yaw with the cube&#x27;s reported yaw so the fingers meet the faces squarely.
+- Bounded retry (3 attempts): re-read the cube pose each time, release and lift between attempts, so a noisy first grasp doesn&#x27;t doom the episode.
+- Carry: lift to z=0.12, travel above the tray centre, descend slowly to z=0.02 (cube bottom ~5 mm above the tray floor, inside the 25 mm walls), release, then retreat.
+- Verify afterwards by re-observing and checking the cube lies within the tray&#x27;s inner half-size (plus a small tolerance for perception noise).
+- Catch MotionError (as Exception) around every move that could be out of reach, and always release + home on failure so the gripper isn&#x27;t left closed.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,96 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    obs = robot.observe()</span>
+<span class='add'>+    objects = obs[&quot;objects&quot;]</span>
+<span class='add'>+    fixtures = obs[&quot;fixtures&quot;]</span>
+<span class='add'>+</span>
+<span class='add'>+    # --- Locate the yellow cube ---</span>
+<span class='add'>+    cube_name = None</span>
+<span class='add'>+    cube_info = None</span>
+<span class='add'>+    for name, o in objects.items():</span>
+<span class='add'>+        if o.get(&quot;color&quot;) == &quot;yellow&quot;:</span>
+<span class='add'>+            cube_name, cube_info = name, o</span>
+<span class='add'>+            break</span>
+<span class='add'>+    if cube_info is None:</span>
+<span class='add'>+        robot.log(&quot;no yellow cube found&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # --- Locate the tray ---</span>
+<span class='add'>+    tray_info = None</span>
+<span class='add'>+    for name, f in fixtures.items():</span>
+<span class='add'>+        if f.get(&quot;kind&quot;) == &quot;tray&quot;:</span>
+<span class='add'>+            tray_info = f</span>
+<span class='add'>+            break</span>
+<span class='add'>+    if tray_info is None:</span>
+<span class='add'>+        robot.log(&quot;no tray found&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    tx, ty = tray_info[&quot;pos&quot;][0], tray_info[&quot;pos&quot;][1]</span>
+<span class='add'>+    inner = tray_info.get(&quot;inner_half_size&quot;, 0.04)</span>
+<span class='add'>+</span>
+<span class='add'>+    # --- Grasp the cube (bounded retries) ---</span>
+<span class='add'>+    grasped = False</span>
+<span class='add'>+    cx, cy, cz = cube_info[&quot;pos&quot;]</span>
+<span class='add'>+    yaw = cube_info[&quot;yaw&quot;]</span>
+<span class='add'>+</span>
+<span class='add'>+    for attempt in range(3):</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            pose = robot.get_pose(cube_name)</span>
+<span class='add'>+            cx, cy, cz = pose[&quot;pos&quot;]</span>
+<span class='add'>+            yaw = pose[&quot;yaw&quot;]</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            pass</span>
+<span class='add'>+</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(cx, cy, 0.10, yaw=yaw, speed=0.15)</span>
+<span class='add'>+            robot.move_to(cx, cy, 0.015, yaw=yaw, speed=0.05)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            robot.log(&quot;approach failed&quot;, attempt)</span>
+<span class='add'>+            robot.release()</span>
+<span class='add'>+            robot.home()</span>
+<span class='add'>+            continue</span>
+<span class='add'>+</span>
+<span class='add'>+        if robot.grasp():</span>
+<span class='add'>+            grasped = True</span>
+<span class='add'>+            break</span>
+<span class='add'>+</span>
+<span class='add'>+        robot.log(&quot;grasp attempt failed&quot;, attempt)</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(cx, cy, 0.10, yaw=yaw, speed=0.1)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            pass</span>
+<span class='add'>+</span>
+<span class='add'>+    if not grasped:</span>
+<span class='add'>+        robot.log(&quot;could not grasp cube&quot;)</span>
+<span class='add'>+        robot.home()</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # --- Carry the cube to the tray ---</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(cx, cy, 0.12, yaw=yaw, speed=0.1)</span>
+<span class='add'>+        robot.move_to(tx, ty, 0.12, speed=0.15)</span>
+<span class='add'>+        robot.move_to(tx, ty, 0.02, speed=0.05)</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        robot.log(&quot;carry failed&quot;)</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        robot.home()</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # --- Release and retreat ---</span>
+<span class='add'>+    robot.release()</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(tx, ty, 0.12, speed=0.1)</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        pass</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+</span>
+<span class='add'>+    # --- Verify placement ---</span>
+<span class='add'>+    obs2 = robot.observe()</span>
+<span class='add'>+    if cube_name in obs2[&quot;objects&quot;]:</span>
+<span class='add'>+        p = obs2[&quot;objects&quot;][cube_name][&quot;pos&quot;]</span>
+<span class='add'>+        if abs(p[0] - tx) &lt;= inner + 0.015 and abs(p[1] - ty) &lt;= inner + 0.015:</span>
+<span class='add'>+            return True</span>
+<span class='add'>+    return False</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><p class="muted">No held-out failures.</p></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+
+def run(robot):
+    obs = robot.observe()
+    objects = obs[&quot;objects&quot;]
+    fixtures = obs[&quot;fixtures&quot;]
+
+    # --- Locate the yellow cube ---
+    cube_name = None
+    cube_info = None
+    for name, o in objects.items():
+        if o.get(&quot;color&quot;) == &quot;yellow&quot;:
+            cube_name, cube_info = name, o
+            break
+    if cube_info is None:
+        robot.log(&quot;no yellow cube found&quot;)
+        return False
+
+    # --- Locate the tray ---
+    tray_info = None
+    for name, f in fixtures.items():
+        if f.get(&quot;kind&quot;) == &quot;tray&quot;:
+            tray_info = f
+            break
+    if tray_info is None:
+        robot.log(&quot;no tray found&quot;)
+        return False
+
+    tx, ty = tray_info[&quot;pos&quot;][0], tray_info[&quot;pos&quot;][1]
+    inner = tray_info.get(&quot;inner_half_size&quot;, 0.04)
+
+    # --- Grasp the cube (bounded retries) ---
+    grasped = False
+    cx, cy, cz = cube_info[&quot;pos&quot;]
+    yaw = cube_info[&quot;yaw&quot;]
+
+    for attempt in range(3):
+        try:
+            pose = robot.get_pose(cube_name)
+            cx, cy, cz = pose[&quot;pos&quot;]
+            yaw = pose[&quot;yaw&quot;]
+        except Exception:
+            pass
+
+        try:
+            robot.move_to(cx, cy, 0.10, yaw=yaw, speed=0.15)
+            robot.move_to(cx, cy, 0.015, yaw=yaw, speed=0.05)
+        except Exception:
+            robot.log(&quot;approach failed&quot;, attempt)
+            robot.release()
+            robot.home()
+            continue
+
+        if robot.grasp():
+            grasped = True
+            break
+
+        robot.log(&quot;grasp attempt failed&quot;, attempt)
+        robot.release()
+        try:
+            robot.move_to(cx, cy, 0.10, yaw=yaw, speed=0.1)
+        except Exception:
+            pass
+
+    if not grasped:
+        robot.log(&quot;could not grasp cube&quot;)
+        robot.home()
+        return False
+
+    # --- Carry the cube to the tray ---
+    try:
+        robot.move_to(cx, cy, 0.12, yaw=yaw, speed=0.1)
+        robot.move_to(tx, ty, 0.12, speed=0.15)
+        robot.move_to(tx, ty, 0.02, speed=0.05)
+    except Exception:
+        robot.log(&quot;carry failed&quot;)
+        robot.release()
+        robot.home()
+        return False
+
+    # --- Release and retreat ---
+    robot.release()
+    try:
+        robot.move_to(tx, ty, 0.12, speed=0.1)
+    except Exception:
+        pass
+    robot.home()
+
+    # --- Verify placement ---
+    obs2 = robot.observe()
+    if cube_name in obs2[&quot;objects&quot;]:
+        p = obs2[&quot;objects&quot;][cube_name][&quot;pos&quot;]
+        if abs(p[0] - tx) &lt;= inner + 0.015 and abs(p[1] - ty) &lt;= inner + 0.015:
+            return True
+    return False
+</pre></section>
+</div></body></html>

@@ -1,0 +1,98 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,95 @@
++import math
++
++
++def run(robot):
++    obs = robot.observe()
++    objs = obs["objects"]
++    red = objs["red_cube"]
++    blue = objs["blue_cube"]
++
++    rx, ry, rz = red["pos"]
++    bx, by, bz = blue["pos"]
++    ryaw = red["yaw"]
++    byaw = blue["yaw"]
++
++    cube_h = 0.03
++    safe_z = 0.12
++
++    # --- 1. Grasp the red cube ---
++    grasped = False
++    for attempt in range(3):
++        try:
++            r = robot.move_to(rx, ry, safe_z, yaw=ryaw, speed=0.15)
++            if not r.get("ok", True):
++                continue
++            r = robot.move_to(rx, ry, rz, yaw=ryaw, speed=0.05)
++            if not r.get("ok", True):
++                continue
++        except Exception:
++            continue
++        if robot.grasp():
++            grasped = True
++            break
++        # back off and retry
++        try:
++            robot.move_to(rx, ry, safe_z, yaw=ryaw, speed=0.10)
++        except Exception:
++            pass
++
++    if not grasped:
++        robot.log("grasp red failed")
++        try:
++            robot.home()
++        except Exception:
++            pass
++        return False
++
++    robot.log("grasped red")
++
++    # --- 2. Lift ---
++    try:
++        robot.move_to(rx, ry, safe_z, yaw=ryaw, speed=0.10)
++    except Exception:
++        pass
++
++    # --- 3. Move above the blue cube ---
++    try:
++        r = robot.move_to(bx, by, safe_z, yaw=byaw, speed=0.15)
++        if not r.get("ok", True):
++            robot.log("move above blue blocked")
++    except Exception:
++        robot.log("move above blue raised")
++        try:
++            robot.home()
++        except Exception:
++            pass
++        return False
++
++    # --- 4. Descend and place ---
++    place_z = bz + cube_h + 0.002  # red centre just above blue top
++    try:
++        r = robot.move_to(bx, by, place_z, yaw=byaw, speed=0.05)
++        if not r.get("ok", True):
++            robot.log("descend to place blocked")
++    except Exception:
++        robot.log("descend to place raised")
++        try:
++            robot.home()
++        except Exception:
++            pass
++        return False
++
++    robot.release()
++    robot.log("released red on blue")
++
++    # --- 5. Retreat and home ---
++    try:
++        robot.move_to(bx, by, safe_z, speed=0.15)
++    except Exception:
++        pass
++    try:
++        robot.home()
++    except Exception:
++        pass
++
++    return True

@@ -1,0 +1,381 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Into the tray</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261023-092800-tray-super-gt &middot; 2026-10-23 09:30:14</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Put the yellow cube into the tray and let go of it.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; 32 practice episodes in 4 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/nemotron-3-super-120b-a12b <em>$0.30 / $0.90 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">64%</div><div>32/50 layouts &middot; Wilson 95% CI 50% to 76%</div><div class='ci'><div class='ci-band' style='left:50.1%;width:25.7%'></div><div class='ci-dot' style='left:64.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:50%'></span><em>R1<br>4/8</em></div><div class='bar'><span style='height:37%'></span><em>R2<br>3/8</em></div><div class='bar'><span style='height:62%'></span><em>R3<br>5/8</em></div><div class='bar'><span style='height:75%'></span><em>R4<br>6/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/nemotron-3-super-120b-a12b</code></td><td>4</td><td>15,433</td><td>7,944</td><td>$0.0118</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>3</td><td>12,496</td><td>1,159</td><td>$0.0010</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>139 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>7</th><th>27,929</th><th>9,103</th><th>$0.0128</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details><summary>Round 1: 4/8 practice episodes &middot; 0 errors &middot; $0.0017 so far</summary><div class='muted'>coder notes</div><pre>- First attempt: perceive the yellow cube, move above it, descend to a grasping pose, close the gripper, verify grasp, then move to the tray center and release.
+- Use slow speeds near objects for better reliability.
+- No hard‑coded coordinates; all positions are read at runtime.
+- Added basic error handling for unreachable poses.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Off-target placement** (3 episodes: 1001, 1005, 1006)
+*Root cause:* The robot moves to the tray’s nominal position, but the cube is released at a tray coordinate offset from the cube’s original location. The check `yellow_cube_tray_dx/dy` exceeds 0.02m.
+*Fix:* After `robot.move_to(tx, ty, place_z)`, add a final `robot.move_to(cx, cy, place_z)` to align the cube over its original grid cell before release.
+
+**Mode 2: Short stroke to placement height** (1 episode: 1002)
+*Root cause:* `robot.move_to(tx, ty, place_z)` stops short (error 0.0117m) due to contact or joint limit at line 56.
+*Fix:* Increase `place_z` by 0.01m (e.g., `tz + 0.025`) to clear any tray edge or fixture collision.
+
+**Mode 3: Premature release** (1 episode: 1005)
+*Root cause:* `robot.release()` at line 62 executes while the arm is still over the pickup pose (x≈0.136, y≈0.0), not the tray. The cube lands near the start location.
+*Fix:* Ensure the arm traverses the full transfer path (above tray → placement height) before calling `release()`.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,75 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        # Start from a safe pose</span>
+<span class='add'>+        robot.home()</span>
+<span class='add'>+</span>
+<span class='add'>+        # Observe the scene to get the yellow cube and tray poses</span>
+<span class='add'>+        obs = robot.observe()</span>
+<span class='add'>+        cube_info = obs[&#x27;objects&#x27;].get(&#x27;yellow_cube&#x27;)</span>
+<span class='add'>+        tray_info = obs[&#x27;fixtures&#x27;].get(&#x27;tray&#x27;)</span>
+<span class='add'>+        if not cube_info or not tray_info:</span>
+<span class='add'>+            robot.log(&quot;Missing cube or tray in observation&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Extract poses</span>
+<span class='add'>+        cx, cy, cz = cube_info[&#x27;pos&#x27;]</span>
+<span class='add'>+        cyaw = cube_info[&#x27;yaw&#x27;]</span>
+<span class='add'>+        tx, ty, tz = tray_info[&#x27;pos&#x27;]   # tray sits on the table (z = 0)</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- Grasping sequence ---</span>
+<span class='add'>+        # Move above the cube</span>
+<span class='add'>+        above_z = cz + 0.08</span>
+<span class='add'>+        move_res = robot.move_to(cx, cy, above_z, yaw=cyaw, speed=0.15)</span>
+<span class='add'>+        if not move_res.get(&#x27;ok&#x27;, False):</span>
+<span class='add'>+            robot.log(&quot;Failed to move above cube&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Descend to a grasping height (just above the cube centre)</span>
+<span class='add'>+        grasp_z = cz + 0.02</span>
+<span class='add'>+        move_res = robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.05)</span>
+<span class='add'>+        if not move_res.get(&#x27;ok&#x27;, False):</span>
+<span class='add'>+            robot.log(&quot;Failed to move to grasp height&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Close the fingers</span>
+<span class='add'>+        if not robot.grasp():</span>
+<span class='add'>+            robot.log(&quot;Grasp did not detect an object&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Verify that we are holding something</span>
+<span class='add'>+        if robot.holding() != &#x27;yellow_cube&#x27;:</span>
+<span class='add'>+            robot.log(&quot;Not holding the yellow cube after grasp&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- Transfer to tray ---</span>
+<span class='add'>+        # Move above the tray centre</span>
+<span class='add'>+        above_tray_z = tz + 0.08</span>
+<span class='add'>+        move_res = robot.move_to(tx, ty, above_tray_z, speed=0.15)</span>
+<span class='add'>+        if not move_res.get(&#x27;ok&#x27;, False):</span>
+<span class='add'>+            robot.log(&quot;Failed to move above tray&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Lower to a safe placement height (cube centre on tray floor)</span>
+<span class='add'>+        place_z = tz + 0.015   # half cube size so it rests on the tray bottom</span>
+<span class='add'>+        move_res = robot.move_to(tx, ty, place_z, speed=0.05)</span>
+<span class='add'>+        if not move_res.get(&#x27;ok&#x27;, False):</span>
+<span class='add'>+            robot.log(&quot;Failed to move to placement height&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Release the cube</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+</span>
+<span class='add'>+        # Optional: verify release</span>
+<span class='add'>+        if robot.holding() is not None:</span>
+<span class='add'>+            robot.log(&quot;Still holding an object after release&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Success</span>
+<span class='add'>+        return True</span>
+<span class='add'>+</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        # Catch any unexpected errors (e.g., MotionError) and fail safely</span>
+<span class='add'>+        robot.log(f&quot;Exception during skill execution: {e}&quot;)</span>
+<span class='add'>+        return False</span></pre></details><details><summary>Round 2: 3/8 practice episodes &middot; 0 errors &middot; $0.0053 so far</summary><div class='muted'>coder notes</div><pre>- Increased placement height to tz+0.025 to avoid joint/contact limits (Mode 2).
+- After reaching the tray centre at placement height, move to the cube&#x27;s original (cx, cy) at that height before releasing to reduce off‑target placement (Mode 1).
+- Ensure the arm completes the full transfer path before calling release (Mode 3).
+- Keep slow speeds near objects and retain basic error handling.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Premature release (5 episodes: 2000, 2002, 2003, 2005, 2007)**
+*Root cause:* The arm moves to the tray’s xy-coordinates but retains the cube’s original xy-position for the final `move_to` before release. If the tray is offset from the cube’s start position, the arm releases the cube in mid-air or at a wrong location, causing it to miss the tray.
+*Code reference:* Lines 61–65 move to `(cx, cy, place_z)` instead of `(tx, ty, place_z)`. Line 68 `robot.release()` executes regardless.
+*Fix:* Change line 62’s target from `cx, cy` to `tx, ty` so the cube is deposited directly above the tray before release.
+
+**Mode 2: Failed grasp or hold loss (2 episodes: 2001, 2004)**
+*Root cause:* Grasp detection fails or the cube is dropped before transfer. In 2001, the arm moves to `above_tray_z` then descends to `place_z` without re-grasping, risking drop. In 2004, the check `yellow_cube_held=False` suggests the cube was never securely held or was released early.
+*Code reference:* Line 37 `robot.grasp()` and line 42 `robot.holding()`. No verification between grasp and transfer.
+*Fix:* Insert a `robot.holding() == &#x27;yellow_cube&#x27;` check after line 39. If false, retry the approach or log &quot;grasp failed&quot; and return.
+
+**Mode 3: Navigation errors (1 episode: 2006 success, others variable)**
+*Root cause:* `move_to` errors accumulate when targeting `cx, cy` at `place_z` (line 62) after the arm has been repositioned over the tray. Small pose drifts cause the cube to land offset from the tray.
+*Code reference:* Line 62 `robot.move_to(cx, cy, place_z, speed=0.05)`.
+*Fix:* Replace `cx, cy` with `tx, ty` on line 62 to ensure the release pose aligns with the tray’s geometry.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_1/skill.py</span>
+<span class=''>+++ round_2/skill.py</span>
+<span class='hunk'>@@ -38,7 +38,7 @@</span>
+<span class=''>             robot.log(&quot;Grasp did not detect an object&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # Verify that we are holding something</span>
+<span class='add'>+        # Verify that we are holding the yellow cube</span>
+<span class=''>         if robot.holding() != &#x27;yellow_cube&#x27;:</span>
+<span class=''>             robot.log(&quot;Not holding the yellow cube after grasp&quot;)</span>
+<span class=''>             return False</span>
+<span class='hunk'>@@ -51,11 +51,17 @@</span>
+<span class=''>             robot.log(&quot;Failed to move above tray&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # Lower to a safe placement height (cube centre on tray floor)</span>
+<span class='del'>-        place_z = tz + 0.015   # half cube size so it rests on the tray bottom</span>
+<span class='add'>+        # Lower to a safe placement height (slightly above tray bottom to avoid contact)</span>
+<span class='add'>+        place_z = tz + 0.025   # increased clearance</span>
+<span class=''>         move_res = robot.move_to(tx, ty, place_z, speed=0.05)</span>
+<span class=''>         if not move_res.get(&#x27;ok&#x27;, False):</span>
+<span class=''>             robot.log(&quot;Failed to move to placement height&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Align over the cube&#x27;s original xy position at placement height</span>
+<span class='add'>+        move_res = robot.move_to(cx, cy, place_z, speed=0.05)</span>
+<span class='add'>+        if not move_res.get(&#x27;ok&#x27;, False):</span>
+<span class='add'>+            robot.log(&quot;Failed to align over cube&#x27;s original position&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class=''>         # Release the cube</span></pre></details><details><summary>Round 3: 5/8 practice episodes &middot; 0 errors &middot; $0.0086 so far</summary><div class='muted'>coder notes</div><pre>- Removed the erroneous move back to the cube&#x27;s original (cx, cy) after lowering onto the tray; this was causing premature release and misplacement (Mode 1).
+- Kept the placement height at tz + 0.015 (cube centre resting on the tray bottom) as it worked well in round 1.
+- Added a holding check after moving above the tray and before lowering to ensure the grasp is still secure (Mode 2).
+- Added a holding check after lowering and before releasing to catch any slip during the descent.
+- Retried the grasp once if the initial attempt fails, improving robustness against occasional grasp failures.
+- Preserved slow speeds (0.05 m/s) for precise motions near objects and used the default speed for longer transfers.
+- Maintained error handling for move_to failures and unexpected exceptions.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Placement collision (1 episode)**
+*Episodes: 3000*
+*Root cause:* Line 69 `move_to(tx, ty, place_z)` failed due to contact/joint limit when lowering onto the tray.
+*Fix:* Raise `place_z` by 0.01m to give clearance, or adjust tray height `tz` in observation.
+
+**Mode 2: Grasp loss during transfer (3 episodes)**
+*Episodes: 3001, 3003, 3004*
+*Root cause:* Lines 56–65. The robot moves above the tray (line 57) and descends (line 69) while holding, but the trajectory causes the gripper to collide or lose contact, triggering the &quot;Lost grasp&quot; log.
+*Fix:* Insert a `robot.move_by(dz=0.02, speed=0.05)` ascent after line 57 to clear the tray edge before descending to `place_z`.
+
+**Mode 3: Grasp detection failure (2 episodes)**
+*Episodes: 3006, 3007*
+*Root cause:* Lines 38–47. The grasp loop retries by lifting `dz=0.01`, but the initial approach or cube pose may be outside the sensor’s reliable grasp zone, causing repeated failures.
+*Fix:* Increase retry lift to `dz=0.02` and add a pre-grasp `robot.move_to(cx, cy, above_z, speed=0.1)` to ensure stable alignment before closure.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_2/skill.py</span>
+<span class=''>+++ round_3/skill.py</span>
+<span class='hunk'>@@ -33,8 +33,16 @@</span>
+<span class=''>             robot.log(&quot;Failed to move to grasp height&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # Close the fingers</span>
+<span class='del'>-        if not robot.grasp():</span>
+<span class='add'>+        # Attempt grasp (allow one retry)</span>
+<span class='add'>+        grasp_success = False</span>
+<span class='add'>+        for _ in range(2):</span>
+<span class='add'>+            if robot.grasp():</span>
+<span class='add'>+                grasp_success = True</span>
+<span class='add'>+                break</span>
+<span class='add'>+            # small lift and try again</span>
+<span class='add'>+            robot.move_by(dz=0.01, speed=0.05)</span>
+<span class='add'>+            robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.05)</span>
+<span class='add'>+        if not grasp_success:</span>
+<span class=''>             robot.log(&quot;Grasp did not detect an object&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='hunk'>@@ -51,17 +59,21 @@</span>
+<span class=''>             robot.log(&quot;Failed to move above tray&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # Lower to a safe placement height (slightly above tray bottom to avoid contact)</span>
+<span class='del'>-        place_z = tz + 0.025   # increased clearance</span>
+<span class='add'>+        # Verify still holding before descending</span>
+<span class='add'>+        if robot.holding() != &#x27;yellow_cube&#x27;:</span>
+<span class='add'>+            robot.log(&quot;Lost grasp while moving above tray&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # Lower to a safe placement height (cube centre on tray floor)</span>
+<span class='add'>+        place_z = tz + 0.015   # half cube size so it rests on the tray bottom</span>
+<span class=''>         move_res = robot.move_to(tx, ty, place_z, speed=0.05)</span>
+<span class=''>         if not move_res.get(&#x27;ok&#x27;, False):</span>
+<span class=''>             robot.log(&quot;Failed to move to placement height&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # Align over the cube&#x27;s original xy position at placement height</span>
+<span class='del'>-        move_res = robot.move_to(cx, cy, place_z, speed=0.05)</span>
+<span class='del'>-        if not move_res.get(&#x27;ok&#x27;, False):</span>
+<span class='del'>-            robot.log(&quot;Failed to align over cube&#x27;s original position&quot;)</span>
+<span class='add'>+        # Verify still holding before release</span>
+<span class='add'>+        if robot.holding() != &#x27;yellow_cube&#x27;:</span>
+<span class='add'>+            robot.log(&quot;Lost grasp before release&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class=''>         # Release the cube</span></pre></details><details open><summary>Round 4: 6/8 practice episodes &middot; 0 errors &middot; $0.0128 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Increased placement height by 0.01 m (place_z = tz + 0.025) to avoid joint‑limit/contact issues when lowering onto the tray (Mode 1).
+- Added a small upward move (dz=0.02) after reaching the pose above the tray before descending, giving the arm extra clearance to prevent grasp loss during transfer (Mode 2).
+- Improved grasp retry: increased lift to dz=0.02 and inserted a pre‑grasp move to the above‑cube pose before each second attempt, improving alignment and grasp reliability (Mode 3).
+- Kept holding checks after critical motions and preserved slow speeds for precise actions.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_3/skill.py</span>
+<span class=''>+++ round_4/skill.py</span>
+<span class='hunk'>@@ -33,15 +33,16 @@</span>
+<span class=''>             robot.log(&quot;Failed to move to grasp height&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # Attempt grasp (allow one retry)</span>
+<span class='add'>+        # Attempt grasp (allow one retry with improved alignment)</span>
+<span class=''>         grasp_success = False</span>
+<span class=''>         for _ in range(2):</span>
+<span class=''>             if robot.grasp():</span>
+<span class=''>                 grasp_success = True</span>
+<span class=''>                 break</span>
+<span class='del'>-            # small lift and try again</span>
+<span class='del'>-            robot.move_by(dz=0.01, speed=0.05)</span>
+<span class='del'>-            robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.05)</span>
+<span class='add'>+            # lift higher and re‑align before trying again</span>
+<span class='add'>+            robot.move_by(dz=0.02, speed=0.05)</span>
+<span class='add'>+            robot.move_to(cx, cy, above_z, speed=0.1)          # pre‑grasp positioning</span>
+<span class='add'>+            robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.05) # descend to grasp height</span>
+<span class=''>         if not grasp_success:</span>
+<span class=''>             robot.log(&quot;Grasp did not detect an object&quot;)</span>
+<span class=''>             return False</span>
+<span class='hunk'>@@ -59,13 +60,16 @@</span>
+<span class=''>             robot.log(&quot;Failed to move above tray&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # Verify still holding before descending</span>
+<span class='add'>+        # Verify still holding before proceeding</span>
+<span class=''>         if robot.holding() != &#x27;yellow_cube&#x27;:</span>
+<span class=''>             robot.log(&quot;Lost grasp while moving above tray&quot;)</span>
+<span class=''>             return False</span>
+<span class=''> </span>
+<span class='del'>-        # Lower to a safe placement height (cube centre on tray floor)</span>
+<span class='del'>-        place_z = tz + 0.015   # half cube size so it rests on the tray bottom</span>
+<span class='add'>+        # Small ascent to clear tray edge before descending</span>
+<span class='add'>+        robot.move_by(dz=0.02, speed=0.05)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Lower to a safe placement height (cube centre resting on tray bottom with clearance)</span>
+<span class='add'>+        place_z = tz + 0.025   # half cube size + 0.01 m clearance</span>
+<span class=''>         move_res = robot.move_to(tx, ty, place_z, speed=0.05)</span>
+<span class=''>         if not move_res.get(&#x27;ok&#x27;, False):</span>
+<span class=''>             robot.log(&quot;Failed to move to placement height&quot;)</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100001/end_front.jpg"><figcaption>seed 100001<br></figcaption></figure><figure><img src="eval/episodes/ep_100002/end_front.jpg"><figcaption>seed 100002<br></figcaption></figure><figure><img src="eval/episodes/ep_100003/end_front.jpg"><figcaption>seed 100003<br></figcaption></figure><figure><img src="eval/episodes/ep_100006/end_front.jpg"><figcaption>seed 100006<br></figcaption></figure><figure><img src="eval/episodes/ep_100008/end_front.jpg"><figcaption>seed 100008<br></figcaption></figure><figure><img src="eval/episodes/ep_100012/end_front.jpg"><figcaption>seed 100012<br></figcaption></figure><figure><img src="eval/episodes/ep_100016/end_front.jpg"><figcaption>seed 100016<br></figcaption></figure><figure><img src="eval/episodes/ep_100018/end_front.jpg"><figcaption>seed 100018<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    try:
+        # Start from a safe pose
+        robot.home()
+
+        # Observe the scene to get the yellow cube and tray poses
+        obs = robot.observe()
+        cube_info = obs[&#x27;objects&#x27;].get(&#x27;yellow_cube&#x27;)
+        tray_info = obs[&#x27;fixtures&#x27;].get(&#x27;tray&#x27;)
+        if not cube_info or not tray_info:
+            robot.log(&quot;Missing cube or tray in observation&quot;)
+            return False
+
+        # Extract poses
+        cx, cy, cz = cube_info[&#x27;pos&#x27;]
+        cyaw = cube_info[&#x27;yaw&#x27;]
+        tx, ty, tz = tray_info[&#x27;pos&#x27;]   # tray sits on the table (z = 0)
+
+        # --- Grasping sequence ---
+        # Move above the cube
+        above_z = cz + 0.08
+        move_res = robot.move_to(cx, cy, above_z, yaw=cyaw, speed=0.15)
+        if not move_res.get(&#x27;ok&#x27;, False):
+            robot.log(&quot;Failed to move above cube&quot;)
+            return False
+
+        # Descend to a grasping height (just above the cube centre)
+        grasp_z = cz + 0.02
+        move_res = robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.05)
+        if not move_res.get(&#x27;ok&#x27;, False):
+            robot.log(&quot;Failed to move to grasp height&quot;)
+            return False
+
+        # Attempt grasp (allow one retry with improved alignment)
+        grasp_success = False
+        for _ in range(2):
+            if robot.grasp():
+                grasp_success = True
+                break
+            # lift higher and re‑align before trying again
+            robot.move_by(dz=0.02, speed=0.05)
+            robot.move_to(cx, cy, above_z, speed=0.1)          # pre‑grasp positioning
+            robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.05) # descend to grasp height
+        if not grasp_success:
+            robot.log(&quot;Grasp did not detect an object&quot;)
+            return False
+
+        # Verify that we are holding the yellow cube
+        if robot.holding() != &#x27;yellow_cube&#x27;:
+            robot.log(&quot;Not holding the yellow cube after grasp&quot;)
+            return False
+
+        # --- Transfer to tray ---
+        # Move above the tray centre
+        above_tray_z = tz + 0.08
+        move_res = robot.move_to(tx, ty, above_tray_z, speed=0.15)
+        if not move_res.get(&#x27;ok&#x27;, False):
+            robot.log(&quot;Failed to move above tray&quot;)
+            return False
+
+        # Verify still holding before proceeding
+        if robot.holding() != &#x27;yellow_cube&#x27;:
+            robot.log(&quot;Lost grasp while moving above tray&quot;)
+            return False
+
+        # Small ascent to clear tray edge before descending
+        robot.move_by(dz=0.02, speed=0.05)
+
+        # Lower to a safe placement height (cube centre resting on tray bottom with clearance)
+        place_z = tz + 0.025   # half cube size + 0.01 m clearance
+        move_res = robot.move_to(tx, ty, place_z, speed=0.05)
+        if not move_res.get(&#x27;ok&#x27;, False):
+            robot.log(&quot;Failed to move to placement height&quot;)
+            return False
+
+        # Verify still holding before release
+        if robot.holding() != &#x27;yellow_cube&#x27;:
+            robot.log(&quot;Lost grasp before release&quot;)
+            return False
+
+        # Release the cube
+        robot.release()
+
+        # Optional: verify release
+        if robot.holding() is not None:
+            robot.log(&quot;Still holding an object after release&quot;)
+            return False
+
+        # Success
+        return True
+
+    except Exception as e:
+        # Catch any unexpected errors (e.g., MotionError) and fail safely
+        robot.log(f&quot;Exception during skill execution: {e}&quot;)
+        return False
+</pre></section>
+</div></body></html>

@@ -1,0 +1,7 @@
+- First attempt used direct hard‑coded targets – fails when layouts change.  
+- Now read `objects` and `fixtures` each episode and match by colour to find the correct cube‑tray pair.  
+- Approach pose is computed as the object's centre with a safe height offset (≈0.025 m) and a small downward move to the estimated grasp height (≈0.028 m).  
+- Grasp is performed, then the robot moves to the matching tray centre (same colour) at a comparable height and releases the cube.  
+- Added `try/except MotionError` around every `move_to` to stay within the reachable band and to recover from out‑of‑reach targets.  
+- Speed is set low (0.07 m/s) for fine approach, and a brief `robot.wait(0.5)` after each major step gives the simulator time to settle.  
+- The skill now loops over all detected objects, so it works for any number of colour‑tray pairs in the scene.

@@ -1,0 +1,4 @@
+- First attempt: perceive the yellow cube, move above it, descend to a grasping pose, close the gripper, verify grasp, then move to the tray center and release.
+- Use slow speeds near objects for better reliability.
+- No hard‑coded coordinates; all positions are read at runtime.
+- Added basic error handling for unreachable poses.

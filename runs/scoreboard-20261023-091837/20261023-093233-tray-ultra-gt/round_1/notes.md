@@ -1,0 +1,5 @@
+- First version: need to perceive yellow cube and tray poses, grasp cube, move over tray center, lower into tray, release.
+- Tray inner half-size 0.044 means 8.8 cm square interior; cube is 3 cm, so plenty of room.
+- Cube center on table at z≈0.015; finger pads reach 1.25 cm below tool point, so grasp at z≈0.015.
+- Tray walls 0.025 high; need to lower cube to just above tray bottom (z≈0.015) inside walls.
+- Use slow speeds near objects, verify grasp with robot.holding(), retry once if needed.

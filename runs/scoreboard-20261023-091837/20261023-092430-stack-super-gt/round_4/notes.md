@@ -1,0 +1,5 @@
+- Changed grasp to lift to a fixed safe height (0.10 m) after grasping, ensuring clearance for horizontal moves.
+- After grasp, re‑observe the red cube’s pose (while held) to compute the XY offset to the blue cube, eliminating drift caused by stale poses.
+- Perform the horizontal move at the safe height, then compute the target stacking height as blue_z + 2·h_red + ε (derived from grasp kinematics) and move vertically to that height before releasing.
+- Added explicit error handling with slower fallbacks for critical moves and a short wait after release to let the cube settle.
+- These changes address the three failure modes: premature release (now release only after vertical move), stack height overflow (correct target height), and XY offset drift (using up‑to‑date red pose).

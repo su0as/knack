@@ -1,0 +1,6 @@
+- First version: no prior results, so I reason from the API. Cubes are 3 cm; a cube resting on the table has its centre at z≈0.015, so a stacked cube's centre sits at blue_z + 0.03.
+- Plan: perceive red & blue poses, align gripper yaw with red's yaw, descend to red's centre height, grasp, lift, translate above blue, rotate to blue's yaw, descend to place height, release, retreat, home.
+- Use slow speeds (0.05) near objects, default speed for travel; keep tool point ≥0.014 (safety floor).
+- Bounded retries (3) around grasp, checking `robot.holding()`/`grasp()` return; catch MotionError via `except Exception` (no bare except).
+- Place slightly above exact contact (blue_z + 0.03 + 0.002) so the red cube drops ~2 mm instead of pressing.
+- Verify `ok` flags from move_to and bail out returning False if a critical move fails.

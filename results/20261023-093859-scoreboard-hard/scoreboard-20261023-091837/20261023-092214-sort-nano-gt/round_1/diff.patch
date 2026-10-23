@@ -1,0 +1,99 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,96 @@
++# Complete skill module
++import math
++import numpy as np
++from collections import defaultdict
++
++def run(robot):
++    """
++    Sort objects by colour: place each cube into the tray that shares its colour.
++    The function returns True when all cubes have been deposited (or when the
++    episode time budget is exhausted – the caller checks the return value).
++    """
++    # 1. Get a fresh perception of the scene
++    obs = robot.observe()
++    objects = obs["objects"]
++    fixtures = obs["fixtures"]
++
++    # 2. Build colour → (object_name, fixture_name) mapping
++    colour_to_obj = {}
++    colour_to_fixture = {}
++    for name, data in objects.items():
++        colour_to_obj[data["color"]] = name
++    for name, data in fixtures.items():
++        colour_to_fixture[data["color"]] = name
++
++    # 3. Process each colour that has both an object and a tray
++    for colour, obj_name in colour_to_obj.items():
++        if colour not in colour_to_fixture:
++            continue  # no matching tray, skip
++        tray_name = colour_to_fixture[colour]
++
++        obj_pose = robot.get_pose(obj_name)
++        tray_pose = robot.get_pose(tray_name)
++
++        # ------------------------------------------------------------------
++        # 3a. Move above the object to a safe height
++        # ------------------------------------------------------------------
++        approach_x = obj_pose["pos"][0]
++        approach_y = obj_pose["pos"][1]
++        approach_z = 0.025  # safe height ~2.5 cm above the table
++
++        try:
++            robot.move_to(approach_x, approach_y, approach_z,
++                          yaw=None, speed=0.07)
++        except Exception:  # MotionError or any other unexpected exception
++            robot.log("move_to above object failed, aborting this object")
++            continue
++
++        # ------------------------------------------------------------------
++        # 3b. Lower to the estimated grasp height and close the gripper
++        # ------------------------------------------------------------------
++        grasp_z = 0.028  # fingertip level ≈ centre of a 3 cm cube
++        try:
++            robot.move_to(approach_x, approach_y, grasp_z,
++                          yaw=obj_pose["yaw"], speed=0.07)
++        except Exception:
++            robot.log("move_to grasp height failed, aborting this object")
++            continue
++
++        robot.grasp()                     # close fingers around the cube
++        if robot.holding() != obj_name:   # verify that the cube is really held
++            robot.log("grasp verification failed, retrying once")
++            # simple retry: lift a bit and try again once
++            robot.move_to(approach_x, approach_y, grasp_z + 0.01, speed=0.07)
++            robot.grasp()
++            if robot.holding() != obj_name:
++                robot.log(f"grasp still failed for {obj_name}")
++                continue
++
++        # ------------------------------------------------------------------
++        # 3c. Move above the matching tray
++        # ------------------------------------------------------------------
++        tray_x, tray_y, tray_z = tray_pose["pos"]
++        release_z = 0.025  # same safe height above the tray
++        try:
++            robot.move_to(tray_x, tray_y, release_z,
++                          yaw=None, speed=0.07)
++        except Exception:
++            robot.log("move_to above tray failed, aborting this object")
++            continue
++
++        # ------------------------------------------------------------------
++        # 3d. Lower to just above the table and release the cube
++        # ------------------------------------------------------------------
++        release_above_table = 0.015  # just above the tabletop
++        try:
++            robot.move_to(tray_x, tray_y, release_above_table,
++                          yaw=None, speed=0.07)
++        except Exception:
++            robot.log("final release move failed, aborting")
++            continue
++
++        robot.release()                     # open fingers to drop the cube
++        robot.wait(0.3)                     # give time for the cube to settle
++
++    # 4. All known cubes have been processed – signal success to the caller
++    return True

@@ -1,0 +1,49 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -33,8 +33,16 @@
+             robot.log("Failed to move to grasp height")
+             return False
+ 
+-        # Close the fingers
+-        if not robot.grasp():
++        # Attempt grasp (allow one retry)
++        grasp_success = False
++        for _ in range(2):
++            if robot.grasp():
++                grasp_success = True
++                break
++            # small lift and try again
++            robot.move_by(dz=0.01, speed=0.05)
++            robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.05)
++        if not grasp_success:
+             robot.log("Grasp did not detect an object")
+             return False
+ 
+@@ -51,17 +59,21 @@
+             robot.log("Failed to move above tray")
+             return False
+ 
+-        # Lower to a safe placement height (slightly above tray bottom to avoid contact)
+-        place_z = tz + 0.025   # increased clearance
++        # Verify still holding before descending
++        if robot.holding() != 'yellow_cube':
++            robot.log("Lost grasp while moving above tray")
++            return False
++
++        # Lower to a safe placement height (cube centre on tray floor)
++        place_z = tz + 0.015   # half cube size so it rests on the tray bottom
+         move_res = robot.move_to(tx, ty, place_z, speed=0.05)
+         if not move_res.get('ok', False):
+             robot.log("Failed to move to placement height")
+             return False
+ 
+-        # Align over the cube's original xy position at placement height
+-        move_res = robot.move_to(cx, cy, place_z, speed=0.05)
+-        if not move_res.get('ok', False):
+-            robot.log("Failed to align over cube's original position")
++        # Verify still holding before release
++        if robot.holding() != 'yellow_cube':
++            robot.log("Lost grasp before release")
+             return False
+ 
+         # Release the cube

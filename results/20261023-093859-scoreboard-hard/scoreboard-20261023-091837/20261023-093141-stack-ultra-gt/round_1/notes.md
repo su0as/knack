@@ -1,0 +1,5 @@
+- First version: need to pick up red cube and stack on blue cube
+- Cubes are 3cm, centers at z=0.015 on table
+- Grasp red cube at z≈0.015, lift, move above blue cube, lower to z=0.045 (blue top at 0.03 + red half-height 0.015)
+- Align yaw with blue cube for proper face alignment
+- Use slow speeds near objects, verify grasp/release

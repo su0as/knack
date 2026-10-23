@@ -1,0 +1,180 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -5,36 +5,38 @@
+ def run(robot):
+     """
+     Stack the red cube on top of the blue cube and let go.
+-    Return True if stacking succeeded, otherwise False.
++    Return True if successful, otherwise False.
+     """
+ 
+     # ------------------------------------------------------------------
+-    # 1. Locate the red and blue cubes and ensure they are on the table
++    # 1. Locate the red and blue cubes
+     # ------------------------------------------------------------------
+-    def find_color(target_color, max_tries=2):
+-        for _ in range(max_tries):
++    def find_color(target_color, attempts=2):
++        for _ in range(attempts):
+             obs = robot.observe()
+             for name, obj in obs["objects"].items():
+                 if obj["color"] == target_color:
+-                    return name, obs
++                    return name
+             robot.wait(0.05)
+-        return None, None
++        return None
+ 
+-    red_name, obs = find_color("red")
+-    blue_name, obs = find_color("blue")
++    red_name = find_color("red")
++    blue_name = find_color("blue")
+     if red_name is None or blue_name is None:
+         robot.log("Red or blue cube not found")
+         return False
+ 
+-    # Verify both cubes sit on the table (z ≈ 0.015 m)
++    # ------------------------------------------------------------------
++    # 2. Verify both cubes sit on the table (z ≈ 0.015 m)
++    # ------------------------------------------------------------------
+     for name in (red_name, blue_name):
+         p = robot.get_pose(name)
+-        if not (abs(p["pos"][2] - 0.015) < 0.02):
+-            robot.log(f"{name} not on table surface")
++        if abs(p["pos"][2] - 0.015) > 0.02:
++            robot.log(f"{name} not on table surface (z={p['pos'][2]:.3f})")
+             return False
+ 
+     # ------------------------------------------------------------------
+-    # 2. Get initial precise poses
++    # 3. Get initial precise poses
+     # ------------------------------------------------------------------
+     red_pose = robot.get_pose(red_name)
+     blue_pose = robot.get_pose(blue_name)
+@@ -44,7 +46,7 @@
+     blue_x, blue_y, blue_z = blue_pose["pos"]
+ 
+     # ------------------------------------------------------------------
+-    # 3. Approach and grasp the red cube
++    # 4. Approach and grasp the red cube
+     # ------------------------------------------------------------------
+     try:
+         robot.move_to(red_x, red_y, red_z, yaw=red_yaw, speed=0.07)
+@@ -68,29 +70,27 @@
+         return False
+ 
+     # ------------------------------------------------------------------
+-    # 4. Re‑observe to get a fresh blue‑cube pose (may have shifted)
++    # 5. Re‑observe to get fresh blue‑cube pose (handles possible drift)
+     # ------------------------------------------------------------------
+-    blue_obs = robot.observe()
+-    # Find the blue cube name again in the new observation
++    obs = robot.observe()
++    # locate blue cube again
+     blue_name2 = None
+-    for n, o in blue_obs["objects"].items():
+-        if o["color"] == "blue":
+-            blue_name2 = n
++    for name, obj in obs["objects"].items():
++        if obj["color"] == "blue":
++            blue_name2 = name
+             break
+     if blue_name2 is None:
+-        robot.log("Blue cube disappeared during lift")
++        robot.log("Blue cube disappeared before placement")
+         robot.release()
+         return False
+-
+     blue_pose2 = robot.get_pose(blue_name2)
+     b_x, b_y, b_z = blue_pose2["pos"]
+-    # Expected centre height of the red cube when stacked on the blue cube
+-    place_center_z = b_z + 0.03   # blue height + half‑heights (≈0.03 m)
++    b_yaw = blue_pose2["yaw"]
+ 
+     # ------------------------------------------------------------------
+-    # 5. Lift to a safe height above the blue cube (using fresh XY)
++    # 6. Lift to a safe height above the blue cube
+     # ------------------------------------------------------------------
+-    safe_z = b_z + 0.05           # a small clearance
++    safe_z = b_z + 0.05  # small clearance
+     try:
+         robot.move_to(b_x, b_y, safe_z, yaw=red_yaw, speed=0.07)
+     except Exception as e:
+@@ -99,8 +99,9 @@
+         return False
+ 
+     # ------------------------------------------------------------------
+-    # 6. Lower to the placement height
++    # 7. Lower to the calculated stacking height
+     # ------------------------------------------------------------------
++    place_center_z = b_z + 0.03  # cube height ≈ 0.03 m (0.015 each)
+     try:
+         robot.move_to(b_x, b_y, place_center_z, yaw=red_yaw, speed=0.05)
+     except Exception as e:
+@@ -109,28 +110,50 @@
+         return False
+ 
+     # ------------------------------------------------------------------
+-    # 7. Release only if we are still holding the red cube
++    # 8. Confirm grip is still intact just before release
+     # ------------------------------------------------------------------
+     if robot.holding() != red_name:
+-        robot.log("Lost grip just before release")
++        robot.log("Lost grip immediately before release")
+         robot.release()
+-        return False
+-    robot.release()
+-    robot.wait(0.2)               # let the release settle
+-
+-    # ------------------------------------------------------------------
+-    # 8. Final validation: check that the released cube is at the correct height
+-    # ------------------------------------------------------------------
+-    final_pose = robot.get_pose(red_name)
+-    if abs(final_pose["pos"][2] - place_center_z) > 0.015:
+-        robot.log(
+-            f"Release height error: got {final_pose['pos'][2]:.4f}, "
+-            f"expected {place_center_z:.4f}"
+-        )
+         return False
+ 
+     # ------------------------------------------------------------------
+-    # 9. Return to a neutral pose and report success
++    # 9. Release the red cube
++    # ------------------------------------------------------------------
++    robot.release()
++    robot.wait(0.2)  # allow release to settle
++
++    # ------------------------------------------------------------------
++    # 10. Verify final stacked pose
++    # ------------------------------------------------------------------
++    final_obs = robot.observe()
++    # find red cube name in the final observation
++    red_name_final = None
++    for name, obj in final_obs["objects"].items():
++        if obj["color"] == "red":
++            red_name_final = name
++            break
++    if red_name_final is None:
++        robot.log("Red cube vanished after release")
++        return False
++    final_pose = robot.get_pose(red_name_final)
++    f_x, f_y, f_z = final_pose["pos"]
++
++    expected_x, expected_y = b_x, b_y
++    expected_z = place_center_z
++
++    # XY tolerance
++    if abs(f_x - expected_x) > 0.015 or abs(f_y - expected_y) > 0.015:
++        robot.log(f"XY mis‑alignment after placement: {f_x:.3f},{f_y:.3f} vs {expected_x:.3f},{expected_y:.3f}")
++        return False
++
++    # Z gap tolerance
++    if abs(f_z - expected_z) > 0.015:
++        robot.log(f"Z gap error after placement: {f_z:.3f} vs {expected_z:.3f}")
++        return False
++
++    # ------------------------------------------------------------------
++    # 11. Return to a neutral pose and signal success
+     # ------------------------------------------------------------------
+     robot.home()
+     return True

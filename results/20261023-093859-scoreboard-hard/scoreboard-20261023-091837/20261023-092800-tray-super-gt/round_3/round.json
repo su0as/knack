@@ -1,0 +1,193 @@
+{
+ "round": 3,
+ "n": 8,
+ "k": 5,
+ "success": 0.625,
+ "gt_k": 5,
+ "self_k": 2,
+ "errors": 0,
+ "wall_s": 7.6,
+ "usd_cum": 0.00855,
+ "code": "round_3/skill.py",
+ "diff": "round_3/diff.patch",
+ "lines": 94,
+ "notes": "- Removed the erroneous move back to the cube's original (cx, cy) after lowering onto the tray; this was causing premature release and misplacement (Mode\u202f1).\n- Kept the placement height at tz + 0.015 (cube centre resting on the tray bottom) as it worked well in round\u202f1.\n- Added a holding check after moving above the tray and before lowering to ensure the grasp is still secure (Mode\u202f2).\n- Added a holding check after lowering and before releasing to catch any slip during the descent.\n- Retried the grasp once if the initial attempt fails, improving robustness against occasional grasp failures.\n- Preserved slow speeds (0.05\u202fm/s) for precise motions near objects and used the default speed for longer transfers.\n- Maintained error handling for move_to failures and unexpected exceptions.",
+ "episodes": [
+  {
+   "seed": 3000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0001,
+    "yellow_cube_tray_dy": 0.0038,
+    "yellow_cube_z": 0.018,
+    "yellow_cube_held": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0211,
+    "yellow_cube_tray_dy": 0.0867,
+    "yellow_cube_z": 0.0149,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3002,
+   "reward": true,
+   "success_gt": true,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.003,
+    "yellow_cube_tray_dy": 0.0281,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3003,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0035,
+    "yellow_cube_tray_dy": 0.005,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0121,
+    "yellow_cube_tray_dy": 0.0767,
+    "yellow_cube_z": 0.0149,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0064,
+    "yellow_cube_tray_dy": 0.0056,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0006,
+    "yellow_cube_tray_dy": 0.0043,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3007,
+   "reward": true,
+   "success_gt": true,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "yellow_cube_tray_dx": 0.0142,
+    "yellow_cube_tray_dy": 0.023,
+    "yellow_cube_z": 0.0189,
+    "yellow_cube_held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

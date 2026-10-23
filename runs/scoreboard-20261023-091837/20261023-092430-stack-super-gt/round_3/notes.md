@@ -1,0 +1,6 @@
+- Fixed horizontal offset miss by lowering to a safe height just above the red cube before moving sideways, preventing the arm from being too high during the XY move.
+- Prevented reach‑limit violations by capping the target stacking height at a safe maximum (0.245 m) and computing the height from the actual cube sizes.
+- Improved grasp reliability: grasp from above, retreat and retry once if needed, then lift only a small clearance (0.02 m) to keep the arm low.
+- Used observed poses after grasping to compute the true XY offset, avoiding reliance on stale absolute coordinates.
+- Wrapped critical moves in try‑except blocks with slower fallback speeds to handle unexpected MotionError.
+- Kept speeds conservative (0.05 m/s for precision, 0.15 m/s for travel) and added a short wait after release for settling.

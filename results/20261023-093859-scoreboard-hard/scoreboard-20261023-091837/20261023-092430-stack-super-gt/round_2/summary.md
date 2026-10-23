@@ -1,0 +1,7 @@
+**Mode 1: Horizontal offset miss (2 episodes: 2000, 2005)**
+*Root cause:* The code moves horizontally at the *current* gripper height (line 61), but after lifting the red cube 0.10 m (line 43) the gripper is too high to reach the stacking pose. The subsequent `move_to` (line 78) attempts to go to `target_z_tool` computed from the original blue pose, but the horizontal displacement `dx,dy` was already applied at the lifted height, causing a mis‑aligned release.
+*Fix:* Reset the gripper z‑coordinate to the cube centre height before the horizontal move. After `grasp_cube` (line 48), add `robot.move_to(cur_x, cur_y, red_pose['pos'][2] + red_pose['size'][2]/2 + 0.01, speed=0.15)` (new lines after 52) to bring the tool to the red cube top before the `move_by` at line 61.
+
+**Mode 2: Reach‑limit violation (1 episode: 2005)**
+*Root cause:* The stacking height calculation (line 73) yields `target_z_tool ≈ 0.260 m`, which exceeds the arm’s maximum reach (0.251 m, line 81 error). The code falls back to a slower speed but still collides with the workspace limit.
+*Fix:* Cap the target height at the arm’s reachable maximum (≈0.245 m). Modify line 73 to `target_z_tool = min(blue_pose['pos'][2] + 1.5*h_red + epsilon + lift_height, 0.245)`.

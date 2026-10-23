@@ -1,0 +1,8 @@
+- First version: no prior results, so I designed from the API spec and the example layout.
+- Find the yellow cube by colour and the tray by kind, never hard-coding coordinates.
+- Grasp strategy: approach above the cube at z=0.10, descend slowly (speed 0.05) to z=0.015 so the pads sit around the cube's middle, then close the fingers.
+- Align the gripper yaw with the cube's reported yaw so the fingers meet the faces squarely.
+- Bounded retry (3 attempts): re-read the cube pose each time, release and lift between attempts, so a noisy first grasp doesn't doom the episode.
+- Carry: lift to z=0.12, travel above the tray centre, descend slowly to z=0.02 (cube bottom ~5 mm above the tray floor, inside the 25 mm walls), release, then retreat.
+- Verify afterwards by re-observing and checking the cube lies within the tray's inner half-size (plus a small tolerance for perception noise).
+- Catch MotionError (as Exception) around every move that could be out of reach, and always release + home on failure so the gripper isn't left closed.

@@ -1,0 +1,6 @@
+- Fixed XY drift by moving the gripper horizontally using the observed offset between the red and blue cubes after grasping, rather than relying on absolute coordinates that could be affected by robot zero‑point shifts.
+- Improved grasp reliability: compute grasp height from the actual cube size (half‑size + small epsilon), retreat and retry once if the first grasp fails, and lift a fixed amount after grasping.
+- Prevented premature release by moving to a tool‑point height that accounts for the grasp offset and lift height, ensuring the red cube’s centre ends exactly at the blue cube’s top face when the fingers open.
+- Added a short wait after release to let the cube settle before retreating.
+- Wrapped critical moves in try‑except to handle unexpected MotionError and fall back to a slower approach if needed.
+- Kept all movements within safe speeds (0.05 m/s for precision, 0.15 m/s for travel) and retained the original home‑and‑observe structure.

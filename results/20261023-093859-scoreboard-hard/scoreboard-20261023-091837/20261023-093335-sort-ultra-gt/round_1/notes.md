@@ -1,0 +1,5 @@
+- First version: implement basic pick-and-place for both cubes into matching trays
+- Use observe() to get all poses, then sequence: approach cube from above, grasp with aligned yaw, lift, move over tray center, lower to tray bottom (z ~ wall_height/2 + cube_half_height), release
+- Handle MotionError with try/except, verify grasp with robot.holding(), retry once if needed
+- Trays are at z=0, inner half-size 0.044m, wall height 0.025m; place cube center at tray center, z = 0.025 (tray floor) + 0.015 (cube half-height) = 0.04m
+- Approach height: 0.1m above cube/tray for travel, 0.05m for final approach

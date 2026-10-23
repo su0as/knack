@@ -1,0 +1,5 @@
+- Each episode randomises object poses, so the skill must read the current observation to find the *yellow_cube* and the *tray* – no hard‑coded coordinates.
+- Strategy: (1) lift above the cube, (2) descend to the cube’s centre height, (3) close the gripper and verify that `holding()` returns `"yellow_cube"`, (4) move above the tray centre, (5) lower to a release height inside the tray, (6) open the gripper and confirm the object is no longer held.
+- Use low approach speeds (≈0.07 m/s) when closing in on objects and a slightly faster default speed for transport; keep moves short and retry a few times on transient failures.
+- All poses are obtained via `robot.observe()` / `robot.get_pose()`; targets are computed from the perceived `[x, y, z]` of the relevant object or fixture.
+- The first version includes simple retry loops (max 3 attempts) and logs useful debug information, while staying within the allowed imports and avoiding bare `except`.

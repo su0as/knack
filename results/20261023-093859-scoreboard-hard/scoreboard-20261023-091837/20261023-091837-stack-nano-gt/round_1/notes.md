@@ -1,0 +1,7 @@
+- First successful run showed that the red cube is slightly offset from the blue cube, so we must use the observed positions each episode rather than fixed coordinates.  
+- We need to move the gripper to the red cube’s centre (z = object height) to grasp, then lift and translate to a pose above the blue cube.  
+- Align the gripper yaw with the red cube’s yaw so the fingers close on its faces.  
+- After grasping, move to a safe height above the blue cube (≈ blue_z + 0.05 m) then lower to place the red cube’s centre at blue_z + 0.03 m (the height of the blue cube’s top plus half the red cube’s height).  
+- Release the gripper, then optionally return to a neutral pose.  
+- Added basic error handling for MotionError and a small retry loop for grasping verification.  
+- Keep speeds low (0.07 m/s) for precise approach and use relative moves for the final placement.

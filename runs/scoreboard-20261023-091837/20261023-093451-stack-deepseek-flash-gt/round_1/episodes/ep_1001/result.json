@@ -1,0 +1,261 @@
+{
+ "task": "stack",
+ "seed": 1001,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "xy_offset": 0.0025,
+  "z_gap": 0.0298,
+  "red_held": false,
+  "blue_z": 0.0148
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.94,
+   "call": "move_to(0.115, -0.125, 0.120, yaw=-0.524, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1151,
+     -0.1251,
+     0.12
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.0,
+   "call": "move_to(0.115, -0.125, 0.018, yaw=-0.524, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1151,
+     -0.125,
+     0.0181
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.5,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0264
+   }
+  },
+  {
+   "t": 3.5,
+   "call": "log",
+   "result": "grasped red"
+  },
+  {
+   "t": 4.54,
+   "call": "move_to(0.115, -0.125, 0.120, yaw=-0.524, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1151,
+     -0.125,
+     0.1198
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 5.62,
+   "call": "move_to(0.135, 0.029, 0.120, yaw=-0.644, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1352,
+     0.0287,
+     0.1197
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 7.14,
+   "call": "move_to(0.135, 0.029, 0.045, yaw=-0.644, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1356,
+     0.0285,
+     0.0465
+    ],
+    "error_m": 0.0015
+   }
+  },
+  {
+   "t": 7.54,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 7.54,
+   "call": "log",
+   "result": "released red on blue"
+  },
+  {
+   "t": 8.1,
+   "call": "move_to(0.135, 0.029, 0.120, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1354,
+     0.0286,
+     0.1202
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 8.48,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     -0.0,
+     0.1401
+    ],
+    "error_m": 0.0001
+   }
+  }
+ ],
+ "n_calls": 12,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 8.98,
+ "wall_time": 1.76,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1149,
+     -0.1239,
+     0.0149
+    ],
+    "yaw": -0.4906,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1328,
+     0.0299,
+     0.0149
+    ],
+    "yaw": -0.6306,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 8.98,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1351,
+     0.0287,
+     0.0446
+    ],
+    "yaw": -0.6449,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1329,
+     0.0299,
+     0.0148
+    ],
+    "yaw": -0.6306,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1149,
+   "y": -0.124,
+   "yaw": -0.4906,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1328,
+   "y": 0.0299,
+   "yaw": -0.6306,
+   "fp": 0.0225
+  }
+ }
+}

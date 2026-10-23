@@ -1,0 +1,5 @@
+- Fixed XY mis‑alignment: after grasping the red cube we re‑observe the scene and use the *current* blue‑cube centre as the target for the lift and placement moves, eliminating drift caused by initial perception noise.  
+- Re‑computed the stacking height from the fresh `blue_z` value (`place_center_z = blue_z + 0.03`) so the release height always matches the true blue‑cube height.  
+- Added a short retry loop to confirm the grip is still on the red cube just before release, and a post‑release pose check that the red cube’s centre is within 0.015 m of the expected stacked height; if not, the skill aborts and returns False.  
+- Retained all existing safety catches, slow speeds, and the table‑height verification for both cubes.  
+- Minor clean‑up: explicit check that both cubes are on the table (z ≈ 0.015 m) and clearer logging.

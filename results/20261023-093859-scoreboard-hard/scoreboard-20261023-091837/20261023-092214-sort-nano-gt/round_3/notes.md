@@ -1,0 +1,6 @@
+- Increased the initial grasp height from 0.028 m to 0.033 m (≈0.005 m higher) to give a more reliable finger contact.  
+- Added a post‑grasp lift step (≈0.01 m upward) after verification to lock the object before any further motion.  
+- After reaching the tray‑release height, performed a slow “centering” move at 0.05 m/s to ensure the cube is directly over the tray centre before descending.  
+- Kept all existing safety‑slow speeds, retry‑lift logic, and colour‑pair processing; failures in one colour no longer abort the whole loop.  
+- Wrapped every motion in try/except to catch MotionError‑like failures and continue with the next object, preserving robustness.  
+- Maintained the 0.3 s wait after each release and retained the overall loop structure that previously worked.

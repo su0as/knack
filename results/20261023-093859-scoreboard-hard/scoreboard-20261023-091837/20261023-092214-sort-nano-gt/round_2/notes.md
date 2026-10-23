@@ -1,0 +1,6 @@
+- Fixed tray‑approach collision by lowering the initial release height to 0.020 m (instead of 0.025 m) and then descending to 0.015 m, giving the arm clearance to navigate around cube/tray edges.  
+- Improved grasp reliability: use the object's yaw when moving to the grasp height, increase the retry lift to 0.025 m, and allow a second grasp attempt before giving up; verification now checks `robot.holding()` before proceeding.  
+- Ensured every colour‑tray pair is processed independently; removed early `continue` that skipped later objects, so the blue cube is still placed even if the red cube fails.  
+- Added explicit error handling around each `move_to`, logging the failure and continuing with the next object rather than aborting the whole skill.  
+- Kept moves slow (0.07 m/s), inserted a short `wait(0.3)` after each release, and retained colour‑based mapping and overall loop structure that were already working.  
+- All changes preserve successful behaviours from previous runs while addressing the three failure modes observed.

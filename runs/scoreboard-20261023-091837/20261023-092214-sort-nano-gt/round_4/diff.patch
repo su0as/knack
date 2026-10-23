@@ -1,0 +1,41 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -65,9 +65,9 @@
+         if robot.holding() != obj_name:
+             robot.log("grasp verification failed – retrying")
+             try:
+-                # lift a bit more (≈0.025 m) and try again
++                # lift a bit more (≈0.040 m) and try again
+                 robot.move_to(obj_pose["pos"][0], obj_pose["pos"][1],
+-                              grasp_z + 0.025, speed=0.07)
++                              grasp_z + 0.040, speed=0.07)
+                 robot.grasp()
+             except Exception:
+                 pass
+@@ -78,7 +78,7 @@
+         # --------------------------------------------------------------
+         # 3d. Post‑grasp lift check – raise a little to lock the grip
+         # --------------------------------------------------------------
+-        lift_z = grasp_z + 0.01               # small upward lift
++        lift_z = grasp_z + 0.030               # increased from 0.01 m
+         try:
+             robot.move_to(obj_pose["pos"][0], obj_pose["pos"][1],
+                           lift_z, speed=0.07)
+@@ -110,7 +110,16 @@
+             continue
+ 
+         # --------------------------------------------------------------
+-        # 3g. Descend to just above the tabletop and release the cube
++        # 3g. Corrective centering – ensure exact centre over tray before release
++        # --------------------------------------------------------------
++        try:
++            robot.move_to(tray_x, tray_y, 0.020, speed=0.05)
++        except Exception:
++            robot.log("corrective centering failed – skipping")
++            continue
++
++        # --------------------------------------------------------------
++        # 3h. Descend to just above the tabletop and release the cube
+         # --------------------------------------------------------------
+         release_z = 0.015                     # 1.5 cm above surface
+         try:

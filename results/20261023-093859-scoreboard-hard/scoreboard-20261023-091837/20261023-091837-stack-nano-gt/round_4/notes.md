@@ -1,0 +1,7 @@
+- Fixed XY drift by re‑observing the scene just before placement and using the *current* blue‑cube pose for the lift and release target, eliminating early‑release mis‑alignments.  
+- Fixed Z‑height errors by computing `place_center_z` from the fresh `blue_z` after the lift, ensuring the stacking height matches the actual blue cube height.  
+- Added a grip‑verification step immediately before release and after lowering, so the skill aborts if the red cube is no longer held.  
+- Added a post‑placement pose check (XY offset ≤ 0.015 m and Z gap ≤ 0.015 m); if the check fails the skill returns False instead of silently succeeding.  
+- Kept all existing safety measures: table‑height verification, retry loops for holding, slow speeds, and broad exception handling around moves.  
+- Minor clean‑up: clearer variable names, explicit logging of intermediate failures, and early aborts on any MotionError.  
+- The new logic still respects the 5‑DoF workspace limits and uses only allowed imports.

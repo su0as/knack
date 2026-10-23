@@ -1,0 +1,4 @@
+- Increased placement height by 0.01 m (place_z = tz + 0.025) to avoid joint‑limit/contact issues when lowering onto the tray (Mode 1).
+- Added a small upward move (dz=0.02) after reaching the pose above the tray before descending, giving the arm extra clearance to prevent grasp loss during transfer (Mode 2).
+- Improved grasp retry: increased lift to dz=0.02 and inserted a pre‑grasp move to the above‑cube pose before each second attempt, improving alignment and grasp reliability (Mode 3).
+- Kept holding checks after critical motions and preserved slow speeds for precise actions.

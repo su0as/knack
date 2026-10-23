@@ -1,0 +1,7 @@
+- Removed the erroneous move back to the cube's original (cx, cy) after lowering onto the tray; this was causing premature release and misplacement (Mode 1).
+- Kept the placement height at tz + 0.015 (cube centre resting on the tray bottom) as it worked well in round 1.
+- Added a holding check after moving above the tray and before lowering to ensure the grasp is still secure (Mode 2).
+- Added a holding check after lowering and before releasing to catch any slip during the descent.
+- Retried the grasp once if the initial attempt fails, improving robustness against occasional grasp failures.
+- Preserved slow speeds (0.05 m/s) for precise motions near objects and used the default speed for longer transfers.
+- Maintained error handling for move_to failures and unexpected exceptions.

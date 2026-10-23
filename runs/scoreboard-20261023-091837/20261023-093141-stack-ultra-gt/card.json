@@ -1,0 +1,82 @@
+{
+ "run_id": "20261023-093141-stack-ultra-gt",
+ "task": "stack",
+ "title": "Stack",
+ "instruction": "Stack the red cube on top of the blue cube and let go.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 8,
+   "success": 1.0,
+   "gt_k": 8,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 8.6,
+   "usd_cum": 0.00415,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 47
+  }
+ ],
+ "best_round": 1,
+ "eval": {
+  "n": 50,
+  "k": 50,
+  "p": 1.0,
+  "lo": 0.928649965826,
+  "hi": 1.0,
+  "source": "gt",
+  "best_round": 1,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 8.03,
+  "self_report_true": 50,
+  "judge": null,
+  "failures": []
+ },
+ "models": {
+  "coder": {
+   "alias": "ultra",
+   "id": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "nvidia": true,
+   "calls": 1,
+   "prompt_tokens": 1535,
+   "completion_tokens": 871,
+   "usd": 0.004148,
+   "price_in": 1.0,
+   "price_out": 3.0
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 0,
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "usd": 0.0,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.004148,
+  "compute_usd": 0.0,
+  "total_usd": 0.004148,
+  "calls": 1,
+  "prompt_tokens": 1535,
+  "completion_tokens": 871,
+  "compute_seconds": 94.53,
+  "backend": "local"
+ },
+ "wall_time_s": 52.0,
+ "practice_episodes": 8,
+ "created": "2026-10-23 09:32:33",
+ "skill_file": "best_skill.py"
+}

@@ -1,0 +1,49 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,46 @@
++import math
++
++def run(robot):
++    # Observe scene to get cube positions
++    obs = robot.observe()
++    red = obs["objects"]["red_cube"]
++    blue = obs["objects"]["blue_cube"]
++    
++    red_pos = red["pos"]
++    red_yaw = red["yaw"]
++    blue_pos = blue["pos"]
++    blue_yaw = blue["yaw"]
++    
++    # Approach red cube from above, grasp at cube center height
++    # Move to position above red cube
++    robot.move_to(red_pos[0], red_pos[1], 0.10, yaw=red_yaw, speed=0.10)
++    # Lower to grasp height (cube center at z=0.015)
++    robot.move_to(red_pos[0], red_pos[1], 0.015, yaw=red_yaw, speed=0.05)
++    # Grasp
++    if not robot.grasp():
++        return False
++    if not robot.holding():
++        return False
++    
++    # Lift red cube
++    robot.move_to(red_pos[0], red_pos[1], 0.10, yaw=red_yaw, speed=0.10)
++    
++    # Move above blue cube, aligned with blue cube's yaw
++    robot.move_to(blue_pos[0], blue_pos[1], 0.10, yaw=blue_yaw, speed=0.10)
++    
++    # Lower to stack height: blue cube top at z=0.03, red cube center at 0.045
++    stack_z = 0.045
++    robot.move_to(blue_pos[0], blue_pos[1], stack_z, yaw=blue_yaw, speed=0.05)
++    
++    # Release
++    robot.release()
++    robot.wait(0.2)
++    
++    # Verify released
++    if robot.holding():
++        return False
++    
++    # Retract slightly
++    robot.move_to(blue_pos[0], blue_pos[1], 0.10, yaw=blue_yaw, speed=0.10)
++    
++    return True

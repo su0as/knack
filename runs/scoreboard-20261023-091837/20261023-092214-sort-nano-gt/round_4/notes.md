@@ -1,0 +1,6 @@
+- Increased the retry lift from `grasp_z + 0.025 m` to `grasp_z + 0.040 m` and the post‑grasp lift from `grasp_z + 0.01 m` to `grasp_z + 0.030 m`; this reliably secures the cube before any transport.
+- Added a dedicated corrective centering step after the initial “above‑tray” move: a second `move_to` to the exact tray centre at 0.020 m height, speed 0.05, placed just before the release descent. This eliminates the residual `dx/dy` offset reported in the failure analysis.
+- Kept the safe height (0.035 m) and grasp height (0.033 m) that already improved finger contact, and retained all slow‑speed, retry‑lift, and colour‑pair logic that were working.
+- Wrapped every motion in `try/except` to preserve robustness and to allow the skill to continue with the next colour if a move fails.
+- Minor refactor: compute `tray_x, tray_y` once and reuse for both the above‑tray and corrective centering moves; kept the 0.3 s wait after each release and the overall loop structure unchanged.
+- Preserved the 0.3 s wait after release and the final `return True`; no new dependencies were introduced.
