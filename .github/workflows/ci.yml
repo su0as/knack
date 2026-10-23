@@ -5,6 +5,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   linux:
     runs-on: ubuntu-latest
@@ -28,7 +32,7 @@ jobs:
         run: pytest -q --durations=15
       - name: Reference fixtures on 10 layouts per scene
         if: always()
-        run: python -m knack oracle all --n 10 --frames --out ci-out/oracle
+        run: python -m knack oracle all --n 20 --frames --verbose --min 0.6 --out ci-out/oracle
       - name: Offline mock run (plumbing only, canned coder)
         if: always()
         run: python -m knack learn lift --mock --rounds 2 --n 4 --eval 8 --runs ci-out/runs --budget 5

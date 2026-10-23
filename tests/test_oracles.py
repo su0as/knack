@@ -27,8 +27,17 @@ def test_prompts_have_no_oracle_code():
 
     obs = {"objects": {}, "fixtures": {}}
     texts = [prompts.CODER_SYSTEM, prompts.first_user("x", "y", obs), prompts.SUMMARIZER_SYSTEM, prompts.JUDGE_SYSTEM, prompts.PROBE_SYSTEM]
-    for code in ORACLES.values():
-        body = [ln.strip() for ln in code.splitlines() if "robot." in ln]
-        for t in texts:
-            for ln in body:
-                assert ln not in t
+    joined = "\n".join(texts)
+    norm_prompt = "\n".join(ln.strip() for ln in joined.splitlines())
+    for task_id, code in ORACLES.items():
+        # No line of fixture code that carries task-specific numbers or names may appear in a prompt
+        # (API names like robot.release() are part of the API doc and are fine).
+        specific = [ln.strip() for ln in code.splitlines()
+                    if "robot." in ln and any(ch.isdigit() for ch in ln) or '"' in ln and "robot." in ln]
+        for ln in specific:
+            assert ln not in norm_prompt, (task_id, ln)
+        # and no run of 3 consecutive fixture lines
+        lines = [ln.strip() for ln in code.splitlines() if ln.strip()]
+        for i in range(len(lines) - 2):
+            chunk = "\n".join(lines[i:i + 3])
+            assert chunk not in norm_prompt, (task_id, chunk)

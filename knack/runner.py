@@ -24,7 +24,7 @@ def default_workers() -> int:
 class LocalRunner:
     name = "local"
 
-    def __init__(self, workers: int | None = None, wall_factor: float = 4.0, wall_slack: float = 60.0, chunk_size: int = 1):
+    def __init__(self, workers: int | None = None, wall_factor: float = 1.5, wall_slack: float = 45.0, chunk_size: int = 1):
         self.workers = workers or default_workers()
         self.wall_factor = wall_factor
         self.wall_slack = wall_slack

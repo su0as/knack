@@ -99,7 +99,15 @@ def cmd_oracle(a):
         print(f"{t:6s} reference fixture: {fmt_ci(k, a.n)}  ({time.time() - t0:.1f}s)")
         for e in errs[:5]:
             print("   error", e)
-        if k < a.n:
+        if a.verbose:
+            for r in res:
+                if r.get("success_gt"):
+                    continue
+                print(f"   FAIL seed {r['seed']}: metrics {r.get('metrics')} halted={r.get('halted')}")
+                print(f"        layout {r.get('layout')}")
+                for tr in (r.get("trace") or [])[-6:]:
+                    print(f"        t={tr.get('t')} {tr.get('call')} -> {json.dumps(tr.get('result', tr.get('error')), default=str)[:150]}")
+        if k / max(1, a.n) < a.min:
             rc = 1
     return rc
 
@@ -243,6 +251,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--workers", type=int)
     p.add_argument("--inline", action="store_true")
     p.add_argument("--frames", action="store_true")
+    p.add_argument("--verbose", "-v", action="store_true", help="print metrics and the last robot calls of failed seeds")
+    p.add_argument("--min", type=float, default=1.0, help="exit non-zero if any scene's success is below this")
     p.add_argument("--out", default="runs/_oracle")
     p.set_defaults(fn=cmd_oracle)
 
