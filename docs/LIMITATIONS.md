@@ -8,6 +8,7 @@ Published on purpose. If a number in this repo looks too good, check it against 
 - **Perception is easy in sim.** `observe()` returns object centres and yaw with about 2 mm and 0.02 rad of Gaussian noise. A real overhead camera with colour thresholding will be noisier, can miss objects and has no height information.
 - **Narrow task family.** Six tabletop scenes with cubes, a puck, a target circle and trays. No articulated objects, deformables, clutter or tool use. Success on these says nothing about long-horizon household tasks.
 - **Domain randomisation is light**: object mass +/-25%, friction +/-15%, grip force 5-7 N, positions and yaw. No lighting, camera pose or actuator-delay randomisation.
+- **The gripper was tuned for the simulator.** The first version closed its fingers so fast that it flicked cubes away (reference fixtures: 85-95% on pick tasks, 50% on push). Adding finger damping brought all six reference fixtures to 20/20 in CI. That is a simulator fix, not evidence about a real gripper.
 - **Ground-truth checks are thresholds** (for example "red cube centre at least 5 cm above the table"). Borderline cases near a threshold can flip.
 
 ## The loop

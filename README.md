@@ -7,7 +7,7 @@
 
 Built for the Nebius x NVIDIA Global AI Hackathon (Physical AI track). Runs on **NVIDIA Nemotron open models served by Nebius Token Factory**, with an optional **Nebius AI Cloud Serverless Jobs** backend for parallel practice.
 
-> Status (23 Oct 2026): code complete for the core loop, tests run in CI with an offline mock coder. **No live Nemotron results are published yet**; every number in the Results section will come from files in this repo once the experiments are run. Nothing below is a projected or invented number.
+> Status (23 Oct 2026): code complete for the core loop; CI green on Linux and Windows; hand-written reference skills solve all six scenes on 20/20 layouts (proves the simulator, not the agent). **No live Nemotron results are published yet**; every number in the Results section will come from files in this repo once the experiments are run. Nothing below is a projected or invented number.
 
 ---
 
@@ -20,9 +20,10 @@ Knack takes the third route that NVIDIA GEAR's ASPIRE and Yilun Du's RAX opened 
 ## What you see in 30 seconds
 
 1. Pick a scene, type the task (or keep the default wording), press **PRACTISE**.
-2. A grid of robots practises in parallel. Each tile turns green or red. The **model chips** show which model is doing what and what it has cost so far.
-3. After each round the trace summariser explains the failures and the coder's diff appears.
-4. When practice ends, the **skill card** shows held-out success on unseen layouts with a 95% confidence interval, a dollar receipt per model, and a failure gallery.
+2. The **loop rail** (WRITE, PRACTISE, SCORE, ANALYSE, REWRITE, VERIFY) lights up the current step and names the model doing it. The **model chips** in the header show tokens and dollars per model so far.
+3. A grid of robots practises in parallel. Each tile turns green or red; failed tiles show the error.
+4. After each round the trace summariser explains the failures and the coder's diff appears.
+5. When practice ends, the **skill card** shows held-out success on unseen layouts with a 95% confidence interval, a dollar receipt per model, every round's notes, failure analysis and code diff, and a failure gallery.
 
 ```
 knack ui            # console at http://127.0.0.1:8765
@@ -75,10 +76,10 @@ Python 3.10+. Works natively on Windows, macOS and Linux (no WSL needed).
 ```powershell
 # Windows PowerShell (example: everything on D:)
 git clone https://github.com/su0as/knack D:\dev\knack
-cd D:\dev\knack
-uv venv --python 3.12 .venv ; .\.venv\Scripts\Activate.ps1   # or: python -m venv .venv
-uv pip install -e ".[dev]"                                     # or: pip install -e ".[dev]"
-copy .env.example .env    # then put your Token Factory key in NEBIUS_API_KEY
+powershell -ExecutionPolicy Bypass -File D:\dev\knack\scripts\setup_windows.ps1
+#   makes .venv (uv if present, else py -3.12), installs knack[dev], creates .env from .env.example,
+#   keeps caches on D:, then runs the free checks. Put your Token Factory key in .env as NEBIUS_API_KEY.
+. D:\dev\knack\scripts\env_windows.ps1    # each new session
 ```
 
 ```bash
@@ -147,6 +148,8 @@ knack/mcp_server.py   robot tools over MCP     knack/real/         SO-101 backen
 ## Feedback on Nebius and NVIDIA tools
 
 Required by the hackathon and kept in [docs/FEEDBACK.md](docs/FEEDBACK.md).
+
+Other docs: [STATUS](docs/STATUS.md) (what is tested, what is not), [LIMITATIONS](docs/LIMITATIONS.md), [DEVPOST draft](docs/DEVPOST.md), [video script](docs/VIDEO.md).
 
 ## License
 
