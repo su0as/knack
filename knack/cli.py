@@ -200,8 +200,23 @@ def cmd_replay(a):
     if not task:
         print("--task is required when replaying a .py file")
         return 1
+    realism = a.realism
+    cfg = json.loads((src / "config.json").read_text(encoding="utf-8")) if src.is_dir() and (src / "config.json").exists() else {}
+    if cfg and realism is None:
+        realism = cfg.get("realism", "sim")
+    realism = realism or "sim"
+    if a.compare:
+        from .agent import EVAL_SEED_BASE
+        from .replay import compare_gif
+
+        seeds = [int(s) for s in a.seeds.split(",")] if a.seeds else [EVAL_SEED_BASE + int(cfg.get("seed_offset", 0)) + i for i in range(a.n)]
+        card = json.loads((src / "card.json").read_text(encoding="utf-8")) if (src / "card.json").exists() else {}
+        res = compare_gif((src / "round_1" / "skill.py").read_text(encoding="utf-8"), code_path.read_text(encoding="utf-8"), task, seeds,
+                          a.out, best_round=card.get("best_round"), realism=realism)
+        _print_json(res)
+        return 0
     seeds = [int(s) for s in a.seeds.split(",")] if a.seeds else list(range(200_000, 200_000 + a.n))
-    res = grid_gif(code_path.read_text(encoding="utf-8"), task, seeds, a.out, cols=a.cols)
+    res = grid_gif(code_path.read_text(encoding="utf-8"), task, seeds, a.out, cols=a.cols, realism=realism)
     _print_json(res)
     return 0
 
@@ -336,6 +351,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--n", type=int, default=9)
     p.add_argument("--cols", type=int)
     p.add_argument("--out", default="replay.gif")
+    p.add_argument("--realism", choices=["sim", "real"], help="default: the run's own setting")
+    p.add_argument("--compare", action="store_true", help="two rows on the same held-out layouts: round 1 vs the practised version")
     p.set_defaults(fn=cmd_replay)
 
     p = sub.add_parser("nebius", help="Nebius Serverless Jobs helpers (PAID)")
