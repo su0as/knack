@@ -160,7 +160,7 @@ Source: `results/20261023-101415-practice-gain/gain-*/practice_gain.md`. Two les
 | **Nemotron 3.5 Super VL judging 4 camera frames** | **49/50** | **0/50** |
 | the skill's own `return True` | 50/50 | 50/50 |
 
-On stack, the judge agreed with ground truth on all 36 practice and held-out episodes it scored, so practice with no simulator signal at all produced a 98% skill. On lift it said "success, 0.95" on every episode where the cube was held a few millimetres short of 5 cm, which no camera at 320x240 can see, so the coder stopped at round 1 with a skill that never meets the spec. The lift skill trained on the judge also returned `True` on all 50 held-out episodes that ground truth failed: an agent grading itself, or graded by a model that cannot see the criterion, will report success it did not achieve. This is the case for keeping a measurable check wherever one exists, and for writing task specs a camera can verify.
+On stack, the judge agreed with ground truth on all 52 practice and held-out episodes it scored, so practice with no simulator signal at all produced a 98% skill. On lift it said "success, 0.95" on every episode where the cube was held a few millimetres short of 5 cm, which no camera at 320x240 can see, so the coder stopped at round 1 with a skill that never meets the spec. The lift skill trained on the judge also returned `True` on all 50 held-out episodes that ground truth failed: an agent grading itself, or graded by a model that cannot see the criterion, will report success it did not achieve. This is the case for keeping a measurable check wherever one exists, and for writing task specs a camera can verify.
 
 Still to run: Kimi K3 as a second reference coder, and a Serverless Jobs run. Commands:
 
