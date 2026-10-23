@@ -64,8 +64,10 @@ def _data_url(path: Path) -> str:
 
 
 class VLMJudge:
-    def __init__(self, llm, model: str = "super-vl", threshold: float = 0.6, views=DEFAULT_VIEWS, max_tokens: int = 1500):
+    def __init__(self, llm, model: str = "super-vl", threshold: float = 0.6, views=DEFAULT_VIEWS, max_tokens: int = 3000,
+                 thinking: bool | None = None):
         self.llm = llm
+        self.thinking = thinking
         self.model = model
         self.threshold = threshold
         self.views = tuple(views)
@@ -81,7 +83,7 @@ class VLMJudge:
             content.append({"type": "image_url", "image_url": {"url": _data_url(frame_dir / frames[v])}})
         messages = [{"role": "system", "content": JUDGE_SYSTEM}, {"role": "user", "content": content}]
         try:
-            reply = self.llm.chat("judge", self.model, messages, temperature=0.0, max_tokens=self.max_tokens)
+            reply = self.llm.chat("judge", self.model, messages, temperature=0.0, max_tokens=self.max_tokens, thinking=self.thinking)
         except Exception as e:  # network or budget: abstain, never invent a verdict
             if type(e).__name__ == "BudgetExceeded":
                 raise

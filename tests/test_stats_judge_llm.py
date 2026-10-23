@@ -51,3 +51,23 @@ def test_costs_and_budget(tmp_path):
     with pytest.raises(BudgetExceeded):
         llm.chat("coder", "ultra", [{"role": "user", "content": "hi"}])
     assert led.summary()["by_role"]["coder"]["calls"] == 1
+
+
+def test_truncated_leaked_thinking_is_not_an_answer(tmp_path):
+    """Live Token Factory behaviour (23 Oct 2026): a reasoning model cut off at max_tokens returned its
+    unfinished thought as plain content. The client must not pass that on as the answer."""
+    from types import SimpleNamespace as NS
+
+    from knack.llm import LLMClient
+
+    client = LLMClient(Ledger(tmp_path / "l.jsonl"), key="test-key")
+    usage = NS(prompt_tokens=100, completion_tokens=4000, prompt_tokens_details=None,
+               completion_tokens_details=NS(reasoning_tokens=0))
+    leaked = NS(choices=[NS(finish_reason="length", message=NS(content="Here's a thinking process:\n1. Analyse...", tool_calls=None))],
+                usage=usage)
+    r = client._finish("summarizer", __import__("knack.config", fromlist=["resolve_model"]).resolve_model("lightning"), leaked, 1.0)
+    assert r.text == "" and "thinking process" in r.reasoning and r.finish_reason == "length"
+    normal = NS(choices=[NS(finish_reason="stop", message=NS(content="Mode 1: gripper closes high (line 12).", tool_calls=None))],
+                usage=NS(prompt_tokens=100, completion_tokens=20, prompt_tokens_details=None, completion_tokens_details=None))
+    r2 = client._finish("summarizer", __import__("knack.config", fromlist=["resolve_model"]).resolve_model("lightning"), normal, 1.0)
+    assert r2.text.startswith("Mode 1") and r2.finish_reason == "stop"

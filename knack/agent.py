@@ -45,6 +45,7 @@ class LearnConfig:
     judge_mode: str = "auto"  # auto (judge when reward=vlm) | always | never
     judge_threshold: float = 0.6
     judge_eval_episodes: int = 20
+    judge_thinking: bool | None = None  # None = model default; False = no reasoning trace (cheaper, faster)
     use_library: bool = False
     probe: bool = False
     backend: str = "local"
@@ -131,7 +132,7 @@ class Learner:
         self.judge_enabled = cfg.judge_mode == "always" or (cfg.judge_mode == "auto" and (cfg.reward == "vlm" or self.custom))
         if cfg.judge_mode == "never" and cfg.reward == "vlm":
             raise ValueError("reward=vlm needs the judge")
-        self.judge = VLMJudge(self.llm, cfg.judge_model, cfg.judge_threshold) if self.judge_enabled else None
+        self.judge = VLMJudge(self.llm, cfg.judge_model, cfg.judge_threshold, thinking=cfg.judge_thinking) if self.judge_enabled else None
         self.notes = ""
         self.history: list[str] = []
         self.rounds: list[dict] = []
@@ -407,8 +408,10 @@ class Learner:
         msgs = [{"role": "system", "content": prompts.SUMMARIZER_SYSTEM},
                 {"role": "user", "content": prompts.summarizer_user(self.instruction, code, lines, self._traces(results, 6, 30))}]
         try:
-            reply = self.llm.chat("summarizer", self.cfg.summarizer, msgs, temperature=0.1, max_tokens=4000)
-            text = reply.text.strip()
+            # thinking off: the summary is a short structured readout, and with thinking on Lightning
+            # spent its whole 4000-token budget reasoning and returned no answer (live run, 23 Oct 2026)
+            reply = self.llm.chat("summarizer", self.cfg.summarizer, msgs, temperature=0.1, max_tokens=1500, thinking=False)
+            text = reply.text.strip() or "(summariser returned no answer)"
             self._save_llm(f"round_{k}_summary", msgs, text, reply.reasoning)
         except BudgetExceeded:
             raise

@@ -129,7 +129,7 @@ def cmd_learn(a):
 
     cfg = LearnConfig(task=a.task, instruction=a.instruction, coder=a.coder, summarizer=a.summarizer, judge_model=a.judge,
                       reward=a.reward, rounds=a.rounds, episodes=a.n, eval_episodes=a.eval, target=a.target,
-                      judge_mode=a.judge_mode, use_library=a.library, probe=a.probe, backend=a.backend, workers=a.workers,
+                      judge_mode=a.judge_mode, judge_thinking={"on": True, "off": False}.get(a.judge_think), use_library=a.library, probe=a.probe, backend=a.backend, workers=a.workers,
                       budget_usd=a.budget, run_id=a.run_id, runs_root=a.runs, mock=a.mock, seed_offset=a.seed_offset,
                       max_tokens=a.max_tokens)
     learner = Learner(cfg)
@@ -282,6 +282,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--judge", default="super-vl")
     p.add_argument("--reward", default="gt", choices=["gt", "vlm", "self"])
     p.add_argument("--judge-mode", default="auto", choices=["auto", "always", "never"])
+    p.add_argument("--judge-think", default="default", choices=["default", "on", "off"],
+                   help="Nemotron reasoning trace for the vision judge (off = cheaper and faster)")
     p.add_argument("--target", type=float, default=0.9)
     p.add_argument("--library", action="store_true", help="offer verified skills from the library to the coder")
     p.add_argument("--probe", action="store_true", help="let the coder explore with tool calls first")

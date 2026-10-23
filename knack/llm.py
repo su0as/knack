@@ -35,6 +35,8 @@ class Reply:
     model: str = ""
     tool_calls: list = field(default_factory=list)
     message: dict | None = None
+    finish_reason: str = ""
+    reasoning_tokens: int = 0
 
 
 class Ledger:
@@ -51,8 +53,9 @@ class Ledger:
         rec = {
             "t": round(time.time(), 2), "role": role, "alias": model.alias, "model": model.id,
             "prompt_tokens": reply.prompt_tokens, "completion_tokens": reply.completion_tokens,
-            "cached_tokens": reply.cached_tokens, "usd": round(reply.cost, 6), "latency_s": round(reply.latency, 2),
-            "ok": ok, "mock": mock,
+            "cached_tokens": reply.cached_tokens, "reasoning_tokens": reply.reasoning_tokens,
+            "usd": round(reply.cost, 6), "latency_s": round(reply.latency, 2),
+            "finish": reply.finish_reason, "ok": ok, "mock": mock,
         }
         with self._lock:
             self.calls.append(rec)
@@ -110,6 +113,10 @@ class Ledger:
 
 
 _THINK = re.compile(r"<think>.*?</think>", re.S)
+# When a reasoning model runs out of tokens mid-thought, some servers return the unfinished
+# reasoning as plain content (no tags). Seen live with Nemotron 3.5 Lightning on 23 Oct 2026:
+# the "failure analysis" began "Here's a thinking process:" and stopped at max_tokens.
+_LEAKED_THINKING = re.compile(r"^\s*(here'?s a thinking process|thinking process:|okay, (so|let'?s)|let me (think|analy[sz]e))", re.I)
 
 
 def strip_thinking(text: str) -> tuple[str, str]:
@@ -146,8 +153,13 @@ class LLMClient:
         return self._clients[url]
 
     def chat(self, role: str, model: str | ModelInfo, messages: list, *, temperature: float = 0.2, max_tokens: int = 8000,
-             tools: list | None = None, extra_body: dict | None = None) -> Reply:
+             tools: list | None = None, extra_body: dict | None = None, thinking: bool | None = None) -> Reply:
+        """thinking=False turns off Nemotron's reasoning trace (chat_template_kwargs.enable_thinking).
+        Measured 23 Oct 2026 on Token Factory: Lightning answered a one-line question in 31 output
+        tokens with thinking off vs ~400-500 with it on. None leaves the model default."""
         m = model if isinstance(model, ModelInfo) else resolve_model(model)
+        if thinking is not None and m.nvidia:
+            extra_body = {**(extra_body or {}), "chat_template_kwargs": {"enable_thinking": bool(thinking)}}
         self.ledger.check_budget()
         bases = [self._model_base.get(m.id) or self.url]
         if m.region_base and m.region_base not in bases:
@@ -172,6 +184,9 @@ class LLMClient:
                     if status == 404 or "not found" in str(e).lower():
                         n404 += 1
                         continue  # try the model's regional base URL
+                    if status in (400, 422) and extra_body and "chat_template_kwargs" in extra_body:
+                        extra_body = {k: v for k, v in extra_body.items() if k != "chat_template_kwargs"} or None
+                        continue  # server rejected the thinking switch: retry once with the model default
                     if status in (400, 401, 403, 422):
                         raise LLMError(f"{m.id}: HTTP {status}: {e}") from e
                     break
@@ -181,9 +196,13 @@ class LLMClient:
         raise LLMError(f"{m.id}: giving up after retries: {last_err}")
 
     def _finish(self, role: str, m: ModelInfo, resp, latency: float) -> Reply:
-        msg = resp.choices[0].message
+        choice = resp.choices[0]
+        msg = choice.message
+        finish = getattr(choice, "finish_reason", "") or ""
         raw = msg.content or ""
         text, reasoning = strip_thinking(raw)
+        if finish == "length" and _LEAKED_THINKING.match(text or ""):
+            reasoning, text = (reasoning + "\n" + text).strip(), ""  # unfinished thought, not an answer
         extra_reasoning = getattr(msg, "reasoning_content", None) or getattr(msg, "reasoning", None) or ""
         if extra_reasoning:
             reasoning = (str(extra_reasoning) + "\n" + reasoning).strip()
@@ -192,12 +211,15 @@ class LLMClient:
         ct = getattr(u, "completion_tokens", 0) or 0
         details = getattr(u, "prompt_tokens_details", None)
         cached = (getattr(details, "cached_tokens", 0) or 0) if details else 0
+        cdetails = getattr(u, "completion_tokens_details", None)
+        rtok = (getattr(cdetails, "reasoning_tokens", 0) or 0) if cdetails else 0
         tool_calls = []
         for tc in getattr(msg, "tool_calls", None) or []:
             tool_calls.append({"id": tc.id, "name": tc.function.name, "arguments": tc.function.arguments})
         r = Reply(text=text, reasoning=reasoning, prompt_tokens=pt, completion_tokens=ct, cached_tokens=cached,
                   cost=m.cost(pt, ct, cached), latency=latency, model=m.id, tool_calls=tool_calls,
-                  message=msg.model_dump() if hasattr(msg, "model_dump") else None)
+                  message=msg.model_dump() if hasattr(msg, "model_dump") else None,
+                  finish_reason=finish, reasoning_tokens=rtok)
         self.ledger.add_call(role, m, r)
         return r
 

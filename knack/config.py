@@ -54,6 +54,8 @@ MODELS: dict[str, ModelInfo] = {
     "deepseek-flash": ModelInfo("deepseek-flash", "deepseek-ai/DeepSeek-V4.1-Flash", 0.30, 1.20, 0.01, vision=True,
                                 nvidia=False, region_base="https://api.tokenfactory.us-north1.nebius.com/v1/",
                                 note="Non-NVIDIA baseline (also on Token Factory)."),
+    "kimi-k3": ModelInfo("kimi-k3", "moonshotai/Kimi-K3", 3.00, 15.00, 0.30, vision=True, nvidia=False,
+                         note="Non-NVIDIA reference: the open-weight model on ASPIRE's cost chart (about 78% at about $55/task)."),
 }
 
 ROLE_DEFAULTS = {"coder": "ultra", "summarizer": "lightning", "judge": "super-vl"}
