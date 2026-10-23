@@ -5,6 +5,10 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-c6ff3d.svg)](LICENSE)
 ![CI](https://github.com/su0as/knack/actions/workflows/ci.yml/badge.svg)
 
+![First try vs after practice, same six held-out layouts](docs/media/first_try_vs_practised_push.gif)
+
+*Nemotron 3 Super on the push task with camera-grade perception noise. Top: the first version it wrote, 0 of these 6 layouts. Bottom: the version after 6 rounds of practice, 4 of 6 (82% on 50 held-out layouts, up from 6%). Zero demonstrations, $0.028 of Token Factory calls in total.*
+
 Built for the Nebius x NVIDIA Global AI Hackathon (Physical AI track). Runs on **NVIDIA Nemotron open models served by Nebius Token Factory**, with an optional **Nebius AI Cloud Serverless Jobs** backend for parallel practice.
 
 > Status (23 Oct 2026): first live results are in (below). Every number comes from a file on the [`results` branch](https://github.com/su0as/knack/tree/results/results), written by the [`live` workflow](.github/workflows/live.yml) on a GitHub-hosted runner calling Nebius Token Factory. Nothing here is projected or estimated.
