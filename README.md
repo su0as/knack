@@ -152,13 +152,24 @@ Source: `results/20261023-101415-practice-gain/gain-*/practice_gain.md`. Two les
 - The overhead judge camera was washed out; the floor and headlight were toned down so the vision judge can see positions.
 - Practice scores on 8 layouts picked the wrong "best" version; the top versions are now re-checked on 16 fresh layouts (simulator only, no tokens).
 
-Still to run: reward-source ablation (ground truth vs vision judge vs self-report), vision-judge accuracy and abstention vs ground truth, Kimi K3 as a second reference coder, and a Serverless Jobs run. Commands:
+**5. A vision reward works when the outcome is visible, and gets gamed when it is not.** Same coder (Super), three reward sources, held-out scored by ground truth (`results/*-ablation`):
+
+| reward used during practice | stack | lift ("at least 5 cm above the table") |
+|---|---|---|
+| simulator ground truth | 50/50 | 36/50 |
+| **Nemotron 3.5 Super VL judging 4 camera frames** | **49/50** | **0/50** |
+| the skill's own `return True` | 50/50 | 50/50 |
+
+On stack, the judge agreed with ground truth on all 36 practice and held-out episodes it scored, so practice with no simulator signal at all produced a 98% skill. On lift it said "success, 0.95" on every episode where the cube was held a few millimetres short of 5 cm, which no camera at 320x240 can see, so the coder stopped at round 1 with a skill that never meets the spec. The lift skill trained on the judge also returned `True` on all 50 held-out episodes that ground truth failed: an agent grading itself, or graded by a model that cannot see the criterion, will report success it did not achieve. This is the case for keeping a measurable check wherever one exists, and for writing task specs a camera can verify.
+
+Still to run: Kimi K3 as a second reference coder, and a Serverless Jobs run. Commands:
 
 | Finding | Command | Output |
 |---|---|---|
-| Ground truth vs vision judge vs self-report as the reward | `knack exp ablation` | `ablation_summary.json` |
+| Ground truth vs vision judge vs self-report as the reward | `knack exp ablation` | `ablation.json` |
 | Vision-judge accuracy and abstention vs ground truth | `knack exp judge runs/` | `judge_eval.json`, `judge_coverage.png` |
 | What practice adds | `knack exp gain "runs/**/*-gt*"` | `practice_gain.md` |
+| First try vs practised, side by side | `knack replay <run_dir> --compare --n 6` | GIF + PNG |
 
 ## Real arm (experimental)
 
