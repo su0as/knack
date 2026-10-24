@@ -95,16 +95,23 @@ Read this section in order: the camera-grade results are the point, the easy-mod
 
 Sources: `results/20261023-101415-practice-gain`, repeat runs in `results/*-real-super-replicate` and `results/*-gain-replicate`, four more camera-grade scenes in `results/*-real-4tasks` and `results/*-gain-real-4tasks`. The push gain repeats (+76 and +40 points); on stack under camera noise practice did not beat the first version, and both sit near the hand-written reference (57%), which suggests the noise, not the code, is the limit there. Two lessons went straight back into the code: an 8-episode practice score is too noisy to pick the best version (Ultra's "88%" round equalled its first version on held-out), so Knack now re-checks the top versions on 16 fresh layouts before the final evaluation; and a rewrite that scores worse is discarded (see 5).
 
-**2. With camera-grade perception, first attempts fail and practice is what gets the skill working.** `--realism real` adds about 8 mm of pose noise per reading, 0.08 rad of yaw noise and wider mass, friction and grip randomisation (what a cheap arm with an overhead camera sees):
+**2. Camera-grade scoreboard: held-out success on 50 unseen layouts and the full Token Factory cost of each skill.** `--realism real` adds about 8 mm of pose noise per reading, 0.08 rad of yaw noise and wider mass, friction and grip randomisation (what a cheap arm with an overhead camera sees). Zero demonstrations, up to 6 practice rounds of 8 episodes.
 
-| run | practice rounds (success on 8 layouts) | held-out (50 layouts) | cost |
-|---|---|---|---|
-| Super, push | 0% → 12% → 12% → 12% → 0% → 50% | **82%** (CI 69% to 90%) | $0.028 |
-| Super, stack | 12% → 75% → 50% → 50% → 75% → 50% | **62%** (CI 48% to 74%) | $0.045 |
-| Ultra, stack | 50% → 88% → 62% → 62% → 62% → 50% | **64%** (CI 50% to 76%) | $0.108 |
-| Ultra, push | 0% → 12% → 0% → 0% → 12% → 12% | 10% (CI 4% to 21%) | $0.100 |
+| scene | Nemotron 3 Nano | Nemotron 3 Super | Nemotron 3 Ultra | DeepSeek V4.1 Flash | Kimi K3 | hand-written reference |
+|---|---|---|---|---|---|---|
+| lift | 88% · $0.011 | 84% · $0.014 | 88% · $0.004 | 100% · $0.004 | 100% · $0.080 | 100% |
+| place in circle | | 80% · $0.002 | 86% · $0.006 | | | 97% |
+| push puck | 0% · $0.011 | 82% · $0.028 (repeat: 64%) | 10% · $0.100 | 88% · $0.120 | no result (timeouts) | 87% |
+| stack | 4% · $0.012 | 62% · $0.045 (repeat: 62%) | 64% · $0.108 | 96% · $0.040 | 98% · $0.120 | 57% |
+| into the tray | | 88% · $0.002 | 98% · $0.005 | | | 97% |
+| sort by colour | 42% · $0.011 | 36% · $0.036 | 100% · $0.013 | 100% · $0.011 | no result (server overloaded) | 100% |
 
-For comparison, the hand-written reference fixtures under the same noise score 57% on stack and 87% on push (30 layouts each). Source: `results/20261023-100205-real-stack-push`. Ultra on push is a failure we publish on purpose: its rewrites kept adding clearance logic that drove the arm into its workspace limits.
+Sources: `results/*-real-stack-push`, `*-real-super-replicate`, `*-real-4tasks`, `*-real-kimi-nano-ds`; reference fixtures from `knack oracle all --realism real` (30 layouts each). Blank cells were not run. How to read it:
+- **Every skill cost between $0.002 and $0.12.** For context only (different benchmark, LIBERO-Pro), ASPIRE's published chart puts open-weight coding agents at about $40 to $55 per task.
+- **Under camera noise, Nemotron 3 Ultra is the strongest NVIDIA coder on 4 of 6 scenes, and fails push** (its rewrites kept adding clearance logic that drove the arm into its workspace limits). Super is the cheapest Nemotron that learns, and it is where practice visibly matters (section 1).
+- **The best open coder in these runs was DeepSeek V4.1 Flash**, not a Nemotron model. We report it because the point of the scoreboard is to measure, not to advertise.
+- Practised skills beat the hand-written reference on stack (Ultra 64%, Super 62%, DeepSeek 96%, Kimi 98% vs 57%).
+- Kimi K3 (the open-weight point on ASPIRE's chart) solved lift and stack but two of its four runs died on Token Factory request timeouts and an HTTP 529 "System is overloaded"; see `docs/FEEDBACK.md`.
 
 **3. With near-perfect perception the scenes are easy: Nemotron 3 Ultra programs all six for under 7 cents each, mostly first try.** Standard perception (about 2 mm pose noise):
 
