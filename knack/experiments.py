@@ -342,8 +342,8 @@ def figures(patterns: list[str], out_dir: str = "docs/figures") -> list[str]:
             ax.text(-0.02, i, label, ha="right", va="center")
             ax.text(r["best_p"] + 0.02, i, f"{r['first_k']}→{r['best_k']}/{r['best_n']}", va="center", fontsize=8)
         ax.set_yticks([])
-        ax.set_xlim(0, 1.15)
-        ax.set_xlabel("held-out success on the same 50 layouts (grey: first version, colour: after practice)")
+        ax.set_xlim(0, 1.22)
+        ax.set_xlabel("held-out success, same 50 layouts. grey = first version, colour = after practice")
         ax.set_title("What practice adds (Knack, live runs, 23-24 Oct 2026)", loc="left")
         for s in ("top", "right", "left"):
             ax.spines[s].set_visible(False)
@@ -371,13 +371,15 @@ def figures(patterns: list[str], out_dir: str = "docs/figures") -> list[str]:
                         fontsize=7, color=grey)
         ax.set_xscale("log")
         ax.set_ylim(0, 1.05)
-        ax.set_xlabel("USD per verified skill (log). Filled: Knack, camera-grade scenes. Hollow: ASPIRE chart, LIBERO-Pro")
+        ax.set_xlabel("USD per verified skill (log scale)")
+        fig.text(0.01, 0.01, "Filled: Knack, camera-grade scenes, mean over the scenes each model ran (subsets differ). "
+                 "Hollow: ASPIRE's published chart, LIBERO-Pro, a different benchmark (context only).", fontsize=7, color=grey)
         ax.set_ylabel("mean held-out success")
-        ax.set_title("Cost of a robot skill: Nemotron on Token Factory (lime = NVIDIA, red = other open models)", loc="left", fontsize=9)
+        ax.set_title("Cost of a verified robot skill on Token Factory (lime = NVIDIA Nemotron, red = other open models)", loc="left", fontsize=9)
         for s in ("top", "right"):
             ax.spines[s].set_visible(False)
         f = out / "cost_vs_success_camera.png"
-        fig.tight_layout()
+        fig.tight_layout(rect=(0, 0.04, 1, 1))
         fig.savefig(f, dpi=170)
         plt.close(fig)
         written.append(str(f))
