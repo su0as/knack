@@ -155,21 +155,32 @@ class VisionPerception:
         for fname, fspec in env.fixture_spec.items():  # drop same-coloured tray walls and floor
             if fspec.kind == "tray" and fspec.color == spec.color and self.fixtures and fname in self.fixtures:
                 fc = self.fixtures[fname]
-                inside = (np.abs(pts[:, 0] - fc[0]) < TRAY_OUTER + 0.004) & (np.abs(pts[:, 1] - fc[1]) < TRAY_OUTER + 0.004)
+                # generous margin: the tray pose itself is estimated (a few mm off); a cube's top face sits above the rim
+                inside = (np.abs(pts[:, 0] - fc[0]) < TRAY_OUTER + 0.015) & (np.abs(pts[:, 1] - fc[1]) < TRAY_OUTER + 0.015)
                 keep &= ~(inside & (pts[:, 2] < TRAY_WALL_TOP + 0.003))
         if keep.sum() < MIN_PIXELS:
             return None
         clean = np.zeros_like(mask)
         clean[vs[keep], us[keep]] = 255
-        comp = self._largest_component(clean)
-        if comp is None:
+        # candidate blobs, largest first; reject anything bigger than the object could be (leftover tray walls etc.)
+        n, labels, stats, _ = self.cv2.connectedComponentsWithStats(clean, connectivity=8)
+        order = sorted(range(1, n), key=lambda k: -stats[k, self.cv2.CC_STAT_AREA])
+        max_extent = (spec.size[0] * 1.6) if spec.shape == "cube" else (spec.size[0] * 2.6)
+        for k in order:
+            if stats[k, self.cv2.CC_STAT_AREA] < MIN_PIXELS:
+                return None
+            vs_k, us_k = np.nonzero(labels == k)
+            pts = self.to_world(cam, depth, us_k, vs_k)
+            top_z = float(np.percentile(pts[:, 2], 95))
+            top = pts[pts[:, 2] >= top_z - 0.004]
+            if len(top) < 15:
+                top = pts
+            _, (w, h), _ = self.cv2.minAreaRect((top[:, :2] * 1000.0).astype(np.float32))
+            if max(w, h) / 1000.0 <= max_extent:
+                us = us_k
+                break
+        else:
             return None
-        us, vs = comp
-        pts = self.to_world(cam, depth, us, vs)
-        top_z = float(np.percentile(pts[:, 2], 95))
-        top = pts[pts[:, 2] >= top_z - 0.004]
-        if len(top) < 15:
-            top = pts
         c, ang = self._rect(top[:, :2])
         half = spec.size[0] / 2 if spec.shape == "cube" else spec.size[1] / 2
         yaw = wrap_quarter(ang) if spec.shape == "cube" else 0.0
