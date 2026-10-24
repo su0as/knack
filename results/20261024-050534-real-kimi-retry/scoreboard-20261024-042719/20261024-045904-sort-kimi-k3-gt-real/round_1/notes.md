@@ -1,0 +1,7 @@
+- First version; no practice results yet. Design choices based on the perception note:
+- Camera noise ~1 cm per reading → average 6 get_pose() calls per pose; use a 4×-angle circular mean for cube yaw (reported in [-π/4, π/4), wraps at ±45°).
+- Don't trust observed z for grasping: cubes rest on the table, so grasp at fixed tool z = 0.015 (pads at cube middle).
+- Trays have 2.5 cm walls and 8.8 cm interior → carry cube in low (tool z ≈ 0.028, cube bottom ~1.3 cm above floor) and release inside, avoiding drop-bounce; verify with a fresh averaged reading and retry if it landed outside.
+- Verify every step: holding() after grasp, after lift, and after transport (friction/grip force vary → drops possible); re-pick on loss.
+- Clamp all move targets just inside the safety box and catch MotionError so a bad layout can't halt the skill; bounded retries everywhere (max 4 pick attempts, 3 full cycles per cube).
+- Watch for next round: grasp failures from residual centering error, cubes bouncing off tray walls, and any unreachable-pose MotionErrors.

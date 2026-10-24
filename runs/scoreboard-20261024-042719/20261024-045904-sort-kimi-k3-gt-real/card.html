@@ -1,0 +1,260 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Sort by colour</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261024-045904-sort-kimi-k3-gt-real &middot; 2026-10-24 05:05:34</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Put the red cube into the red tray and the blue cube into the blue tray.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: real &middot; 8 practice episodes in 1 rounds</p>
+<div><span class='chip'><b>CODER</b>moonshotai/Kimi-K3 <em>$3.00 / $15.00 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">100%</div><div>50/50 layouts &middot; Wilson 95% CI 93% to 100%</div><div class='ci'><div class='ci-band' style='left:92.9%;width:7.1%'></div><div class='ci-dot' style='left:100.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:100%'></span><em>R1<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>moonshotai/Kimi-K3</code></td><td>1</td><td>1,758</td><td>11,419</td><td>$0.1764</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>0</td><td>0</td><td>0</td><td>$0.0000</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>151 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>1</th><th>1,758</th><th>11,419</th><th>$0.1764</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details open><summary>Round 1: 8/8 practice episodes &middot; 0 errors &middot; $0.1764 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- First version; no practice results yet. Design choices based on the perception note:
+- Camera noise ~1 cm per reading → average 6 get_pose() calls per pose; use a 4×-angle circular mean for cube yaw (reported in [-π/4, π/4), wraps at ±45°).
+- Don&#x27;t trust observed z for grasping: cubes rest on the table, so grasp at fixed tool z = 0.015 (pads at cube middle).
+- Trays have 2.5 cm walls and 8.8 cm interior → carry cube in low (tool z ≈ 0.028, cube bottom ~1.3 cm above floor) and release inside, avoiding drop-bounce; verify with a fresh averaged reading and retry if it landed outside.
+- Verify every step: holding() after grasp, after lift, and after transport (friction/grip force vary → drops possible); re-pick on loss.
+- Clamp all move targets just inside the safety box and catch MotionError so a bad layout can&#x27;t halt the skill; bounded retries everywhere (max 4 pick attempts, 3 full cycles per cube).
+- Watch for next round: grasp failures from residual centering error, cubes bouncing off tray walls, and any unreachable-pose MotionErrors.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,108 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _clamp(v, lo, hi):</span>
+<span class='add'>+    return max(lo, min(hi, v))</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _avg_pose(robot, name, n=6):</span>
+<span class='add'>+    &quot;&quot;&quot;Average n noisy readings of a pose; circular mean on 4*yaw to</span>
+<span class='add'>+    handle the cube&#x27;s 90-degree yaw symmetry / wrap at +-pi/4.&quot;&quot;&quot;</span>
+<span class='add'>+    sx = sy = sz = 0.0</span>
+<span class='add'>+    s4 = c4 = 0.0</span>
+<span class='add'>+    for _ in range(n):</span>
+<span class='add'>+        p = robot.get_pose(name)</span>
+<span class='add'>+        pos = p[&quot;pos&quot;]</span>
+<span class='add'>+        sx += pos[0]</span>
+<span class='add'>+        sy += pos[1]</span>
+<span class='add'>+        sz += pos[2]</span>
+<span class='add'>+        a = 4.0 * float(p.get(&quot;yaw&quot;, 0.0))</span>
+<span class='add'>+        s4 += math.sin(a)</span>
+<span class='add'>+        c4 += math.cos(a)</span>
+<span class='add'>+    yaw = math.atan2(s4, c4) / 4.0</span>
+<span class='add'>+    return sx / n, sy / n, sz / n, yaw</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _move(robot, x, y, z, yaw=None, speed=None):</span>
+<span class='add'>+    &quot;&quot;&quot;move_to with targets clamped inside the safety box and</span>
+<span class='add'>+    MotionError caught so nothing can halt the skill.&quot;&quot;&quot;</span>
+<span class='add'>+    x = _clamp(x, 0.05, 0.31)</span>
+<span class='add'>+    y = _clamp(y, -0.25, 0.25)</span>
+<span class='add'>+    z = _clamp(z, 0.015, 0.25)</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        return robot.move_to(x, y, z, yaw=yaw, speed=speed)</span>
+<span class='add'>+    except Exception as exc:</span>
+<span class='add'>+        robot.log(&quot;move error&quot;, round(x, 3), round(y, 3), round(z, 3), exc)</span>
+<span class='add'>+        return None</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _pick(robot, name):</span>
+<span class='add'>+    for _ in range(4):</span>
+<span class='add'>+        x, y, _, yaw = _avg_pose(robot, name)</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        if _move(robot, x, y, 0.085, yaw=yaw) is None:</span>
+<span class='add'>+            continue</span>
+<span class='add'>+        if _move(robot, x, y, 0.015, yaw=yaw, speed=0.05) is None:</span>
+<span class='add'>+            _move(robot, x, y, 0.07, speed=0.1)</span>
+<span class='add'>+            continue</span>
+<span class='add'>+        robot.grasp()</span>
+<span class='add'>+        if robot.holding() == name:</span>
+<span class='add'>+            _move(robot, x, y, 0.11, speed=0.08)</span>
+<span class='add'>+            if robot.holding() == name:</span>
+<span class='add'>+                robot.log(&quot;picked&quot;, name)</span>
+<span class='add'>+                return True</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        _move(robot, x, y, 0.07, speed=0.1)</span>
+<span class='add'>+    robot.log(&quot;pick failed&quot;, name)</span>
+<span class='add'>+    return False</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _in_tray(robot, cube, tray):</span>
+<span class='add'>+    cx, cy, cz, _ = _avg_pose(robot, cube, n=4)</span>
+<span class='add'>+    tx, ty, _, _ = _avg_pose(robot, tray, n=4)</span>
+<span class='add'>+    dx = cx - tx</span>
+<span class='add'>+    dy = cy - ty</span>
+<span class='add'>+    inside = (dx * dx + dy * dy) &lt; (0.035 * 0.035) and cz &lt; 0.024</span>
+<span class='add'>+    robot.log(&quot;in_tray&quot;, cube, inside, round(dx, 3), round(dy, 3), round(cz, 3))</span>
+<span class='add'>+    return inside</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _place(robot, cube, tray):</span>
+<span class='add'>+    tx, ty, _, _ = _avg_pose(robot, tray)</span>
+<span class='add'>+    if _move(robot, tx, ty, 0.13) is None:</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    if robot.holding() != cube:</span>
+<span class='add'>+        robot.log(&quot;lost in transport&quot;, cube)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    if _move(robot, tx, ty, 0.05, speed=0.08) is None:</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    # lower the held cube into the tray (bottom ~1.3 cm above the floor,</span>
+<span class='add'>+    # below the 2.5 cm wall top) then release: minimal drop, no bounce</span>
+<span class='add'>+    _move(robot, tx, ty, 0.028, speed=0.05)</span>
+<span class='add'>+    robot.release()</span>
+<span class='add'>+    _move(robot, tx, ty, 0.12, speed=0.1)</span>
+<span class='add'>+    return _in_tray(robot, cube, tray)</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+    tasks = ((&quot;red_cube&quot;, &quot;red_tray&quot;), (&quot;blue_cube&quot;, &quot;blue_tray&quot;))</span>
+<span class='add'>+    ok_all = True</span>
+<span class='add'>+    for cube, tray in tasks:</span>
+<span class='add'>+        done = False</span>
+<span class='add'>+        for _ in range(3):</span>
+<span class='add'>+            if _in_tray(robot, cube, tray):</span>
+<span class='add'>+                done = True</span>
+<span class='add'>+                break</span>
+<span class='add'>+            if robot.holding() != cube:</span>
+<span class='add'>+                if not _pick(robot, cube):</span>
+<span class='add'>+                    continue</span>
+<span class='add'>+            if _place(robot, cube, tray):</span>
+<span class='add'>+                done = True</span>
+<span class='add'>+                break</span>
+<span class='add'>+        if not done:</span>
+<span class='add'>+            ok_all = False</span>
+<span class='add'>+            robot.log(&quot;FAILED&quot;, cube, tray)</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+    robot.log(&quot;finished, ok_all =&quot;, ok_all)</span>
+<span class='add'>+    return ok_all</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><p class="muted">No held-out failures.</p></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+
+def _clamp(v, lo, hi):
+    return max(lo, min(hi, v))
+
+
+def _avg_pose(robot, name, n=6):
+    &quot;&quot;&quot;Average n noisy readings of a pose; circular mean on 4*yaw to
+    handle the cube&#x27;s 90-degree yaw symmetry / wrap at +-pi/4.&quot;&quot;&quot;
+    sx = sy = sz = 0.0
+    s4 = c4 = 0.0
+    for _ in range(n):
+        p = robot.get_pose(name)
+        pos = p[&quot;pos&quot;]
+        sx += pos[0]
+        sy += pos[1]
+        sz += pos[2]
+        a = 4.0 * float(p.get(&quot;yaw&quot;, 0.0))
+        s4 += math.sin(a)
+        c4 += math.cos(a)
+    yaw = math.atan2(s4, c4) / 4.0
+    return sx / n, sy / n, sz / n, yaw
+
+
+def _move(robot, x, y, z, yaw=None, speed=None):
+    &quot;&quot;&quot;move_to with targets clamped inside the safety box and
+    MotionError caught so nothing can halt the skill.&quot;&quot;&quot;
+    x = _clamp(x, 0.05, 0.31)
+    y = _clamp(y, -0.25, 0.25)
+    z = _clamp(z, 0.015, 0.25)
+    try:
+        return robot.move_to(x, y, z, yaw=yaw, speed=speed)
+    except Exception as exc:
+        robot.log(&quot;move error&quot;, round(x, 3), round(y, 3), round(z, 3), exc)
+        return None
+
+
+def _pick(robot, name):
+    for _ in range(4):
+        x, y, _, yaw = _avg_pose(robot, name)
+        robot.release()
+        if _move(robot, x, y, 0.085, yaw=yaw) is None:
+            continue
+        if _move(robot, x, y, 0.015, yaw=yaw, speed=0.05) is None:
+            _move(robot, x, y, 0.07, speed=0.1)
+            continue
+        robot.grasp()
+        if robot.holding() == name:
+            _move(robot, x, y, 0.11, speed=0.08)
+            if robot.holding() == name:
+                robot.log(&quot;picked&quot;, name)
+                return True
+        robot.release()
+        _move(robot, x, y, 0.07, speed=0.1)
+    robot.log(&quot;pick failed&quot;, name)
+    return False
+
+
+def _in_tray(robot, cube, tray):
+    cx, cy, cz, _ = _avg_pose(robot, cube, n=4)
+    tx, ty, _, _ = _avg_pose(robot, tray, n=4)
+    dx = cx - tx
+    dy = cy - ty
+    inside = (dx * dx + dy * dy) &lt; (0.035 * 0.035) and cz &lt; 0.024
+    robot.log(&quot;in_tray&quot;, cube, inside, round(dx, 3), round(dy, 3), round(cz, 3))
+    return inside
+
+
+def _place(robot, cube, tray):
+    tx, ty, _, _ = _avg_pose(robot, tray)
+    if _move(robot, tx, ty, 0.13) is None:
+        return False
+    if robot.holding() != cube:
+        robot.log(&quot;lost in transport&quot;, cube)
+        return False
+    if _move(robot, tx, ty, 0.05, speed=0.08) is None:
+        return False
+    # lower the held cube into the tray (bottom ~1.3 cm above the floor,
+    # below the 2.5 cm wall top) then release: minimal drop, no bounce
+    _move(robot, tx, ty, 0.028, speed=0.05)
+    robot.release()
+    _move(robot, tx, ty, 0.12, speed=0.1)
+    return _in_tray(robot, cube, tray)
+
+
+def run(robot):
+    robot.home()
+    tasks = ((&quot;red_cube&quot;, &quot;red_tray&quot;), (&quot;blue_cube&quot;, &quot;blue_tray&quot;))
+    ok_all = True
+    for cube, tray in tasks:
+        done = False
+        for _ in range(3):
+            if _in_tray(robot, cube, tray):
+                done = True
+                break
+            if robot.holding() != cube:
+                if not _pick(robot, cube):
+                    continue
+            if _place(robot, cube, tray):
+                done = True
+                break
+        if not done:
+            ok_all = False
+            robot.log(&quot;FAILED&quot;, cube, tray)
+    robot.home()
+    robot.log(&quot;finished, ok_all =&quot;, ok_all)
+    return ok_all
+</pre></section>
+</div></body></html>
