@@ -11,7 +11,10 @@ Last updated: 23 Oct 2026, 18:30 SGT.
 - **Live runs now go through `.github/workflows/live.yml`** (Actions tab, "Run workflow", or `gh workflow run live.yml -f command="..."`). Each run uploads `runs/` as an artifact and commits the small summary files to the `results` branch. One paid run at a time (concurrency group), every command still has `--budget`.
 - **Pilot gate: PASS** (23 Oct): Super 100/100/80% and Ultra 100/100/90% held-out on lift/place/push. Scoreboard on stack/tray/sort done. Camera-grade (`--realism real`) runs done for stack and push. See README Results.
 - Spent so far: about $0.50 of the $1 trial. Promo code form submitted (code arrives by email to suhas.cse20@gmail.com, $25); AI Builder Program application submitted (another $25 after review, "within two business days").
-- Not yet run: reward ablation, judge accuracy, Kimi K3 reference, the Serverless Jobs backend (paid), the real arm.
+- Done since: reward ablation and judge accuracy, camera-grade scoreboard for Nano / Super / Ultra / DeepSeek / Kimi K3, practice-gain re-runs, README charts, Windows console fixes (realism dropdown, WinError 5 retries, stale runs).
+- Token Factory balance: $59 from two promo codes (24 Oct), minus about $1.50 of runs.
+- **Serverless Jobs: code and CI wiring ready, not run.** Nebius AI Cloud account created (tenant amber-tiglon-tenant-h35, project default-project-eu-west2). Blocked on billing: the console requires card details and charges a $25 top-up before the first job. After that: create a service account (editors group) + authorized key, an Object Storage bucket + access key, then set repo secrets NEBIUS_SA_ID, NEBIUS_SA_PUBLIC_KEY_ID, NEBIUS_SA_PRIVATE_KEY, NEBIUS_PROJECT_ID, NEBIUS_S3_ACCESS_KEY_ID, NEBIUS_S3_SECRET_ACCESS_KEY, KNACK_NEBIUS_BUCKET, NEBIUS_REGION=eu-west2, then `live` with `nebius hello` and `learn lift --coder super --realism real --backend nebius`.
+- Not run: the real arm.
 
 ## Your test checklist (in order, cheapest first)
 
