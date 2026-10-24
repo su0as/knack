@@ -226,8 +226,12 @@ def cmd_nebius(a):
 
     if a.action == "hello":
         print("Creating a small PAID Serverless Job (cpu-d3 2vcpu-8gb, a few minutes)...")
-        print("job:", nebius.hello())
-        print("Follow with: nebius ai job logs <job id> --follow")
+        job = nebius.hello()
+        print("job:", job)
+        t0 = time.time()
+        state = nebius.NebiusJobRunner("unused", "hello").wait(job, max_wait_s=1500)
+        print(f"state: {state} after {time.time() - t0:.0f} s")
+        print(nebius._cli(["ai", "job", "logs", job, "--tail", "100"], check=False))
     elif a.action == "status":
         r = nebius.NebiusJobRunner("unused", "status")
         print(r.job_state(a.job))

@@ -51,6 +51,34 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq libosmesa6 libgl1
       - name: Install
         run: pip install -e ".[dev]"
+      - name: Nebius AI Cloud CLI (only when the Serverless Jobs secrets are set)
+        env:
+          NB_SA_ID: ${{ secrets.NEBIUS_SA_ID }}
+          NB_KEY_ID: ${{ secrets.NEBIUS_SA_PUBLIC_KEY_ID }}
+          NB_PRIVATE_KEY: ${{ secrets.NEBIUS_SA_PRIVATE_KEY }}
+          NB_PROJECT: ${{ secrets.NEBIUS_PROJECT_ID }}
+          S3_KEY_ID: ${{ secrets.NEBIUS_S3_ACCESS_KEY_ID }}
+          S3_SECRET: ${{ secrets.NEBIUS_S3_SECRET_ACCESS_KEY }}
+          NB_BUCKET: ${{ secrets.KNACK_NEBIUS_BUCKET }}
+          NB_REGION: ${{ secrets.NEBIUS_REGION }}
+        run: |
+          if [ -z "$NB_SA_ID" ]; then echo "Serverless Jobs secrets not set; skipping"; exit 0; fi
+          curl -sSL https://storage.eu-north1.nebius.cloud/cli/install.sh | bash
+          echo "$HOME/.nebius/bin" >> "$GITHUB_PATH"
+          umask 077
+          printf '%s\n' "$NB_PRIVATE_KEY" > /tmp/nb_sa.pem
+          "$HOME/.nebius/bin/nebius" profile create --endpoint api.nebius.cloud --service-account-id "$NB_SA_ID" \
+            --public-key-id "$NB_KEY_ID" --private-key-file /tmp/nb_sa.pem --profile knack-ci --parent-id "$NB_PROJECT"
+          rm -f /tmp/nb_sa.pem
+          mkdir -p ~/.aws
+          printf '[default]\naws_access_key_id = %s\naws_secret_access_key = %s\n' "$S3_KEY_ID" "$S3_SECRET" > ~/.aws/credentials
+          printf '[default]\nregion = %s\n' "${NB_REGION:-eu-west2}" > ~/.aws/config
+          pip install -q "boto3>=1.34"
+          {
+            echo "KNACK_NEBIUS_BUCKET=$NB_BUCKET"
+            echo "KNACK_S3_REGION=${NB_REGION:-eu-west2}"
+            echo "AWS_PROFILE=default"
+          } >> "$GITHUB_ENV"
       - name: Bring in earlier results (read-only, for replay/eval/plots of past runs)
         run: |
           git fetch -q origin results && git checkout origin/results -- results && git reset -q results || echo "no results branch yet"
@@ -59,7 +87,7 @@ jobs:
           set -euo pipefail
           if [ -z "${NEBIUS_API_KEY}" ]; then echo "NEBIUS_API_KEY secret is missing"; exit 1; fi
           # allowlist: first word must be a known knack subcommand; no shell metacharacters
-          if ! printf '%s' "$KNACK_CMD" | grep -Eq '^(models|check|oracle|learn|pilot|exp|eval|card|replay|library)( [A-Za-z0-9_.,:/=+*-]+)*$'; then
+          if ! printf '%s' "$KNACK_CMD" | grep -Eq '^(models|check|oracle|learn|pilot|exp|eval|card|replay|library|nebius)( [A-Za-z0-9_.,:/=+*-]+)*$'; then
             echo "command rejected: $KNACK_CMD"; exit 1
           fi
           if ! printf '%s' "$KNACK_LABEL" | grep -Eq '^[A-Za-z0-9-]{1,40}$'; then echo "bad label"; exit 1; fi

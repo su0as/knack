@@ -160,12 +160,15 @@ class NebiusJobRunner:
                 "--platform", self.platform, "--preset", self.preset, "--timeout", self.timeout,
                 "--disk-size", self.disk, "--restart-policy", "never",
                 "--inject-file", f"{script_path}:/workspace/run.sh",
-                "--volume", f"s3://{self.bucket}:/data:rw:{self.aws_profile}", "--format", "json"]
+                "--volume", f"s3://{self.bucket}:/data:rw:{self.aws_profile}",
+                "--async", "--format", "jsonpath={.resource_id}"]  # CLI reference, 22 Oct 2026: prints the job ID
         for cpath, lpath in (inject or {}).items():
             args += ["--inject-file", f"{lpath}:{cpath}"]
         if self.subnet_id:
             args += ["--subnet-id", self.subnet_id]
         out = _cli(args)
+        if re.fullmatch(r"\s*[a-z0-9-]{6,}\s*", out or ""):
+            return out.strip()
         try:
             data = json.loads(out)
             ids = [v for v in _walk(data.get("metadata", data), {"id"})]
@@ -259,9 +262,9 @@ def hello(preset: str = "2vcpu-8gb", platform: str = "cpu-d3", image: str = "pyt
     args = ["ai", "job", "create", "--name", f"knack-hello-{int(time.time())}", "--image", image,
             "--container-command", "bash", "--args", "/workspace/run.sh", "--platform", platform, "--preset", preset,
             "--timeout", "1h", "--disk-size", "20Gi", "--restart-policy", "never",
-            "--inject-file", f"{sp}:/workspace/run.sh", "--format", "json"]
+            "--inject-file", f"{sp}:/workspace/run.sh", "--async", "--format", "jsonpath={.resource_id}"]
     if runner.subnet_id:
         args += ["--subnet-id", runner.subnet_id]
-    out = _cli(args)
+    out = _cli(args).strip()
     m = re.search(r'"id"\s*:\s*"([^"]+)"', out)
-    return m.group(1) if m else out.strip()[:200]
+    return m.group(1) if m else out[:200]
