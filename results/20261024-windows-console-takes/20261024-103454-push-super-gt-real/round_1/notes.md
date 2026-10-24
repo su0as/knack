@@ -1,0 +1,5 @@
+- First attempt: perceive puck and target poses, compute push direction from puck to target.
+- Position gripper behind the puck (opposite direction) at a small height above the puck, then lower slightly to engage the puck's side.
+- Push forward a fixed distance along the computed direction.
+- Check if the puck centre is now inside the green zone; repeat up to three times to compensate for perception noise and variations in mass/friction.
+- Use modest speeds for precise motions and catch MotionError for unreachable targets.

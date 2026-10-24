@@ -1,0 +1,22 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -11,7 +11,7 @@
+     push_speed = 0.08        # slow speed while in contact
+     travel_speed = 0.15      # normal speed for repositioning
+     lift_height = 0.05       # safe height above table (m)
+-    base_contact_height = 0.02   # nominal height where finger pads touch puck
++    base_contact_height = 0.03   # increased clearance for contact (m)
+ 
+     for attempt in range(max_attempts):
+         # 1. Get latest poses (noisy, fresh each call)
+@@ -52,8 +52,8 @@
+         # 5. If puck is extremely close to target, avoid problematic low approach
+         if dist_xy < 0.05:
+             # Make a small lateral reposition at safe height and retry perception
+-            side_x = behind_x + 0.02 * (-dir_y)
+-            side_y = behind_y + 0.02 *  dir_x
++            side_x = behind_x + 0.04 * (-dir_y)   # increased step size
++            side_y = behind_y + 0.04 *  dir_x
+             try:
+                 robot.move_to(side_x, side_y, lift_height, speed=travel_speed)
+             except Exception:

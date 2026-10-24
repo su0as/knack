@@ -1,0 +1,64 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -11,7 +11,7 @@
+     push_speed = 0.08        # slow speed while in contact
+     travel_speed = 0.15      # normal speed for repositioning
+     lift_height = 0.05       # safe height above table (m)
+-    base_contact_height = 0.02   # nominal height where finger pads touch puck
++    base_contact_height = 0.03   # nominal height where finger pads touch puck (raised to avoid joint limits)
+ 
+     for attempt in range(max_attempts):
+         # 1. Get latest poses (noisy, fresh each call)
+@@ -54,37 +54,35 @@
+             # Make a small lateral reposition at safe height and retry perception
+             side_x = behind_x + 0.02 * (-dir_y)   # reduced step size
+             side_y = behind_y + 0.02 *  dir_x
+-            try:
+-                robot.move_to(side_x, side_y, lift_height, speed=travel_speed)
+-            except Exception:
++            res = robot.move_to(side_x, side_y, lift_height, speed=travel_speed)
++            if not res.get("ok", False):
++                # fallback to original behind point if side step fails
+                 robot.move_to(behind_x, behind_y, lift_height, speed=travel_speed)
+             continue
+ 
+         # 6. Move to behind puck at a safe height
+-        try:
+-            robot.move_to(behind_x, behind_y, lift_height, speed=travel_speed)
+-        except Exception:
+-            # If unreachable, try a slightly higher lift
+-            robot.move_to(behind_x, behind_y, lift_height + 0.02, speed=travel_speed)
++        res = robot.move_to(behind_x, behind_y, lift_height, speed=travel_speed)
++        if not res.get("ok", False):
++            # try a slightly higher lift
++            res = robot.move_to(behind_x, behind_y, lift_height + 0.02, speed=travel_speed)
++            if not res.get("ok", False):
++                continue  # cannot reach this pose, retry attempt
+ 
+         # 7. Lower to contact height (still behind puck)
+-        try:
+-            robot.move_to(behind_x, behind_y, contact_height, speed=push_speed)
+-        except Exception:
+-            # If we hit something, retreat and retry this attempt
++        res = robot.move_to(behind_x, behind_y, contact_height, speed=push_speed)
++        if not res.get("ok", False):
++            # blocked on descent – retreat and retry this attempt
+             robot.move_to(behind_x, behind_y, lift_height, speed=travel_speed)
+             continue
+ 
+         # 8. Push forward: move along the direction while staying at contact height
+-        # Use just the remaining distance; a tiny epsilon ensures we maintain contact.
+         # Cap the extra push to avoid overshoot when already near the target.
+         push_distance = min(dist_xy + 0.002, dist_xy * 1.1)
+         push_x = behind_x + dir_x * push_distance
+         push_y = behind_y + dir_y * push_distance
+-        try:
+-            robot.move_to(push_x, push_y, contact_height, speed=push_speed)
+-        except Exception:
+-            # Blocked during push – abort this attempt and retry from a new pose
++        res = robot.move_to(push_x, push_y, contact_height, speed=push_speed)
++        if not res.get("ok", False):
++            # blocked during push – abort this attempt and retry from a new pose
+             robot.move_to(behind_x, behind_y, lift_height, speed=travel_speed)
+             continue
+ 

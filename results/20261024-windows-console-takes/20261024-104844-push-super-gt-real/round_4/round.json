@@ -1,0 +1,185 @@
+{
+ "round": 4,
+ "n": 8,
+ "k": 5,
+ "success": 0.625,
+ "gt_k": 5,
+ "self_k": 4,
+ "errors": 0,
+ "wall_s": 3.9,
+ "usd_cum": 0.0177,
+ "code": "round_4/skill.py",
+ "diff": "round_4/diff.patch",
+ "lines": 107,
+ "notes": "- Revert base_contact_height to 0.02\u202fm (original) to avoid unnecessary clearance issues.\n- In yaw adjustment, increase lateral scaling from 0.02 to 0.05\u202fm to better counteract tipping torque.\n- In the close\u2011target (<0.05\u202fm) branch, reduce the lateral side\u2011step from 0.04\u202fm to 0.02\u202fm to keep the gripper in a safe workspace.\n- Fix overshoot by capping the push distance: push_distance = min(dist_xy + 0.002, dist_xy * 1.1) so the extra nudge never exceeds 10\u202f% of the remaining gap.\n- Keep all other parameters (approach_offset, push_speed, travel_speed, lift_height, max_attempts) unchanged.",
+ "episodes": [
+  {
+   "seed": 4000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0403,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0503,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4002,
+   "reward": true,
+   "success_gt": true,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0346,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4003,
+   "reward": true,
+   "success_gt": true,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0265,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4004,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0309,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0333,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0322,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0379,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

@@ -1,0 +1,51 @@
+import math
+
+def run(robot):
+    max_attempts = 3
+    for _ in range(max_attempts):
+        # 1. Perceive current poses
+        obs = robot.observe()
+        puck = obs['objects']['puck']
+        target = obs['fixtures']['target']
+
+        px, py, pz = puck['pos']
+        tx, ty, tz = target['pos']
+        radius_target = target['radius']
+
+        # Vector from puck to target
+        dx = tx - px
+        dy = ty - py
+        dist = math.hypot(dx, dy)
+        if dist < 1e-4:  # already essentially on target
+            return True
+
+        ux, uy = dx / dist, dy / dist  # unit push direction
+
+        # 2. Position gripper behind the puck
+        back_offset = 0.04  # 4 cm behind puck
+        bx = px - ux * back_offset
+        by = py - uy * back_offset
+        bz = pz + 0.02  # a little above puck centre
+
+        try:
+            robot.move_to(bx, by, bz, yaw=None, speed=0.1)
+        except Exception:  # MotionError or similar
+            continue  # retry with fresh perception
+
+        # 3. Lower slightly to make contact with puck side
+        robot.move_by(dz=-0.01, speed=0.05)
+
+        # 4. Push forward
+        push_len = 0.06  # 6 cm push
+        robot.move_by(dx=ux * push_len, dy=uy * push_len, dz=0, speed=0.05)
+
+        # 5. Verify result
+        obs2 = robot.observe()
+        puck2 = obs2['objects']['puck']
+        px2, py2, _ = puck2['pos']
+        inside = math.hypot(px2 - tx, py2 - ty) <= radius_target + 1e-3
+        if inside:
+            return True
+        # otherwise loop again for another attempt
+
+    return False

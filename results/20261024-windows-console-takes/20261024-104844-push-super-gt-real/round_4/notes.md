@@ -1,0 +1,5 @@
+- Revert base_contact_height to 0.02 m (original) to avoid unnecessary clearance issues.
+- In yaw adjustment, increase lateral scaling from 0.02 to 0.05 m to better counteract tipping torque.
+- In the close‑target (<0.05 m) branch, reduce the lateral side‑step from 0.04 m to 0.02 m to keep the gripper in a safe workspace.
+- Fix overshoot by capping the push distance: push_distance = min(dist_xy + 0.002, dist_xy * 1.1) so the extra nudge never exceeds 10 % of the remaining gap.
+- Keep all other parameters (approach_offset, push_speed, travel_speed, lift_height, max_attempts) unchanged.

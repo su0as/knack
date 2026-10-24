@@ -1,0 +1,32 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -18,7 +18,7 @@
+ 
+         # Desired heights (table surface is at z=0, cube centre rests at ~0.015 m)
+         grasp_z = cz + 0.015   # finger pads around the middle of the cube
+-        lift_z  = cz + 0.065   # 5 cm above table (0.015 + 0.05)
++        lift_z  = cz + 0.07    # lift high enough to clear the 5 cm requirement even with settling
+ 
+         # 2️⃣ Move to a safe clearance above the cube
+         try:
+@@ -38,7 +38,10 @@
+             robot.release()
+             continue
+ 
+-        # 5️⃣ Verify we are actually holding something
++        # Allow the gripper to close fully before lifting
++        robot.wait(0.2)
++
++        # 5️⃣ Verify we are actually holding the red cube
+         if robot.holding() != "red_cube":
+             robot.release()
+             continue
+@@ -53,7 +56,7 @@
+ 
+         # 7️⃣ Final verification: check height of the held cube
+         final_pose = robot.get_pose("red_cube")
+-        if final_pose is not None and final_pose["pos"][2] >= 0.06:  # ≥5 cm above table
++        if final_pose is not None and final_pose["pos"][2] >= 0.065:  # ≥5 cm above table
+             return True  # Success
+ 
+         # Something went wrong (e.g., slip) – release and retry

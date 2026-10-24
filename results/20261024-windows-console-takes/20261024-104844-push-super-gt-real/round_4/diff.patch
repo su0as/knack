@@ -1,0 +1,41 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -11,7 +11,7 @@
+     push_speed = 0.08        # slow speed while in contact
+     travel_speed = 0.15      # normal speed for repositioning
+     lift_height = 0.05       # safe height above table (m)
+-    base_contact_height = 0.03   # increased clearance for contact (m)
++    base_contact_height = 0.02   # nominal height where finger pads touch puck
+ 
+     for attempt in range(max_attempts):
+         # 1. Get latest poses (noisy, fresh each call)
+@@ -43,7 +43,7 @@
+             contact_height = base_contact_height + 0.01
+             # Shift the push point laterally to align better with puck faces
+             # lateral offset proportional to yaw, direction perpendicular to push
+-            lateral = 0.02 * math.sin(puck_yaw)   # magnitude ~0.02*m at max yaw
++            lateral = 0.05 * math.sin(puck_yaw)   # increased scaling
+             behind_x += lateral * (-dir_y)
+             behind_y += lateral *  dir_x
+         else:
+@@ -52,8 +52,8 @@
+         # 5. If puck is extremely close to target, avoid problematic low approach
+         if dist_xy < 0.05:
+             # Make a small lateral reposition at safe height and retry perception
+-            side_x = behind_x + 0.04 * (-dir_y)   # increased step size
+-            side_y = behind_y + 0.04 *  dir_x
++            side_x = behind_x + 0.02 * (-dir_y)   # reduced step size
++            side_y = behind_y + 0.02 *  dir_x
+             try:
+                 robot.move_to(side_x, side_y, lift_height, speed=travel_speed)
+             except Exception:
+@@ -77,7 +77,8 @@
+ 
+         # 8. Push forward: move along the direction while staying at contact height
+         # Use just the remaining distance; a tiny epsilon ensures we maintain contact.
+-        push_distance = dist_xy + 0.002
++        # Cap the extra push to avoid overshoot when already near the target.
++        push_distance = min(dist_xy + 0.002, dist_xy * 1.1)
+         push_x = behind_x + dir_x * push_distance
+         push_y = behind_y + dir_y * push_distance
+         try:

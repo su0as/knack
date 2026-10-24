@@ -1,0 +1,269 @@
+{
+ "run_id": "20261024-104844-push-super-gt-real",
+ "task": "push",
+ "title": "Push puck",
+ "instruction": "Push the orange puck so that its centre ends up inside the green circle. The puck is too wide to grasp.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "real",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 4,
+   "success": 0.5,
+   "gt_k": 4,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 4.0,
+   "usd_cum": 0.00322,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 80,
+   "summary": "**Mode 1: Overshoot & drop** (3 episodes: 1001, 1005, 1004)\n*Root cause:* The push distance (`push_distance = dist_xy + approach_offset`) is too large for the contact speed, causing the puck to slide past the target or lose grip before centering. Line 54 adds `approach_offset` to the remaining distance, which compounds when the puck is already close.\n*Fix:* Cap `push_distance` to `max(dist_xy, approach_offset)` so the gripper only pushes the remaining gap, not the full separation plus offset.\n\n**Mode 2: Upright failure / tilt** (2 episodes: 1002, 1005)\n*Root cause:* The puck is pushed while the gripper is still in contact, but no correction for rotational momentum is applied. If the approach angle is slightly off, the puck tips. Lines 35\u201336 compute `behind` point without checking puck orientation; lines 57\u201359 move the gripper linearly, ignoring tilt.\n*Fix:* Add a pre-push check: if `puck[\"orientation\"]` deviates >10\u00b0 from vertical, adjust `behind_x/behind_y` laterally by `0.02m` to push straighter, or lift slightly higher (`contact_height + 0.01`) to reduce friction torque.\n\n**Mode 3: Reach/visibility failure** (2 episodes: 1002, 1004)\n*Root cause:* The robot attempts `move_to` to poses that are perceptually blocked or outside the workspace after the initial approach, triggering the `except` handler at line 41/48 and resetting pose without progress.\n*Fix:* Before lowering to `contact_height`, verify `dist_xy > 0.05m`; if closer, skip the push and only reposition laterally using `travel_speed` before retrying the push loop."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 4,
+   "success": 0.5,
+   "gt_k": 4,
+   "self_k": 5,
+   "errors": 0,
+   "wall_s": 4.5,
+   "usd_cum": 0.01,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 106,
+   "summary": "**Mode 1: Contact-limited approach (6 episodes, seeds 2000\u20132002, 2006)**\n*Root cause:* The robot lowers to `contact_height` (line 72) but the puck\u2019s geometry or orientation causes the gripper to hit the table or puck edge before full descent, triggering the exception handler (line 73\u201376) which retreats to `lift_height`. The puck never enters the push phase.\n*Fix:* Increase `base_contact_height` from `0.02` to `0.03` m. This provides more clearance for the approach and reduces premature contact stops.\n\n**Mode 2: Lateral misalignment at close range (3 episodes, seeds 2001, 2006, 2007)**\n*Root cause:* When `dist_xy < 0.05` m (line 53), the code attempts a lateral side-step (lines 55\u201356). However, the step size `0.02` m is insufficient when the puck is already near the target radius, causing the robot to reposition into a blocked configuration or fail to re-establish contact.\n*Fix:* Increase the lateral step to `0.04` m in the close-range reposition block (lines 55\u201356) to ensure a clear path around the target perimeter."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 5.1,
+   "usd_cum": 0.01306,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 106,
+   "summary": "**Mode 1: Overshoot & oscillation** (5 episodes, seeds 3000, 3001, 3002, 3004, 3005)\n*Root cause:* The push distance `dist_xy + 0.002` (line 80) adds a fixed 2\u202fmm beyond the target. When the puck is already near the target, this extra travel pushes it past the green circle, then the next perception step sees it overshot and the loop retries from a new pose, creating a drift pattern.\n*Fix:* Cap the push distance to the remaining gap: `push_distance = min(dist_xy + 0.002, dist_xy * 1.1)` so the final nudge never exceeds 10\u202f% of the gap.\n\n**Mode 2: Lateral slip from yaw** (3 episodes, seeds 3003, 3006, 3007)\n*Root cause:* When `puck_yaw > 0.1745` rad (line 41) a lateral offset is applied (lines 46\u201148). The offset magnitude `0.02 * sin(puck_yaw)` is too small to counteract friction torque, so the puck tips and slides sideways instead of translating forward.\n*Fix:* Increase the lateral scaling from `0.02` to `0.05` (line 46) so the push point shifts enough to keep the puck rolling straight.\n\n**Mode 3: High approach height on close targets** (all 7 episodes)\n*Root cause:* When `dist_xy < 0.05` (line 53) the code sidesteps 0.04\u202fm laterally at `lift_height` (lines 55\u201160). If the sidestep lands the gripper in a narrow corridor between puck and table, the subsequent `move_to` to `behind_x, behind_y, contact_height` (line 72) can collide, triggering the `continue` and losing progress.\n*Fix:* Reduce the lateral step in the close\u2011target branch from `0.04` to `0.02` (line 55) to keep the gripper within the safe workspace.",
+   "reverted_to": 2
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 4,
+   "errors": 0,
+   "wall_s": 3.9,
+   "usd_cum": 0.0177,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 107,
+   "summary": "**Mode 1: Lift collision on approach (3 episodes: 4000, 4001, 4007)**\n*Root cause:* The robot lowers to `contact_height` (line 72) before confirming the path is clear. When the puck is near the target edge, the lowered gripper contacts the table or fixture, triggering the `except` at line 73\u201376 and retreating without pushing.\n*Fix:* Add a pre-lift-check: before line 71, test `robot.move_to(behind_x, behind_y, lift_height, speed=travel_speed)`. If it fails, skip this attempt rather than lowering into an obstacle.\n\n**Mode 2: Short stop due to contact/joint limit (3 episodes: 4000, 4001, 4007)**\n*Root cause:* After successfully reaching `lift_height`, the subsequent `move_to` to `contact_height` (line 72) is reported as `ok: false` with \"stopped short\". This indicates the robot cannot physically reach the low height from its current pose, likely due to singularity or workspace limits.\n*Fix:* Increase `contact_height` baseline (line 14) from `0.02` to `0.03`. This raises the contact point, keeping the robot in a safer pose while still allowing effective pushing."
+  },
+  {
+   "round": 5,
+   "n": 8,
+   "k": 1,
+   "success": 0.125,
+   "gt_k": 1,
+   "self_k": 1,
+   "errors": 0,
+   "wall_s": 4.8,
+   "usd_cum": 0.02166,
+   "code": "round_5/skill.py",
+   "diff": "round_5/diff.patch",
+   "lines": 105,
+   "summary": "**Mode 1: Overshoot & oscillation** (4 episodes: 5000, 5001, 5005, 5006)  \n*Root cause:* Push distance formula `dist_xy * 1.1` (line 80) adds 10% buffer even when already close, causing the puck to travel past the target and bounce back.  \n*Fix:* Cap push distance to `min(dist_xy, 0.15)` so short pushes dominate when near the target.\n\n**Mode 2: Missed lateral alignment** (3 episodes: 5002, 5003, 5007)  \n*Root cause:* Lateral shift `0.05 * sin(puck_yaw)` (line 46) is too small for yaw >10\u00b0, and the perpendicular offset (lines 47-48) uses `-dir_y`/`dir_x` which can point *away* from the target when the puck is yawed sideways.  \n*Fix:* Increase lateral scaling to `0.15` and reverse sign to `+dir_y`/`-dir_x` so the push point slides *toward* the target axis.\n\n**Mode 3: Descent blocks** (2 episodes: 5004 success, 5000/5001 retries)  \n*Root cause:* Contact height drops to `base_contact_height` (0.03m) on flat pucks, causing finger collision (lines 50, 72).  \n*Fix:* Raise nominal `base_contact_height` to `0.04` m to keep fingers clear of the table surface.",
+   "reverted_to": 4
+  },
+  {
+   "round": 6,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 4.4,
+   "usd_cum": 0.02817,
+   "code": "round_6/skill.py",
+   "diff": "round_6/diff.patch",
+   "lines": 107
+  }
+ ],
+ "best_round": 1,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 4,
+  "chosen": 1,
+  "rows": [
+   {
+    "round": 4,
+    "practice": "5/8",
+    "recheck": "11/16",
+    "total_k": 16,
+    "total_n": 24
+   },
+   {
+    "round": 1,
+    "practice": "4/8",
+    "recheck": "14/16",
+    "total_k": 18,
+    "total_n": 24
+   },
+   {
+    "round": 2,
+    "practice": "4/8",
+    "recheck": "11/16",
+    "total_k": 15,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 36,
+  "p": 0.72,
+  "lo": 0.58334612854,
+  "hi": 0.825259856423,
+  "source": "gt",
+  "best_round": 1,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 6.78,
+  "self_report_true": 50,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100000,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0361,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100000/end_front.jpg"
+   },
+   {
+    "seed": 100003,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0152,
+     "tolerance": 0.035,
+     "upright": false
+    },
+    "frame": "eval/episodes/ep_100003/end_front.jpg"
+   },
+   {
+    "seed": 100011,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0359,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100011/end_front.jpg"
+   },
+   {
+    "seed": 100015,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0066,
+     "tolerance": 0.035,
+     "upright": false
+    },
+    "frame": "eval/episodes/ep_100015/end_front.jpg"
+   },
+   {
+    "seed": 100016,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0404,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100016/end_front.jpg"
+   },
+   {
+    "seed": 100022,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0103,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100022/end_front.jpg"
+   },
+   {
+    "seed": 100025,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.039,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100025/end_front.jpg"
+   },
+   {
+    "seed": 100029,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0305,
+     "tolerance": 0.035,
+     "upright": false
+    },
+    "frame": "eval/episodes/ep_100029/end_front.jpg"
+   }
+  ]
+ },
+ "models": {
+  "coder": {
+   "alias": "super",
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "nvidia": true,
+   "calls": 8,
+   "prompt_tokens": 33842,
+   "completion_tokens": 16944,
+   "usd": 0.025403,
+   "price_in": 0.3,
+   "price_out": 0.9
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 5,
+   "prompt_tokens": 38521,
+   "completion_tokens": 1903,
+   "usd": 0.002768,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.028171,
+  "compute_usd": 0.0,
+  "total_usd": 0.028171,
+  "calls": 13,
+  "prompt_tokens": 72363,
+  "completion_tokens": 18847,
+  "compute_seconds": 320.98,
+  "backend": "local"
+ },
+ "wall_time_s": 188.2,
+ "practice_episodes": 48,
+ "created": "2026-10-24 10:51:53",
+ "skill_file": "best_skill.py"
+}

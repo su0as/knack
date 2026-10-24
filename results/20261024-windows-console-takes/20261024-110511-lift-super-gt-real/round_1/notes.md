@@ -1,0 +1,4 @@
+- First attempt: perceive the red cube, move above it, descend to a grasp height, close the gripper, then lift to at least 5 cm above the table.
+- Use small retry loops (up to 3 tries) to cope with perception noise and occasional grasp failures.
+- Keep approach speeds safe (0.1 m/s for travel, 0.05 m/s for fine positioning) and verify the grasp and final height before declaring success.
+- If any step fails, release the object (if held) and try again from the latest observation.

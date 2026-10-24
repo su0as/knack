@@ -1,0 +1,6 @@
+- Increase max_attempts from 3 to 5 to give more retries when perception or motion fails.
+- Add a debug log when the red cube is not observed to help diagnose missing perception.
+- Use a safer lift height (cz + 0.09) to guarantee the cube clears the 5 cm requirement even with observation noise.
+- After lifting, wait briefly (0.05 s) before checking the cube height to allow any settling.
+- Keep the perception‑act‑verify loop: each attempt starts with a fresh observation, and we verify grasp and hold before lifting.
+- Maintain safe speeds (0.1 m/s for travel, 0.05 m/s for fine moves).

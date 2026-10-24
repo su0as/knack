@@ -1,0 +1,5 @@
+- Fixed insufficient lift: compute target lift height from the actual cube centre (cz + 0.065) instead of a constant.
+- Added a pre‑grasp height guard: if the grasp point is too low (<0.03 m) we raise it to avoid table contact.
+- On grasp failure we now retreat and retry the approach/grasp sequence once before giving up.
+- All motions are wrapped in try/except MotionError to prevent crashes on unreachable targets.
+- After a successful grasp we re‑observe the cube to get an updated centre height for the lift calculation.

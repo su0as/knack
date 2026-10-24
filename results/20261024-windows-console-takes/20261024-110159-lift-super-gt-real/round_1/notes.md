@@ -1,0 +1,5 @@
+- Use a single perception step to get the red cube's pose (noisy, but sufficient for a first attempt).
+- Compute a grasp point slightly above the cube's centre so the finger pads close around its middle.
+- Move slowly to the grasp point, close the gripper, then lift a fixed amount (5 cm) to meet the height requirement.
+- Verify that the object is still held after the lift; if not, treat as failure.
+- Wrap moves in try/except for MotionError to avoid crashing on unreachable targets.

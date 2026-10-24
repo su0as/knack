@@ -1,0 +1,4 @@
+- Increase base_contact_height to 0.03 m to avoid joint‑limit stops when lowering.
+- Check the `ok` flag of every `move_to` (not just exceptions) and treat a blocked motion as a failure, retreating to safe height and retrying the attempt.
+- Keep the previously tuned parameters: approach_offset=0.04, push_speed=0.08, travel_speed=0.15, lift_height=0.05, max_attempts=5, yaw‑based lateral scaling=0.05, close‑target side‑step=0.02, push distance capped at min(dist+0.002, dist*1.1).
+- Before lowering to contact height, verify the path to lift height succeeds; if not, skip the attempt.

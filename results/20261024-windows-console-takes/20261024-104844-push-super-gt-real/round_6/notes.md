@@ -1,0 +1,6 @@
+- Increased base_contact_height to 0.04 m to prevent finger collisions with the table.
+- Changed lateral yaw compensation: scaling increased to 0.15 and sign reversed (+dir_y, -dir_x) so the push point slides toward the target axis.
+- Replaced the 10 % extra push distance with a fixed small epsilon (dist_xy + 0.002) to avoid overshoot when the puck is already near the target.
+- Switched all move_to calls to check the returned "ok" flag instead of relying on exceptions; on a blocked motion we retreat to a safe height and retry the attempt.
+- Added a higher‑lift fallback when the initial approach to the behind point fails.
+- Kept other tuned parameters (approach_offset, push_speed, travel_speed, lift_height, max_attempts) unchanged.

@@ -1,0 +1,38 @@
+Traceback (most recent call last):
+  File "D:\dev\knack\knack\agent.py", line 558, in run
+    rnd = self._practice(k, code)
+          ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\knack\knack\agent.py", line 383, in _practice
+    results = self._run_batch(code, seeds, rdir / "episodes")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\knack\knack\agent.py", line 253, in _run_batch
+    results = self.runner.run_batch(specs, out, on_update=self._on_episode)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\dev\knack\knack\runner.py", line 89, in run_batch
+    on_update("running", int(s["seed"]), None)
+  File "D:\dev\knack\knack\agent.py", line 244, in _on_episode
+    self._set()
+  File "D:\dev\knack\knack\agent.py", line 175, in _set
+    os.replace(tmp, p)
+PermissionError: [WinError 5] Access is denied: 'runs\\20261024-103454-push-super-gt-real\\state.json.tmp' -> 'runs\\20261024-103454-push-super-gt-real\\state.json'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\dev\knack\knack\__main__.py", line 6, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "D:\dev\knack\knack\cli.py", line 375, in main
+    return int(args.fn(args) or 0)
+               ^^^^^^^^^^^^^
+  File "D:\dev\knack\knack\cli.py", line 138, in cmd_learn
+    card = learner.run()
+           ^^^^^^^^^^^^^
+  File "D:\dev\knack\knack\agent.py", line 592, in run
+    self._set(status=status, phase="failed")
+  File "D:\dev\knack\knack\agent.py", line 175, in _set
+    os.replace(tmp, p)
+PermissionError: [WinError 5] Access is denied: 'runs\\20261024-103454-push-super-gt-real\\state.json.tmp' -> 'runs\\20261024-103454-push-super-gt-real\\state.json'
+run 20261024-103454-push-super-gt-real -> runs\20261024-103454-push-super-gt-real

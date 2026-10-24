@@ -1,0 +1,4 @@
+- Removed non‑ASCII emoji characters from comment lines that caused a SyntaxError.
+- Kept the same logic and variable names; only cleaned up comments.
+- Ensured all try/except blocks are properly indented and that the function ends with a return statement.
+- No other changes were needed; the algorithm remains sound for pushing the puck into the target zone.

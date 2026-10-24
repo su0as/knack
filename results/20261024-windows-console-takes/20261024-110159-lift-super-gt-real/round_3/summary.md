@@ -1,0 +1,7 @@
+**Mode 1: Grasp succeeds but immediate release (5 episodes: 3000, 3003, 3005, 3006, 3007)**
+- **Root cause:** Code releases the cube before lifting to target height. After `grasp()` at line 38, the robot moves to `approach_z` then `grasp_z` (lines 31–37), but the lift to `target_z` (line 65) only happens if `grasped` is True. However, the subsequent `move_to` to `target_z` (line 65) succeeds, yet the episode ends at line 78 with `robot.release()` because the final height check at line 75 fails (`final_cz >= 0.065 - 0.002`). The cube is dropped or settles below 6.5 cm during the observe cycle.
+- **Fix:** Move the `robot.release()` at line 78 inside the `if robot.holding() == "red_cube":` block (line 71), so release only occurs after the height verification passes.
+
+**Mode 2: Approach/grasp fails due to table contact (2 episodes: 3002, 3004)**
+- **Root cause:** `move_to` to `grasp_z` (line 35) stops short of the target. In seed 3002, the error note at line 36 explicitly says "stopped short of the target (blocked by contact or joint limit)". The cube sits at `cz ≈ 0.015 m`; `grasp_z = cz + 0.0125 ≈ 0.0275 m`, but the guard at line 22 sets `grasp_z = 0.03 m` only if below 0.03. The actual cube height may vary, causing the robot to hit the table or cube sides before closing.
+- **Fix:** Increase the `grasp_z` offset or add a pre-grasp height check: set `grasp_z = max(cz + 0.02, 0.04)` to ensure a safer 2 cm finger‑pad clearance above the cube, reducing table contact risk.

@@ -1,0 +1,3 @@
+- Increased base_contact_height from 0.02 m to 0.03 m to give more clearance when lowering the gripper, preventing premature contact stops (Mode 1 fix).
+- Enlarged the lateral side‑step in the close‑range (<0.05 m) reposition block from 0.02 m to 0.04 m to ensure a clear path around the target perimeter (Mode 2 fix).
+- No other logic changes; the overall push‑while‑in‑contact strategy remains unchanged.

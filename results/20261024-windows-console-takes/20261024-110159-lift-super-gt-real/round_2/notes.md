@@ -1,0 +1,4 @@
+- Grasp succeeded but lift fell short because a fixed dz lift did not account for the exact height needed to raise the cube centre to 0.065 m. Solution: lift to an absolute tool‑point height of 0.0775 m (which guarantees cube centre ≥ 0.065 m regardless of initial cz).
+- Grasp sometimes failed due to contact or stopping short; reduced the clearance above the grasp from 3 cm to 2.5 cm (approach_z = grasp_z + 0.025) to give the arm a smoother descent.
+- No premature release in the current logic; keep the release only if the grasp fails or the cube slips after lift.
+- Wrap all moves in try/except MotionError to avoid crashes on unreachable targets.

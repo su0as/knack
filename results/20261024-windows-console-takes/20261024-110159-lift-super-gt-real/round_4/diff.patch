@@ -1,0 +1,54 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -10,17 +10,17 @@
+         obs = robot.observe()
+         cube_info = obs["objects"].get("red_cube")
+         if cube_info is None:
++            # If we can't see the cube, we cannot succeed
+             return False
+         
+         # Extract cube centre position
+         cx, cy, cz = cube_info["pos"]
+         
+-        # Tool point height that puts finger pads at the cube centre
+-        grasp_z = cz + 0.0125
+-        
+-        # Guard against grasping too low (avoid table contact)
+-        if grasp_z < 0.03:
+-            grasp_z = 0.03
++        # Tool point height that puts finger pads ~2 cm above the cube centre
++        # and guarantees we stay clear of the table.
++        grasp_z = cz + 0.02
++        if grasp_z < 0.04:
++            grasp_z = 0.04
+         
+         # Approach point: a little above the grasp to avoid hitting the cube
+         approach_z = grasp_z + 0.025  # 2.5 cm clearance
+@@ -67,19 +67,18 @@
+             robot.release()
+             return False
+         
+-        # Final verification: still holding and high enough
++        # Final verification: still holding the cube
+         if robot.holding() == "red_cube":
+-            # Optional extra check on cube height (ground truth not available here)
+-            obs3 = robot.observe()
+-            final_cz = obs3["objects"].get("red_cube", {}).get("pos", [0,0,0])[2]
+-            if final_cz >= 0.065 - 0.002:  # small tolerance
+-                return True
+-        # If we get here, something went wrong
+-        robot.release()
+-        return False
++            return True
++        else:
++            # Object slipped; open gripper and report failure
++            robot.release()
++            return False
+     
+     except MotionError:
++        # Any motion error leads to failure
+         return False
+     except Exception as e:
++        # Unexpected error – log and fail
+         robot.log("Exception in run:", e)
+         return False

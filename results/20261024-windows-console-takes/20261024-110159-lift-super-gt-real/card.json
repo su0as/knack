@@ -1,0 +1,262 @@
+{
+ "run_id": "20261024-110159-lift-super-gt-real",
+ "task": "lift",
+ "title": "Lift",
+ "instruction": "Pick up the red cube and hold it at least 5 cm above the table.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "real",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 3,
+   "errors": 0,
+   "wall_s": 3.2,
+   "usd_cum": 0.0014,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 56,
+   "summary": "**Mode 1: Grasp succeeds, lift fails (4 episodes: 1000, 1004, 1007)**\n- **Root cause:** `move_by(dz=0.05)` lifts from the *grasp_z* (c centre + 0.0125 m), but the required height is cube centre + 0.05 m. With cz \u2248 0.05 m, grasp_z \u2248 0.0625 m; a 0.05 m lift only reaches \u22480.0725 m, missing the 0.065 m target in some poses. Line 41.\n- **Fix:** Compute target_z = cz + 0.0125 + 0.05 and `move_to(cx, cy, target_z)` instead of `move_by`.\n\n**Mode 2: Grasp fails due to collision/shortage (3 episodes: 1002, 1003, 1005)**\n- **Root cause:** `move_to(..., speed=0.05)` descends to `grasp_z` but stops short (error_m > 0.009). The arm contacts the cube or hits a joint limit before reaching the planned height. Lines 30, 33.\n- **Fix:** Reduce approach_z by 0.005 m (e.g., `approach_z = grasp_z + 0.025`) to give more clearance, or add a collision-check step before the slow descent.\n\n**Mode 3: Premature release (2 episodes: 1001, 1005)**\n- **Root cause:** `release()` is called immediately after `holding()` returns true (lines 48, 54), before the 5 cm lift completes. The gripper opens while the cube is still low.\n- **Fix:** Move the `release()` call to after the verification block (after line 45) or remove it entirely if the task ends at lift."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 7,
+   "errors": 0,
+   "wall_s": 4.0,
+   "usd_cum": 0.00548,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 70,
+   "summary": "**Mode 1: Insufficient lift height** (3 episodes: 2000, 2001, 2005)  \n*Root cause:* The lift target `target_z = 0.0775` (line 49) is fixed, but the code never recomputes it from the actual cube height `cz`. When `cz` is low (e.g., 0.056\u202fm), the robot stops at 0.0775\u202fm, leaving the cube at ~0.056\u202fm\u2014below the 0.065\u202fm requirement.  \n*Fix:* After `observe()`, compute `target_z = cz + 0.065` (ensures centre \u2265\u202f0.065\u202fm) and use that in the final `move_to` (line 51).\n\n**Mode 2: Grasp/descend collision** (2 episodes: 2001, 2005)  \n*Root cause:* The approach/grasp Z values (lines 23, 33) are derived from `cz + 0.0125` and `cz + 0.025`. If the perceived `cz` is inaccurate or the cube sits on an uneven surface, the robot descends into the table or loses grip.  \n*Fix:* Add a pre\u2011grasp height check: if `grasp_z < 0.03`, abort or raise `approach_z` by 0.01\u202fm (line 23) to guarantee clearance.\n\n**Mode 3: Gripper slip** (1 episode: 2001)  \n*Root cause:* After a short retreat (line 42) the gripper releases (line 60) without re\u2011attempting.  \n*Fix:* On grasp failure, retry the approach once before reporting failure."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 1,
+   "success": 0.125,
+   "gt_k": 1,
+   "self_k": 2,
+   "errors": 0,
+   "wall_s": 3.0,
+   "usd_cum": 0.00926,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 86,
+   "summary": "**Mode 1: Grasp succeeds but immediate release (5 episodes: 3000, 3003, 3005, 3006, 3007)**\n- **Root cause:** Code releases the cube before lifting to target height. After `grasp()` at line 38, the robot moves to `approach_z` then `grasp_z` (lines 31\u201337), but the lift to `target_z` (line 65) only happens if `grasped` is True. However, the subsequent `move_to` to `target_z` (line 65) succeeds, yet the episode ends at line 78 with `robot.release()` because the final height check at line 75 fails (`final_cz >= 0.065 - 0.002`). The cube is dropped or settles below 6.5\u202fcm during the observe cycle.\n- **Fix:** Move the `robot.release()` at line 78 inside the `if robot.holding() == \"red_cube\":` block (line 71), so release only occurs after the height verification passes.\n\n**Mode 2: Approach/grasp fails due to table contact (2 episodes: 3002, 3004)**\n- **Root cause:** `move_to` to `grasp_z` (line 35) stops short of the target. In seed 3002, the error note at line 36 explicitly says \"stopped short of the target (blocked by contact or joint limit)\". The cube sits at `cz \u2248 0.015\u202fm`; `grasp_z = cz + 0.0125 \u2248 0.0275\u202fm`, but the guard at line 22 sets `grasp_z = 0.03\u202fm` only if below 0.03. The actual cube height may vary, causing the robot to hit the table or cube sides before closing.\n- **Fix:** Increase the `grasp_z` offset or add a pre-grasp height check: set `grasp_z = max(cz + 0.02, 0.04)` to ensure a safer 2\u202fcm finger\u2011pad clearance above the cube, reducing table contact risk.",
+   "reverted_to": 2
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 3.2,
+   "usd_cum": 0.01402,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 85,
+   "summary": "**Mode 1: Grasp slip (5 episodes)**\n- **Root cause:** The lift after grasp uses `cz_after + 0.065` (line 63). With the cube at z\u22480.015\u202fm, target_z \u2248 0.08\u202fm. The robot moves to this height but does not verify that the gripper is still closed; the subsequent `holding()` check (line 71) often returns false because the cube slides out during the move.\n- **Fix:** After line 65, add a brief `robot.move_by(dz=0.01, speed=0.05)` to apply upward force, then re\u2011check `robot.holding()` before releasing.\n\n**Mode 2: Approach/grasp miss (3 episodes)**\n- **Root cause:** The approach height `grasp_z = cz + 0.02` (line 21) is only 2\u202fcm above the cube. When the cube is at z\u22480.015\u202fm, `grasp_z` \u2248 0.035\u202fm, leaving insufficient clearance for the robot\u2019s hand geometry, causing the grasp to fail or slip immediately.\n- **Fix:** Increase the offset to `cz + 0.04` (line 21) and raise `approach_z` accordingly (line 26), ensuring the robot reaches well above the cube before closing.\n\n**Mode 3: Perception loss (1 episode)**\n- **Root cause:** After a failed grasp the code retreats (`move_by(dz=0.02)`) but does not re\u2011observe before the retry (lines 44\u201148). If the cube shifted, the second `attempt_grasp()` targets stale coordinates.\n- **Fix:** Insert `obs = robot.observe()` after the retreat and before the retry, then extract fresh `cx, cy, cz`.",
+   "reverted_to": 2
+  },
+  {
+   "round": 5,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 3.5,
+   "usd_cum": 0.01937,
+   "code": "round_5/skill.py",
+   "diff": "round_5/diff.patch",
+   "lines": 79,
+   "summary": "**Mode 1 \u2013 Grasp never succeeds (6 episodes)**\n- **Root cause:** `robot.grasp()` returns `False` every attempt (lines 38\u201146). The arm descends, closes, but the gripper fails to close or the cube slips.\n- **Fix:** Add a small retreat (`move_by(dz=0.02)`) after each failed grasp and re\u2011observe before the next try, as the code already intends. Ensure the approach pose (`approach_z = cz + 0.065`) gives enough vertical clearance for a reliable close.\n\n**Mode 2 \u2013 Cube perceived too low (4 episodes)**\n- **Root cause:** Perception reports `red_cube_z \u2248 0.015\u202fm` (line 19), but the code\u2019s `target_z = 0.0775\u202fm` (line 54) assumes the cube centre is higher. The required height `0.065\u202fm` cannot be met because the starting `cz` is underestimated.\n- **Fix:** Increase the initial `grasp_z` offset (line 22) or add a perception correction step that raises `cz` if the observed `z` seems inconsistent with the workspace.\n\n**Mode 3 \u2013 Motion error during lift (2 episodes)**\n- **Root cause:** `robot.move_to(cx, cy, target_z, speed=0.1)` (line 56) throws `MotionError` when the arm cannot reach the commanded height, triggering `robot.release()` and failure (lines 58\u201159).\n- **Fix:** Reduce `speed` to `0.05` on the lift move, or add a `try/except` that attempts a lower `target_z` (e.g., `0.07`) before giving up.",
+   "reverted_to": 2
+  },
+  {
+   "round": 6,
+   "n": 8,
+   "k": 3,
+   "success": 0.375,
+   "gt_k": 3,
+   "self_k": 5,
+   "errors": 0,
+   "wall_s": 3.1,
+   "usd_cum": 0.02327,
+   "code": "round_6/skill.py",
+   "diff": "round_6/diff.patch",
+   "lines": 80
+  }
+ ],
+ "best_round": 2,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 2,
+  "chosen": 2,
+  "rows": [
+   {
+    "round": 2,
+    "practice": "5/8",
+    "recheck": "7/16",
+    "total_k": 12,
+    "total_n": 24
+   },
+   {
+    "round": 6,
+    "practice": "3/8",
+    "recheck": "7/16",
+    "total_k": 10,
+    "total_n": 24
+   },
+   {
+    "round": 3,
+    "practice": "1/8",
+    "recheck": "1/16",
+    "total_k": 2,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 20,
+  "p": 0.4,
+  "lo": 0.276081897862,
+  "hi": 0.538188108972,
+  "source": "gt",
+  "best_round": 2,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 3,
+  "mean_sim_time": 3.89,
+  "self_report_true": 32,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100001,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100001/end_front.jpg"
+   },
+   {
+    "seed": 100002,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100002/end_front.jpg"
+   },
+   {
+    "seed": 100003,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100003/end_front.jpg"
+   },
+   {
+    "seed": 100004,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0614,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100004/end_front.jpg"
+   },
+   {
+    "seed": 100006,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0558,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100006/end_front.jpg"
+   },
+   {
+    "seed": 100007,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0639,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100007/end_front.jpg"
+   },
+   {
+    "seed": 100008,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100008/end_front.jpg"
+   },
+   {
+    "seed": 100009,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100009/end_front.jpg"
+   }
+  ]
+ },
+ "models": {
+  "coder": {
+   "alias": "super",
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "nvidia": true,
+   "calls": 8,
+   "prompt_tokens": 28925,
+   "completion_tokens": 14208,
+   "usd": 0.021465,
+   "price_in": 0.3,
+   "price_out": 0.9
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 5,
+   "prompt_tokens": 21398,
+   "completion_tokens": 2157,
+   "usd": 0.001803,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.023268,
+  "compute_usd": 0.0,
+  "total_usd": 0.023268,
+  "calls": 13,
+  "prompt_tokens": 50323,
+  "completion_tokens": 16365,
+  "compute_seconds": 285.77,
+  "backend": "local"
+ },
+ "wall_time_s": 166.6,
+ "practice_episodes": 48,
+ "created": "2026-10-24 11:04:46",
+ "skill_file": "best_skill.py"
+}

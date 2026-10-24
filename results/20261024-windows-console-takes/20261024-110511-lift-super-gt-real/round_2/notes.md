@@ -1,0 +1,5 @@
+- Increase lift target to cz + 0.07 to guarantee ≥5 cm clearance after settling.
+- Add a short wait after grasp to let the fingers close fully.
+- Tighten final height check to ≥0.065 m (the required cube centre height).
+- Keep the perception‑act‑verify loop; each iteration starts with a fresh observation to avoid stale data.
+- Maintain safe speeds (0.1 m/s for travel, 0.05 m/s for fine moves).
