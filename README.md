@@ -73,6 +73,77 @@ flowchart LR
 - **Rewards**: `gt` (simulator check), `vlm` (vision judge only; the coder never sees ground truth), `self` (the skill grades itself, included to measure how badly that goes).
 - **Zero demonstrations**: the coder sees the task text, the API doc and an example observation. The hand-written reference skills in `knack/oracles.py` exist only to prove each scene is solvable in CI; a test asserts that no prompt contains them.
 
+## Results
+
+Read this section in order: the camera-grade results are the point, the easy-mode table is context. All runs on 23-24 Oct 2026, zero demonstrations, 8 parallel practice episodes per round, held-out success on **50 unseen layouts** with a Wilson 95% interval. Cost is the exact Token Factory bill for the whole run (every model call), from `ledger.jsonl`.
+
+**1. Practice turns failing first attempts into working skills, measured directly.** "Camera-grade" means `--realism real`: about 8 mm of pose noise per reading, as a cheap arm with an overhead camera sees (details in 2). `knack exp gain` re-runs each run's *first* version (written before any feedback) on the exact 50 held-out layouts the practised version was scored on. Where the best version was round 1 the two numbers match exactly, which checks that the comparison is like for like.
+
+| run | first version | after practice | gain |
+|---|---|---|---|
+| Super, push, camera-grade | 3/50 (6%) | 41/50 (82%), round 6 | **+76 pts** |
+| Super, push, camera-grade (repeat run) | 12/50 (24%) | 32/50 (64%), round 6 | **+40 pts** |
+| Super, lift | 0/50 (0%) | 50/50 (100%), round 3 | **+100 pts** |
+| Super, lift, camera-grade | 0/50 (0%) | 42/50 (84%), round 4 | **+84 pts** |
+| Super, sort, camera-grade | 14/50 (28%) | 18/50 (36%), round 5 | +8 pts (within noise) |
+| Super, tray | 23/50 (46%) | 32/50 (64%), round 4 | +18 pts |
+| Super, stack, camera-grade | 29/50 (58%) | 31/50 (62%), round 5 | +4 pts (within noise) |
+| Super, stack, camera-grade (repeat run) | 34/50 (68%) | 31/50 (62%), round 5 | -6 pts (within noise) |
+| Ultra, stack, camera-grade | 32/50 (64%) | 32/50 (64%), round 2 | 0 |
+| Ultra, push, camera-grade | 7/50 (14%) | 5/50 (10%), round 6 | -4 pts |
+| 22 other runs (incl. Ultra on lift, place, tray, sort at camera-grade: 86-100%) | solved in round 1 | | 0 |
+
+Sources: `results/20261023-101415-practice-gain`, repeat runs in `results/*-real-super-replicate` and `results/*-gain-replicate`, four more camera-grade scenes in `results/*-real-4tasks` and `results/*-gain-real-4tasks`. The push gain repeats (+76 and +40 points); on stack under camera noise practice did not beat the first version, and both sit near the hand-written reference (57%), which suggests the noise, not the code, is the limit there. Two lessons went straight back into the code: an 8-episode practice score is too noisy to pick the best version (Ultra's "88%" round equalled its first version on held-out), so Knack now re-checks the top versions on 16 fresh layouts before the final evaluation; and a rewrite that scores worse is discarded (see 5).
+
+**2. With camera-grade perception, first attempts fail and practice is what gets the skill working.** `--realism real` adds about 8 mm of pose noise per reading, 0.08 rad of yaw noise and wider mass, friction and grip randomisation (what a cheap arm with an overhead camera sees):
+
+| run | practice rounds (success on 8 layouts) | held-out (50 layouts) | cost |
+|---|---|---|---|
+| Super, push | 0% → 12% → 12% → 12% → 0% → 50% | **82%** (CI 69% to 90%) | $0.028 |
+| Super, stack | 12% → 75% → 50% → 50% → 75% → 50% | **62%** (CI 48% to 74%) | $0.045 |
+| Ultra, stack | 50% → 88% → 62% → 62% → 62% → 50% | **64%** (CI 50% to 76%) | $0.108 |
+| Ultra, push | 0% → 12% → 0% → 0% → 12% → 12% | 10% (CI 4% to 21%) | $0.100 |
+
+For comparison, the hand-written reference fixtures under the same noise score 57% on stack and 87% on push (30 layouts each). Source: `results/20261023-100205-real-stack-push`. Ultra on push is a failure we publish on purpose: its rewrites kept adding clearance logic that drove the arm into its workspace limits.
+
+**3. With near-perfect perception the scenes are easy: Nemotron 3 Ultra programs all six for under 7 cents each, mostly first try.** Standard perception (about 2 mm pose noise):
+
+| scene | Nemotron 3 Nano (3B active) | Nemotron 3 Super | Nemotron 3 Ultra | DeepSeek V4.1 Flash (baseline) |
+|---|---|---|---|---|
+| lift | | 100% · $0.011 | 100% · $0.006 | |
+| place in circle | | 100% · $0.004 | 100% · $0.005 | |
+| push puck | | 80% · $0.005 | 90% · $0.065 | |
+| stack | 64% · $0.006 | 72% · $0.028 | 100% · $0.004 | 100% · $0.005 |
+| into the tray | 100% · $0.001 | 64% · $0.013 | 100% · $0.005 | 100% · $0.009 |
+| sort by colour | 0% · $0.006 | 100% · $0.003 | 100% · $0.006 | 100% · $0.003 |
+
+Sources: `results/20261023-090645-pilot`, `results/20261023-093859-scoreboard-hard`. For context only (different benchmark, LIBERO-Pro): ASPIRE's published chart puts open-weight coding agents at about $40 to $55 per task. The honest reading is that Knack's scenes with near-perfect perception are easy for a strong coder: Ultra and DeepSeek solved them on the first try, and practice mattered only for the smaller models.
+
+**4. A vision reward works when the outcome is visible, and gets gamed when it is not.** Same coder (Super), three reward sources, held-out scored by ground truth (`results/*-ablation`):
+
+| reward used during practice | stack | lift ("at least 5 cm above the table") |
+|---|---|---|
+| simulator ground truth | 50/50 | 36/50 |
+| **Nemotron 3.5 Super VL judging 4 camera frames** | **49/50** | **0/50** |
+| the skill's own `return True` | 50/50 | 50/50 |
+
+On stack, the judge agreed with ground truth on all 52 practice and held-out episodes it scored, so practice with no simulator signal at all produced a 98% skill. On lift it said "success, 0.95" on every episode where the cube was held a few millimetres short of 5 cm, which no camera at 320x240 can see, so the coder stopped at round 1 with a skill that never meets the spec. The lift skill trained on the judge also returned `True` on all 50 held-out episodes that ground truth failed: an agent grading itself, or graded by a model that cannot see the criterion, will report success it did not achieve. This is the case for keeping a measurable check wherever one exists, and for writing task specs a camera can verify.
+
+**5. Four things the live runs changed in the code** (each in the commit history):
+- Nemotron 3.5 Lightning with thinking on spent its whole 4000-token budget reasoning and returned the unfinished thought as the "analysis". The summariser now runs with `enable_thinking: false` (about 460 output tokens, about 4 s).
+- Ultra once edited its own broken rewrite three times in a row (88% → 0% → 0% → 0%). A rewrite that scores worse is now discarded and the next rewrite starts from the best version, with the harmful diff shown to the coder.
+- The overhead judge camera was washed out; the floor and headlight were toned down so the vision judge can see positions.
+- Practice scores on 8 layouts picked the wrong "best" version; the top versions are now re-checked on 16 fresh layouts (simulator only, no tokens).
+
+Still to run: Kimi K3 as a second reference coder, and a Serverless Jobs run. Commands:
+
+| Finding | Command | Output |
+|---|---|---|
+| Ground truth vs vision judge vs self-report as the reward | `knack exp ablation` | `ablation.json` |
+| Vision-judge accuracy and abstention vs ground truth | `knack exp judge runs/` | `judge_eval.json`, `judge_coverage.png` |
+| What practice adds | `knack exp gain "runs/**/*-gt*"` | `practice_gain.md` |
+| First try vs practised, side by side | `knack replay <run_dir> --compare --n 6` | GIF + PNG |
+
 ## Quickstart
 
 Python 3.10+. Works natively on Windows, macOS and Linux (no WSL needed).
@@ -107,77 +178,6 @@ knack ui                          # console
 ```
 
 Every command that calls a model takes `--budget` (USD) and stops cleanly when it is reached.
-
-## Results
-
-All runs on 23 Oct 2026, zero demonstrations, 8 parallel practice episodes per round, held-out success on **50 unseen layouts** with a Wilson 95% interval. Cost is the exact Token Factory bill for the whole run (every model call), from `ledger.jsonl`.
-
-**1. Nemotron 3 Ultra programs all six scenes for under 7 cents each.** Standard perception (about 2 mm pose noise):
-
-| scene | Nemotron 3 Nano (3B active) | Nemotron 3 Super | Nemotron 3 Ultra | DeepSeek V4.1 Flash (baseline) |
-|---|---|---|---|---|
-| lift | | 100% · $0.011 | 100% · $0.006 | |
-| place in circle | | 100% · $0.004 | 100% · $0.005 | |
-| push puck | | 80% · $0.005 | 90% · $0.065 | |
-| stack | 64% · $0.006 | 72% · $0.028 | 100% · $0.004 | 100% · $0.005 |
-| into the tray | 100% · $0.001 | 64% · $0.013 | 100% · $0.005 | 100% · $0.009 |
-| sort by colour | 0% · $0.006 | 100% · $0.003 | 100% · $0.006 | 100% · $0.003 |
-
-Sources: `results/20261023-090645-pilot`, `results/20261023-093859-scoreboard-hard`. For context only (different benchmark, LIBERO-Pro): ASPIRE's published chart puts open-weight coding agents at about $40 to $55 per task. The honest reading is that Knack's scenes with near-perfect perception are easy for a strong coder: Ultra and DeepSeek solved them on the first try, and practice mattered only for the smaller models.
-
-**2. With camera-grade perception, first attempts fail and practice is what gets the skill working.** `--realism real` adds about 8 mm of pose noise per reading, 0.08 rad of yaw noise and wider mass, friction and grip randomisation (what a cheap arm with an overhead camera sees):
-
-| run | practice rounds (success on 8 layouts) | held-out (50 layouts) | cost |
-|---|---|---|---|
-| Super, push | 0% → 12% → 12% → 12% → 0% → 50% | **82%** (CI 69% to 90%) | $0.028 |
-| Super, stack | 12% → 75% → 50% → 50% → 75% → 50% | **62%** (CI 48% to 74%) | $0.045 |
-| Ultra, stack | 50% → 88% → 62% → 62% → 62% → 50% | **64%** (CI 50% to 76%) | $0.108 |
-| Ultra, push | 0% → 12% → 0% → 0% → 12% → 12% | 10% (CI 4% to 21%) | $0.100 |
-
-For comparison, the hand-written reference fixtures under the same noise score 57% on stack and 87% on push (30 layouts each). Source: `results/20261023-100205-real-stack-push`. Ultra on push is a failure we publish on purpose: its rewrites kept adding clearance logic that drove the arm into its workspace limits.
-
-**3. What practice adds, measured directly.** `knack exp gain` re-runs each run's *first* version (written before any feedback) on the exact 50 held-out layouts the practised version was scored on. Where the best version was round 1 the two numbers match exactly, which checks that the comparison is like for like.
-
-| run | first version | after practice | gain |
-|---|---|---|---|
-| Super, push, camera-grade | 3/50 (6%) | 41/50 (82%), round 6 | **+76 pts** |
-| Super, push, camera-grade (repeat run) | 12/50 (24%) | 32/50 (64%), round 6 | **+40 pts** |
-| Super, lift | 0/50 (0%) | 50/50 (100%), round 3 | **+100 pts** |
-| Super, lift, camera-grade | 0/50 (0%) | 42/50 (84%), round 4 | **+84 pts** |
-| Super, sort, camera-grade | 14/50 (28%) | 18/50 (36%), round 5 | +8 pts (within noise) |
-| Super, tray | 23/50 (46%) | 32/50 (64%), round 4 | +18 pts |
-| Super, stack, camera-grade | 29/50 (58%) | 31/50 (62%), round 5 | +4 pts (within noise) |
-| Super, stack, camera-grade (repeat run) | 34/50 (68%) | 31/50 (62%), round 5 | -6 pts (within noise) |
-| Ultra, stack, camera-grade | 32/50 (64%) | 32/50 (64%), round 2 | 0 |
-| Ultra, push, camera-grade | 7/50 (14%) | 5/50 (10%), round 6 | -4 pts |
-| 22 other runs (incl. Ultra on lift, place, tray, sort at camera-grade: 86-100%) | solved in round 1 | | 0 |
-
-Sources: `results/20261023-101415-practice-gain`, repeat runs in `results/*-real-super-replicate` and `results/*-gain-replicate`, four more camera-grade scenes in `results/*-real-4tasks` and `results/*-gain-real-4tasks`. The push gain repeats (+76 and +40 points); on stack under camera noise practice did not beat the first version, and both sit near the hand-written reference (57%), which suggests the noise, not the code, is the limit there. Two lessons went straight back into the code: an 8-episode practice score is too noisy to pick the best version (Ultra's "88%" round equalled its first version on held-out), so Knack now re-checks the top versions on 16 fresh layouts before the final evaluation; and a rewrite that scores worse is discarded (see 4).
-
-**4. Four things the live runs changed in the code** (each in the commit history):
-- Nemotron 3.5 Lightning with thinking on spent its whole 4000-token budget reasoning and returned the unfinished thought as the "analysis". The summariser now runs with `enable_thinking: false` (about 460 output tokens, about 4 s).
-- Ultra once edited its own broken rewrite three times in a row (88% → 0% → 0% → 0%). A rewrite that scores worse is now discarded and the next rewrite starts from the best version, with the harmful diff shown to the coder.
-- The overhead judge camera was washed out; the floor and headlight were toned down so the vision judge can see positions.
-- Practice scores on 8 layouts picked the wrong "best" version; the top versions are now re-checked on 16 fresh layouts (simulator only, no tokens).
-
-**5. A vision reward works when the outcome is visible, and gets gamed when it is not.** Same coder (Super), three reward sources, held-out scored by ground truth (`results/*-ablation`):
-
-| reward used during practice | stack | lift ("at least 5 cm above the table") |
-|---|---|---|
-| simulator ground truth | 50/50 | 36/50 |
-| **Nemotron 3.5 Super VL judging 4 camera frames** | **49/50** | **0/50** |
-| the skill's own `return True` | 50/50 | 50/50 |
-
-On stack, the judge agreed with ground truth on all 52 practice and held-out episodes it scored, so practice with no simulator signal at all produced a 98% skill. On lift it said "success, 0.95" on every episode where the cube was held a few millimetres short of 5 cm, which no camera at 320x240 can see, so the coder stopped at round 1 with a skill that never meets the spec. The lift skill trained on the judge also returned `True` on all 50 held-out episodes that ground truth failed: an agent grading itself, or graded by a model that cannot see the criterion, will report success it did not achieve. This is the case for keeping a measurable check wherever one exists, and for writing task specs a camera can verify.
-
-Still to run: Kimi K3 as a second reference coder, and a Serverless Jobs run. Commands:
-
-| Finding | Command | Output |
-|---|---|---|
-| Ground truth vs vision judge vs self-report as the reward | `knack exp ablation` | `ablation.json` |
-| Vision-judge accuracy and abstention vs ground truth | `knack exp judge runs/` | `judge_eval.json`, `judge_coverage.png` |
-| What practice adds | `knack exp gain "runs/**/*-gt*"` | `practice_gain.md` |
-| First try vs practised, side by side | `knack replay <run_dir> --compare --n 6` | GIF + PNG |
 
 ## Real arm (experimental)
 
