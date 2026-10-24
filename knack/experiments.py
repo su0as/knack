@@ -300,3 +300,87 @@ def practice_gain(patterns: list[str], n: int | None = None, workers=None, out_r
     (out / "practice_gain.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines))
     return res
+
+
+def figures(patterns: list[str], out_dir: str = "docs/figures") -> list[str]:
+    """README charts from committed results: (1) first try vs practised (practice_gain.json files),
+    (2) held-out success vs $ per skill by coder, camera-grade runs, with ASPIRE's published points as context."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    files = sorted({f for pat in patterns for f in glob.glob(pat, recursive=True)})
+    gains, rows = [], []
+    for f in files:
+        d = json.loads(Path(f).read_text(encoding="utf-8"))
+        if f.endswith("practice_gain.json"):
+            gains += d.get("rows", [])
+        elif "rows" in d:
+            rows += [r for r in d["rows"] if r.get("eval_p") is not None]
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    ink, lime, red, grey, paper = "#e8ecef", "#c6ff3d", "#ff5d3d", "#8a94a3", "#0b0e12"
+    plt.rcParams.update({"figure.facecolor": paper, "axes.facecolor": paper, "axes.edgecolor": grey, "text.color": ink,
+                         "axes.labelcolor": ink, "xtick.color": ink, "ytick.color": ink, "font.size": 9})
+    written = []
+    # (1) dumbbell: runs where practice changed the outcome, plus a few solved-first-try for contrast
+    g = [r for r in gains if r.get("first_n") == r.get("best_n")]
+    seen, uniq = set(), []
+    for r in g:
+        if r["run_id"] not in seen:
+            seen.add(r["run_id"])
+            uniq.append(r)
+    moved = sorted([r for r in uniq if r["best_p"] != r["first_p"]], key=lambda r: r["best_p"] - r["first_p"])
+    if moved:
+        fig, ax = plt.subplots(figsize=(7, 0.42 * len(moved) + 1.2))
+        for i, r in enumerate(moved):
+            label = f"{r['coder']} · {r['task']}" + (" · camera" if r.get("realism") == "real" else "")
+            ax.plot([r["first_p"], r["best_p"]], [i, i], color=grey, lw=2, zorder=1)
+            ax.scatter([r["first_p"]], [i], color=grey, s=40, zorder=2)
+            ax.scatter([r["best_p"]], [i], color=lime if r["best_p"] > r["first_p"] else red, s=60, zorder=3)
+            ax.text(-0.02, i, label, ha="right", va="center")
+            ax.text(r["best_p"] + 0.02, i, f"{r['first_k']}→{r['best_k']}/{r['best_n']}", va="center", fontsize=8)
+        ax.set_yticks([])
+        ax.set_xlim(0, 1.15)
+        ax.set_xlabel("held-out success on the same 50 layouts (grey: first version, colour: after practice)")
+        ax.set_title("What practice adds (Knack, live runs, 23-24 Oct 2026)", loc="left")
+        for s in ("top", "right", "left"):
+            ax.spines[s].set_visible(False)
+        f = out / "practice_gain.png"
+        fig.tight_layout()
+        fig.savefig(f, dpi=170)
+        plt.close(fig)
+        written.append(str(f))
+    # (2) success vs cost per coder, camera-grade
+    cam = [r for r in rows if "-real" in str(r.get("run_id", "")) or r.get("realism") == "real"]
+    if cam:
+        by = {}
+        for r in cam:
+            by.setdefault(r["model"], []).append(r)
+        fig, ax = plt.subplots(figsize=(7, 4.2))
+        for m, rs in by.items():
+            p = sum(r["eval_p"] for r in rs) / len(rs)
+            usd = sum(r["usd"] for r in rs) / len(rs)
+            nv = resolve_model(m).nvidia
+            ax.scatter(usd, p, s=110, color=lime if nv else red, zorder=3)
+            ax.annotate(f"{m} ({len(rs)} skills)", (usd, p), xytext=(7, 4), textcoords="offset points")
+        for ref in ASPIRE_REFERENCE:
+            ax.scatter(ref["usd_per_task"], ref["success"], s=70, facecolors="none", edgecolors=grey, zorder=2)
+            ax.annotate(ref["label"], (ref["usd_per_task"], ref["success"]), xytext=(6, -11), textcoords="offset points",
+                        fontsize=7, color=grey)
+        ax.set_xscale("log")
+        ax.set_ylim(0, 1.05)
+        ax.set_xlabel("USD per verified skill (log). Filled: Knack, camera-grade scenes. Hollow: ASPIRE chart, LIBERO-Pro")
+        ax.set_ylabel("mean held-out success")
+        ax.set_title("Cost of a robot skill: Nemotron on Token Factory (lime = NVIDIA, red = other open models)", loc="left", fontsize=9)
+        for s in ("top", "right"):
+            ax.spines[s].set_visible(False)
+        f = out / "cost_vs_success_camera.png"
+        fig.tight_layout()
+        fig.savefig(f, dpi=170)
+        plt.close(fig)
+        written.append(str(f))
+    for w in written:
+        print(w)
+    return written
