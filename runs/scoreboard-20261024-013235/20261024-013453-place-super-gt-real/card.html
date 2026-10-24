@@ -1,0 +1,221 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Place in circle</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261024-013453-place-super-gt-real &middot; 2026-10-24 01:35:49</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Put the blue cube inside the green circle on the table and let go of it.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: real &middot; 8 practice episodes in 1 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/nemotron-3-super-120b-a12b <em>$0.30 / $0.90 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">80%</div><div>40/50 layouts &middot; Wilson 95% CI 67% to 89%</div><div class='ci'><div class='ci-band' style='left:67.0%;width:21.8%'></div><div class='ci-dot' style='left:80.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:100%'></span><em>R1<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/nemotron-3-super-120b-a12b</code></td><td>1</td><td>1,670</td><td>1,489</td><td>$0.0018</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>0</td><td>0</td><td>0</td><td>$0.0000</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>92 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>1</th><th>1,670</th><th>1,489</th><th>$0.0018</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details open><summary>Round 1: 8/8 practice episodes &middot; 0 errors &middot; $0.0018 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- First version: perceive cube and target, move above cube, descend to grasp height, grasp, lift, move above target, descend to release height, release.
+- Use safe Z for travel, low Z for grasp/release.
+- Simple retry on grasp failure (max 2 attempts).
+- No compensation for perception noise yet; will add verification in later iterations.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,90 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    # Constants for motion</span>
+<span class='add'>+    SAFE_Z = 0.08      # height for safe travel</span>
+<span class='add'>+    GRASP_Z = 0.02     # height to attempt grasp (tool point)</span>
+<span class='add'>+    RELEASE_Z = 0.02   # height to release</span>
+<span class='add'>+    SPEED_TRAVEL = None   # use default speed</span>
+<span class='add'>+    SPEED_SLOW = 0.05     # slow speed near objects</span>
+<span class='add'>+    MAX_GRASP_ATTEMPTS = 2</span>
+<span class='add'>+</span>
+<span class='add'>+    # Helper to safely move, catching MotionError</span>
+<span class='add'>+    def safe_move_to(x, y, z, yaw=None, speed=None):</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            return robot.move_to(x, y, z, yaw=yaw, speed=speed)</span>
+<span class='add'>+        except Exception as e:  # MotionError is subclass of Exception</span>
+<span class='add'>+            robot.log(&quot;Move failed:&quot;, e)</span>
+<span class='add'>+            return {&quot;ok&quot;: False}</span>
+<span class='add'>+</span>
+<span class='add'>+    # 1. Observe scene to get cube and target poses</span>
+<span class='add'>+    obs = robot.observe()</span>
+<span class='add'>+    cube_info = obs[&quot;objects&quot;].get(&quot;blue_cube&quot;)</span>
+<span class='add'>+    target_info = obs[&quot;fixtures&quot;].get(&quot;target&quot;)</span>
+<span class='add'>+    if not cube_info or not target_info:</span>
+<span class='add'>+        robot.log(&quot;Missing cube or target in observation&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    cube_pos = cube_info[&quot;pos&quot;]</span>
+<span class='add'>+    cube_yaw = cube_info[&quot;yaw&quot;]</span>
+<span class='add'>+    target_pos = target_info[&quot;pos&quot;]</span>
+<span class='add'>+</span>
+<span class='add'>+    # 2. Move above the cube</span>
+<span class='add'>+    res = safe_move_to(cube_pos[0], cube_pos[1], SAFE_Z, yaw=cube_yaw, speed=SPEED_TRAVEL)</span>
+<span class='add'>+    if not res[&quot;ok&quot;]:</span>
+<span class='add'>+        robot.log(&quot;Failed to move above cube&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # 3. Descend to grasp height (slow)</span>
+<span class='add'>+    res = safe_move_to(cube_pos[0], cube_pos[1], GRASP_Z, yaw=cube_yaw, speed=SPEED_SLOW)</span>
+<span class='add'>+    if not res[&quot;ok&quot;]:</span>
+<span class='add'>+        robot.log(&quot;Failed to descend to grasp height&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # 4. Attempt grasp (with retries)</span>
+<span class='add'>+    grasped = False</span>
+<span class='add'>+    for _ in range(MAX_GRASP_ATTEMPTS):</span>
+<span class='add'>+        if robot.grasp():</span>
+<span class='add'>+            # Verify we are holding something</span>
+<span class='add'>+            if robot.holding() is not None:</span>
+<span class='add'>+                grasped = True</span>
+<span class='add'>+                break</span>
+<span class='add'>+        robot.log(&quot;Grasp attempt failed, retrying&quot;)</span>
+<span class='add'>+        # Slightly re-open and try again</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        robot.wait(0.1)</span>
+<span class='add'>+</span>
+<span class='add'>+    if not grasped:</span>
+<span class='add'>+        robot.log(&quot;Could not grasp cube after attempts&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # 5. Lift cube to safe height</span>
+<span class='add'>+    res = safe_move_to(cube_pos[0], cube_pos[1], SAFE_Z, yaw=cube_yaw, speed=SPEED_SLOW)</span>
+<span class='add'>+    if not res[&quot;ok&quot;]:</span>
+<span class='add'>+        robot.log(&quot;Failed to lift cube&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # 6. Move above target zone</span>
+<span class='add'>+    res = safe_move_to(target_pos[0], target_pos[1], SAFE_Z, yaw=None, speed=SPEED_TRAVEL)</span>
+<span class='add'>+    if not res[&quot;ok&quot;]:</span>
+<span class='add'>+        robot.log(&quot;Failed to move above target&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # 7. Descend to release height (still over target)</span>
+<span class='add'>+    res = safe_move_to(target_pos[0], target_pos[1], RELEASE_Z, yaw=None, speed=SPEED_SLOW)</span>
+<span class='add'>+    if not res[&quot;ok&quot;]:</span>
+<span class='add'>+        robot.log(&quot;Failed to descend to release height&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # 8. Release the cube</span>
+<span class='add'>+    robot.release()</span>
+<span class='add'>+    robot.wait(0.2)  # let it settle</span>
+<span class='add'>+</span>
+<span class='add'>+    # 9. Retreat to safe height</span>
+<span class='add'>+    res = safe_move_to(target_pos[0], target_pos[1], SAFE_Z, yaw=None, speed=SPEED_TRAVEL)</span>
+<span class='add'>+    if not res[&quot;ok&quot;]:</span>
+<span class='add'>+        robot.log(&quot;Failed to retreat after release&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # Task considered done; success evaluation is external</span>
+<span class='add'>+    return True</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100003/end_front.jpg"><figcaption>seed 100003<br></figcaption></figure><figure><img src="eval/episodes/ep_100011/end_front.jpg"><figcaption>seed 100011<br></figcaption></figure><figure><img src="eval/episodes/ep_100013/end_front.jpg"><figcaption>seed 100013<br></figcaption></figure><figure><img src="eval/episodes/ep_100017/end_front.jpg"><figcaption>seed 100017<br></figcaption></figure><figure><img src="eval/episodes/ep_100018/end_front.jpg"><figcaption>seed 100018<br></figcaption></figure><figure><img src="eval/episodes/ep_100020/end_front.jpg"><figcaption>seed 100020<br></figcaption></figure><figure><img src="eval/episodes/ep_100021/end_front.jpg"><figcaption>seed 100021<br></figcaption></figure><figure><img src="eval/episodes/ep_100025/end_front.jpg"><figcaption>seed 100025<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    # Constants for motion
+    SAFE_Z = 0.08      # height for safe travel
+    GRASP_Z = 0.02     # height to attempt grasp (tool point)
+    RELEASE_Z = 0.02   # height to release
+    SPEED_TRAVEL = None   # use default speed
+    SPEED_SLOW = 0.05     # slow speed near objects
+    MAX_GRASP_ATTEMPTS = 2
+
+    # Helper to safely move, catching MotionError
+    def safe_move_to(x, y, z, yaw=None, speed=None):
+        try:
+            return robot.move_to(x, y, z, yaw=yaw, speed=speed)
+        except Exception as e:  # MotionError is subclass of Exception
+            robot.log(&quot;Move failed:&quot;, e)
+            return {&quot;ok&quot;: False}
+
+    # 1. Observe scene to get cube and target poses
+    obs = robot.observe()
+    cube_info = obs[&quot;objects&quot;].get(&quot;blue_cube&quot;)
+    target_info = obs[&quot;fixtures&quot;].get(&quot;target&quot;)
+    if not cube_info or not target_info:
+        robot.log(&quot;Missing cube or target in observation&quot;)
+        return False
+
+    cube_pos = cube_info[&quot;pos&quot;]
+    cube_yaw = cube_info[&quot;yaw&quot;]
+    target_pos = target_info[&quot;pos&quot;]
+
+    # 2. Move above the cube
+    res = safe_move_to(cube_pos[0], cube_pos[1], SAFE_Z, yaw=cube_yaw, speed=SPEED_TRAVEL)
+    if not res[&quot;ok&quot;]:
+        robot.log(&quot;Failed to move above cube&quot;)
+        return False
+
+    # 3. Descend to grasp height (slow)
+    res = safe_move_to(cube_pos[0], cube_pos[1], GRASP_Z, yaw=cube_yaw, speed=SPEED_SLOW)
+    if not res[&quot;ok&quot;]:
+        robot.log(&quot;Failed to descend to grasp height&quot;)
+        return False
+
+    # 4. Attempt grasp (with retries)
+    grasped = False
+    for _ in range(MAX_GRASP_ATTEMPTS):
+        if robot.grasp():
+            # Verify we are holding something
+            if robot.holding() is not None:
+                grasped = True
+                break
+        robot.log(&quot;Grasp attempt failed, retrying&quot;)
+        # Slightly re-open and try again
+        robot.release()
+        robot.wait(0.1)
+
+    if not grasped:
+        robot.log(&quot;Could not grasp cube after attempts&quot;)
+        return False
+
+    # 5. Lift cube to safe height
+    res = safe_move_to(cube_pos[0], cube_pos[1], SAFE_Z, yaw=cube_yaw, speed=SPEED_SLOW)
+    if not res[&quot;ok&quot;]:
+        robot.log(&quot;Failed to lift cube&quot;)
+        return False
+
+    # 6. Move above target zone
+    res = safe_move_to(target_pos[0], target_pos[1], SAFE_Z, yaw=None, speed=SPEED_TRAVEL)
+    if not res[&quot;ok&quot;]:
+        robot.log(&quot;Failed to move above target&quot;)
+        return False
+
+    # 7. Descend to release height (still over target)
+    res = safe_move_to(target_pos[0], target_pos[1], RELEASE_Z, yaw=None, speed=SPEED_SLOW)
+    if not res[&quot;ok&quot;]:
+        robot.log(&quot;Failed to descend to release height&quot;)
+        return False
+
+    # 8. Release the cube
+    robot.release()
+    robot.wait(0.2)  # let it settle
+
+    # 9. Retreat to safe height
+    res = safe_move_to(target_pos[0], target_pos[1], SAFE_Z, yaw=None, speed=SPEED_TRAVEL)
+    if not res[&quot;ok&quot;]:
+        robot.log(&quot;Failed to retreat after release&quot;)
+        return False
+
+    # Task considered done; success evaluation is external
+    return True
+</pre></section>
+</div></body></html>

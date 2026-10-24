@@ -1,0 +1,267 @@
+{
+ "task": "lift",
+ "seed": 3006,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "red_cube_z": 0.0729,
+  "required_z": 0.065
+ },
+ "trace": [
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.18,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.92,
+   "call": "move_to(0.116, -0.048, 0.061, yaw=0.383, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1155,
+     -0.0475,
+     0.0603
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 1.48,
+   "call": "move_to(0.116, -0.048, 0.024, yaw=0.383, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1156,
+     -0.0474,
+     0.0239
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 1.98,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0258
+   }
+  },
+  {
+   "t": 1.98,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 1.98,
+   "call": "log",
+   "result": "Grasp successful"
+  },
+  {
+   "t": 1.98,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 2.4,
+   "call": "move_to(0.116, -0.048, 0.073, yaw=0.383, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1156,
+     -0.0475,
+     0.0726
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 2.4,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 2.4,
+   "call": "get_pose('red_cube')",
+   "result": {
+    "pos": [
+     0.114,
+     -0.0453,
+     0.0627
+    ],
+    "yaw": 0.2829
+   }
+  },
+  {
+   "t": 2.62,
+   "call": "move_to(0.116, -0.047, 0.083, yaw=0.383, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1157,
+     -0.0475,
+     0.0826
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.62,
+   "call": "get_pose('red_cube')",
+   "result": {
+    "pos": [
+     0.1111,
+     -0.0458,
+     0.0708
+    ],
+    "yaw": 0.4229
+   }
+  },
+  {
+   "t": 2.62,
+   "call": "log",
+   "result": "Task succeeded after corrective nudge"
+  }
+ ],
+ "n_calls": 14,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 3.12,
+ "wall_time": 0.95,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1155,
+     -0.0414,
+     0.0149
+    ],
+    "yaw": 0.2574,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1526,
+     0.0182,
+     0.0149
+    ],
+    "yaw": 0.4223,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 3.12,
+  "gripper": {
+   "pos": [
+    0.1155,
+    -0.0474,
+    0.0824
+   ],
+   "yaw": 0.383,
+   "opening": 0.0258,
+   "holding": "red_cube"
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1134,
+     -0.0418,
+     0.0729
+    ],
+    "yaw": 0.3632,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1526,
+     0.0182,
+     0.0149
+    ],
+    "yaw": 0.4223,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1155,
+   "y": -0.0414,
+   "yaw": 0.2574,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1526,
+   "y": 0.0182,
+   "yaw": 0.4223,
+   "fp": 0.0225
+  }
+ }
+}

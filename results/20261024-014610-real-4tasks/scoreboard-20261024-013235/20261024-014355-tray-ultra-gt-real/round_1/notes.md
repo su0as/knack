@@ -1,0 +1,6 @@
+- First version: perceive yellow cube and tray poses, move to cube, grasp, move to tray, release, verify.
+- Use observe() for initial positions, then get_pose() for fresh reads before critical moves.
+- Approach cube at z=0.015 (cube center height) with yaw aligned to cube yaw.
+- For tray, approach above tray center, then lower to just above tray floor (z ~ 0.015 + cube half-height = 0.03) to clear walls.
+- Catch MotionError, retry with small offsets.
+- Verify grasp with robot.holding() and verify release by checking holding is None.

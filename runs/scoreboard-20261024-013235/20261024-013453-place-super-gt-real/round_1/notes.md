@@ -1,0 +1,4 @@
+- First version: perceive cube and target, move above cube, descend to grasp height, grasp, lift, move above target, descend to release height, release.
+- Use safe Z for travel, low Z for grasp/release.
+- Simple retry on grasp failure (max 2 attempts).
+- No compensation for perception noise yet; will add verification in later iterations.

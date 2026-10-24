@@ -1,0 +1,110 @@
+import math
+
+def run(robot):
+    # Observe initial scene
+    obs = robot.observe()
+    
+    # Get blue cube and green zone (target) poses
+    blue_cube = obs["objects"].get("blue_cube")
+    target_zone = obs["fixtures"].get("target")
+    
+    if not blue_cube or not target_zone:
+        robot.log("Missing blue_cube or target zone")
+        return False
+    
+    cube_pos = blue_cube["pos"]
+    cube_yaw = blue_cube["yaw"]
+    zone_pos = target_zone["pos"]
+    zone_radius = target_zone["radius"]
+    
+    robot.log(f"Cube at {cube_pos}, yaw={cube_yaw:.3f}")
+    robot.log(f"Zone at {zone_pos}, radius={zone_radius:.3f}")
+    
+    # --- GRASP PHASE ---
+    # Move above cube first (safe height)
+    above_cube = [cube_pos[0], cube_pos[1], 0.15]
+    try:
+        robot.move_to(*above_cube, speed=0.15)
+    except Exception as e:
+        robot.log(f"Failed to move above cube: {e}")
+        return False
+    
+    # Move down to grasp height (cube center at z=0.015)
+    grasp_pos = [cube_pos[0], cube_pos[1], 0.015]
+    try:
+        robot.move_to(*grasp_pos, yaw=cube_yaw, speed=0.05)
+    except Exception as e:
+        robot.log(f"Failed to move to grasp position: {e}")
+        return False
+    
+    # Grasp
+    robot.wait(0.2)
+    grasped = robot.grasp()
+    robot.wait(0.2)
+    
+    if not grasped or robot.holding() != "blue_cube":
+        robot.log("Grasp failed, retrying once")
+        # Retry: re-observe and try again
+        obs = robot.observe()
+        blue_cube = obs["objects"].get("blue_cube")
+        if blue_cube:
+            cube_pos = blue_cube["pos"]
+            cube_yaw = blue_cube["yaw"]
+            grasp_pos = [cube_pos[0], cube_pos[1], 0.015]
+            try:
+                robot.move_to(*grasp_pos, yaw=cube_yaw, speed=0.05)
+                robot.wait(0.2)
+                grasped = robot.grasp()
+                robot.wait(0.2)
+            except Exception as e:
+                robot.log(f"Retry grasp failed: {e}")
+                return False
+        
+        if not grasped or robot.holding() != "blue_cube":
+            robot.log("Grasp failed after retry")
+            return False
+    
+    robot.log("Successfully grasped blue cube")
+    
+    # Lift cube to safe transport height
+    try:
+        robot.move_to(cube_pos[0], cube_pos[1], 0.15, speed=0.10)
+    except Exception as e:
+        robot.log(f"Failed to lift cube: {e}")
+        return False
+    
+    # --- PLACE PHASE ---
+    # Move above target zone
+    above_zone = [zone_pos[0], zone_pos[1], 0.15]
+    try:
+        robot.move_to(*above_zone, speed=0.15)
+    except Exception as e:
+        robot.log(f"Failed to move above zone: {e}")
+        return False
+    
+    # Move down to release height (slightly above table)
+    release_pos = [zone_pos[0], zone_pos[1], 0.02]
+    try:
+        robot.move_to(*release_pos, speed=0.05)
+    except Exception as e:
+        robot.log(f"Failed to move to release position: {e}")
+        return False
+    
+    # Release
+    robot.release()
+    robot.wait(0.3)
+    
+    # Verify release
+    if robot.holding() is not None:
+        robot.log("Release failed, still holding")
+        return False
+    
+    robot.log("Successfully released blue cube in green zone")
+    
+    # Move away to clear view
+    try:
+        robot.move_to(zone_pos[0], zone_pos[1], 0.15, speed=0.10)
+    except Exception:
+        pass
+    
+    return True

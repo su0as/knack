@@ -1,0 +1,4 @@
+- Added a clean‑gripper check at the start of each cube iteration to avoid carrying over a held object.
+- Fixed grasp height by clamping it to at least 0.05 m above the perceived cube centre, preventing low grasps that collide with the table.
+- Modified _pick_and_place to refresh the tray pose after lifting the cube, compensating for any pose drift caused by the previous placement.
+- Kept the rest of the logic (attempts, speeds, offsets) unchanged because it succeeded in several episodes.

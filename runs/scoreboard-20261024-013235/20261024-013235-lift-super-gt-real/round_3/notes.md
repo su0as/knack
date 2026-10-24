@@ -1,0 +1,4 @@
+- Modified lift target to add a safety margin of +0.01 m (target_z = cz_refined + 0.05 + 0.01) to guarantee ≥5 cm clearance even if the cube settles after grasp.
+- Clamped the descend target to the safe workspace floor: descend_z = max(cz, 0.024) before moving down, preventing SafetyViolation when the cube is near the table.
+- Kept the existing grasp‑retry logic, re‑observation after grasp, and corrective nudge if the lift is insufficient.
+- All other speeds and safety margins remain unchanged.

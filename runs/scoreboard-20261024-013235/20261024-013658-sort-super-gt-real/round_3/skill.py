@@ -1,0 +1,100 @@
+import math
+
+def run(robot):
+    """Sort cubes by colour into matching trays."""
+    robot.home()
+
+    # Get current scene description
+    obs = robot.observe()
+
+    # Separate cubes and trays
+    cubes = {name: obj for name, obj in obs['objects'].items() if obj['shape'] == 'cube'}
+    trays = {name: fix for name, fix in obs['fixtures'].items() if fix['kind'] == 'tray'}
+
+    # Map colour -> tray name (e.g., 'red' -> 'red_tray')
+    colour_to_tray = {}
+    for name, fix in trays.items():
+        colour_to_tray[fix['color']] = name
+
+    overall_success = True
+
+    for cube_name, cube in cubes.items():
+        colour = cube['color']
+        tray_name = colour_to_tray.get(colour)
+        if tray_name is None:
+            robot.log(f"No tray found for colour '{colour}'")
+            overall_success = False
+            continue
+
+        # Get up-to-date poses (perception is noisy)
+        cube_pose = robot.get_pose(cube_name)
+        tray_pose = robot.get_pose(tray_name)
+
+        if not _pick_and_place(robot, cube_pose, tray_pose):
+            robot.log(f"Failed to place {cube_name} into {tray_name}")
+            overall_success = False
+
+    return overall_success
+
+
+def _pick_and_place(robot, cube_pose, tray_pose):
+    """Attempt one pick‑and‑place cycle. Returns True on success."""
+    max_attempts = 2
+    lift_height = 0.10          # safe travel height above the table
+    grasp_offset = 0.05         # how far above the cube centre we close the fingers
+    place_offset = -0.005       # how far below the tray top we release (negative = inside)
+
+    for attempt in range(max_attempts):
+        try:
+            # 1. Move above the cube
+            above_cube = [cube_pose['pos'][0], cube_pose['pos'][1], lift_height]
+            robot.move_to(*above_cube, speed=0.2)
+
+            # 2. Descend to a grasp height (just above the cube centre)
+            # Ensure we are not too low to avoid table collisions
+            grasp_z = max(cube_pose['pos'][2] + grasp_offset,
+                          cube_pose['pos'][2] + 0.05)
+            robot.move_to(cube_pose['pos'][0], cube_pose['pos'][1], grasp_z,
+                          speed=0.05)
+
+            # 3. Close fingers
+            if not robot.grasp():
+                robot.release()  # ensure hand is open before retrying
+                continue
+
+            # 4. Verify we actually hold something
+            if robot.holding() is None:
+                robot.release()
+                continue
+
+            # 5. Lift the cube
+            robot.move_to(cube_pose['pos'][0], cube_pose['pos'][1], lift_height,
+                          speed=0.05)
+
+            # 6. Move above the target tray (use fresh tray pose to account for any drift)
+            tray_pose = robot.get_pose(tray_name)  # refresh perception
+            above_tray = [tray_pose['pos'][0], tray_pose['pos'][1], lift_height]
+            robot.move_to(*above_tray, speed=0.2)
+
+            # 7. Lower to just inside the tray top
+            place_z = tray_pose['pos'][2] + place_offset
+            robot.move_to(tray_pose['pos'][0], tray_pose['pos'][1], place_z,
+                          speed=0.05)
+
+            # 8. Release the cube
+            robot.release()
+            robot.wait(0.05)  # brief pause to let the object settle
+
+            # 9. Retract to safe height
+            robot.move_to(tray_pose['pos'][0], tray_pose['pos'][1], lift_height,
+                          speed=0.05)
+
+            return True  # success for this cube
+
+        except Exception as e:  # catches MotionError and other unexpected issues
+            robot.log(f"Attempt {attempt+1} failed: {e}")
+            robot.release()  # try to leave the hand open
+            continue
+
+    # If we exit the loop, all attempts failed
+    return False

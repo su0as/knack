@@ -1,0 +1,5 @@
+- Fixed a stray indentation/character that caused a SyntaxError at line 86.
+- Ensured all try/except blocks are properly closed and that the function ends with a return statement.
+- Kept the original logic: home, perceive red cube, approach, descend, grasp, verify, lift, and final check.
+- Added a small retreat after a failed grasp to avoid re‑grasping the same pose.
+- Verified that the cube is held at least 5 cm above the table (centre ≥ 0.065 m).

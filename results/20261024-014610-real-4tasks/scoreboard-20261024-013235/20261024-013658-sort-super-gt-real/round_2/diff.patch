@@ -1,0 +1,53 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -19,6 +19,10 @@
+     overall_success = True
+ 
+     for cube_name, cube in cubes.items():
++        # Ensure a clean gripper before attempting the next pick
++        if robot.holding() is not None:
++            robot.release()
++
+         colour = cube['color']
+         tray_name = colour_to_tray.get(colour)
+         if tray_name is None:
+@@ -28,16 +32,15 @@
+ 
+         # Get up-to-date poses (perception is noisy)
+         cube_pose = robot.get_pose(cube_name)
+-        tray_pose = robot.get_pose(tray_name)
+ 
+-        if not _pick_and_place(robot, cube_pose, tray_pose):
++        if not _pick_and_place(robot, cube_pose, tray_name):
+             robot.log(f"Failed to place {cube_name} into {tray_name}")
+             overall_success = False
+ 
+     return overall_success
+ 
+ 
+-def _pick_and_place(robot, cube_pose, tray_pose):
++def _pick_and_place(robot, cube_pose, tray_name):
+     """Attempt one pick‑and‑place cycle. Returns True on success."""
+     max_attempts = 2
+     lift_height = 0.10          # safe travel height above the table
+@@ -51,7 +54,9 @@
+             robot.move_to(*above_cube, speed=0.2)
+ 
+             # 2. Descend to a grasp height (just above the cube centre)
+-            grasp_z = cube_pose['pos'][2] + grasp_offset
++            # Clamp grasp_z to be at least 0.05 m above the cube centre to avoid table collisions
++            grasp_z = max(cube_pose['pos'][2] + grasp_offset,
++                          cube_pose['pos'][2] + 0.05)
+             robot.move_to(cube_pose['pos'][0], cube_pose['pos'][1], grasp_z,
+                           speed=0.05)
+ 
+@@ -69,7 +74,8 @@
+             robot.move_to(cube_pose['pos'][0], cube_pose['pos'][1], lift_height,
+                           speed=0.05)
+ 
+-            # 6. Move above the target tray
++            # 6. Move above the target tray (use fresh tray pose to account for any drift)
++            tray_pose = robot.get_pose(tray_name)
+             above_tray = [tray_pose['pos'][0], tray_pose['pos'][1], lift_height]
+             robot.move_to(*above_tray, speed=0.2)
+ 

@@ -1,0 +1,6 @@
+- Grasp failures likely due to insufficient downward alignment; we now align the gripper with the cube's yaw and add a small downward probe after reaching the grasp height to ensure contact.
+- Increased grasp_offset to 0.08 and then probe an extra 0.02 downward, giving an effective closure point about 0.06 above the cube centre (finger pads near the cube's mid‑height) while avoiding the table.
+- Kept place_offset at 0.02 (release just above the tray bottom) and refreshed the tray pose immediately before both the approach and the release to counteract drift.
+- Added a simple verification after release: we observe and check that the cube is no longer held and its xy‑position is within 0.04 m of the tray centre; if not, we treat the attempt as a failure and retry.
+- Colour mapping remains as before; if a tray for the cube’s colour is not found we log and skip that cube.
+- All moves use the object’s yaw where relevant to improve alignment, and speeds are kept conservative for precision phases.

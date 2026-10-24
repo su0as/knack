@@ -1,0 +1,4 @@
+- Grasp failures were due to the gripper closing too high; increased grasp_offset to 0.05 (and kept a safety clamp) to position the tool point higher so the finger pads close around the cube without hitting the table.
+- Placement failures were due to releasing too high above the tray; changed place_offset to -0.005 to release slightly below the tray top, letting the cube settle inside.
+- Retained the clean‑gripper check at the start of each cube iteration, the fresh‑tray pose after lift, and the existing attempt/retry logic.
+- No changes to speeds, lift height, or the overall structure that previously yielded partial success.

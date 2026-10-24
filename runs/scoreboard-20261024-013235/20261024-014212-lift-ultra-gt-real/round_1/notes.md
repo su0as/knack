@@ -1,0 +1,4 @@
+- First version for "Lift" task: pick up red cube and hold ≥5 cm above table.
+- Use observe() to locate red_cube, move to its xy at grasp height (z≈0.015), grasp, then lift to z≥0.05.
+- Account for perception noise: re-read pose after move, verify hold with robot.holding(), retry grasp once if needed.
+- Catch MotionError on moves; keep approach moves slow (0.08 m/s).

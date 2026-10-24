@@ -1,0 +1,26 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -26,9 +26,11 @@
+             robot.log(f"Move to approach failed: {e}")
+             continue  # retry with fresh observation
+ 
+-        # 2. Descend to grasp height (aim for cube centre)
++        # 2. Descend to grasp height (aim for cube centre) – clamp to safe floor
++        safe_floor = 0.024  # 0.014 (workspace floor) + 0.01 margin
++        descend_z = max(cz, safe_floor)
+         try:
+-            robot.move_to(cx, cy, cz, yaw=cyaw, speed=0.07)
++            robot.move_to(cx, cy, descend_z, yaw=cyaw, speed=0.07)
+         except Exception as e:
+             robot.log(f"Descend to grasp failed: {e}")
+             continue
+@@ -66,7 +68,8 @@
+         cz_refined = pose["pos"][2] if pose else cz
+ 
+     # Desired lift: at least 5 cm above table (centre ≥ 0.015 + 0.05 = 0.065)
+-    target_z = cz_refined + 0.05 + 0.001  # small epsilon for margin
++    # Add safety margin of +0.01 m to counteract possible post‑grasp settling
++    target_z = cz_refined + 0.05 + 0.01
+     try:
+         robot.move_to(cx, cy, target_z, yaw=cyaw, speed=0.15)
+     except Exception as e:

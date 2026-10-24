@@ -1,0 +1,193 @@
+{
+ "round": 1,
+ "n": 8,
+ "k": 8,
+ "success": 1.0,
+ "gt_k": 8,
+ "self_k": 8,
+ "errors": 0,
+ "wall_s": 11.0,
+ "usd_cum": 0.00585,
+ "code": "round_1/skill.py",
+ "diff": "round_1/diff.patch",
+ "lines": 111,
+ "notes": "- First version of the skill for placing blue cube in green circle\n- Need to handle perception noise by re-observing after key actions\n- Move slowly (0.05-0.10 m/s) near objects for precision\n- Grasp at z=0.015 (cube center height), release at similar height over zone\n- Use yaw from cube observation for aligned grasp\n- Verify grasp and release with robot.holding()\n- Retry logic for robustness",
+ "episodes": [
+  {
+   "seed": 1000,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "blue_cube_to_target_xy": 0.0005,
+    "tolerance": 0.03,
+    "blue_cube_z": 0.0149,
+    "held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1001,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "blue_cube_to_target_xy": 0.0017,
+    "tolerance": 0.03,
+    "blue_cube_z": 0.0149,
+    "held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1002,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "blue_cube_to_target_xy": 0.0189,
+    "tolerance": 0.03,
+    "blue_cube_z": 0.0149,
+    "held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1003,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "blue_cube_to_target_xy": 0.0073,
+    "tolerance": 0.03,
+    "blue_cube_z": 0.0149,
+    "held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1004,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "blue_cube_to_target_xy": 0.0034,
+    "tolerance": 0.03,
+    "blue_cube_z": 0.0149,
+    "held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "blue_cube_to_target_xy": 0.0149,
+    "tolerance": 0.03,
+    "blue_cube_z": 0.0149,
+    "held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "blue_cube_to_target_xy": 0.0183,
+    "tolerance": 0.03,
+    "blue_cube_z": 0.0149,
+    "held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1007,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "blue_cube_to_target_xy": 0.0167,
+    "tolerance": 0.03,
+    "blue_cube_z": 0.0149,
+    "held": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

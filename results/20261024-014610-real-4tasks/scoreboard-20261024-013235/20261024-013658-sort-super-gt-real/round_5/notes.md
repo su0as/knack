@@ -1,0 +1,5 @@
+- Reverted grasp strategy to round 1: close fingers 0.02 m above the cube centre (grasp_offset=0.02) and removed the extra probe_down that caused grasp failures.
+- Added yaw alignment during the descent and grasp to improve pose matching.
+- After releasing the cube, we lift to a safe height, re‑observe the cube and tray poses, and verify that the cube’s xy‑position is within 0.04 m of the tray centre; if not, we treat the attempt as a failure and retry.
+- Kept the same colour‑to‑tray mapping, home‑start, and error handling (catch MotionError‑like exceptions, release hand, continue).
+- All precision moves use a slow speed (0.05 m/s) and travel moves use the default speed (0.2 m/s).

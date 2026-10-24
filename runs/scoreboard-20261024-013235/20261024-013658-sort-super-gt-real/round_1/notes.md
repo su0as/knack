@@ -1,0 +1,3 @@
+- Removed a stray blank line after the `return False` statement that was causing a syntax error at line 98.
+- Verified all indentation and punctuation are correct.
+- No other changes were needed; the logic remains the same.

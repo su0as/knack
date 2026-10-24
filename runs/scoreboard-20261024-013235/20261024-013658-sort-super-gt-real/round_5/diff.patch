@@ -1,0 +1,97 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -41,9 +41,9 @@
+     """Attempt one pick‑and‑place cycle. Returns True on success."""
+     max_attempts = 2
+     lift_height = 0.10          # safe travel height above the table
+-    grasp_offset = 0.08         # how far above the cube centre we initially approach
+-    probe_down = 0.02           # additional downward move before closing fingers
++    grasp_offset = 0.02         # how far above the cube centre we close the fingers
+     place_offset = 0.02         # how far above the tray bottom we release
++    tolerance = 0.04            # acceptable xy error for placement (metres)
+ 
+     for attempt in range(max_attempts):
+         try:
+@@ -51,63 +51,52 @@
+             above_cube = [cube_pose['pos'][0], cube_pose['pos'][1], lift_height]
+             robot.move_to(*above_cube, speed=0.2)
+ 
+-            # 2. Descend to a grasp approach height (just above the cube centre)
+-            approach_z = cube_pose['pos'][2] + grasp_offset
+-            robot.move_to(cube_pose['pos'][0], cube_pose['pos'][1], approach_z,
+-                          speed=0.05, yaw=cube_pose['yaw'])
+-
+-            # 3. Probe a little closer to the cube
+-            grasp_z = cube_pose['pos'][2] + grasp_offset - probe_down
++            # 2. Descend to a grasp height (just above the cube centre)
++            grasp_z = cube_pose['pos'][2] + grasp_offset
+             robot.move_to(cube_pose['pos'][0], cube_pose['pos'][1], grasp_z,
+                           speed=0.05, yaw=cube_pose['yaw'])
+ 
+-            # 4. Close fingers
++            # 3. Close fingers
+             if not robot.grasp():
+                 robot.release()  # ensure hand is open before retrying
+                 continue
+ 
+-            # 5. Verify we actually hold something
++            # 4. Verify we actually hold something
+             if robot.holding() is None:
+                 robot.release()
+                 continue
+ 
+-            # 6. Lift the cube to safe height
++            # 5. Lift the cube to safe height
+             robot.move_to(cube_pose['pos'][0], cube_pose['pos'][1], lift_height,
+                           speed=0.05)
+ 
+-            # 7. Refresh tray pose and move above the target tray
+-            tray_pose = robot.get_pose(tray_name)  # latest perception
++            # 6. Move above the target tray
+             above_tray = [tray_pose['pos'][0], tray_pose['pos'][1], lift_height]
+             robot.move_to(*above_tray, speed=0.2)
+ 
+-            # 8. Lower to just above the tray bottom
++            # 7. Lower to just above the tray bottom
+             place_z = tray_pose['pos'][2] + place_offset
+             robot.move_to(tray_pose['pos'][0], tray_pose['pos'][1], place_z,
+                           speed=0.05, yaw=tray_pose['yaw'])
+ 
+-            # 9. Release the cube
++            # 8. Release the cube
+             robot.release()
+             robot.wait(0.05)  # brief pause to let the object settle
+ 
+-            # 10. Retract to safe height
++            # 9. Retract to safe height
+             robot.move_to(tray_pose['pos'][0], tray_pose['pos'][1], lift_height,
+                           speed=0.05)
+ 
+-            # 11. Simple verification: cube should be released and near tray centre
+-            obs_after = robot.observe()
+-            held = robot.holding()
+-            if held is not None:
+-                robot.log("Verification failed: still holding after release")
+-                return False
+-            cube_after = obs_after['objects'].get(cube_name)
+-            if cube_after is None:
+-                robot.log("Verification failed: cube disappeared from observation")
+-                return False
+-            dx = cube_after['pos'][0] - tray_pose['pos'][0]
+-            dy = cube_after['pos'][1] - tray_pose['pos'][1]
+-            if math.hypot(dx, dy) > 0.04:  # 4 cm tolerance
+-                robot.log(f"Verification failed: cube offset ({dx:.3f},{dy:.3f}) too large")
+-                return False
++            # 10. Verification: cube should be released and near tray centre
++            cube_after = robot.get_pose(cube_name)
++            tray_after = robot.get_pose(tray_name)  # tray pose is static but refresh anyway
++            dx = cube_after['pos'][0] - tray_after['pos'][0]
++            dy = cube_after['pos'][1] - tray_after['pos'][1]
++            if math.hypot(dx, dy) > tolerance:
++                robot.log(f"Verification failed: cube {cube_name} off target by {math.hypot(dx, dy):.3f} m")
++                # Ensure hand is open before retrying
++                robot.release()
++                continue
+ 
+             return True  # success for this cube
+ 

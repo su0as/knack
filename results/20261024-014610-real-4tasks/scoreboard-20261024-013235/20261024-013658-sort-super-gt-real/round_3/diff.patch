@@ -1,0 +1,62 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -19,10 +19,6 @@
+     overall_success = True
+ 
+     for cube_name, cube in cubes.items():
+-        # Ensure a clean gripper before attempting the next pick
+-        if robot.holding() is not None:
+-            robot.release()
+-
+         colour = cube['color']
+         tray_name = colour_to_tray.get(colour)
+         if tray_name is None:
+@@ -32,20 +28,21 @@
+ 
+         # Get up-to-date poses (perception is noisy)
+         cube_pose = robot.get_pose(cube_name)
++        tray_pose = robot.get_pose(tray_name)
+ 
+-        if not _pick_and_place(robot, cube_pose, tray_name):
++        if not _pick_and_place(robot, cube_pose, tray_pose):
+             robot.log(f"Failed to place {cube_name} into {tray_name}")
+             overall_success = False
+ 
+     return overall_success
+ 
+ 
+-def _pick_and_place(robot, cube_pose, tray_name):
++def _pick_and_place(robot, cube_pose, tray_pose):
+     """Attempt one pick‑and‑place cycle. Returns True on success."""
+     max_attempts = 2
+     lift_height = 0.10          # safe travel height above the table
+-    grasp_offset = 0.02         # how far above the cube centre we close the fingers
+-    place_offset = 0.02         # how far above the tray bottom we release
++    grasp_offset = 0.05         # how far above the cube centre we close the fingers
++    place_offset = -0.005       # how far below the tray top we release (negative = inside)
+ 
+     for attempt in range(max_attempts):
+         try:
+@@ -54,7 +51,7 @@
+             robot.move_to(*above_cube, speed=0.2)
+ 
+             # 2. Descend to a grasp height (just above the cube centre)
+-            # Clamp grasp_z to be at least 0.05 m above the cube centre to avoid table collisions
++            # Ensure we are not too low to avoid table collisions
+             grasp_z = max(cube_pose['pos'][2] + grasp_offset,
+                           cube_pose['pos'][2] + 0.05)
+             robot.move_to(cube_pose['pos'][0], cube_pose['pos'][1], grasp_z,
+@@ -75,11 +72,11 @@
+                           speed=0.05)
+ 
+             # 6. Move above the target tray (use fresh tray pose to account for any drift)
+-            tray_pose = robot.get_pose(tray_name)
++            tray_pose = robot.get_pose(tray_name)  # refresh perception
+             above_tray = [tray_pose['pos'][0], tray_pose['pos'][1], lift_height]
+             robot.move_to(*above_tray, speed=0.2)
+ 
+-            # 7. Lower to just above the tray bottom
++            # 7. Lower to just inside the tray top
+             place_z = tray_pose['pos'][2] + place_offset
+             robot.move_to(tray_pose['pos'][0], tray_pose['pos'][1], place_z,
+                           speed=0.05)

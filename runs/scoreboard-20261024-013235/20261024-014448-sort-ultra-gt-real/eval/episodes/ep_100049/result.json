@@ -1,0 +1,507 @@
+{
+ "task": "sort",
+ "seed": 100049,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "red_cube_tray_dx": 0.0085,
+  "red_cube_tray_dy": 0.001,
+  "red_cube_z": 0.0189,
+  "red_cube_held": false,
+  "blue_cube_tray_dx": 0.0025,
+  "blue_cube_tray_dy": 0.0026,
+  "blue_cube_z": 0.0189,
+  "blue_cube_held": false,
+  "red_ok": true,
+  "blue_ok": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "red: attempt 1"
+  },
+  {
+   "t": 0.0,
+   "call": "get_pose('red_cube')",
+   "result": {
+    "pos": [
+     0.1319,
+     -0.1605,
+     0.0027
+    ],
+    "yaw": 0.5095
+   }
+  },
+  {
+   "t": 0.0,
+   "call": "get_pose('red_tray')",
+   "result": {
+    "pos": [
+     0.1846,
+     -0.0175,
+     0.0
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 1.14,
+   "call": "move_to(0.132, -0.161, 0.120, yaw=0.509, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1319,
+     -0.1607,
+     0.12
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 3.26,
+   "call": "move_to(0.132, -0.161, 0.015, yaw=0.509, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1319,
+     -0.1605,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.76,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0272
+   }
+  },
+  {
+   "t": 3.76,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 3.76,
+   "call": "log",
+   "result": "red: grasped successfully"
+  },
+  {
+   "t": 4.86,
+   "call": "move_to(0.132, -0.161, 0.120, yaw=0.509, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.132,
+     -0.1606,
+     0.1197
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 5.92,
+   "call": "move_to(0.185, -0.018, 0.120, yaw=0.000, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1846,
+     -0.0174,
+     0.1195
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 7.74,
+   "call": "move_to(0.185, -0.018, 0.030, yaw=0.000, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1842,
+     -0.0175,
+     0.0295
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 8.14,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 8.34,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 8.34,
+   "call": "holding()"
+  },
+  {
+   "t": 8.64,
+   "call": "wait(0.30)",
+   "result": "ok"
+  },
+  {
+   "t": 8.64,
+   "call": "get_pose('red_cube')",
+   "result": {
+    "pos": [
+     0.1879,
+     0.0031,
+     0.0041
+    ],
+    "yaw": -0.0919
+   }
+  },
+  {
+   "t": 8.64,
+   "call": "log",
+   "result": "red: placed successfully"
+  },
+  {
+   "t": 8.64,
+   "call": "log",
+   "result": "blue: attempt 1"
+  },
+  {
+   "t": 8.64,
+   "call": "get_pose('blue_cube')",
+   "result": {
+    "pos": [
+     0.0521,
+     -0.1449,
+     0.0117
+    ],
+    "yaw": 0.1321
+   }
+  },
+  {
+   "t": 8.64,
+   "call": "get_pose('blue_tray')",
+   "result": {
+    "pos": [
+     0.0824,
+     0.1545,
+     0.0
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 10.04,
+   "call": "move_to(0.052, -0.145, 0.120, yaw=0.132, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0521,
+     -0.145,
+     0.1201
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 12.18,
+   "call": "move_to(0.052, -0.145, 0.015, yaw=0.132, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0524,
+     -0.1453,
+     0.0154
+    ],
+    "error_m": 0.0007
+   }
+  },
+  {
+   "t": 12.68,
+   "call": "grasp()",
+   "result": {
+    "holding": "blue_cube",
+    "opening": 0.0276
+   }
+  },
+  {
+   "t": 12.68,
+   "call": "holding()",
+   "result": "blue_cube"
+  },
+  {
+   "t": 12.68,
+   "call": "log",
+   "result": "blue: grasped successfully"
+  },
+  {
+   "t": 13.76,
+   "call": "move_to(0.052, -0.145, 0.120, yaw=0.132, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0521,
+     -0.1449,
+     0.1196
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 15.8,
+   "call": "move_to(0.082, 0.154, 0.120, yaw=0.000, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0824,
+     0.1545,
+     0.1194
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 17.62,
+   "call": "move_to(0.082, 0.154, 0.030, yaw=0.000, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0822,
+     0.1541,
+     0.0294
+    ],
+    "error_m": 0.0008
+   }
+  },
+  {
+   "t": 18.02,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 18.22,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 18.22,
+   "call": "holding()"
+  },
+  {
+   "t": 18.52,
+   "call": "wait(0.30)",
+   "result": "ok"
+  },
+  {
+   "t": 18.52,
+   "call": "get_pose('blue_cube')",
+   "result": {
+    "pos": [
+     0.0763,
+     0.1449,
+     0.0062
+    ],
+    "yaw": -0.0731
+   }
+  },
+  {
+   "t": 18.52,
+   "call": "log",
+   "result": "blue: placed successfully"
+  }
+ ],
+ "n_calls": 35,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 19.02,
+ "wall_time": 1.04,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1188,
+     -0.1564,
+     0.0149
+    ],
+    "yaw": 0.5384,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.0608,
+     -0.1335,
+     0.0149
+    ],
+    "yaw": 0.2003,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.1736,
+     -0.0189,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.0852,
+     0.147,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "final_obs": {
+  "time": 19.02,
+  "gripper": {
+   "pos": [
+    0.0824,
+    0.1545,
+    0.03
+   ],
+   "yaw": -3.1416,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1821,
+     -0.0179,
+     0.0189
+    ],
+    "yaw": -0.2683,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.0827,
+     0.1443,
+     0.0189
+    ],
+    "yaw": -0.0009,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.1736,
+     -0.0189,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.0852,
+     0.147,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_tray": {
+   "x": 0.1736,
+   "y": -0.0189,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "blue_tray": {
+   "x": 0.0852,
+   "y": 0.147,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "red_cube": {
+   "x": 0.1188,
+   "y": -0.1564,
+   "yaw": 0.5384,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.0608,
+   "y": -0.1335,
+   "yaw": 0.2003,
+   "fp": 0.0225
+  }
+ }
+}

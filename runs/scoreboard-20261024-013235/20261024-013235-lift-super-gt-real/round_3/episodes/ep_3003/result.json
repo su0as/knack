@@ -1,0 +1,267 @@
+{
+ "task": "lift",
+ "seed": 3003,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": true,
+ "metrics": {
+  "red_cube_z": 0.066,
+  "required_z": 0.065
+ },
+ "trace": [
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.18,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 1.08,
+   "call": "move_to(0.102, 0.078, 0.058, yaw=0.146, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1024,
+     0.0783,
+     0.0583
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 1.62,
+   "call": "move_to(0.102, 0.078, 0.024, yaw=0.146, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1024,
+     0.0782,
+     0.0239
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 2.12,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0279
+   }
+  },
+  {
+   "t": 2.12,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 2.12,
+   "call": "log",
+   "result": "Grasp successful"
+  },
+  {
+   "t": 2.12,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 2.5,
+   "call": "move_to(0.102, 0.078, 0.066, yaw=0.146, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1023,
+     0.0781,
+     0.0657
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 2.5,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 2.5,
+   "call": "get_pose('red_cube')",
+   "result": {
+    "pos": [
+     0.0861,
+     0.0805,
+     0.0606
+    ],
+    "yaw": 0.1084
+   }
+  },
+  {
+   "t": 2.74,
+   "call": "move_to(0.102, 0.078, 0.076, yaw=-2.996, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1021,
+     0.078,
+     0.0754
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 2.74,
+   "call": "get_pose('red_cube')",
+   "result": {
+    "pos": [
+     0.106,
+     0.0718,
+     0.0646
+    ],
+    "yaw": 0.1363
+   }
+  },
+  {
+   "t": 2.74,
+   "call": "log",
+   "result": "Cube too low after lift: z=0.0646"
+  }
+ ],
+ "n_calls": 14,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 3.24,
+ "wall_time": 0.93,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.099,
+     0.0763,
+     0.0149
+    ],
+    "yaw": 0.1184,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1459,
+     -0.0969,
+     0.0149
+    ],
+    "yaw": 0.3435,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 3.24,
+  "gripper": {
+   "pos": [
+    0.1021,
+    0.078,
+    0.0753
+   ],
+   "yaw": -2.9959,
+   "opening": 0.0279,
+   "holding": "red_cube"
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.0996,
+     0.0765,
+     0.066
+    ],
+    "yaw": 0.1432,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1459,
+     -0.0969,
+     0.0149
+    ],
+    "yaw": 0.3435,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.099,
+   "y": 0.0763,
+   "yaw": 0.1184,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1459,
+   "y": -0.0969,
+   "yaw": 0.3435,
+   "fp": 0.0225
+  }
+ }
+}

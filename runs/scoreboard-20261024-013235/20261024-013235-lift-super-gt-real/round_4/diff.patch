@@ -1,0 +1,25 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -57,19 +57,9 @@
+         robot.log("Failed to grasp red cube after multiple attempts")
+         return False
+ 
+-    # 4. Re‑obtain cube pose after grasp for accurate height
+-    obs2 = robot.observe()
+-    cube_info2 = obs2["objects"].get("red_cube")
+-    if cube_info2 is not None:
+-        cz_refined = cube_info2["pos"][2]
+-    else:
+-        # fallback to get_pose if observation missing
+-        pose = robot.get_pose("red_cube")
+-        cz_refined = pose["pos"][2] if pose else cz
+-
+-    # Desired lift: at least 5 cm above table (centre ≥ 0.015 + 0.05 = 0.065)
+-    # Add safety margin of +0.01 m to counteract possible post‑grasp settling
+-    target_z = cz_refined + 0.05 + 0.01
++    # 4. Lift the cube to at least 5 cm above the table with safety margin
++    # Use the initial cube centre (cz) from the first perception to avoid noisy post‑grasp data.
++    target_z = cz + 0.07  # 5 cm clearance + 2 cm safety margin
+     try:
+         robot.move_to(cx, cy, target_z, yaw=cyaw, speed=0.15)
+     except Exception as e:

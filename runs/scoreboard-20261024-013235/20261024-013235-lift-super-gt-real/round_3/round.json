@@ -1,0 +1,177 @@
+{
+ "round": 3,
+ "n": 8,
+ "k": 7,
+ "success": 0.875,
+ "gt_k": 7,
+ "self_k": 6,
+ "errors": 0,
+ "wall_s": 6.3,
+ "usd_cum": 0.01012,
+ "code": "round_3/skill.py",
+ "diff": "round_3/diff.patch",
+ "lines": 100,
+ "notes": "- Modified lift target to add a safety margin of +0.01\u202fm (target_z = cz_refined + 0.05 + 0.01) to guarantee \u22655\u202fcm clearance even if the cube settles after grasp.\n- Clamped the descend target to the safe workspace floor: descend_z = max(cz, 0.024) before moving down, preventing SafetyViolation when the cube is near the table.\n- Kept the existing grasp\u2011retry logic, re\u2011observation after grasp, and corrective nudge if the lift is insufficient.\n- All other speeds and safety margins remain unchanged.",
+ "episodes": [
+  {
+   "seed": 3000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_z": 0.0554,
+    "required_z": 0.065
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3001,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_z": 0.0671,
+    "required_z": 0.065
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3002,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_z": 0.0679,
+    "required_z": 0.065
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3003,
+   "reward": true,
+   "success_gt": true,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_z": 0.066,
+    "required_z": 0.065
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3004,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_z": 0.0669,
+    "required_z": 0.065
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_z": 0.0666,
+    "required_z": 0.065
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_z": 0.0729,
+    "required_z": 0.065
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3007,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_z": 0.0818,
+    "required_z": 0.065
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

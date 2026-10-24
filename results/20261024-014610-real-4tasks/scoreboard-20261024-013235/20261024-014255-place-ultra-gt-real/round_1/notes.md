@@ -1,0 +1,7 @@
+- First version of the skill for placing blue cube in green circle
+- Need to handle perception noise by re-observing after key actions
+- Move slowly (0.05-0.10 m/s) near objects for precision
+- Grasp at z=0.015 (cube center height), release at similar height over zone
+- Use yaw from cube observation for aligned grasp
+- Verify grasp and release with robot.holding()
+- Retry logic for robustness

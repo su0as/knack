@@ -1,0 +1,7 @@
+**Mode 1: Insufficient lift after grasp** (1 episode: seed 3000)
+- **Root cause**: The refined cube height `cz_refined` (line 64) is taken from a post-grasp observation that reports the cube at `z=0.0461 m` (below the table floor). The target `target_z = cz_refined + 0.06` (line 72) therefore computes to ~0.056 m, failing the `≥0.065 m` check (lines 82–96).
+- **Fix**: After a successful grasp, force `cz_refined` to the observed cube centre `cz` from the initial perception (line 18) before adding the 0.06 m offset. This ensures the lift target is based on the known cube position, not a potentially stale or erroneous post-grasp pose.
+
+**Mode 2: Grasp succeeds but cube settles below target** (0 episodes in given data; pattern likely if `robot.holding()` returns `"red_cube"` but `get_pose` returns a lower `z` due to sensor lag or gravity-induced settling).  
+- **Root cause**: The verification at lines 81–96 uses `get_pose` after the lift; if the cube has settled, the height check fails despite a valid grasp.
+- **Fix**: Add a brief `robot.move_by(dz=0.02)` (line 51 style) after `robot.release()` on grasp failure, and before the final lift, ensure the robot lifts to `cz + 0.07` (instead of `+0.06`) to provide a larger safety margin against settling.

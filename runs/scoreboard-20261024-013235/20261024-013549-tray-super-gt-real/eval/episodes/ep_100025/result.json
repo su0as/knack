@@ -1,0 +1,290 @@
+{
+ "task": "tray",
+ "seed": 100025,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": false,
+ "metrics": {
+  "yellow_cube_tray_dx": 0.0204,
+  "yellow_cube_tray_dy": 0.1173,
+  "yellow_cube_z": 0.0148,
+  "yellow_cube_held": false
+ },
+ "trace": [
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.18,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.98,
+   "call": "move_to(0.113, 0.040, 0.097, yaw=0.230, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1133,
+     0.0397,
+     0.0966
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 4.08,
+   "call": "move_to(0.113, 0.040, 0.017, yaw=0.230, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1235,
+     0.0431,
+     0.0222
+    ],
+    "error_m": 0.012,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 4.88,
+   "call": "move_to(0.113, 0.040, 0.097, yaw=0.230, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1135,
+     0.0397,
+     0.0968
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 6.52,
+   "call": "move_to(0.113, 0.040, 0.017, yaw=0.230, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1133,
+     0.0397,
+     0.0167
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 7.02,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0026
+   }
+  },
+  {
+   "t": 7.86,
+   "call": "move_to(0.113, 0.040, 0.097, yaw=0.230, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1135,
+     0.0397,
+     0.0968
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 9.5,
+   "call": "move_to(0.113, 0.040, 0.017, yaw=0.230, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1148,
+     0.0405,
+     0.0178
+    ],
+    "error_m": 0.0019
+   }
+  },
+  {
+   "t": 10.0,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0011
+   }
+  },
+  {
+   "t": 10.0,
+   "call": "log",
+   "result": "Failed to grasp yellow cube after retries"
+  }
+ ],
+ "n_calls": 11,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 10.5,
+ "wall_time": 0.76,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "yellow_cube": {
+    "pos": [
+     0.1273,
+     0.0225,
+     0.0149
+    ],
+    "yaw": 0.1571,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "yellow"
+   },
+   "red_cube": {
+    "pos": [
+     0.1987,
+     0.0041,
+     0.0149
+    ],
+    "yaw": 0.4644,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   }
+  },
+  "fixtures": {
+   "tray": {
+    "pos": [
+     0.0973,
+     -0.1072,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "purple",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "final_obs": {
+  "time": 10.5,
+  "gripper": {
+   "pos": [
+    0.1142,
+    0.0401,
+    0.0171
+   ],
+   "yaw": -2.9109,
+   "opening": 0.0011,
+   "holding": null
+  },
+  "objects": {
+   "yellow_cube": {
+    "pos": [
+     0.1176,
+     0.0101,
+     0.0148
+    ],
+    "yaw": -0.7565,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "yellow"
+   },
+   "red_cube": {
+    "pos": [
+     0.1987,
+     0.0041,
+     0.0149
+    ],
+    "yaw": 0.4644,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   }
+  },
+  "fixtures": {
+   "tray": {
+    "pos": [
+     0.0973,
+     -0.1072,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "purple",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "tray": {
+   "x": 0.0973,
+   "y": -0.1072,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "yellow_cube": {
+   "x": 0.1273,
+   "y": 0.0225,
+   "yaw": 0.1571,
+   "fp": 0.0225
+  },
+  "red_cube": {
+   "x": 0.1987,
+   "y": 0.0041,
+   "yaw": 0.4644,
+   "fp": 0.0225
+  }
+ }
+}

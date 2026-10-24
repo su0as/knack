@@ -1,0 +1,229 @@
+{
+ "run_id": "20261024-013235-lift-super-gt-real",
+ "task": "lift",
+ "title": "Lift",
+ "instruction": "Pick up the red cube and hold it at least 5 cm above the table.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "real",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 1,
+   "success": 0.125,
+   "gt_k": 1,
+   "self_k": 4,
+   "errors": 0,
+   "wall_s": 8.6,
+   "usd_cum": 0.00329,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 86,
+   "summary": "**Mode 1: Insufficient lift height** (5 episodes: 1000, 1001, 1002, 1003, 1005)\n*Root cause:* The lift target `cz + 0.05` uses the cube centre z from the *grasp* observation. Due to sensor noise or approach error, the actual cube centre is often ~0.014\u202fm, making `target_z \u2248 0.064\u202fm`, just below the 0.065\u202fm threshold (lines 61\u201162).\n*Fix:* After a successful grasp, re\u2011observe the cube pose and use that `cz` for the lift target (after line 42).\n\n**Mode 2: Grasp on edge/collision** (2 episodes: 1004, 1007)\n*Root cause:* The robot descends to `cz` (line 32) but the cube is near a table edge or another object. The grasp closes but does not secure a stable lift, causing the cube to slide down during the lift phase (lines 38\u201148).\n*Fix:* Add a pre\u2011grasp check that the approach point has `cz > 0.02\u202fm` and no nearby obstacles; if failed, increase `approach_z` by 0.01\u202fm (line 23) before retrying.\n\n**Mode 3: Safety clamp activation** (2 episodes: 1004, 1007)\n*Root cause:* Physical contact with the environment triggers the safety clamp, preventing full lift (lines 66\u201169). The code returns `False` without retrying.\n*Fix:* On clamp detection, command a small retreat `move_by(dz=0.02)` then re\u2011attempt the lift from the new pose rather than aborting."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 5,
+   "errors": 1,
+   "wall_s": 5.9,
+   "usd_cum": 0.00673,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 97,
+   "summary": "**Mode 1: Insufficient lift after grasp** (3 episodes: 2000, 2005)  \n*Root cause*: The final lift targets `cz_refined + 0.05 + 0.001`, but `cz_refined` is extracted from a *post-grasp* observation where the cube may have settled or shifted downward. The epsilon `0.001` is too small to guarantee the 5\u202fcm table\u2011clearance threshold (line 69, 80).  \n*Fix*: Add a safety margin of `+0.01\u202fm` to `target_z` (line 69) so the robot lifts to at least `cz_refined + 0.061`, guaranteeing clearance even if the cube sinks post\u2011grasp.\n\n**Mode 2: Collision with safe\u2011workspace limits** (1 episode: 2004)  \n*Root cause*: The descend step moves to `cz` (cube centre height). When the cube is near the table surface, `cz` can fall below the robot\u2019s safe workspace floor of `0.014\u202fm`, triggering a `SafetyViolation` (line 31).  \n*Fix*: Clamp the descend target to the workspace floor: `target_z = max(cz, 0.014 + 0.01)` before `move_to` (line 31), ensuring the robot never requests a pose below `0.024\u202fm`."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 7,
+   "success": 0.875,
+   "gt_k": 7,
+   "self_k": 6,
+   "errors": 0,
+   "wall_s": 6.3,
+   "usd_cum": 0.01012,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 100,
+   "summary": "**Mode 1: Insufficient lift after grasp** (1 episode: seed 3000)\n- **Root cause**: The refined cube height `cz_refined` (line 64) is taken from a post-grasp observation that reports the cube at `z=0.0461\u202fm` (below the table floor). The target `target_z = cz_refined + 0.06` (line 72) therefore computes to ~0.056\u202fm, failing the `\u22650.065\u202fm` check (lines 82\u201396).\n- **Fix**: After a successful grasp, force `cz_refined` to the observed cube centre `cz` from the initial perception (line 18) before adding the 0.06\u202fm offset. This ensures the lift target is based on the known cube position, not a potentially stale or erroneous post-grasp pose.\n\n**Mode 2: Grasp succeeds but cube settles below target** (0 episodes in given data; pattern likely if `robot.holding()` returns `\"red_cube\"` but `get_pose` returns a lower `z` due to sensor lag or gravity-induced settling).  \n- **Root cause**: The verification at lines 81\u201396 uses `get_pose` after the lift; if the cube has settled, the height check fails despite a valid grasp.\n- **Fix**: Add a brief `robot.move_by(dz=0.02)` (line 51 style) after `robot.release()` on grasp failure, and before the final lift, ensure the robot lifts to `cz + 0.07` (instead of `+0.06`) to provide a larger safety margin against settling."
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 8,
+   "success": 1.0,
+   "gt_k": 8,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 5.9,
+   "usd_cum": 0.01367,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 90
+  }
+ ],
+ "best_round": 4,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 4,
+  "chosen": 4,
+  "rows": [
+   {
+    "round": 4,
+    "practice": "8/8",
+    "recheck": "16/16",
+    "total_k": 24,
+    "total_n": 24
+   },
+   {
+    "round": 3,
+    "practice": "7/8",
+    "recheck": "11/16",
+    "total_k": 18,
+    "total_n": 24
+   },
+   {
+    "round": 2,
+    "practice": "5/8",
+    "recheck": "10/16",
+    "total_k": 15,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 42,
+  "p": 0.84,
+  "lo": 0.714855190382,
+  "hi": 0.916626786379,
+  "source": "gt",
+  "best_round": 4,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 3.55,
+  "self_report_true": 43,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100000,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0644,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100000/end_front.jpg"
+   },
+   {
+    "seed": 100020,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100020/end_front.jpg"
+   },
+   {
+    "seed": 100021,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0629,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100021/end_front.jpg"
+   },
+   {
+    "seed": 100025,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100025/end_front.jpg"
+   },
+   {
+    "seed": 100028,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0649,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100028/end_front.jpg"
+   },
+   {
+    "seed": 100035,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0639,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100035/end_front.jpg"
+   },
+   {
+    "seed": 100039,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100039/end_front.jpg"
+   },
+   {
+    "seed": 100041,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100041/end_front.jpg"
+   }
+  ]
+ },
+ "models": {
+  "coder": {
+   "alias": "super",
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "nvidia": true,
+   "calls": 5,
+   "prompt_tokens": 16919,
+   "completion_tokens": 8466,
+   "usd": 0.012695,
+   "price_in": 0.3,
+   "price_out": 0.9
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 3,
+   "prompt_tokens": 11877,
+   "completion_tokens": 1115,
+   "usd": 0.00098,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.013675,
+  "compute_usd": 0.0,
+  "total_usd": 0.013675,
+  "calls": 8,
+  "prompt_tokens": 28796,
+  "completion_tokens": 9581,
+  "compute_seconds": 167.61,
+  "backend": "local"
+ },
+ "wall_time_s": 138.2,
+ "practice_episodes": 32,
+ "created": "2026-10-24 01:34:53",
+ "skill_file": "best_skill.py"
+}

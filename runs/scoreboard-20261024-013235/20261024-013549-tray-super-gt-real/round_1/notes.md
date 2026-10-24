@@ -1,0 +1,7 @@
+- Start by homing the arm to a known safe pose.
+- Use perceive‑act‑verify cycle: get the latest pose of the yellow cube before each grasp attempt, align the gripper yaw with the cube's yaw, and approach slowly.
+- Retry grasping a few times if the grasp fails or if the object is not detected as held.
+- After a successful grasp, lift the cube to a clear height, then move to the tray centre (obtained from fixtures) and lower to table height (where the cube will sit inside the tray).
+- Release the cube and verify that the gripper is empty before finishing.
+- Use modest speeds for precise motions (0.05 m/s) and default speed for longer travels.
+- Wrap moves that could be out of reach in try/except MotionError to avoid crashing the skill.

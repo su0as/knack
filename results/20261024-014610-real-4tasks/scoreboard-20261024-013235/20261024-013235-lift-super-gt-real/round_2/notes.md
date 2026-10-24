@@ -1,0 +1,5 @@
+- After a successful grasp, re‑observe the cube pose (or use get_pose) to obtain a accurate centre height and compute the lift target from that value, preventing the systematic ~1 mm undershoot seen in seeds 1000‑1003,1005.
+- Added a small epsilon (0.001 m) to the lift target to give a margin above the 0.065 m requirement.
+- If the lift does not achieve the required height, perform a brief upward retreat (move_by dz=0.01) and re‑check, which helps recover from safety‑clamp contacts or slight slips.
+- Kept the existing grasp‑retry logic (small retreat on failed grasp) and the overall structure (home → perceive → approach → descend → grasp → verify → lift → final check).
+- All moves remain within the safety workspace; speeds are kept low for precision phases.

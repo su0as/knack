@@ -1,0 +1,5 @@
+- The failure occurred because the lift target was based on a noisy post‑grasp observation that reported the cube lower than its true height, resulting in insufficient lift.
+- Fixed by using the initial cube centre (cz) from the first perception to compute the lift target, guaranteeing an accurate reference.
+- Increased the safety margin from +0.01 m to +0.02 m (lift target = cz + 0.07 m) to protect against any settling or measurement error after grasping.
+- Preserved the existing grasp‑retry logic, safe‑floor clamp for descent, and corrective upward nudge if the lift is still too low.
+- No changes to approach/descent speeds or other safety margins.
