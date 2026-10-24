@@ -1,0 +1,6 @@
+- Lowered the initial approach height to 5 mm above the puck centre (instead of adding radius) to avoid side‑collisions with the wide puck.  
+- Simplified the touch‑down step: a single `move_by(dz=-0.0125)` lowers the tool until the fingertips contact the top surface.  
+- Limited each push to ≤ 0.015 m and made the step size adaptive (`min(0.015, distance)`) to keep motions small and safe.  
+- Added a fresh observation after the first lift and, if the puck is still outside, performed one extra tiny corrective push (≤ 0.005 m) before giving up – this captures the “insufficient correction” failure mode.  
+- Kept all speeds at 0.05 m/s, used narrow `try/except` blocks only for `Exception` (no bare `except:`), and removed any hard‑coded coordinates.  
+- Preserved the overall structure that already worked (perceive → approach → touch → push → lift → verify) while fixing the three failure modes identified.

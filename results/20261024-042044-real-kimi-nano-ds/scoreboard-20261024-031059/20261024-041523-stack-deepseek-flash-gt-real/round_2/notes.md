@@ -1,0 +1,7 @@
+- Only seeds 1001 and 1003 failed; both are "off-target placement" (red ended on the table beside blue, xy_offset ≈ 0.037). The other 6 succeeded with z_gap ≈ 0.0298, so the grasp, lift, descent height (0.046) and release sequence are sound — keep them.
+- Root cause is perception noise, not drift: in seed 1001 the three blue readings spanned y from 0.010 to 0.035 (≈2.5 cm), so a 3-sample mean was badly biased. Switched to a **median of 7–9 samples** for every pose read (robust to outliers).
+- Replaced the fragile "estimate grasp offset then subtract" placement with a **closed-loop XY alignment**: while holding red, repeatedly read red and blue, compute delta = blue − red, and `move_by(dx, dy)` until the held red cube is centred over blue (≤2 mm). This cancels both the grasp offset and the blue-pose noise directly.
+- Kept the spiral-of-offsets grasp, `holding()` verification, slow speeds near objects, and bounded try/except around every risky move.
+- Descent height is now adaptive: `place_z = blue_z + 0.031` clamped to [0.044, 0.050] (≈0.046 for blue_z≈0.015), matching what worked.
+- Added a straight-up `move_by(dz=0.03)` immediately after release (before retreating) so the cube is never dragged sideways.
+- Final stack check uses median poses; success requires dz > 0.02 and dxy < 0.025.

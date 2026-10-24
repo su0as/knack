@@ -1,0 +1,4 @@
+- Fixed tray‑pose staleness: after `robot.get_pose(tray_name)` we now wait 0.05 s and re‑read the pose before moving, ensuring the approach target reflects the current tray position.  
+- Added a safety‑margin shift for the blue‑cube pick: coordinates are clamped to a slightly smaller box (x∈[0.07,0.27], y∈[‑0.20,0.20]) to keep the pre‑grasp pose well inside the reachable workspace and avoid edge‑related MotionError.  
+- Raised the approach height for the blue‑tray from 0.045 m to 0.055 m (and kept the 0.06 m clearance before the first pick) to prevent the contact/joint‑limit stop observed on that step.  
+- Preserved all existing verification lifts, retry loops and micro‑adjustments; only the two behavioural fixes and the margin shift were introduced.

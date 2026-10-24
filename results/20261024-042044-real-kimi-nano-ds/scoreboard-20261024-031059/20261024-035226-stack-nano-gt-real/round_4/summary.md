@@ -1,0 +1,7 @@
+**Mode 1: Persistent placement offset (5 episodes)**
+- **Root cause:** The placement target `bx, by` is adjusted only when `xy_offset > PLACEMENT_OFFSET_THRESHOLD` (line 102), but the adjustment uses the *current* red position relative to the *original* blue position. If the red cube drifts or the initial perception was noisy, the scaled target never converges within the 2‑try limit (lines 64‑108). The loop then falls through to the next overall attempt, which repeats the same perception‑drift cycle.
+- **Fix:** After each `robot.move_to` failure (line 67), re‑perceive the red cube (line 88) *before* computing the offset, and force a target adjustment if `xy_offset > 0.01` regardless of the threshold. This ensures the target is always nudged toward the held cube.
+
+**Mode 2: Pick‑height / short‑stop collision (2 episodes)**
+- **Root cause:** `move_to` returns `ok: false` with `error_m > 0.005` (line 41), triggering a xy‑shift of ±0.02 m (lines 42‑43). In two cases the shift pushes the robot into a joint limit or contact, causing the subsequent `grasp()` to fail and the cube to be dropped before placement (see seed 4004 pick short‑stop log).
+- **Fix:** Cap the shift magnitude to `0.005 m` when `error_m > 0.01`, and add a brief `robot.move_by(dz=0.01)` after `robot.grasp()` to verify clearance before lifting.

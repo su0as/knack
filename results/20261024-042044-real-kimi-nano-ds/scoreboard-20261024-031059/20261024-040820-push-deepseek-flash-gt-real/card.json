@@ -1,0 +1,211 @@
+{
+ "run_id": "20261024-040820-push-deepseek-flash-gt-real",
+ "task": "push",
+ "title": "Push puck",
+ "instruction": "Push the orange puck so that its centre ends up inside the green circle. The puck is too wide to grasp.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "real",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 6,
+   "success": 0.75,
+   "gt_k": 6,
+   "self_k": 3,
+   "errors": 4,
+   "wall_s": 23.9,
+   "usd_cum": 0.01516,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 84,
+   "summary": "**Mode 1: Out-of-reach push point** (2 episodes: 1000, 1001)  \n*Root cause:* The `clamp` on line 31 forces `cx` to 0.31 when the puck is far right, but the arm\u2019s max reach is 0.251 m (wrist). Line 30\u2019s `margin = r + 0.012` adds extra distance, pushing the target beyond the workspace.  \n*Fix:* Reduce the margin or lower the `cx` clamp ceiling (e.g., `0.25`) to keep the approach point inside the arm\u2019s envelope.\n\n**Mode 2: Timeout on vertical descent** (2 episodes: 1003, 1007)  \n*Root cause:* Line 55 moves to `z=0.02` at slow speed (0.05) to set push height. When the puck is near the target, this tiny descent takes many waypoints, exhausting the 45 s budget before the push executes.  \n*Fix:* Increase the descent speed to `0.15` on line 55, or raise the target `z` to `0.05` to reduce waypoint count.\n\n**Mode 3: Gripper collision / puck tilt** (1 episode: 1002)  \n*Root cause:* Line 76 lifts the gripper from `z=0.02` after the push. The puck\u2019s edge may catch the jaw geometry during retreat, causing a stall that the code does not recover from, leaving the puck off\u2011center.  \n*Fix:* Add a small `yaw` offset or a brief `open` command on line 76 to ensure the jaws clear the puck before lifting."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 5,
+   "errors": 3,
+   "wall_s": 25.0,
+   "usd_cum": 0.05572,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 84,
+   "summary": "**Mode 1: Approach timeout** (2 episodes: 2003, 2004)  \n**Root cause:** The descent to push height (line 55) moves at 0.05\u202fm/s. When the puck is far or offset, the arm traverses a long horizontal distance at this slow speed, exceeding the 45\u202fs budget before reaching `z=0.02`.  \n**Fix:** Increase the descent speed to `0.15` on line 55, matching the approach speed used earlier.\n\n**Mode 2: Initial approach timeout** (1 episode: 2006)  \n**Root cause:** The first `move_to` to the contact point (line 40) also uses the slow 0.05\u202fm/s speed. A distant puck causes a long traverse that times out before the push can begin.  \n**Fix:** Raise the speed on line 40 to `0.15` so the arm reaches the contact point promptly.\n\n**Mode 3: Overshoot / instability** (1 episode: 2006)  \n**Root cause:** After a successful approach, the final push (line 70) moves at 0.05\u202fm/s to `z=0.02`. The low speed combined with the short push distance can cause the puck to nudge sideways or the arm to overshoot due to residual momentum, leaving the puck off\u2011target.  \n**Fix:** Raise the push speed on line 70 to `0.15` to deliver the push decisively before the arm lifts clear.",
+   "reverted_to": 1
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 6,
+   "success": 0.75,
+   "gt_k": 6,
+   "self_k": 6,
+   "errors": 2,
+   "wall_s": 20.3,
+   "usd_cum": 0.09632,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 84,
+   "summary": "**Mode 1: Approach timeout (2 episodes)**\n*Episodes: 3001, 3004*\n*Root cause:* The `move_to` to descent height (line 55) or lift (line 76) exceeds the 45s budget, likely because the calculated `cx/cy` clamp restricts the robot to a narrow corridor that is physically unreachable or obstructed, causing repeated retries.\n*Fix:* Widen the clamp bounds on lines 31-32 (e.g., `0.05` \u2192 `0.02`, `0.31` \u2192 `0.35`) to give the robot more lateral room to reach the approach point without timing out.\n\n**Mode 2: Contact/blocked descent (2 episodes)**\n*Episodes: 3005, 3001 (t=43)*\n*Root cause:* The push height descent (line 55) commands `0.02` m, but the puck radius plus margin pushes the approach point near obstacles. The robot \"stopped short\" (error_m 0.01) indicating a collision or joint limit before reaching `0.02` m (lines 56-61).\n*Fix:* Reduce descent depth to `0.01` m on line 55, or add a pre-check: if `dist < 0.05`, skip the low-height move and push from the approach height directly."
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 8,
+   "success": 1.0,
+   "gt_k": 8,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 10.9,
+   "usd_cum": 0.12035,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 91
+  }
+ ],
+ "best_round": 4,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 4,
+  "chosen": 4,
+  "rows": [
+   {
+    "round": 4,
+    "practice": "8/8",
+    "recheck": "15/16",
+    "total_k": 23,
+    "total_n": 24
+   },
+   {
+    "round": 1,
+    "practice": "6/8",
+    "recheck": "10/16",
+    "total_k": 16,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 44,
+  "p": 0.88,
+  "lo": 0.761949211134,
+  "hi": 0.943824762894,
+  "source": "gt",
+  "best_round": 4,
+  "errors": 2,
+  "halts": 2,
+  "safety_clamps": 0,
+  "mean_sim_time": 14.55,
+  "self_report_true": 47,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100002,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.3003,
+     "tolerance": 0.035,
+     "upright": false
+    },
+    "frame": "eval/episodes/ep_100002/end_front.jpg"
+   },
+   {
+    "seed": 100017,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.007,
+     "tolerance": 0.035,
+     "upright": false
+    },
+    "frame": "eval/episodes/ep_100017/end_front.jpg"
+   },
+   {
+    "seed": 100023,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0149,
+     "tolerance": 0.035,
+     "upright": false
+    },
+    "frame": "eval/episodes/ep_100023/end_front.jpg"
+   },
+   {
+    "seed": 100026,
+    "error": "EpisodeTimeout: time budget of 45 s exceeded [skill.py line 73, in run: robot.move_to(ex, ey, PUSH_Z, yaw=yaw, speed=0.05)]",
+    "metrics": {
+     "puck_to_target_xy": 0.0965,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100026/end_front.jpg"
+   },
+   {
+    "seed": 100038,
+    "error": "EpisodeTimeout: time budget of 45 s exceeded [skill.py line 58, in run: res = robot.move_to(cx, cy, PUSH_Z, yaw=yaw, speed=0.10)]",
+    "metrics": {
+     "puck_to_target_xy": 0.1088,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100038/end_front.jpg"
+   },
+   {
+    "seed": 100044,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0061,
+     "tolerance": 0.035,
+     "upright": false
+    },
+    "frame": "eval/episodes/ep_100044/end_front.jpg"
+   }
+  ]
+ },
+ "models": {
+  "coder": {
+   "alias": "deepseek-flash",
+   "id": "deepseek-ai/DeepSeek-V4.1-Flash",
+   "nvidia": false,
+   "calls": 7,
+   "prompt_tokens": 34332,
+   "completion_tokens": 94762,
+   "usd": 0.118891,
+   "price_in": 0.3,
+   "price_out": 1.2
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 3,
+   "prompt_tokens": 20063,
+   "completion_tokens": 1071,
+   "usd": 0.001461,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.120352,
+  "compute_usd": 0.0,
+  "total_usd": 0.120352,
+  "calls": 10,
+  "prompt_tokens": 54395,
+  "completion_tokens": 95833,
+  "compute_seconds": 304.85,
+  "backend": "local"
+ },
+ "wall_time_s": 422.8,
+ "practice_episodes": 32,
+ "created": "2026-10-24 04:15:23",
+ "skill_file": "best_skill.py"
+}

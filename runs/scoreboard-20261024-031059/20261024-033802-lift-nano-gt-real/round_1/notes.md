@@ -1,0 +1,7 @@
+- The scene uses noisy perception; we must read the object pose each time we need it and not rely on a single observation.
+- The red cube is identified by its colour; we will locate it by name in `robot.observe()["objects"]`.
+- Target lift height: 5 cm above the table surface → z ≈ 0.05 m. Since the cube sits at ~0.015 m, we aim for a final z of ~0.065 m.
+- Plan: (1) observe, locate red_cube, compute a safe tool‑point pose directly above its centre (add a small safety margin to x/y). (2) Align the gripper yaw with the cube’s yaw so the fingers close along its faces. (3) Move there slowly, then close the gripper. (4) Verify that `robot.holding()` returns `"red_cube"`; if not, retry a few times. (5) Lift a little higher (≈0.08 m) to guarantee the 5 cm clearance, then return True.
+- We must guard `robot.move_to` with a try/except for `MotionError` and fall back to a new observation if the target is unreachable.
+- Keep speeds low (≈0.07 m/s) for the approach and lift to stay within the safety layer.
+- The skill ends as soon as the cube is securely held at the required height; we simply return True.

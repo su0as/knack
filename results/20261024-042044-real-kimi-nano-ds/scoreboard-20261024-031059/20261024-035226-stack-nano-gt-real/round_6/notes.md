@@ -1,0 +1,5 @@
+- Persistent grasp failures were caused by an automatic re‑grasp that released the cube and could lose it; we now verify the grasp once and abort the current overall attempt if it fails, avoiding the fragile re‑grasp loop.  
+- Placement drift was due to a large adjustment factor (0.5) that could push the target out of reach; we now scale the shift by 0.1 and cap it at 0.02 m, keeping the target inside the safe workspace.  
+- The verification step now only checks that the red cube is still being held and that its xy offset to the target is < 0.02 m; if the offset is too large we gently nudge the target toward the observed red centre and retry once.  
+- All retry logic respects the global 3‑attempt limit and stays within the time budget; we keep the perception sanity check and limited per‑subtask retries.  
+- The skill returns True only after a successful release with no object still held, preserving the original success criterion.

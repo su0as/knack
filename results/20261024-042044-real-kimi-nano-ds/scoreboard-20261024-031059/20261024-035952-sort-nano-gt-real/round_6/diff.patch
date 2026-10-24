@@ -1,0 +1,99 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -1,5 +1,5 @@
+ # --------------------------------------------------------------
+-#  Sort‑by‑colour skill – final version (Round 4 fixes)
++#  Sort‑by‑colour skill – improved version (Round 4 fixes with regression fixes)
+ # --------------------------------------------------------------
+ import math
+ import numpy as np  # allowed import
+@@ -23,6 +23,10 @@
+     SAFE_X = (0.04, 0.32)
+     SAFE_Y = (-0.26, 0.26)
+     SAFE_Z = (0.014, 0.26)
++
++    # Additional inner margins to keep picks away from the strict edges
++    SAFE_X_IN = (0.07, 0.27)
++    SAFE_Y_IN = (-0.20, 0.20)
+ 
+     def clamp_coord(val, limits):
+         lo, hi = limits
+@@ -62,12 +66,12 @@
+             ox, oy, oz = obj["pos"]
+             oyaw = obj["yaw"]
+ 
+-            # 2. Clamp to safety limits (especially for blue cube near edges)
+-            ox = clamp_coord(ox, SAFE_X)
+-            oy = clamp_coord(oy, SAFE_Y)
++            # 2. Small pause to let the simulated scene settle
++            robot.wait(0.1)
+ 
+-            # 3. Small pause to let the simulated scene settle
+-            robot.wait(0.1)
++            # 3. Apply inner safety margins for edge‑case objects
++            ox = clamp_coord(ox, SAFE_X_IN)
++            oy = clamp_coord(oy, SAFE_Y_IN)
+ 
+             # 4. Pre‑grasp pose a little above the object
+             pre_z = 0.025                     # 2.5 cm above table
+@@ -94,6 +98,7 @@
+                 robot.release()
+                 continue
+             if robot.holding() != obj_name:
++                # Not holding – drop and retry
+                 robot.release()
+                 continue
+ 
+@@ -115,18 +120,24 @@
+         Move the gripper above the centre of the given tray,
+         lower to release height, release, nudge, then lift away.
+         """
+-        # 1. Get tray centre (fresh pose)
++        # 1. Get tray centre (fresh pose) and re‑read after a short wait
+         tray_pose = robot.get_pose(tray_name)
+         tx, ty, _ = tray_pose["pos"]
++        robot.wait(0.05)                     # let pose settle
++        tray_pose = robot.get_pose(tray_name)
++        tx, ty, _ = tray_pose["pos"]        # use the updated values
+ 
+-        # 2. Approach from a safe height above the tray (clear of rim)
+-        approach_z = 0.045          # 4.5 cm – clears the cube and tray rim
++        # 2. Approach height depends on which tray we are handling
++        if tray_name == "blue_tray":
++            approach_z = 0.055          # 5.5 cm – clears the blue tray rim and avoids contact stop
++        else:
++            approach_z = 0.045          # 4.5 cm – safe for the red tray
+         move_res = safe_move_to(tx, ty, approach_z, speed=0.07)
+         if not move_res["ok"]:
+             return False
+ 
+         # 3. Lower to release height (just above the table)
+-        release_z = 0.025           # 2.5 cm – enough to clear the cube centre
++        release_z = 0.025               # 2.5 cm – enough to clear the cube centre
+         move_res = safe_move_to(tx, ty, release_z, speed=0.05)
+         if not move_res["ok"]:
+             return False
+@@ -139,7 +150,7 @@
+         safe_move_to(tx, ty, micro_z, speed=0.03)
+ 
+         # 6. Lift away to avoid dragging; use a fresh safe height
+-        lift_z = 0.05               # 5 cm above table
++        lift_z = 0.05                   # 5 cm above table
+         safe_move_to(tx, ty, lift_z, speed=0.07)
+ 
+         return True
+@@ -154,13 +165,7 @@
+     if not place_into_tray("red_tray", grip_pose):
+         return False
+ 
+-    # 2. Clear the red cube to avoid collision with the next pick
+-    #    Move to a high position above the just‑placed cube's (x,y)
+-    clear_res = safe_move_to(grip_pose[0], grip_pose[1], 0.06, speed=0.07)
+-    if not clear_res["ok"]:
+-        return False
+-
+-    # 3. Pick the blue cube and place it into the blue tray
++    # 2. Pick the blue cube and place it into the blue tray
+     grip_pose = pick("blue_cube")
+     if not grip_pose:
+         return False

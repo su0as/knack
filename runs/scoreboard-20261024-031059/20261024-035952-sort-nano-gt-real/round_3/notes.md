@@ -1,0 +1,5 @@
+- Disallowed `time` import removed; replaced `time.sleep(0.1)` with `robot.wait(0.1)`.
+- Kept all safety‑clamping and error‑handling logic unchanged.
+- Minor refactor: moved the `MotionError` class to the top level (still allowed) and kept helper functions unchanged.
+- Retained the same pick‑and‑place flow, but now uses only permitted modules (`math`, `numpy`, `itertools`, `functools`, `collections`).
+- Code now complies with the import policy and should run on the simulated robot.

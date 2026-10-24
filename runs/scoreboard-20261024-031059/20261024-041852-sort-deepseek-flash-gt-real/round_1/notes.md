@@ -1,0 +1,6 @@
+- First version: no prior results, so I designed from the spec. Key facts: cube centre rests at z≈0.015, tray floor at z=0, tray walls 0.025 high, tray inner half-size 0.044, gripper max opening 0.05.
+- Perception is noisy (~1 cm, several degrees), so I average 3 fresh `get_pose` readings before each critical move and re-read the tray just before placing.
+- Grasp strategy: approach at z=0.12 aligned to the cube's yaw, descend slowly to z=0.015 (pads at cube mid-height), `grasp()`, verify `holding()`, lift to 0.14.
+- Place strategy: travel at z=0.14, descend to 0.03 then 0.016 inside the tray, `release()`, retreat, verify `holding() is None`.
+- Recovery: bounded retries with small ±6 mm lateral offsets on failed grasps; re-pick if the cube isn't verified inside the tray; `MotionError` caught around every move with `home()` fallback.
+- Colour mapping is read from `observe()` at run time (never hard-coded names/coords).

@@ -1,0 +1,193 @@
+{
+ "round": 1,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 6,
+ "errors": 0,
+ "wall_s": 8.2,
+ "usd_cum": 0.00084,
+ "code": "round_1/skill.py",
+ "diff": "round_1/diff.patch",
+ "lines": 73,
+ "notes": "- Identify the red and blue cubes by colour from the observation dictionary.\n- Compute a safe pick height a little above the red cube\u2019s centre and move there with a slow speed.\n- Close the gripper and verify that the red cube is actually being held; retry a few times on failure.\n- Lift the gripper slightly to clear the red cube, then compute the centre height needed to place the red cube on top of the blue cube (blue centre\u202f+\u202fhalf\u2011height\u202f+\u202fred half\u2011height).\n- Move to that placement pose above the blue cube, open the gripper to release, and verify that nothing is being held.\n- Use modest retry limits and catch motion errors to keep the skill robust despite perception noise.",
+ "episodes": [
+  {
+   "seed": 1000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0871,
+    "z_gap": -0.0022,
+    "red_held": false,
+    "blue_z": 0.0171
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.1606,
+    "z_gap": -0.0005,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.1095,
+    "z_gap": 0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.1773,
+    "z_gap": -0.0001,
+    "red_held": false,
+    "blue_z": 0.015
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0946,
+    "z_gap": -0.0047,
+    "red_held": false,
+    "blue_z": 0.0196
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.2189,
+    "z_gap": -0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0861,
+    "z_gap": 0.0033,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0324,
+    "z_gap": 0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

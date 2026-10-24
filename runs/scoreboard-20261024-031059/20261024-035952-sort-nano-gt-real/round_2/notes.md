@@ -1,0 +1,7 @@
+- Fixed pick‑place collision (Mode 1) by raising the pre‑release approach height to 0.025 m before lowering to 0.015 m, giving clearance over the tray rim.  
+- Added proper `MotionError` definition and workspace clamping (x∈[0.04,0.32], y∈[‑0.26,0.26], z∈[0.014,0.26]) to prevent the over‑reach halt (Mode 2).  
+- After releasing an object, the gripper now lifts to a fresh safe height (0.05 m) with no yaw, avoiding the stale‑pose collision that caused the cube to be dropped away from the tray (Mode 3).  
+- Added verification that the object is actually held (`robot.holding() == obj_name`) and a bounded retry loop for grasp failures.  
+- All moves now use low speeds for approach/placement (0.05–0.07 m/s) and re‑observe where needed.  
+- Clamped coordinates before calling `move_to` so the safety layer never receives out‑of‑range targets.  
+- Kept the overall sequential pick‑place flow but made it robust to perception noise and transient failures.

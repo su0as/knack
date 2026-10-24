@@ -1,0 +1,265 @@
+{
+ "task": "push",
+ "seed": 100042,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "puck_to_target_xy": 0.0096,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.18,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.18,
+   "call": "log",
+   "result": "attempt 0 dist 0.127"
+  },
+  {
+   "t": 1.2,
+   "call": "move_to(0.080, 0.121, 0.120, yaw=0.412, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0798,
+     0.1214,
+     0.12
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.28,
+   "call": "move_to(0.080, 0.121, 0.015, yaw=0.412, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0798,
+     0.1211,
+     0.0149
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 3.7,
+   "call": "move_to(0.108, 0.057, 0.015, yaw=0.412, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.108,
+     0.0572,
+     0.0151
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.7,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 4.44,
+   "call": "move_to(0.108, 0.057, 0.120, yaw=0.412, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.108,
+     0.0572,
+     0.1202
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 4.44,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 4.44,
+   "call": "log",
+   "result": "attempt 1 dist 0.058"
+  },
+  {
+   "t": 6.02,
+   "call": "move_to(0.108, 0.059, 0.120, yaw=0.514, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1077,
+     0.0589,
+     0.12
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 7.1,
+   "call": "move_to(0.108, 0.059, 0.015, yaw=0.514, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1075,
+     0.0588,
+     0.0149
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 8.54,
+   "call": "move_to(0.142, -0.002, 0.015, yaw=0.514, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.142,
+     -0.0021,
+     0.0149
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 8.54,
+   "call": "observe()",
+   "result": "ok"
+  }
+ ],
+ "n_calls": 14,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 9.04,
+ "wall_time": 0.88,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1073,
+     0.0818,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1482,
+     -0.0306,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 9.04,
+  "gripper": {
+   "pos": [
+    0.142,
+    -0.0021,
+    0.0149
+   ],
+   "yaw": 0.5138,
+   "opening": 0.0522,
+   "holding": "puck"
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1537,
+     -0.0227,
+     0.0099
+    ],
+    "yaw": 0.1782,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1482,
+     -0.0306,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1482,
+   "y": -0.0306,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1073,
+   "y": 0.0818,
+   "yaw": -0.0801,
+   "fp": 0.035
+  }
+ }
+}

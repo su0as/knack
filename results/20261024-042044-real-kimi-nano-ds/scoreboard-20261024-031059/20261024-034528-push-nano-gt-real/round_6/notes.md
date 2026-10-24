@@ -1,0 +1,5 @@
+- Expanded the vertical clearance buffer to **0.045 m** and increased the approach‑retry attempts to **3**, lifting **0.005 m** on each failure. This gives enough room to clear side obstacles that previously blocked the gripper.
+- Moved the whole “compute offset → approach pose → retry → descend → push” sequence **inside the push loop** so it is recomputed after every push. This prevents the gripper from losing alignment and stops lateral drift that caused the final distance to exceed the tolerance.
+- After each successful push we now lift back to the **re‑computed** approach height, ensuring the gripper is always centered over the current puck pose before the next push.
+- All previously working habits are retained: slow speed, bounded retries, re‑observation after moves, and a final verification step.
+- No hard‑coded coordinates; everything is derived from the live perception data.

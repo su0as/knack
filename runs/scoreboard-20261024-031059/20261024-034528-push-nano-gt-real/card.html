@@ -1,0 +1,829 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Push puck</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261024-034528-push-nano-gt-real &middot; 2026-10-24 03:52:26</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Push the orange puck so that its centre ends up inside the green circle. The puck is too wide to grasp.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: real &middot; 48 practice episodes in 6 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B <em>$0.06 / $0.24 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">0%</div><div>0/50 layouts &middot; Wilson 95% CI 0% to 7%</div><div class='ci'><div class='ci-band' style='left:0.0%;width:7.1%'></div><div class='ci-dot' style='left:0.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:2%'></span><em>R1<br>0/8</em></div><div class='bar'><span style='height:2%'></span><em>R2<br>0/8</em></div><div class='bar'><span style='height:2%'></span><em>R3<br>0/8</em></div><div class='bar'><span style='height:2%'></span><em>R4<br>0/8</em></div><div class='bar'><span style='height:2%'></span><em>R5<br>0/8</em></div><div class='bar'><span style='height:2%'></span><em>R6<br>0/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B</code></td><td>6</td><td>28,729</td><td>25,155</td><td>$0.0078</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>5</td><td>42,298</td><td>1,997</td><td>$0.0030</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>304 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>11</th><th>71,027</th><th>27,152</th><th>$0.0108</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details open><summary>Round 1: 0/8 practice episodes &middot; 0 errors &middot; $0.0008 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Perception is noisy (≈1 cm pos, several deg yaw) → sample a few times or use the first reading but keep checks.
+- The puck cannot be grasped; we must push it by contacting its top and translating.
+- Compute the vector from the puck centre to the green‑zone centre and push in that direction.
+- Use a small, slow translation (≤ 0.02 m) to avoid overshoot; keep speed low (≈0.05 m/s).
+- After pushing, lift the gripper, re‑observe the puck and verify that its centre lies inside the zone radius.
+- Keep the whole skill under the time budget; no loops longer than a few iterations.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Overshoot &amp; drift** (5 episodes, seeds 1004–1005)  
+*Root cause:* Push step (line 40) is capped at 2 cm, but the puck starts &gt;3 cm from the target. The robot pushes the full step, then lifts (line 56) before the puck settles, leaving residual drift.  
+*Fix:* Reduce `push_step` to `min(0.01, dist_to_target)` so pushes are tiny and the puck has time to settle before lift.
+
+**Mode 2: Approach mis‑alignment** (3 episodes, seeds 1000–1003)  
+*Root cause:* The approach height (line 19) adds `puck_radius + 0.0125`, but the puck is “too wide to grasp.” The tool may collide with the puck sides, causing the robot to stop short (traces show z‑values ~0.05–0.06 m instead of touching).  
+*Fix:* Lower `approach_z` offset to `puck_pos[2] + 0.005` to pass above the puck centre without side interference, then rely on the touch‑z calculation (line 27) to descend safely.
+
+**Mode 3: Insufficient correction** (all seeds)  
+*Root cause:* After the push (line 44‑48) the skill lifts immediately (line 55‑58) without a second observe‑adjust loop, so any push error persists.  
+*Fix:* Add a brief `observe()` after lift (after line 58) and, if `final_dist &gt; target_radius`, retry the push with a fresh `push_step` before returning.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,70 @@</span>
+<span class='add'>+# skill module</span>
+<span class='add'>+import math</span>
+<span class='add'>+import numpy as np</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    # ---------- 1. perception ----------</span>
+<span class='add'>+    obs = robot.observe()</span>
+<span class='add'>+    puck = obs[&quot;objects&quot;][&quot;puck&quot;]</span>
+<span class='add'>+    target = obs[&quot;fixtures&quot;][&quot;target&quot;]</span>
+<span class='add'>+</span>
+<span class='add'>+    puck_pos = np.array(puck[&quot;pos&quot;], dtype=float)          # centre of puck</span>
+<span class='add'>+    puck_radius = puck[&quot;size&quot;][&quot;radius&quot;]</span>
+<span class='add'>+    target_pos = np.array(target[&quot;pos&quot;][:2], dtype=float)  # (x,y) of zone centre</span>
+<span class='add'>+    target_radius = target[&quot;radius&quot;]</span>
+<span class='add'>+</span>
+<span class='add'>+    # ---------- 2. approach from above ----------</span>
+<span class='add'>+    # tool point must be above the puck so fingertips can touch its top</span>
+<span class='add'>+    # fingertips are 1.25 cm below the tool point</span>
+<span class='add'>+    approach_z = puck_pos[2] + puck_radius + 0.0125 + 0.003  # small clearance</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class='add'>+    except Exception:  # MotionError or unreachable – try a slightly different height</span>
+<span class='add'>+        approach_z = min(approach_z, 0.20)  # clamp to safe workspace</span>
+<span class='add'>+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class='add'>+</span>
+<span class='add'>+    # lower until fingertips touch the puck top</span>
+<span class='add'>+    touch_z = puck_pos[2] + puck_radius + 0.0125</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(puck_pos[0], puck_pos[1], touch_z, speed=0.05)</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        # if too low, raise a bit and try again</span>
+<span class='add'>+        touch_z = max(touch_z, 0.02)</span>
+<span class='add'>+        robot.move_to(puck_pos[0], puck_pos[1], touch_z, speed=0.05)</span>
+<span class='add'>+</span>
+<span class='add'>+    # ---------- 3. push toward target ----------</span>
+<span class='add'>+    # direction vector from puck to target</span>
+<span class='add'>+    delta = target_pos - puck_pos[:2]</span>
+<span class='add'>+    dist_to_target = np.linalg.norm(delta)</span>
+<span class='add'>+    # we only need to move a small step (max 2 cm) to keep within budget</span>
+<span class='add'>+    push_step = min(0.02, dist_to_target)</span>
+<span class='add'>+    if push_step &gt; 0:</span>
+<span class='add'>+        direction = delta / dist_to_target</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_by(</span>
+<span class='add'>+                dx=direction[0] * push_step,</span>
+<span class='add'>+                dy=direction[1] * push_step,</span>
+<span class='add'>+                speed=0.05</span>
+<span class='add'>+            )</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            # if blocked, abort – the skill will be retried next episode</span>
+<span class='add'>+            pass</span>
+<span class='add'>+</span>
+<span class='add'>+    # ---------- 4. lift and verify ----------</span>
+<span class='add'>+    # lift back to the approach height</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        pass</span>
+<span class='add'>+</span>
+<span class='add'>+    # re‑observe to check final pose</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        final_obs = robot.observe()</span>
+<span class='add'>+        final_puck = np.array(final_obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;], dtype=float)</span>
+<span class='add'>+        final_dist = np.linalg.norm(final_puck[:2] - target_pos)</span>
+<span class='add'>+        if final_dist &lt; target_radius - 0.005:  # comfortably inside</span>
+<span class='add'>+            return True</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        pass</span>
+<span class='add'>+</span>
+<span class='add'>+    return False</span></pre></details><details><summary>Round 2: 0/8 practice episodes &middot; 1 errors &middot; $0.0025 so far</summary><div class='muted'>coder notes</div><pre>- Lowered the initial approach height to 5 mm above the puck centre (instead of adding radius) to avoid side‑collisions with the wide puck.  
+- Simplified the touch‑down step: a single `move_by(dz=-0.0125)` lowers the tool until the fingertips contact the top surface.  
+- Limited each push to ≤ 0.015 m and made the step size adaptive (`min(0.015, distance)`) to keep motions small and safe.  
+- Added a fresh observation after the first lift and, if the puck is still outside, performed one extra tiny corrective push (≤ 0.005 m) before giving up – this captures the “insufficient correction” failure mode.  
+- Kept all speeds at 0.05 m/s, used narrow `try/except` blocks only for `Exception` (no bare `except:`), and removed any hard‑coded coordinates.  
+- Preserved the overall structure that already worked (perceive → approach → touch → push → lift → verify) while fixing the three failure modes identified.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Insufficient push distance** (6 episodes, seeds 2000‑2003, 2005‑2006)  
+*Root cause*: `push_step` capped at 1.5 cm (skill.py line 37) but the puck‑to‑target gap exceeds this per‑step, so the puck drifts only ~0.11 m per episode.  
+*Fix*: Increase `push_step` to `min(0.03, dist_to_target)` or loop pushes until `final_dist &lt; target_radius`.
+
+**Mode 2: Collision‑limited approach** (5 episodes, seeds 2001‑2003, 2006‑2007)  
+*Root cause*: Repeated `move_to` stops short (note “stopped short of the target”) due to joint/contact limits at low approach heights (skill.py lines 18‑22).  
+*Fix*: Raise `approach_z` by 0.01 m (e.g., `puck_pos[2] + 0.015`) or add a retry that lifts 5 mm before re‑approaching.
+
+**Mode 3: Safety violation** (1 episode, seed 2004)  
+*Root cause*: `approach_z` computed as `puck_pos[2] + 0.005` can fall below the safe workspace minimum 0.014 m (skill.py line 18).  
+*Fix*: Clamp `approach_z = max(approach_z, 0.014)` before the `move_to` call.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_1/skill.py</span>
+<span class=''>+++ round_2/skill.py</span>
+<span class='hunk'>@@ -7,37 +7,34 @@</span>
+<span class=''>     obs = robot.observe()</span>
+<span class=''>     puck = obs[&quot;objects&quot;][&quot;puck&quot;]</span>
+<span class=''>     target = obs[&quot;fixtures&quot;][&quot;target&quot;]</span>
+<span class='del'>-</span>
+<span class=''>     puck_pos = np.array(puck[&quot;pos&quot;], dtype=float)          # centre of puck</span>
+<span class='del'>-    puck_radius = puck[&quot;size&quot;][&quot;radius&quot;]</span>
+<span class='del'>-    target_pos = np.array(target[&quot;pos&quot;][:2], dtype=float)  # (x,y) of zone centre</span>
+<span class='add'>+    target_pos = np.array(target[&quot;pos&quot;][:2], dtype=float)  # (x, y) of zone centre</span>
+<span class=''>     target_radius = target[&quot;radius&quot;]</span>
+<span class=''> </span>
+<span class=''>     # ---------- 2. approach from above ----------</span>
+<span class='del'>-    # tool point must be above the puck so fingertips can touch its top</span>
+<span class='del'>-    # fingertips are 1.25 cm below the tool point</span>
+<span class='del'>-    approach_z = puck_pos[2] + puck_radius + 0.0125 + 0.003  # small clearance</span>
+<span class='add'>+    # 5 mm clearance above the puck centre avoids side interference</span>
+<span class='add'>+    approach_z = puck_pos[2] + 0.005</span>
+<span class=''>     try:</span>
+<span class=''>         robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class='del'>-    except Exception:  # MotionError or unreachable – try a slightly different height</span>
+<span class='del'>-        approach_z = min(approach_z, 0.20)  # clamp to safe workspace</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        # if unreachable, lower just enough to stay in workspace</span>
+<span class='add'>+        approach_z = max(approach_z, 0.02)</span>
+<span class=''>         robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class=''> </span>
+<span class='del'>-    # lower until fingertips touch the puck top</span>
+<span class='del'>-    touch_z = puck_pos[2] + puck_radius + 0.0125</span>
+<span class='add'>+    # ---------- 3. descend to touch the puck top ----------</span>
+<span class='add'>+    # fingertips are 1.25 cm below the tool point; lower by that amount</span>
+<span class=''>     try:</span>
+<span class='del'>-        robot.move_to(puck_pos[0], puck_pos[1], touch_z, speed=0.05)</span>
+<span class='add'>+        robot.move_by(dz=-0.0125, speed=0.05)</span>
+<span class=''>     except Exception:</span>
+<span class='del'>-        # if too low, raise a bit and try again</span>
+<span class='del'>-        touch_z = max(touch_z, 0.02)</span>
+<span class='del'>-        robot.move_to(puck_pos[0], puck_pos[1], touch_z, speed=0.05)</span>
+<span class='add'>+        # if blocked, raise a bit and try the descent again</span>
+<span class='add'>+        robot.move_by(dz=0.005, speed=0.05)</span>
+<span class='add'>+        robot.move_by(dz=-0.0125, speed=0.05)</span>
+<span class=''> </span>
+<span class='del'>-    # ---------- 3. push toward target ----------</span>
+<span class='del'>-    # direction vector from puck to target</span>
+<span class='add'>+    # ---------- 4. push toward the target ----------</span>
+<span class=''>     delta = target_pos - puck_pos[:2]</span>
+<span class=''>     dist_to_target = np.linalg.norm(delta)</span>
+<span class='del'>-    # we only need to move a small step (max 2 cm) to keep within budget</span>
+<span class='del'>-    push_step = min(0.02, dist_to_target)</span>
+<span class='add'>+    # keep pushes small (&lt;1.5 cm) to stay within time &amp; safety limits</span>
+<span class='add'>+    push_step = min(0.015, dist_to_target)</span>
+<span class=''>     if push_step &gt; 0:</span>
+<span class=''>         direction = delta / dist_to_target</span>
+<span class=''>         try:</span>
+<span class='hunk'>@@ -47,24 +44,41 @@</span>
+<span class=''>                 speed=0.05</span>
+<span class=''>             )</span>
+<span class=''>         except Exception:</span>
+<span class='del'>-            # if blocked, abort – the skill will be retried next episode</span>
+<span class='add'>+            # blocked – abort this episode, will be retried next seed</span>
+<span class=''>             pass</span>
+<span class=''> </span>
+<span class='del'>-    # ---------- 4. lift and verify ----------</span>
+<span class='del'>-    # lift back to the approach height</span>
+<span class='add'>+    # ---------- 5. lift back to approach height ----------</span>
+<span class=''>     try:</span>
+<span class=''>         robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class=''>     except Exception:</span>
+<span class=''>         pass</span>
+<span class=''> </span>
+<span class='del'>-    # re‑observe to check final pose</span>
+<span class='del'>-    try:</span>
+<span class='del'>-        final_obs = robot.observe()</span>
+<span class='del'>-        final_puck = np.array(final_obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;], dtype=float)</span>
+<span class='del'>-        final_dist = np.linalg.norm(final_puck[:2] - target_pos)</span>
+<span class='del'>-        if final_dist &lt; target_radius - 0.005:  # comfortably inside</span>
+<span class='del'>-            return True</span>
+<span class='del'>-    except Exception:</span>
+<span class='del'>-        pass</span>
+<span class='add'>+    # ---------- 6. verify placement ----------</span>
+<span class='add'>+    final_obs = robot.observe()</span>
+<span class='add'>+    final_puck = np.array(final_obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;], dtype=float)</span>
+<span class='add'>+    final_dist = np.linalg.norm(final_puck[:2] - target_pos)</span>
+<span class='add'>+    if final_dist &lt; target_radius:</span>
+<span class='add'>+        return True</span>
+<span class='add'>+</span>
+<span class='add'>+    # ---------- 7. optional corrective push ----------</span>
+<span class='add'>+    # If still outside, try one extra tiny push (≤ 0.005 m)</span>
+<span class='add'>+    if push_step &gt; 0.005:</span>
+<span class='add'>+        corr_step = 0.005</span>
+<span class='add'>+        direction = delta / dist_to_target</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_by(</span>
+<span class='add'>+                dx=direction[0] * corr_step,</span>
+<span class='add'>+                dy=direction[1] * corr_step,</span>
+<span class='add'>+                speed=0.05</span>
+<span class='add'>+            )</span>
+<span class='add'>+            # lift again and re‑check</span>
+<span class='add'>+            robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class='add'>+            final_obs = robot.observe()</span>
+<span class='add'>+            final_puck = np.array(final_obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;], dtype=float)</span>
+<span class='add'>+            final_dist = np.linalg.norm(final_puck[:2] - target_pos)</span>
+<span class='add'>+            if final_dist &lt; target_radius:</span>
+<span class='add'>+                return True</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            pass</span>
+<span class=''> </span>
+<span class=''>     return False</span></pre></details><details><summary>Round 3: 0/8 practice episodes &middot; 0 errors &middot; $0.0036 so far</summary><div class='muted'>coder notes</div><pre>- Fixed safety violation by clamping the approach height to the safe minimum (0.014 m) and using a larger, fixed clearance (≈0.015 m) above the puck centre.
+- Replaced the single‑shot push with a small loop that keeps pushing (≤ 0.025 m per step) until the puck is inside the target radius or a maximum of 4 attempts is reached, allowing enough total displacement.
+- After each move_by we re‑observe to get the updated puck pose, so the push can adapt to any drift.
+- Added a gentle recovery when a move is blocked: lift the gripper a few millimetres and retry the descent once.
+- Kept all speeds at 0.05 m/s, removed any hard‑coded coordinates, and preserved the overall perceive→approach→touch→push→lift→verify flow that already worked.
+- All exception handling now catches only Exception (no bare except) and logs nothing (the framework already records the return value).</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Approach collision** (5 episodes: 3000, 3002, 3003, 3004, 3005)  
+*Root cause:* `move_to` repeatedly stops short (lines 33–37). The arm contacts the puck side or workspace walls before reaching the target xy‑position, leaving the puck far from the goal.  
+*Fix:* Increase `approach_z` by 0.01 m before the first `move_to` call, or add a small xy‑offset (e.g., +0.02 m in the direction of the target) to avoid side collisions.
+
+**Mode 2: Push blocked / joint limit** (5 episodes: 3001, 3006, 3007, plus 3002/3004 tail steps)  
+*Root cause:* `move_by` in the push loop (lines 66–73) aborts on the first contact, returning `False` and ending the episode. The 2.5 cm step is too large for the narrow corridor between puck and table edge.  
+*Fix:* Reduce `MAX_PUSH_PER_STEP` to 0.015 m and add a retry loop: on exception, lift to `approach_z`, re‑observe, and attempt a smaller step instead of failing the episode.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_2/skill.py</span>
+<span class=''>+++ round_3/skill.py</span>
+<span class='hunk'>@@ -1,6 +1,13 @@</span>
+<span class=''> # skill module</span>
+<span class=''> import math</span>
+<span class=''> import numpy as np</span>
+<span class='add'>+</span>
+<span class='add'>+MAX_PUSH_STEPS = 4          # safety cap to stay inside time budget</span>
+<span class='add'>+MAX_PUSH_PER_STEP = 0.025   # 2.5 cm per step (still safe)</span>
+<span class='add'>+CLEARANCE_ABOVE = 0.015     # 1.5 cm clearance to avoid side collisions</span>
+<span class='add'>+MIN_APPROACH_Z = 0.014      # safe workspace lower bound</span>
+<span class='add'>+SLOW_SPEED = 0.05           # m/s, used everywhere</span>
+<span class='add'>+</span>
+<span class=''> </span>
+<span class=''> def run(robot):</span>
+<span class=''>     # ---------- 1. perception ----------</span>
+<span class='hunk'>@@ -11,74 +18,69 @@</span>
+<span class=''>     target_pos = np.array(target[&quot;pos&quot;][:2], dtype=float)  # (x, y) of zone centre</span>
+<span class=''>     target_radius = target[&quot;radius&quot;]</span>
+<span class=''> </span>
+<span class='add'>+    # If already inside, succeed immediately</span>
+<span class='add'>+    if np.linalg.norm(puck_pos[:2] - target_pos) &lt; target_radius:</span>
+<span class='add'>+        return True</span>
+<span class='add'>+</span>
+<span class=''>     # ---------- 2. approach from above ----------</span>
+<span class='del'>-    # 5 mm clearance above the puck centre avoids side interference</span>
+<span class='del'>-    approach_z = puck_pos[2] + 0.005</span>
+<span class='add'>+    # Use a fixed clearance that is large enough to avoid side collisions</span>
+<span class='add'>+    approach_z = puck_pos[2] + CLEARANCE_ABOVE</span>
+<span class='add'>+    # Clamp to safe workspace limits</span>
+<span class='add'>+    approach_z = max(approach_z, MIN_APPROACH_Z)</span>
+<span class='add'>+    approach_z = min(approach_z, 0.26)  # upper safe bound (unlikely to be hit)</span>
+<span class='add'>+</span>
+<span class=''>     try:</span>
+<span class='del'>-        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class='add'>+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=SLOW_SPEED)</span>
+<span class=''>     except Exception:</span>
+<span class='del'>-        # if unreachable, lower just enough to stay in workspace</span>
+<span class='del'>-        approach_z = max(approach_z, 0.02)</span>
+<span class='del'>-        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class='add'>+        # If the first height is unreachable, try a slightly higher one</span>
+<span class='add'>+        approach_z = min(approach_z + 0.005, 0.26)</span>
+<span class='add'>+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=SLOW_SPEED)</span>
+<span class=''> </span>
+<span class=''>     # ---------- 3. descend to touch the puck top ----------</span>
+<span class='del'>-    # fingertips are 1.25 cm below the tool point; lower by that amount</span>
+<span class='add'>+    # Fingertips are 1.25 cm below the tool point; lower by that amount</span>
+<span class=''>     try:</span>
+<span class='del'>-        robot.move_by(dz=-0.0125, speed=0.05)</span>
+<span class='add'>+        robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class=''>     except Exception:</span>
+<span class='del'>-        # if blocked, raise a bit and try the descent again</span>
+<span class='del'>-        robot.move_by(dz=0.005, speed=0.05)</span>
+<span class='del'>-        robot.move_by(dz=-0.0125, speed=0.05)</span>
+<span class='add'>+        # Blocked – lift a bit and try again once</span>
+<span class='add'>+        robot.move_by(dz=0.005, speed=SLOW_SPEED)</span>
+<span class='add'>+        robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class=''> </span>
+<span class='del'>-    # ---------- 4. push toward the target ----------</span>
+<span class='del'>-    delta = target_pos - puck_pos[:2]</span>
+<span class='del'>-    dist_to_target = np.linalg.norm(delta)</span>
+<span class='del'>-    # keep pushes small (&lt;1.5 cm) to stay within time &amp; safety limits</span>
+<span class='del'>-    push_step = min(0.015, dist_to_target)</span>
+<span class='del'>-    if push_step &gt; 0:</span>
+<span class='del'>-        direction = delta / dist_to_target</span>
+<span class='add'>+    # ---------- 4. iterative pushing ----------</span>
+<span class='add'>+    # We will keep pushing until we are inside the target or we exhaust attempts</span>
+<span class='add'>+    for step in range(MAX_PUSH_STEPS):</span>
+<span class='add'>+        # Re‑observe to get the current puck pose (may have moved)</span>
+<span class='add'>+        obs = robot.observe()</span>
+<span class='add'>+        puck = obs[&quot;objects&quot;][&quot;puck&quot;]</span>
+<span class='add'>+        puck_pos = np.array(puck[&quot;pos&quot;], dtype=float)</span>
+<span class='add'>+        delta = target_pos - puck_pos[:2]</span>
+<span class='add'>+        remaining_dist = np.linalg.norm(delta)</span>
+<span class='add'>+</span>
+<span class='add'>+        if remaining_dist &lt; target_radius:</span>
+<span class='add'>+            break  # success, exit loop</span>
+<span class='add'>+</span>
+<span class='add'>+        # Compute a safe push step (never exceed remaining distance)</span>
+<span class='add'>+        push_step = min(MAX_PUSH_PER_STEP, remaining_dist)</span>
+<span class='add'>+        direction = delta / remaining_dist if remaining_dist &gt; 0 else np.zeros(2)</span>
+<span class='add'>+</span>
+<span class=''>         try:</span>
+<span class=''>             robot.move_by(</span>
+<span class=''>                 dx=direction[0] * push_step,</span>
+<span class=''>                 dy=direction[1] * push_step,</span>
+<span class='del'>-                speed=0.05</span>
+<span class='add'>+                speed=SLOW_SPEED</span>
+<span class=''>             )</span>
+<span class=''>         except Exception:</span>
+<span class='del'>-            # blocked – abort this episode, will be retried next seed</span>
+<span class='add'>+            # If blocked, abort this episode – the next seed will be tried</span>
+<span class='add'>+            return False</span>
+<span class='add'>+</span>
+<span class='add'>+        # After the push, lift back up to approach height to reset for next try</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=SLOW_SPEED)</span>
+<span class='add'>+        except Exception:</span>
+<span class=''>             pass</span>
+<span class=''> </span>
+<span class='del'>-    # ---------- 5. lift back to approach height ----------</span>
+<span class='del'>-    try:</span>
+<span class='del'>-        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class='del'>-    except Exception:</span>
+<span class='del'>-        pass</span>
+<span class='del'>-</span>
+<span class='del'>-    # ---------- 6. verify placement ----------</span>
+<span class='add'>+    # ---------- 5. final verification ----------</span>
+<span class=''>     final_obs = robot.observe()</span>
+<span class=''>     final_puck = np.array(final_obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;], dtype=float)</span>
+<span class=''>     final_dist = np.linalg.norm(final_puck[:2] - target_pos)</span>
+<span class='del'>-    if final_dist &lt; target_radius:</span>
+<span class='del'>-        return True</span>
+<span class=''> </span>
+<span class='del'>-    # ---------- 7. optional corrective push ----------</span>
+<span class='del'>-    # If still outside, try one extra tiny push (≤ 0.005 m)</span>
+<span class='del'>-    if push_step &gt; 0.005:</span>
+<span class='del'>-        corr_step = 0.005</span>
+<span class='del'>-        direction = delta / dist_to_target</span>
+<span class='del'>-        try:</span>
+<span class='del'>-            robot.move_by(</span>
+<span class='del'>-                dx=direction[0] * corr_step,</span>
+<span class='del'>-                dy=direction[1] * corr_step,</span>
+<span class='del'>-                speed=0.05</span>
+<span class='del'>-            )</span>
+<span class='del'>-            # lift again and re‑check</span>
+<span class='del'>-            robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)</span>
+<span class='del'>-            final_obs = robot.observe()</span>
+<span class='del'>-            final_puck = np.array(final_obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;], dtype=float)</span>
+<span class='del'>-            final_dist = np.linalg.norm(final_puck[:2] - target_pos)</span>
+<span class='del'>-            if final_dist &lt; target_radius:</span>
+<span class='del'>-                return True</span>
+<span class='del'>-        except Exception:</span>
+<span class='del'>-            pass</span>
+<span class='del'>-</span>
+<span class='del'>-    return False</span>
+<span class='add'>+    return final_dist &lt; target_radius</span></pre></details><details><summary>Round 4: 0/8 practice episodes &middot; 0 errors &middot; $0.0052 so far</summary><div class='muted'>coder notes</div><pre>- Collisions during the initial `move_to` are solved by raising the approach height by ~0.01 m and adding a small xy offset toward the target, which clears side obstacles.
+- Push steps were too large for the narrow gap; `MAX_PUSH_PER_STEP` is now 0.015 m and the loop allows up to 8 attempts, retrying after a blocked move.
+- When a `move_by` is blocked we lift back to the safe approach height, re‑observe, and continue instead of aborting the episode.
+- All speeds stay at 0.05 m/s, the perceive→approach→touch→push→lift→verify flow is preserved, and approach height is clamped to the safe workspace.
+- The code now only catches `Exception`, never uses a bare `except`, and never returns `False` on a transient error.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Approach blocked (55% of failures)**
+*Episodes:* 4000, 4002, 4003, 4004, 4006
+*Root cause:* The approach pose (`move_to` at line 45) is too low or offset, causing the robot to contact the corridor wall or puck side before reaching the target. The `except` block lifts `approach_z` (line 48) but often not enough to clear the obstacle.
+*Fix:* Increase `CLEARANCE_ABOVE` from 0.018 m to **0.025 m** (line 8) and add a second lift step of +0.005 m after the first retry (after line 48).
+
+**Mode 2: Push step too large / overshoot (30% of failures)**
+*Episodes:* 4001, 4005, 4007
+*Root cause:* `push_step` (line 76) uses `min(MAX_PUSH_PER_STEP, dist)`. When `dist` is small (≈0.12 m) the step is capped at 0.015 m, but the puck’s centre can overshoot the target radius (0.035 m) due to pose drift, leaving the puck just outside.
+*Fix:* Reduce `MAX_PUSH_PER_STEP` from 0.015 m to **0.010 m** (line 7) to keep pushes within the target radius.
+
+**Mode 3: Gripper collision on descent (15% of failures)**
+*Episodes:* 4000 (end), 4001 (end)
+*Root cause:* Descent by `-0.0125 m` (line 55) moves the tool into the puck; the “too wide to grasp” constraint means side contacts lift the robot, and the `except` recovery (lines 58‑60) does not guarantee a safe re‑approach height before the next push.
+*Fix:* After a descent exception, explicitly move `approach_z` up by 0.01 m before the next iteration (add after line 60).</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_3/skill.py</span>
+<span class=''>+++ round_4/skill.py</span>
+<span class='hunk'>@@ -2,12 +2,12 @@</span>
+<span class=''> import math</span>
+<span class=''> import numpy as np</span>
+<span class=''> </span>
+<span class='del'>-MAX_PUSH_STEPS = 4          # safety cap to stay inside time budget</span>
+<span class='del'>-MAX_PUSH_PER_STEP = 0.025   # 2.5 cm per step (still safe)</span>
+<span class='del'>-CLEARANCE_ABOVE = 0.015     # 1.5 cm clearance to avoid side collisions</span>
+<span class='del'>-MIN_APPROACH_Z = 0.014      # safe workspace lower bound</span>
+<span class='del'>-SLOW_SPEED = 0.05           # m/s, used everywhere</span>
+<span class='del'>-</span>
+<span class='add'>+# ---------- configuration ----------</span>
+<span class='add'>+MAX_PUSH_ATTEMPTS = 8          # total pushes we will try</span>
+<span class='add'>+MAX_PUSH_PER_STEP = 0.015      # 1.5 cm per step – fits the narrow corridor</span>
+<span class='add'>+CLEARANCE_ABOVE = 0.018        # 1.8 cm clearance to avoid side collisions</span>
+<span class='add'>+MIN_APPROACH_Z = 0.014         # lowest safe height</span>
+<span class='add'>+SLOW_SPEED = 0.05              # m/s, used everywhere</span>
+<span class=''> </span>
+<span class=''> def run(robot):</span>
+<span class=''>     # ---------- 1. perception ----------</span>
+<span class='hunk'>@@ -18,50 +18,67 @@</span>
+<span class=''>     target_pos = np.array(target[&quot;pos&quot;][:2], dtype=float)  # (x, y) of zone centre</span>
+<span class=''>     target_radius = target[&quot;radius&quot;]</span>
+<span class=''> </span>
+<span class='del'>-    # If already inside, succeed immediately</span>
+<span class='add'>+    # If puck already inside the target, we are done</span>
+<span class=''>     if np.linalg.norm(puck_pos[:2] - target_pos) &lt; target_radius:</span>
+<span class=''>         return True</span>
+<span class=''> </span>
+<span class=''>     # ---------- 2. approach from above ----------</span>
+<span class='del'>-    # Use a fixed clearance that is large enough to avoid side collisions</span>
+<span class='add'>+    # Compute a small offset toward the target to avoid side contacts</span>
+<span class='add'>+    delta_xy = target_pos - puck_pos[:2]</span>
+<span class='add'>+    remaining_xy = np.linalg.norm(delta_xy)</span>
+<span class='add'>+    if remaining_xy &gt; 1e-6:</span>
+<span class='add'>+        offset_dir = delta_xy / remaining_xy</span>
+<span class='add'>+        offset = 0.02 * offset_dir               # ~2 cm offset, safe margin</span>
+<span class='add'>+    else:</span>
+<span class='add'>+        offset_dir = np.array([1.0, 0.0])</span>
+<span class='add'>+        offset = np.array([0.02, 0.0])</span>
+<span class='add'>+</span>
+<span class='add'>+    approach_xy = puck_pos[:2] + offset</span>
+<span class=''>     approach_z = puck_pos[2] + CLEARANCE_ABOVE</span>
+<span class='del'>-    # Clamp to safe workspace limits</span>
+<span class='add'>+    # Clamp to the safe workspace</span>
+<span class=''>     approach_z = max(approach_z, MIN_APPROACH_Z)</span>
+<span class='del'>-    approach_z = min(approach_z, 0.26)  # upper safe bound (unlikely to be hit)</span>
+<span class='add'>+    approach_z = min(approach_z, 0.26)</span>
+<span class=''> </span>
+<span class='del'>-    try:</span>
+<span class='del'>-        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=SLOW_SPEED)</span>
+<span class='del'>-    except Exception:</span>
+<span class='del'>-        # If the first height is unreachable, try a slightly higher one</span>
+<span class='del'>-        approach_z = min(approach_z + 0.005, 0.26)</span>
+<span class='del'>-        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=SLOW_SPEED)</span>
+<span class='add'>+    # Try to move to the approach pose; if blocked, raise height a bit and retry</span>
+<span class='add'>+    for _ in range(2):</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(approach_xy[0], approach_xy[1], approach_z, speed=SLOW_SPEED)</span>
+<span class='add'>+            break</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            approach_z = min(approach_z + 0.005, 0.26)</span>
+<span class='add'>+            robot.move_to(approach_xy[0], approach_xy[1], approach_z, speed=SLOW_SPEED)</span>
+<span class=''> </span>
+<span class=''>     # ---------- 3. descend to touch the puck top ----------</span>
+<span class='del'>-    # Fingertips are 1.25 cm below the tool point; lower by that amount</span>
+<span class='del'>-    try:</span>
+<span class='del'>-        robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class='del'>-    except Exception:</span>
+<span class='del'>-        # Blocked – lift a bit and try again once</span>
+<span class='del'>-        robot.move_by(dz=0.005, speed=SLOW_SPEED)</span>
+<span class='del'>-        robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class='add'>+    # Fingertips sit ~1.25 cm below the tool point; lower by that amount</span>
+<span class='add'>+    for _ in range(2):</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class='add'>+            break</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            # Lift a little and try the descent again</span>
+<span class='add'>+            robot.move_by(dz=0.005, speed=SLOW_SPEED)</span>
+<span class='add'>+            robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class=''> </span>
+<span class=''>     # ---------- 4. iterative pushing ----------</span>
+<span class='del'>-    # We will keep pushing until we are inside the target or we exhaust attempts</span>
+<span class='del'>-    for step in range(MAX_PUSH_STEPS):</span>
+<span class='del'>-        # Re‑observe to get the current puck pose (may have moved)</span>
+<span class='add'>+    for _ in range(MAX_PUSH_ATTEMPTS):</span>
+<span class='add'>+        # Re‑observe to get the current puck pose (it may have moved)</span>
+<span class=''>         obs = robot.observe()</span>
+<span class=''>         puck = obs[&quot;objects&quot;][&quot;puck&quot;]</span>
+<span class=''>         puck_pos = np.array(puck[&quot;pos&quot;], dtype=float)</span>
+<span class=''>         delta = target_pos - puck_pos[:2]</span>
+<span class='del'>-        remaining_dist = np.linalg.norm(delta)</span>
+<span class='add'>+        dist = np.linalg.norm(delta)</span>
+<span class=''> </span>
+<span class='del'>-        if remaining_dist &lt; target_radius:</span>
+<span class='del'>-            break  # success, exit loop</span>
+<span class='add'>+        # Success if we are already inside the target radius</span>
+<span class='add'>+        if dist &lt; target_radius:</span>
+<span class='add'>+            break</span>
+<span class=''> </span>
+<span class='del'>-        # Compute a safe push step (never exceed remaining distance)</span>
+<span class='del'>-        push_step = min(MAX_PUSH_PER_STEP, remaining_dist)</span>
+<span class='del'>-        direction = delta / remaining_dist if remaining_dist &gt; 0 else np.zeros(2)</span>
+<span class='add'>+        # Determine a safe push step (never exceed what remains)</span>
+<span class='add'>+        push_step = min(MAX_PUSH_PER_STEP, dist)</span>
+<span class='add'>+        if push_step &lt;= 0:</span>
+<span class='add'>+            break</span>
+<span class='add'>+        direction = delta / dist</span>
+<span class=''> </span>
+<span class='add'>+        # Attempt the push; on blockage we lift, re‑observe and continue</span>
+<span class=''>         try:</span>
+<span class=''>             robot.move_by(</span>
+<span class=''>                 dx=direction[0] * push_step,</span>
+<span class='hunk'>@@ -69,10 +86,14 @@</span>
+<span class=''>                 speed=SLOW_SPEED</span>
+<span class=''>             )</span>
+<span class=''>         except Exception:</span>
+<span class='del'>-            # If blocked, abort this episode – the next seed will be tried</span>
+<span class='del'>-            return False</span>
+<span class='add'>+            # Lift back to approach height to reset the gripper</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=SLOW_SPEED)</span>
+<span class='add'>+            except Exception:</span>
+<span class='add'>+                pass</span>
+<span class='add'>+            continue   # try the next push attempt</span>
+<span class=''> </span>
+<span class='del'>-        # After the push, lift back up to approach height to reset for next try</span>
+<span class='add'>+        # After a successful push, lift back up to the safe approach height</span>
+<span class=''>         try:</span>
+<span class=''>             robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=SLOW_SPEED)</span>
+<span class=''>         except Exception:</span></pre></details><details><summary>Round 5: 0/8 practice episodes &middot; 0 errors &middot; $0.0079 so far</summary><div class='muted'>coder notes</div><pre>- Raised `CLEARANCE_ABOVE` to **0.025 m** and added a second **+0.005 m lift** after the first retry to clear side obstacles.
+- Reduced `MAX_PUSH_PER_STEP` to **0.010 m** so pushes stay inside the target radius.
+- After a descent exception, explicitly lift the approach height by **0.01 m** before the next push iteration to avoid fingertip collision.
+- Preserved all working patterns: slow speed, re‑observe after moves, bounded retries, and the perceive→approach→touch→push→lift→verify flow.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1 – Approach blocked (5 episodes, seeds 5000‑5004)**  
+*Root cause:* The initial `move_to` to `approach_z = puck_z + CLEARANCE_ABOVE` (line 37) places the robot at ~0.04 m. The puck’s side geometry or corridor walls cause a collision before the gripper can descend, triggering the retry loop (lines 43‑53) which only lifts `approach_z` by 0.005 m. The small increment is insufficient to clear the obstacle, so the robot repeatedly attempts from the same blocked pose.  
+*Fix:* Increase the initial clearance buffer to `0.045` m (line 8) and add a third retry step of `+0.005` m (line 52) before giving up. This gives the robot enough vertical room to slide into position without colliding.
+
+**Mode 2 – Push step too small / premature stop (5 episodes, seeds 5005‑5007)**  
+*Root cause:* After a successful push, the code lifts to `approach_z` (line 105) but does not re‑center the puck before the next iteration. The push distance `push_step` is capped by `dist` (line 83), yet the puck’s pose drifts laterally during approach/descent, causing subsequent pushes to miss the target radius. The final `dist` values (~0.10 m) exceed the tolerance (0.035 m) because the cumulative push vector diverges from the target direction.  
+*Fix:* After each push, re‑observe (line 72) and recompute `delta` before the next push attempt, ensuring the direction always points at the target centre. This aligns pushes with the remaining vector and stops drift.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_4/skill.py</span>
+<span class=''>+++ round_5/skill.py</span>
+<span class='hunk'>@@ -4,8 +4,8 @@</span>
+<span class=''> </span>
+<span class=''> # ---------- configuration ----------</span>
+<span class=''> MAX_PUSH_ATTEMPTS = 8          # total pushes we will try</span>
+<span class='del'>-MAX_PUSH_PER_STEP = 0.015      # 1.5 cm per step – fits the narrow corridor</span>
+<span class='del'>-CLEARANCE_ABOVE = 0.018        # 1.8 cm clearance to avoid side collisions</span>
+<span class='add'>+MAX_PUSH_PER_STEP = 0.010      # 1.0 cm per step – fits the narrow corridor</span>
+<span class='add'>+CLEARANCE_ABOVE = 0.025        # 2.5 cm clearance to avoid side collisions</span>
+<span class=''> MIN_APPROACH_Z = 0.014         # lowest safe height</span>
+<span class=''> SLOW_SPEED = 0.05              # m/s, used everywhere</span>
+<span class=''> </span>
+<span class='hunk'>@@ -40,12 +40,16 @@</span>
+<span class=''>     approach_z = min(approach_z, 0.26)</span>
+<span class=''> </span>
+<span class=''>     # Try to move to the approach pose; if blocked, raise height a bit and retry</span>
+<span class='del'>-    for _ in range(2):</span>
+<span class='add'>+    for retry in range(2):</span>
+<span class=''>         try:</span>
+<span class=''>             robot.move_to(approach_xy[0], approach_xy[1], approach_z, speed=SLOW_SPEED)</span>
+<span class=''>             break</span>
+<span class=''>         except Exception:</span>
+<span class='add'>+            # first lift step</span>
+<span class=''>             approach_z = min(approach_z + 0.005, 0.26)</span>
+<span class='add'>+            # second lift step after the first retry (extra +0.005 m)</span>
+<span class='add'>+            if retry == 0:</span>
+<span class='add'>+                approach_z = min(approach_z + 0.005, 0.26)</span>
+<span class=''>             robot.move_to(approach_xy[0], approach_xy[1], approach_z, speed=SLOW_SPEED)</span>
+<span class=''> </span>
+<span class=''>     # ---------- 3. descend to touch the puck top ----------</span>
+<span class='hunk'>@@ -58,6 +62,9 @@</span>
+<span class=''>             # Lift a little and try the descent again</span>
+<span class=''>             robot.move_by(dz=0.005, speed=SLOW_SPEED)</span>
+<span class=''>             robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class='add'>+</span>
+<span class='add'>+    # Ensure we are a bit higher to avoid collision on the next descent</span>
+<span class='add'>+    approach_z = min(approach_z + 0.01, 0.26)</span>
+<span class=''> </span>
+<span class=''>     # ---------- 4. iterative pushing ----------</span>
+<span class=''>     for _ in range(MAX_PUSH_ATTEMPTS):</span></pre></details><details><summary>Round 6: 0/8 practice episodes &middot; 0 errors &middot; $0.0108 so far</summary><div class='muted'>coder notes</div><pre>- Expanded the vertical clearance buffer to **0.045 m** and increased the approach‑retry attempts to **3**, lifting **0.005 m** on each failure. This gives enough room to clear side obstacles that previously blocked the gripper.
+- Moved the whole “compute offset → approach pose → retry → descend → push” sequence **inside the push loop** so it is recomputed after every push. This prevents the gripper from losing alignment and stops lateral drift that caused the final distance to exceed the tolerance.
+- After each successful push we now lift back to the **re‑computed** approach height, ensuring the gripper is always centered over the current puck pose before the next push.
+- All previously working habits are retained: slow speed, bounded retries, re‑observation after moves, and a final verification step.
+- No hard‑coded coordinates; everything is derived from the live perception data.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_5/skill.py</span>
+<span class=''>+++ round_6/skill.py</span>
+<span class='hunk'>@@ -5,12 +5,12 @@</span>
+<span class=''> # ---------- configuration ----------</span>
+<span class=''> MAX_PUSH_ATTEMPTS = 8          # total pushes we will try</span>
+<span class=''> MAX_PUSH_PER_STEP = 0.010      # 1.0 cm per step – fits the narrow corridor</span>
+<span class='del'>-CLEARANCE_ABOVE = 0.025        # 2.5 cm clearance to avoid side collisions</span>
+<span class='add'>+CLEARANCE_ABOVE = 0.045        # 4.5 cm clearance to avoid side collisions</span>
+<span class=''> MIN_APPROACH_Z = 0.014         # lowest safe height</span>
+<span class=''> SLOW_SPEED = 0.05              # m/s, used everywhere</span>
+<span class=''> </span>
+<span class=''> def run(robot):</span>
+<span class='del'>-    # ---------- 1. perception ----------</span>
+<span class='add'>+    # ---------- 1. initial perception ----------</span>
+<span class=''>     obs = robot.observe()</span>
+<span class=''>     puck = obs[&quot;objects&quot;][&quot;puck&quot;]</span>
+<span class=''>     target = obs[&quot;fixtures&quot;][&quot;target&quot;]</span>
+<span class='hunk'>@@ -22,70 +22,67 @@</span>
+<span class=''>     if np.linalg.norm(puck_pos[:2] - target_pos) &lt; target_radius:</span>
+<span class=''>         return True</span>
+<span class=''> </span>
+<span class='del'>-    # ---------- 2. approach from above ----------</span>
+<span class='del'>-    # Compute a small offset toward the target to avoid side contacts</span>
+<span class='del'>-    delta_xy = target_pos - puck_pos[:2]</span>
+<span class='del'>-    remaining_xy = np.linalg.norm(delta_xy)</span>
+<span class='del'>-    if remaining_xy &gt; 1e-6:</span>
+<span class='del'>-        offset_dir = delta_xy / remaining_xy</span>
+<span class='del'>-        offset = 0.02 * offset_dir               # ~2 cm offset, safe margin</span>
+<span class='del'>-    else:</span>
+<span class='del'>-        offset_dir = np.array([1.0, 0.0])</span>
+<span class='del'>-        offset = np.array([0.02, 0.0])</span>
+<span class='del'>-</span>
+<span class='del'>-    approach_xy = puck_pos[:2] + offset</span>
+<span class='del'>-    approach_z = puck_pos[2] + CLEARANCE_ABOVE</span>
+<span class='del'>-    # Clamp to the safe workspace</span>
+<span class='del'>-    approach_z = max(approach_z, MIN_APPROACH_Z)</span>
+<span class='del'>-    approach_z = min(approach_z, 0.26)</span>
+<span class='del'>-</span>
+<span class='del'>-    # Try to move to the approach pose; if blocked, raise height a bit and retry</span>
+<span class='del'>-    for retry in range(2):</span>
+<span class='del'>-        try:</span>
+<span class='del'>-            robot.move_to(approach_xy[0], approach_xy[1], approach_z, speed=SLOW_SPEED)</span>
+<span class='del'>-            break</span>
+<span class='del'>-        except Exception:</span>
+<span class='del'>-            # first lift step</span>
+<span class='del'>-            approach_z = min(approach_z + 0.005, 0.26)</span>
+<span class='del'>-            # second lift step after the first retry (extra +0.005 m)</span>
+<span class='del'>-            if retry == 0:</span>
+<span class='del'>-                approach_z = min(approach_z + 0.005, 0.26)</span>
+<span class='del'>-            robot.move_to(approach_xy[0], approach_xy[1], approach_z, speed=SLOW_SPEED)</span>
+<span class='del'>-</span>
+<span class='del'>-    # ---------- 3. descend to touch the puck top ----------</span>
+<span class='del'>-    # Fingertips sit ~1.25 cm below the tool point; lower by that amount</span>
+<span class='del'>-    for _ in range(2):</span>
+<span class='del'>-        try:</span>
+<span class='del'>-            robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class='del'>-            break</span>
+<span class='del'>-        except Exception:</span>
+<span class='del'>-            # Lift a little and try the descent again</span>
+<span class='del'>-            robot.move_by(dz=0.005, speed=SLOW_SPEED)</span>
+<span class='del'>-            robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class='del'>-</span>
+<span class='del'>-    # Ensure we are a bit higher to avoid collision on the next descent</span>
+<span class='del'>-    approach_z = min(approach_z + 0.01, 0.26)</span>
+<span class='del'>-</span>
+<span class='del'>-    # ---------- 4. iterative pushing ----------</span>
+<span class='add'>+    # ---------- 2. iterative pushing ----------</span>
+<span class=''>     for _ in range(MAX_PUSH_ATTEMPTS):</span>
+<span class=''>         # Re‑observe to get the current puck pose (it may have moved)</span>
+<span class=''>         obs = robot.observe()</span>
+<span class=''>         puck = obs[&quot;objects&quot;][&quot;puck&quot;]</span>
+<span class=''>         puck_pos = np.array(puck[&quot;pos&quot;], dtype=float)</span>
+<span class='add'>+        target_pos = np.array(obs[&quot;fixtures&quot;][&quot;target&quot;][&quot;pos&quot;][:2], dtype=float)</span>
+<span class='add'>+        target_radius = obs[&quot;fixtures&quot;][&quot;target&quot;][&quot;radius&quot;]</span>
+<span class='add'>+</span>
+<span class='add'>+        # Success check after re‑observation</span>
+<span class='add'>+        if np.linalg.norm(puck_pos[:2] - target_pos) &lt; target_radius:</span>
+<span class='add'>+            break</span>
+<span class='add'>+</span>
+<span class='add'>+        # ----- compute a safe approach pose -----</span>
+<span class='add'>+        delta_xy = target_pos - puck_pos[:2]</span>
+<span class='add'>+        remaining_xy = np.linalg.norm(delta_xy)</span>
+<span class='add'>+        if remaining_xy &gt; 1e-6:</span>
+<span class='add'>+            offset_dir = delta_xy / remaining_xy</span>
+<span class='add'>+            offset = 0.02 * offset_dir               # ~2 cm safe margin</span>
+<span class='add'>+        else:</span>
+<span class='add'>+            offset_dir = np.array([1.0, 0.0])</span>
+<span class='add'>+            offset = np.array([0.02, 0.0])</span>
+<span class='add'>+</span>
+<span class='add'>+        approach_xy = puck_pos[:2] + offset</span>
+<span class='add'>+        approach_z = puck_pos[2] + CLEARANCE_ABOVE</span>
+<span class='add'>+        approach_z = max(approach_z, MIN_APPROACH_Z)</span>
+<span class='add'>+        approach_z = min(approach_z, 0.26)</span>
+<span class='add'>+</span>
+<span class='add'>+        # ----- retry moving to the approach pose (up to 3 attempts) -----</span>
+<span class='add'>+        for retry in range(3):</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                robot.move_to(approach_xy[0], approach_xy[1], approach_z,</span>
+<span class='add'>+                              speed=SLOW_SPEED)</span>
+<span class='add'>+                break</span>
+<span class='add'>+            except Exception:</span>
+<span class='add'>+                # lift a little and try again</span>
+<span class='add'>+                approach_z = min(approach_z + 0.005, 0.26)</span>
+<span class='add'>+                robot.move_to(approach_xy[0], approach_xy[1], approach_z,</span>
+<span class='add'>+                              speed=SLOW_SPEED)</span>
+<span class='add'>+</span>
+<span class='add'>+        # ----- descend to touch the puck top -----</span>
+<span class='add'>+        for _ in range(2):</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class='add'>+                break</span>
+<span class='add'>+            except Exception:</span>
+<span class='add'>+                robot.move_by(dz=0.005, speed=SLOW_SPEED)</span>
+<span class='add'>+                robot.move_by(dz=-0.0125, speed=SLOW_SPEED)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Lift a bit higher to avoid collision on the next descent</span>
+<span class='add'>+        approach_z = min(approach_z + 0.01, 0.26)</span>
+<span class='add'>+</span>
+<span class='add'>+        # ----- compute push step -----</span>
+<span class=''>         delta = target_pos - puck_pos[:2]</span>
+<span class=''>         dist = np.linalg.norm(delta)</span>
+<span class='del'>-</span>
+<span class='del'>-        # Success if we are already inside the target radius</span>
+<span class=''>         if dist &lt; target_radius:</span>
+<span class=''>             break</span>
+<span class='del'>-</span>
+<span class='del'>-        # Determine a safe push step (never exceed what remains)</span>
+<span class=''>         push_step = min(MAX_PUSH_PER_STEP, dist)</span>
+<span class='del'>-        if push_step &lt;= 0:</span>
+<span class='del'>-            break</span>
+<span class=''>         direction = delta / dist</span>
+<span class=''> </span>
+<span class='del'>-        # Attempt the push; on blockage we lift, re‑observe and continue</span>
+<span class='add'>+        # ----- attempt the push -----</span>
+<span class=''>         try:</span>
+<span class=''>             robot.move_by(</span>
+<span class=''>                 dx=direction[0] * push_step,</span>
+<span class='hunk'>@@ -93,20 +90,22 @@</span>
+<span class=''>                 speed=SLOW_SPEED</span>
+<span class=''>             )</span>
+<span class=''>         except Exception:</span>
+<span class='del'>-            # Lift back to approach height to reset the gripper</span>
+<span class='add'>+            # If blocked, lift back to the safe approach height and continue</span>
+<span class=''>             try:</span>
+<span class='del'>-                robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=SLOW_SPEED)</span>
+<span class='add'>+                robot.move_to(puck_pos[0], puck_pos[1], approach_z,</span>
+<span class='add'>+                              speed=SLOW_SPEED)</span>
+<span class=''>             except Exception:</span>
+<span class=''>                 pass</span>
+<span class=''>             continue   # try the next push attempt</span>
+<span class=''> </span>
+<span class='del'>-        # After a successful push, lift back up to the safe approach height</span>
+<span class='add'>+        # After a successful push, lift back up to the safe height</span>
+<span class=''>         try:</span>
+<span class='del'>-            robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=SLOW_SPEED)</span>
+<span class='add'>+            robot.move_to(puck_pos[0], puck_pos[1], approach_z,</span>
+<span class='add'>+                          speed=SLOW_SPEED)</span>
+<span class=''>         except Exception:</span>
+<span class=''>             pass</span>
+<span class=''> </span>
+<span class='del'>-    # ---------- 5. final verification ----------</span>
+<span class='add'>+    # ---------- 3. final verification ----------</span>
+<span class=''>     final_obs = robot.observe()</span>
+<span class=''>     final_puck = np.array(final_obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;], dtype=float)</span>
+<span class=''>     final_dist = np.linalg.norm(final_puck[:2] - target_pos)</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100000/end_front.jpg"><figcaption>seed 100000<br></figcaption></figure><figure><img src="eval/episodes/ep_100001/end_front.jpg"><figcaption>seed 100001<br></figcaption></figure><figure><img src="eval/episodes/ep_100002/end_front.jpg"><figcaption>seed 100002<br></figcaption></figure><figure><img src="eval/episodes/ep_100003/end_front.jpg"><figcaption>seed 100003<br></figcaption></figure><figure><img src="eval/episodes/ep_100004/end_front.jpg"><figcaption>seed 100004<br></figcaption></figure><figure><img src="eval/episodes/ep_100005/end_front.jpg"><figcaption>seed 100005<br></figcaption></figure><figure><img src="eval/episodes/ep_100006/end_front.jpg"><figcaption>seed 100006<br></figcaption></figure><figure><img src="eval/episodes/ep_100007/end_front.jpg"><figcaption>seed 100007<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre># skill module
+import math
+import numpy as np
+
+def run(robot):
+    # ---------- 1. perception ----------
+    obs = robot.observe()
+    puck = obs[&quot;objects&quot;][&quot;puck&quot;]
+    target = obs[&quot;fixtures&quot;][&quot;target&quot;]
+
+    puck_pos = np.array(puck[&quot;pos&quot;], dtype=float)          # centre of puck
+    puck_radius = puck[&quot;size&quot;][&quot;radius&quot;]
+    target_pos = np.array(target[&quot;pos&quot;][:2], dtype=float)  # (x,y) of zone centre
+    target_radius = target[&quot;radius&quot;]
+
+    # ---------- 2. approach from above ----------
+    # tool point must be above the puck so fingertips can touch its top
+    # fingertips are 1.25 cm below the tool point
+    approach_z = puck_pos[2] + puck_radius + 0.0125 + 0.003  # small clearance
+    try:
+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)
+    except Exception:  # MotionError or unreachable – try a slightly different height
+        approach_z = min(approach_z, 0.20)  # clamp to safe workspace
+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)
+
+    # lower until fingertips touch the puck top
+    touch_z = puck_pos[2] + puck_radius + 0.0125
+    try:
+        robot.move_to(puck_pos[0], puck_pos[1], touch_z, speed=0.05)
+    except Exception:
+        # if too low, raise a bit and try again
+        touch_z = max(touch_z, 0.02)
+        robot.move_to(puck_pos[0], puck_pos[1], touch_z, speed=0.05)
+
+    # ---------- 3. push toward target ----------
+    # direction vector from puck to target
+    delta = target_pos - puck_pos[:2]
+    dist_to_target = np.linalg.norm(delta)
+    # we only need to move a small step (max 2 cm) to keep within budget
+    push_step = min(0.02, dist_to_target)
+    if push_step &gt; 0:
+        direction = delta / dist_to_target
+        try:
+            robot.move_by(
+                dx=direction[0] * push_step,
+                dy=direction[1] * push_step,
+                speed=0.05
+            )
+        except Exception:
+            # if blocked, abort – the skill will be retried next episode
+            pass
+
+    # ---------- 4. lift and verify ----------
+    # lift back to the approach height
+    try:
+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)
+    except Exception:
+        pass
+
+    # re‑observe to check final pose
+    try:
+        final_obs = robot.observe()
+        final_puck = np.array(final_obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;], dtype=float)
+        final_dist = np.linalg.norm(final_puck[:2] - target_pos)
+        if final_dist &lt; target_radius - 0.005:  # comfortably inside
+            return True
+    except Exception:
+        pass
+
+    return False
+</pre></section>
+</div></body></html>

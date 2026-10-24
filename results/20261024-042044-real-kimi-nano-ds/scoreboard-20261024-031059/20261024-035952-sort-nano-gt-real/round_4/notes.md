@@ -1,0 +1,5 @@
+- Fixed the “missed‑grasp” failures by adding a short verification lift (≈ 4 cm) right after closing the fingers, before checking `holding()`. This reliably lifts the cube and confirms the grasp before any further motion.
+- Added a micro‑adjust after releasing a cube in `place_into_tray`: a tiny translation of `release_z + 0.005 m` at low speed to nudge the object into the tray centre before the final lift.
+- Integrated both lifts into the pick‑and‑place flow while preserving the existing retry logic and safety clamping.
+- Kept all permitted imports, error handling and workspace limits unchanged; only the two behavioural fixes were added.
+- Minor refactor: the verification lift and micro‑adjust are now explicit calls, improving readability without altering the overall skill structure.

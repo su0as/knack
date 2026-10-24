@@ -1,0 +1,129 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -9,16 +9,14 @@
+     """
+     RED_NAME = "red_cube"
+     REQUIRED_Z = 0.065          # 5 cm above tabletop
+-    # Pre‑grasp height: start a little above the observed centre,
+-    # but allow a lower floor for very flat objects.
+-    # Safety margin: at least 0.016 m and at least 1 mm above the centre.
+-    PRE_GRASP_MIN = 0.016
+-    HEIGHT_OFFSET = 0.001        # 1 mm above centre
++    # Minimum vertical clearance for the pre‑grasp pose
++    PRE_GRASP_MIN = 0.020       # 2 cm above table (safe floor)
++    CLEARANCE_ABOVE = 0.010     # at least 1 cm above the observed cube centre
++    # Horizontal safety offset
++    HOFFSET = 0.005
+     # Speeds
+     SPEED_APPROACH = 0.10
+     SPEED_LIFT = 0.07
+-    # Horizontal offset to stay away from object edges
+-    HOFFSET = 0.005
+     # Wait times
+     WAIT_AFTER_OBSERVE = 0.5
+     WAIT_AFTER_MOVE = 0.1
+@@ -28,7 +26,7 @@
+ 
+     for attempt in range(MAX_RETRIES):
+         # ------------------------------------------------------------
+-        # 1. Perceive
++        # 1. Perceive the scene and wait for a stable observation
+         # ------------------------------------------------------------
+         obs = robot.observe()
+         robot.wait(WAIT_AFTER_OBSERVE)
+@@ -44,21 +42,25 @@
+         cyaw = cube["yaw"]
+ 
+         # ------------------------------------------------------------
+-        # 2. Target position (horizontal offset, clamped)
++        # 2. Compute a safe tool‑point just above the cube centre
+         # ------------------------------------------------------------
+         offset_x = HOFFSET if cx >= 0 else -HOFFSET
+         offset_y = HOFFSET if cy >= 0 else -HOFFSET
+         target_x = cx + offset_x
+         target_y = cy + offset_y
++        # Clamp to the robot's reachable area
+         target_x = max(0.04, min(0.32, target_x))
+         target_y = max(-0.26, min(0.26, target_y))
+ 
+         # ------------------------------------------------------------
+-        # 3. Pre‑grasp pose (just above the cube)
++        # 3. Pre‑grasp pose (ensure enough clearance)
+         # ------------------------------------------------------------
+-        # Lower floor to 0.008 m, then enforce safety margin.
+-        pre_grasp_z_raw = max(0.008, cz - 0.002)          # lower floor
+-        pre_grasp_z = max(PRE_GRASP_MIN, pre_grasp_z_raw, cz + HEIGHT_OFFSET)
++        # Guarantee at least CLEARANCE_ABOVE above the observed centre,
++        # but never go below PRE_GRASP_MIN.
++        pre_grasp_z = max(PRE_GRASP_MIN, cz + CLEARANCE_ABOVE)
++        # Clamp to the safe vertical workspace
++        pre_grasp_z = max(0.014, min(0.26, pre_grasp_z))
++
+         pre_grasp_args = {
+             "x": target_x,
+             "y": target_y,
+@@ -74,6 +76,10 @@
+             continue
+         robot.wait(SETTLE_AFTER_MOVE)
+ 
++        # Optional re‑observe to confirm we are still above the cube
++        obs2 = robot.observe()
++        robot.wait(0.1)
++
+         # ------------------------------------------------------------
+         # 4. Grasp
+         # ------------------------------------------------------------
+@@ -84,20 +90,27 @@
+         robot.wait(WAIT_AFTER_GRASP)
+ 
+         # ------------------------------------------------------------
+-        # 5. Verify hold
++        # 5. Verify that the red cube is actually held
+         # ------------------------------------------------------------
+         if robot.holding() != RED_NAME:
+             robot.log(f"holding check failed: got {robot.holding()}, retry")
+             robot.wait(0.2)
+             continue
+ 
++        # Verify that the object has risen (slip detection)
++        obs_check = robot.observe()
++        robot.wait(0.1)
++        held_z = obs_check.get("objects", {}).get(RED_NAME, {}).get("pos", [0])[2]
++        if held_z < cz + 0.005:   # not lifted enough
++            robot.log(f"hold check low z {held_z:.4f}, retry")
++            robot.wait(0.2)
++            continue
++
+         # ------------------------------------------------------------
+-        # 6. Lift to required height (guaranteed clearance)
++        # 6. Lift to required height
+         # ------------------------------------------------------------
+-        # Desired lift height: required clearance plus a bit above the cube centre.
+-        lift_z_raw = REQUIRED_Z + cz          # typical ~0.080 m
+-        lift_z = max(REQUIRED_Z, lift_z_raw)  # ensure minimum clearance
+-        lift_z = min(lift_z, 0.26)            # stay inside workspace ceiling
++        lift_z = max(REQUIRED_Z, cz + 0.020)  # give a small extra margin
++        lift_z = min(lift_z, 0.26)           # stay inside safe zone
+ 
+         lift_args = {
+             "x": target_x,
+@@ -117,13 +130,12 @@
+         # ------------------------------------------------------------
+         # 7. Final verification – still holding and at sufficient height
+         # ------------------------------------------------------------
+-        if robot.holding() == RED_NAME:
+-            final_obs = robot.observe()
+-            robot.wait(0.1)
+-            final_z = final_obs.get("objects", {}).get(RED_NAME, {}).get("pos", [0])[2]
+-            if final_z >= REQUIRED_Z - 0.005:
+-                robot.log("success: red cube securely lifted to required height")
+-                return True
++        final_obs = robot.observe()
++        robot.wait(0.1)
++        final_z = final_obs.get("objects", {}).get(RED_NAME, {}).get("pos", [0])[2]
++        if final_z >= REQUIRED_Z - 0.005:
++            robot.log("success: red cube securely lifted to required height")
++            return True
+ 
+         # ------------------------------------------------------------
+         # 8. Unexpected end – retry

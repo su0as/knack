@@ -1,0 +1,6 @@
+- Fixed safety violation by clamping the approach height to the safe minimum (0.014 m) and using a larger, fixed clearance (≈0.015 m) above the puck centre.
+- Replaced the single‑shot push with a small loop that keeps pushing (≤ 0.025 m per step) until the puck is inside the target radius or a maximum of 4 attempts is reached, allowing enough total displacement.
+- After each move_by we re‑observe to get the updated puck pose, so the push can adapt to any drift.
+- Added a gentle recovery when a move is blocked: lift the gripper a few millimetres and retry the descent once.
+- Kept all speeds at 0.05 m/s, removed any hard‑coded coordinates, and preserved the overall perceive→approach→touch→push→lift→verify flow that already worked.
+- All exception handling now catches only Exception (no bare except) and logs nothing (the framework already records the return value).

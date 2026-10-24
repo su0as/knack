@@ -1,0 +1,5 @@
+- Raised the pre‑grasp floor from 0.008 m to 0.020 m and added a fixed clearance of 0.010 m above the observed cube centre, guaranteeing enough vertical space for the fingers to close.
+- Added a guard that forces the pre‑grasp height to be at least `cz + 0.010 m`; if the cube sits too close to the table the pose is raised further, preventing grasp attempts on objects with insufficient clearance.
+- After a successful grasp we re‑observe the cube and check that its reported `z` has risen by at least 0.005 m; a small rise confirms the object is actually held and not slipping.
+- Kept all existing timing, horizontal offset, retry loop and safety clamps; only the height calculations and the post‑grasp verification step were tightened.
+- Minor comment clean‑up and clearer variable names for future debugging while preserving the behaviour that already succeeded in most episodes.

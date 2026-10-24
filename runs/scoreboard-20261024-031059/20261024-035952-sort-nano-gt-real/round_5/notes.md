@@ -1,0 +1,5 @@
+- Fixed the tray‑approach collision (Mode 1) by inserting a high‑clearance move (z≈0.06 m) after the red‑cube is placed, before starting the blue‑cube pick. This flies over the just‑placed cube and avoids joint‑limit or contact stops.
+- Added coordinate clamping for the blue‑cube pick to keep the pre‑grasp pose inside the strict safety box (SAFE_X, SAFE_Y). This prevents MotionError on edge‑case seeds.
+- Retained the verification lift after grasp and the micro‑adjust after release – they already solved the “missed‑grasp” failures.
+- Minor refactor: the clearance move is a dedicated call to `safe_move_to` with a fixed high z, keeping the code readable and preserving all existing retry/verification logic.
+- All permitted imports and error‑handling remain unchanged; only the two behavioural fixes and the clamping addition were introduced.

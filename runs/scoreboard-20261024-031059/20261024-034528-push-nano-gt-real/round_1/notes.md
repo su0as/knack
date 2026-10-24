@@ -1,0 +1,6 @@
+- Perception is noisy (≈1 cm pos, several deg yaw) → sample a few times or use the first reading but keep checks.
+- The puck cannot be grasped; we must push it by contacting its top and translating.
+- Compute the vector from the puck centre to the green‑zone centre and push in that direction.
+- Use a small, slow translation (≤ 0.02 m) to avoid overshoot; keep speed low (≈0.05 m/s).
+- After pushing, lift the gripper, re‑observe the puck and verify that its centre lies inside the zone radius.
+- Keep the whole skill under the time budget; no loops longer than a few iterations.

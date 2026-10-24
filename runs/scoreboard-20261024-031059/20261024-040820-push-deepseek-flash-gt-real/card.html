@@ -1,0 +1,366 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Push puck</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261024-040820-push-deepseek-flash-gt-real &middot; 2026-10-24 04:15:23</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Push the orange puck so that its centre ends up inside the green circle. The puck is too wide to grasp.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: real &middot; 32 practice episodes in 4 rounds</p>
+<div><span class='chip'><b>CODER</b>deepseek-ai/DeepSeek-V4.1-Flash <em>$0.30 / $1.20 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">88%</div><div>44/50 layouts &middot; Wilson 95% CI 76% to 94%</div><div class='ci'><div class='ci-band' style='left:76.2%;width:18.2%'></div><div class='ci-dot' style='left:88.0%'></div></div>
+<p class="muted">Safety layer: 2 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:75%'></span><em>R1<br>6/8</em></div><div class='bar'><span style='height:62%'></span><em>R2<br>5/8</em></div><div class='bar'><span style='height:75%'></span><em>R3<br>6/8</em></div><div class='bar'><span style='height:100%'></span><em>R4<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>deepseek-ai/DeepSeek-V4.1-Flash</code></td><td>7</td><td>34,332</td><td>94,762</td><td>$0.1189</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>3</td><td>20,063</td><td>1,071</td><td>$0.0015</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>305 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>10</th><th>54,395</th><th>95,833</th><th>$0.1204</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details><summary>Round 1: 6/8 practice episodes &middot; 4 errors &middot; $0.0152 so far</summary><div class='muted'>coder notes</div><pre>- First version: no demonstration available, so I built a perceive→plan→push→re-observe loop that corrects for the ~1 cm position noise and varying friction by re-reading poses every iteration.
+- Push direction u = unit vector from puck to target. Contact point is placed behind the puck at distance r + 0.012 so the open fingers clear the puck on descent.
+- Yaw is set perpendicular to the push direction: the 5 cm opening is narrower than the 6 cm puck, so the fingers must straddle the push line and contact the puck with their front edges rather than trying to close on it.
+- Tool point kept at z = 0.02 (fingertips reach 0.0075, well inside the puck&#x27;s 0–0.02 height band) and moves near the puck at speed 0.05.
+- Push step = remaining distance + 0.02 overshoot, clamped to [0.03, 0.07] m, so we converge in a few iterations without launching the puck out of the 4 cm zone.
+- All moves wrapped in try/except Exception (MotionError is an Exception subclass); if the yawed approach fails I retry without yaw, and if the descent is blocked I lift and try the next iteration.
+- Success check: final puck–target centre distance &lt; 0.035 m (zone radius 0.04 m, leaving margin for camera noise).</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Out-of-reach push point** (2 episodes: 1000, 1001)  
+*Root cause:* The `clamp` on line 31 forces `cx` to 0.31 when the puck is far right, but the arm’s max reach is 0.251 m (wrist). Line 30’s `margin = r + 0.012` adds extra distance, pushing the target beyond the workspace.  
+*Fix:* Reduce the margin or lower the `cx` clamp ceiling (e.g., `0.25`) to keep the approach point inside the arm’s envelope.
+
+**Mode 2: Timeout on vertical descent** (2 episodes: 1003, 1007)  
+*Root cause:* Line 55 moves to `z=0.02` at slow speed (0.05) to set push height. When the puck is near the target, this tiny descent takes many waypoints, exhausting the 45 s budget before the push executes.  
+*Fix:* Increase the descent speed to `0.15` on line 55, or raise the target `z` to `0.05` to reduce waypoint count.
+
+**Mode 3: Gripper collision / puck tilt** (1 episode: 1002)  
+*Root cause:* Line 76 lifts the gripper from `z=0.02` after the push. The puck’s edge may catch the jaw geometry during retreat, causing a stall that the code does not recover from, leaving the puck off‑center.  
+*Fix:* Add a small `yaw` offset or a brief `open` command on line 76 to ensure the jaws clear the puck before lifting.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,83 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+</span>
+<span class='add'>+    def read():</span>
+<span class='add'>+        obs = robot.observe()</span>
+<span class='add'>+        p = obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;]</span>
+<span class='add'>+        t = obs[&quot;fixtures&quot;][&quot;target&quot;][&quot;pos&quot;]</span>
+<span class='add'>+        r = obs[&quot;objects&quot;][&quot;puck&quot;][&quot;size&quot;][&quot;radius&quot;]</span>
+<span class='add'>+        return p, t, r</span>
+<span class='add'>+</span>
+<span class='add'>+    def clamp(v, lo, hi):</span>
+<span class='add'>+        return min(max(v, lo), hi)</span>
+<span class='add'>+</span>
+<span class='add'>+    for attempt in range(12):</span>
+<span class='add'>+        p, t, r = read()</span>
+<span class='add'>+        dx = t[0] - p[0]</span>
+<span class='add'>+        dy = t[1] - p[1]</span>
+<span class='add'>+        dist = math.hypot(dx, dy)</span>
+<span class='add'>+        robot.log(&quot;attempt&quot;, attempt, &quot;dist&quot;, round(dist, 4))</span>
+<span class='add'>+        if dist &lt; 0.012:</span>
+<span class='add'>+            return True</span>
+<span class='add'>+</span>
+<span class='add'>+        ux = dx / dist</span>
+<span class='add'>+        uy = dy / dist</span>
+<span class='add'>+</span>
+<span class='add'>+        # Contact point behind the puck, clear of its radius.</span>
+<span class='add'>+        margin = r + 0.012</span>
+<span class='add'>+        cx = clamp(p[0] - ux * margin, 0.05, 0.31)</span>
+<span class='add'>+        cy = clamp(p[1] - uy * margin, -0.25, 0.25)</span>
+<span class='add'>+</span>
+<span class='add'>+        # Fingers perpendicular to the push so the open jaws straddle the line.</span>
+<span class='add'>+        yaw = math.atan2(uy, ux) + math.pi / 2.0</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- approach from above ---</span>
+<span class='add'>+        reached = False</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            res = robot.move_to(cx, cy, 0.12, yaw=yaw, speed=0.15)</span>
+<span class='add'>+            reached = res.get(&quot;ok&quot;, True)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            reached = False</span>
+<span class='add'>+        if not reached:</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                res = robot.move_to(cx, cy, 0.12, speed=0.15)</span>
+<span class='add'>+                reached = res.get(&quot;ok&quot;, True)</span>
+<span class='add'>+            except Exception:</span>
+<span class='add'>+                reached = False</span>
+<span class='add'>+        if not reached:</span>
+<span class='add'>+            continue</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- descend to push height ---</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            res = robot.move_to(cx, cy, 0.02, yaw=yaw, speed=0.05)</span>
+<span class='add'>+            if not res.get(&quot;ok&quot;, True):</span>
+<span class='add'>+                try:</span>
+<span class='add'>+                    robot.move_to(cx, cy, 0.12, yaw=yaw, speed=0.15)</span>
+<span class='add'>+                except Exception:</span>
+<span class='add'>+                    pass</span>
+<span class='add'>+                continue</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            continue</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- push forward ---</span>
+<span class='add'>+        push = min(max(dist + 0.02, 0.03), 0.07)</span>
+<span class='add'>+        ex = clamp(cx + ux * push, 0.05, 0.31)</span>
+<span class='add'>+        ey = clamp(cy + uy * push, -0.25, 0.25)</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(ex, ey, 0.02, yaw=yaw, speed=0.05)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            pass</span>
+<span class='add'>+</span>
+<span class='add'>+        # --- lift clear before re-planning ---</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(ex, ey, 0.12, yaw=yaw, speed=0.15)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            pass</span>
+<span class='add'>+</span>
+<span class='add'>+    p, t, r = read()</span>
+<span class='add'>+    dist = math.hypot(t[0] - p[0], t[1] - p[1])</span>
+<span class='add'>+    robot.log(&quot;final dist&quot;, round(dist, 4))</span>
+<span class='add'>+    return dist &lt; 0.035</span></pre></details><details><summary>Round 2: 5/8 practice episodes &middot; 3 errors &middot; $0.0557 so far</summary><div class='muted'>coder notes</div><pre>- First version: no demonstration available, so I built a perceive→plan→push→re-observe loop that corrects for the ~1 cm position noise and varying friction by re-reading poses every iteration.
+- Push direction u = unit vector from puck to target. Contact point is placed behind the puck at distance r + 0.012 so the open fingers clear the puck on descent.
+- Yaw is set perpendicular to the push direction: the 5 cm opening is narrower than the 6 cm puck, so the fingers must straddle the push line and contact the puck with their front edges rather than trying to close on it.
+- Tool point kept at z = 0.02 (fingertips reach 0.0075, well inside the puck&#x27;s 0–0.02 height band) and moves near the puck at speed 0.05.
+- Push step = remaining distance + 0.02 overshoot, clamped to [0.03, 0.07] m, so we converge in a few iterations without launching the puck out of the 4 cm zone.
+- All moves wrapped in try/except Exception (MotionError is an Exception subclass); if the yawed approach fails I retry without yaw, and if the descent is blocked I lift and try the next iteration.
+- Success check: final puck–target centre distance &lt; 0.035 m (zone radius 0.04 m, leaving margin for camera noise).</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Approach timeout** (2 episodes: 2003, 2004)  
+**Root cause:** The descent to push height (line 55) moves at 0.05 m/s. When the puck is far or offset, the arm traverses a long horizontal distance at this slow speed, exceeding the 45 s budget before reaching `z=0.02`.  
+**Fix:** Increase the descent speed to `0.15` on line 55, matching the approach speed used earlier.
+
+**Mode 2: Initial approach timeout** (1 episode: 2006)  
+**Root cause:** The first `move_to` to the contact point (line 40) also uses the slow 0.05 m/s speed. A distant puck causes a long traverse that times out before the push can begin.  
+**Fix:** Raise the speed on line 40 to `0.15` so the arm reaches the contact point promptly.
+
+**Mode 3: Overshoot / instability** (1 episode: 2006)  
+**Root cause:** After a successful approach, the final push (line 70) moves at 0.05 m/s to `z=0.02`. The low speed combined with the short push distance can cause the puck to nudge sideways or the arm to overshoot due to residual momentum, leaving the puck off‑target.  
+**Fix:** Raise the push speed on line 70 to `0.15` to deliver the push decisively before the arm lifts clear.</pre></details><details><summary>Round 3: 6/8 practice episodes &middot; 2 errors &middot; $0.0963 so far</summary><div class='muted'>coder notes</div><pre>- First version: no demonstration available, so I built a perceive→plan→push→re-observe loop that corrects for the ~1 cm position noise and varying friction by re-reading poses every iteration.
+- Push direction u = unit vector from puck to target. Contact point is placed behind the puck at distance r + 0.012 so the open fingers clear the puck on descent.
+- Yaw is set perpendicular to the push direction: the 5 cm opening is narrower than the 6 cm puck, so the fingers must straddle the push line and contact the puck with their front edges rather than trying to close on it.
+- Tool point kept at z = 0.02 (fingertips reach 0.0075, well inside the puck&#x27;s 0–0.02 height band) and moves near the puck at speed 0.05.
+- Push step = remaining distance + 0.02 overshoot, clamped to [0.03, 0.07] m, so we converge in a few iterations without launching the puck out of the 4 cm zone.
+- All moves wrapped in try/except Exception (MotionError is an Exception subclass); if the yawed approach fails I retry without yaw, and if the descent is blocked I lift and try the next iteration.
+- Success check: final puck–target centre distance &lt; 0.035 m (zone radius 0.04 m, leaving margin for camera noise).</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Approach timeout (2 episodes)**
+*Episodes: 3001, 3004*
+*Root cause:* The `move_to` to descent height (line 55) or lift (line 76) exceeds the 45s budget, likely because the calculated `cx/cy` clamp restricts the robot to a narrow corridor that is physically unreachable or obstructed, causing repeated retries.
+*Fix:* Widen the clamp bounds on lines 31-32 (e.g., `0.05` → `0.02`, `0.31` → `0.35`) to give the robot more lateral room to reach the approach point without timing out.
+
+**Mode 2: Contact/blocked descent (2 episodes)**
+*Episodes: 3005, 3001 (t=43)*
+*Root cause:* The push height descent (line 55) commands `0.02` m, but the puck radius plus margin pushes the approach point near obstacles. The robot &quot;stopped short&quot; (error_m 0.01) indicating a collision or joint limit before reaching `0.02` m (lines 56-61).
+*Fix:* Reduce descent depth to `0.01` m on line 55, or add a pre-check: if `dist &lt; 0.05`, skip the low-height move and push from the approach height directly.</pre></details><details open><summary>Round 4: 8/8 practice episodes &middot; 0 errors &middot; $0.1203 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- The previous submission was cut off mid-expression (`speed=` with no value), so the module never parsed; I rewrote the whole skill cleanly and closed every call.
+- Kept the working strategy: perceive puck + target each iteration, compute a contact point behind the puck along the target direction, align the fingers perpendicular to the push, descend, push, verify, lift.
+- Fixed the truncation and made the lift-back a complete `move_to(..., LIFT_Z, ...)` call.
+- Push height set to 0.015 (puck centre height) so the pads contact the puck body, not the table.
+- Push length is `dist + 0.02` clamped to [0.03, 0.07] so each stroke makes progress without over-shooting the zone.
+- Bounded retries (12) with a final re-read check; returns True only when the puck is within the zone tolerance.
+- All risky moves wrapped in `try/except Exception` (no bare except) and `ok` flags checked so a blocked move triggers a re-plan instead of a crash.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_3/skill.py</span>
+<span class=''>+++ round_4/skill.py</span>
+<span class='hunk'>@@ -3,6 +3,9 @@</span>
+<span class=''> </span>
+<span class=''> def run(robot):</span>
+<span class=''>     robot.home()</span>
+<span class='add'>+</span>
+<span class='add'>+    def clamp(v, lo, hi):</span>
+<span class='add'>+        return min(max(v, lo), hi)</span>
+<span class=''> </span>
+<span class=''>     def read():</span>
+<span class=''>         obs = robot.observe()</span>
+<span class='hunk'>@@ -11,8 +14,8 @@</span>
+<span class=''>         r = obs[&quot;objects&quot;][&quot;puck&quot;][&quot;size&quot;][&quot;radius&quot;]</span>
+<span class=''>         return p, t, r</span>
+<span class=''> </span>
+<span class='del'>-    def clamp(v, lo, hi):</span>
+<span class='del'>-        return min(max(v, lo), hi)</span>
+<span class='add'>+    PUSH_Z = 0.015   # puck centre height; pads contact the puck body</span>
+<span class='add'>+    LIFT_Z = 0.12    # safe travel height</span>
+<span class=''> </span>
+<span class=''>     for attempt in range(12):</span>
+<span class=''>         p, t, r = read()</span>
+<span class='hunk'>@@ -20,7 +23,7 @@</span>
+<span class=''>         dy = t[1] - p[1]</span>
+<span class=''>         dist = math.hypot(dx, dy)</span>
+<span class=''>         robot.log(&quot;attempt&quot;, attempt, &quot;dist&quot;, round(dist, 4))</span>
+<span class='del'>-        if dist &lt; 0.012:</span>
+<span class='add'>+        if dist &lt; 0.015:</span>
+<span class=''>             return True</span>
+<span class=''> </span>
+<span class=''>         ux = dx / dist</span>
+<span class='hunk'>@@ -28,8 +31,8 @@</span>
+<span class=''> </span>
+<span class=''>         # Contact point behind the puck, clear of its radius.</span>
+<span class=''>         margin = r + 0.012</span>
+<span class='del'>-        cx = clamp(p[0] - ux * margin, 0.05, 0.31)</span>
+<span class='del'>-        cy = clamp(p[1] - uy * margin, -0.25, 0.25)</span>
+<span class='add'>+        cx = clamp(p[0] - ux * margin, 0.04, 0.32)</span>
+<span class='add'>+        cy = clamp(p[1] - uy * margin, -0.26, 0.26)</span>
+<span class=''> </span>
+<span class=''>         # Fingers perpendicular to the push so the open jaws straddle the line.</span>
+<span class=''>         yaw = math.atan2(uy, ux) + math.pi / 2.0</span>
+<span class='hunk'>@@ -37,13 +40,13 @@</span>
+<span class=''>         # --- approach from above ---</span>
+<span class=''>         reached = False</span>
+<span class=''>         try:</span>
+<span class='del'>-            res = robot.move_to(cx, cy, 0.12, yaw=yaw, speed=0.15)</span>
+<span class='add'>+            res = robot.move_to(cx, cy, LIFT_Z, yaw=yaw, speed=0.15)</span>
+<span class=''>             reached = res.get(&quot;ok&quot;, True)</span>
+<span class=''>         except Exception:</span>
+<span class=''>             reached = False</span>
+<span class=''>         if not reached:</span>
+<span class=''>             try:</span>
+<span class='del'>-                res = robot.move_to(cx, cy, 0.12, speed=0.15)</span>
+<span class='add'>+                res = robot.move_to(cx, cy, LIFT_Z, speed=0.15)</span>
+<span class=''>                 reached = res.get(&quot;ok&quot;, True)</span>
+<span class=''>             except Exception:</span>
+<span class=''>                 reached = False</span>
+<span class='hunk'>@@ -52,10 +55,10 @@</span>
+<span class=''> </span>
+<span class=''>         # --- descend to push height ---</span>
+<span class=''>         try:</span>
+<span class='del'>-            res = robot.move_to(cx, cy, 0.02, yaw=yaw, speed=0.05)</span>
+<span class='add'>+            res = robot.move_to(cx, cy, PUSH_Z, yaw=yaw, speed=0.10)</span>
+<span class=''>             if not res.get(&quot;ok&quot;, True):</span>
+<span class=''>                 try:</span>
+<span class='del'>-                    robot.move_to(cx, cy, 0.12, yaw=yaw, speed=0.15)</span>
+<span class='add'>+                    robot.move_to(cx, cy, LIFT_Z, yaw=yaw, speed=0.15)</span>
+<span class=''>                 except Exception:</span>
+<span class=''>                     pass</span>
+<span class=''>                 continue</span>
+<span class='hunk'>@@ -64,20 +67,24 @@</span>
+<span class=''> </span>
+<span class=''>         # --- push forward ---</span>
+<span class=''>         push = min(max(dist + 0.02, 0.03), 0.07)</span>
+<span class='del'>-        ex = clamp(cx + ux * push, 0.05, 0.31)</span>
+<span class='del'>-        ey = clamp(cy + uy * push, -0.25, 0.25)</span>
+<span class='add'>+        ex = clamp(cx + ux * push, 0.04, 0.32)</span>
+<span class='add'>+        ey = clamp(cy + uy * push, -0.26, 0.26)</span>
+<span class=''>         try:</span>
+<span class='del'>-            robot.move_to(ex, ey, 0.02, yaw=yaw, speed=0.05)</span>
+<span class='add'>+            robot.move_to(ex, ey, PUSH_Z, yaw=yaw, speed=0.05)</span>
+<span class=''>         except Exception:</span>
+<span class=''>             pass</span>
+<span class=''> </span>
+<span class='add'>+        # --- quick success check before spending time on the lift ---</span>
+<span class='add'>+        p2, t2, r2 = read()</span>
+<span class='add'>+        d2 = math.hypot(t2[0] - p2[0], t2[1] - p2[1])</span>
+<span class='add'>+        if d2 &lt; 0.02:</span>
+<span class='add'>+            return True</span>
+<span class='add'>+</span>
+<span class=''>         # --- lift clear before re-planning ---</span>
+<span class=''>         try:</span>
+<span class='del'>-            robot.move_to(ex, ey, 0.12, yaw=yaw, speed=0.15)</span>
+<span class='add'>+            robot.move_to(ex, ey, LIFT_Z, yaw=yaw, speed=0.15)</span>
+<span class=''>         except Exception:</span>
+<span class=''>             pass</span>
+<span class=''> </span>
+<span class=''>     p, t, r = read()</span>
+<span class='del'>-    dist = math.hypot(t[0] - p[0], t[1] - p[1])</span>
+<span class='del'>-    robot.log(&quot;final dist&quot;, round(dist, 4))</span>
+<span class='del'>-    return dist &lt; 0.035</span>
+<span class='add'>+    return math.hypot(t[0] - p[0], t[1] - p[1]) &lt; 0.02</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100002/end_front.jpg"><figcaption>seed 100002<br></figcaption></figure><figure><img src="eval/episodes/ep_100017/end_front.jpg"><figcaption>seed 100017<br></figcaption></figure><figure><img src="eval/episodes/ep_100023/end_front.jpg"><figcaption>seed 100023<br></figcaption></figure><figure><img src="eval/episodes/ep_100026/end_front.jpg"><figcaption>seed 100026<br>EpisodeTimeout: time budget of 45 s exceeded [skill.py line 73, in run: robot.move_to(ex, ey, PUSH_Z, yaw=yaw, speed=0.05)]</figcaption></figure><figure><img src="eval/episodes/ep_100038/end_front.jpg"><figcaption>seed 100038<br>EpisodeTimeout: time budget of 45 s exceeded [skill.py line 58, in run: res = robot.move_to(cx, cy, PUSH_Z, yaw=yaw, speed=0.10)]</figcaption></figure><figure><img src="eval/episodes/ep_100044/end_front.jpg"><figcaption>seed 100044<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+
+def run(robot):
+    robot.home()
+
+    def clamp(v, lo, hi):
+        return min(max(v, lo), hi)
+
+    def read():
+        obs = robot.observe()
+        p = obs[&quot;objects&quot;][&quot;puck&quot;][&quot;pos&quot;]
+        t = obs[&quot;fixtures&quot;][&quot;target&quot;][&quot;pos&quot;]
+        r = obs[&quot;objects&quot;][&quot;puck&quot;][&quot;size&quot;][&quot;radius&quot;]
+        return p, t, r
+
+    PUSH_Z = 0.015   # puck centre height; pads contact the puck body
+    LIFT_Z = 0.12    # safe travel height
+
+    for attempt in range(12):
+        p, t, r = read()
+        dx = t[0] - p[0]
+        dy = t[1] - p[1]
+        dist = math.hypot(dx, dy)
+        robot.log(&quot;attempt&quot;, attempt, &quot;dist&quot;, round(dist, 4))
+        if dist &lt; 0.015:
+            return True
+
+        ux = dx / dist
+        uy = dy / dist
+
+        # Contact point behind the puck, clear of its radius.
+        margin = r + 0.012
+        cx = clamp(p[0] - ux * margin, 0.04, 0.32)
+        cy = clamp(p[1] - uy * margin, -0.26, 0.26)
+
+        # Fingers perpendicular to the push so the open jaws straddle the line.
+        yaw = math.atan2(uy, ux) + math.pi / 2.0
+
+        # --- approach from above ---
+        reached = False
+        try:
+            res = robot.move_to(cx, cy, LIFT_Z, yaw=yaw, speed=0.15)
+            reached = res.get(&quot;ok&quot;, True)
+        except Exception:
+            reached = False
+        if not reached:
+            try:
+                res = robot.move_to(cx, cy, LIFT_Z, speed=0.15)
+                reached = res.get(&quot;ok&quot;, True)
+            except Exception:
+                reached = False
+        if not reached:
+            continue
+
+        # --- descend to push height ---
+        try:
+            res = robot.move_to(cx, cy, PUSH_Z, yaw=yaw, speed=0.10)
+            if not res.get(&quot;ok&quot;, True):
+                try:
+                    robot.move_to(cx, cy, LIFT_Z, yaw=yaw, speed=0.15)
+                except Exception:
+                    pass
+                continue
+        except Exception:
+            continue
+
+        # --- push forward ---
+        push = min(max(dist + 0.02, 0.03), 0.07)
+        ex = clamp(cx + ux * push, 0.04, 0.32)
+        ey = clamp(cy + uy * push, -0.26, 0.26)
+        try:
+            robot.move_to(ex, ey, PUSH_Z, yaw=yaw, speed=0.05)
+        except Exception:
+            pass
+
+        # --- quick success check before spending time on the lift ---
+        p2, t2, r2 = read()
+        d2 = math.hypot(t2[0] - p2[0], t2[1] - p2[1])
+        if d2 &lt; 0.02:
+            return True
+
+        # --- lift clear before re-planning ---
+        try:
+            robot.move_to(ex, ey, LIFT_Z, yaw=yaw, speed=0.15)
+        except Exception:
+            pass
+
+    p, t, r = read()
+    return math.hypot(t[0] - p[0], t[1] - p[1]) &lt; 0.02
+</pre></section>
+</div></body></html>

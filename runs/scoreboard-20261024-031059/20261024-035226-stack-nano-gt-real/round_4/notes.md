@@ -1,0 +1,7 @@
+- Keep the perception sanity check but don’t abort the whole run if cubes are missing after the second observation.  
+- Remove the strict “holding == red_cube” verification that restarts the entire sequence; instead proceed after a grasp (or do a quick re‑grasp on failure).  
+- Lower the placement‑offset threshold to 0.015 m and automatically scale the target position toward the observed red centre to bring the offset within that threshold.  
+- After a placement short‑stop, back‑off the height and also shift the target xy by the signed offset observed, then retry the move.  
+- Allow up to two retries per subtask without resetting the overall attempt counter, preserving progress across attempts.  
+- Use slow speeds for fine moves, log error_m for debugging, and stay within safety limits.  
+- Preserve the overall retry limit (3 attempts) and return True only after a successful release with no object still held.

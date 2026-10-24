@@ -1,0 +1,70 @@
+# skill module
+import math
+import numpy as np
+
+def run(robot):
+    # ---------- 1. perception ----------
+    obs = robot.observe()
+    puck = obs["objects"]["puck"]
+    target = obs["fixtures"]["target"]
+
+    puck_pos = np.array(puck["pos"], dtype=float)          # centre of puck
+    puck_radius = puck["size"]["radius"]
+    target_pos = np.array(target["pos"][:2], dtype=float)  # (x,y) of zone centre
+    target_radius = target["radius"]
+
+    # ---------- 2. approach from above ----------
+    # tool point must be above the puck so fingertips can touch its top
+    # fingertips are 1.25 cm below the tool point
+    approach_z = puck_pos[2] + puck_radius + 0.0125 + 0.003  # small clearance
+    try:
+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)
+    except Exception:  # MotionError or unreachable – try a slightly different height
+        approach_z = min(approach_z, 0.20)  # clamp to safe workspace
+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)
+
+    # lower until fingertips touch the puck top
+    touch_z = puck_pos[2] + puck_radius + 0.0125
+    try:
+        robot.move_to(puck_pos[0], puck_pos[1], touch_z, speed=0.05)
+    except Exception:
+        # if too low, raise a bit and try again
+        touch_z = max(touch_z, 0.02)
+        robot.move_to(puck_pos[0], puck_pos[1], touch_z, speed=0.05)
+
+    # ---------- 3. push toward target ----------
+    # direction vector from puck to target
+    delta = target_pos - puck_pos[:2]
+    dist_to_target = np.linalg.norm(delta)
+    # we only need to move a small step (max 2 cm) to keep within budget
+    push_step = min(0.02, dist_to_target)
+    if push_step > 0:
+        direction = delta / dist_to_target
+        try:
+            robot.move_by(
+                dx=direction[0] * push_step,
+                dy=direction[1] * push_step,
+                speed=0.05
+            )
+        except Exception:
+            # if blocked, abort – the skill will be retried next episode
+            pass
+
+    # ---------- 4. lift and verify ----------
+    # lift back to the approach height
+    try:
+        robot.move_to(puck_pos[0], puck_pos[1], approach_z, speed=0.05)
+    except Exception:
+        pass
+
+    # re‑observe to check final pose
+    try:
+        final_obs = robot.observe()
+        final_puck = np.array(final_obs["objects"]["puck"]["pos"], dtype=float)
+        final_dist = np.linalg.norm(final_puck[:2] - target_pos)
+        if final_dist < target_radius - 0.005:  # comfortably inside
+            return True
+    except Exception:
+        pass
+
+    return False

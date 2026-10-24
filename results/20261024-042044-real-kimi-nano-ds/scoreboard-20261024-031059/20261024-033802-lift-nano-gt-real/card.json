@@ -1,0 +1,242 @@
+{
+ "run_id": "20261024-033802-lift-nano-gt-real",
+ "task": "lift",
+ "title": "Lift",
+ "instruction": "Pick up the red cube and hold it at least 5 cm above the table.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "real",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 10.9,
+   "usd_cum": 0.00049,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 105,
+   "summary": "**Mode 1 \u2013 Grasp failure (6 episodes)**  \n*Root cause:* `robot.grasp()` returns `False` every attempt (lines 65\u201169). The gripper does not close or slips.  \n*Fix:* Increase approach speed to `0.10` and add a pre\u2011grasp `move_to` with `z=0.05` to seat the fingers, then retry.\n\n**Mode 2 \u2013 Motion unreachable (4 episodes)**  \n*Root cause:* `move_to` reports `ok: true` but the robot stops short (z\u22480.065, final cube z=0.015). The target height is unreachable from the starting pose (lines 50\u201162).  \n*Fix:* Reduce `LIFT_Z` to `0.055` and add a `wait(0.1)` after `move_to` before `grasp` to allow settling.\n\n**Mode 3 \u2013 Perception lag (1 episode)**  \n*Root cause:* Cube reported at z=0.015 while code expects lift above 0.065; the observation is stale (line 21).  \n*Fix:* Insert `robot.wait(0.5)` after `observe()` to ensure fresh pose before computing `target_z`."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 15.9,
+   "usd_cum": 0.00208,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 106,
+   "summary": "**Mode 1 \u2013 Grasp failure (5 episodes)**\n- **Root cause:** `grasp()` returns `holding: null` (line 67). The gripper cannot close on the cube, likely due to approach pose misalignment or insufficient downward force.\n- **Fix:** Add a brief `robot.wait(0.05)` after `move_to` pre\u2011grasp (line 59) to let the robot settle, and verify `target_z` is exactly `PRE_GRASP_Z` (0.055\u202fm) before closing.\n\n**Mode 2 \u2013 Height insufficient after lift (3 episodes)**\n- **Root cause:** Final `move_to` uses `LIFT_Z = 0.07\u202fm` (line 83), but the perception step reports `red_cube_z \u2248 0.015\u202fm`. The code never adds the cube\u2019s base height (0.015\u202fm) to the required clearance, so the robot lifts from a perceived base that is already on the table, ending ~5\u202fcm short of the 0.065\u202fm target.\n- **Fix:** Change `LIFT_Z` to `REQUIRED_Z + cube_base_height` (0.065\u202f+\u202f0.015 = 0.080\u202fm) or adjust the final `z` to `0.080`\u202fm (line 83).\n\n**Mode 3 \u2013 Pre\u2011grasp pose out of reach (2 episodes)**\n- **Root cause:** Horizontal offset `HOFFSET` (line 18) is applied unconditionally; when `cx` or `cy` are near zero the offset flips sign, pushing the target outside the robot\u2019s workspace.\n- **Fix:** Clamp the offset: `target_x = cx + max(-HOFFSET, min(HOFFSET, cx))` (lines 47\u201148) to keep the pose within reachable bounds."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 16.1,
+   "usd_cum": 0.00387,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 121,
+   "summary": "**Mode 1 \u2013 Grasp failure (6 episodes)**\n- **Root cause:** `robot.grasp()` returns `holding: null` at lines 75\u201178. The gripper never closes on the cube.\n- **Fix:** Increase `SPEED_LIFT` or add a brief `robot.wait(0.05)` after `robot.move_to` before `robot.grasp()` to ensure the arm settles on the cube before closing.\n\n**Mode 2 \u2013 Pre\u2011grasp position missed (4 episodes)**\n- **Root cause:** `move_to` targets `z=0.055` (line 58) but the cube base `cz` is only ~0.015\u202fm. The pre\u2011grasp pose may not contact the cube, causing the gripper to miss.\n- **Fix:** Set `PRE_GRASP_Z = cz - 0.002` (use observed base height) so the arm descends to the cube top before closing.\n\n**Mode 3 \u2013 Lift height insufficient (0 episodes, but check)**\n- **Root cause:** `lift_z = REQUIRED_Z + cz` (line 88) adds observed base height; if `cz` is mis\u2011reported the final `final_z` may fall below 0.065\u202fm (line 110).\n- **Fix:** Clamp `lift_z = max(lift_z, REQUIRED_Z)` before the lift move to guarantee the safety margin regardless of observation noise."
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 7,
+   "success": 0.875,
+   "gt_k": 7,
+   "self_k": 7,
+   "errors": 0,
+   "wall_s": 8.6,
+   "usd_cum": 0.00542,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 140,
+   "summary": "**Failure modes (3 episodes)**  \n\n| Mode | Episodes | Root cause (code) | Fix |\n|------|----------|-------------------|-----|\n| Grasp fails on low cube | 4002 | `pre_grasp_z = max(0.014, cz - 0.002)` (line\u202f59) leaves the gripper at ~1.7\u202fcm when the cube base is only 1.5\u202fcm high, so the jaws close on empty space. | Lower the pre\u2011grasp floor: `pre_grasp_z = max(0.008, cz - 0.002)` to stay just above very flat objects. |\n| Pre\u2011grasp collides with table | 4002 (retry 2) | `move_to` targets `z=0.014`/0.017\u202fm while the cube sits at 0.015\u202fm; the robot tries to move *into* the table. | Add a safety margin: `pre_grasp_z = max(0.016, cz + 0.001)` ensuring >1\u202fcm clearance above any observed base. |\n| Holding check never passes | 4002 (final) | After a failed grasp the loop retries, but `robot.holding()` returns `None` because no cube was ever secured. | No code change needed; the corrected pre\u2011grasp pose will enable a successful grasp, ending the retry loop. |\n\n**Summary:** The dominant issue is an overly high pre\u2011grasp pose for flat cubes, causing the gripper to miss or strike the table. Adjusting the pre\u2011grasp z\u2011computation to a lower floor resolves all three failures."
+  },
+  {
+   "round": 5,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 5,
+   "errors": 0,
+   "wall_s": 11.2,
+   "usd_cum": 0.00912,
+   "code": "round_5/skill.py",
+   "diff": "round_5/diff.patch",
+   "lines": 136,
+   "summary": "**Mode 1: Pre\u2011grasp too low \u2192 grasp fails**  \n*Episodes:* 5000, 5002, 5005 (3/7)  \n*Root cause:* The pre\u2011grasp height calculation (line 60\u201161) forces `pre_grasp_z_raw` down to 0.008\u202fm, then applies the safety margin. For cubes sitting near the table (`cz \u2248 0.015\u202fm`), the resulting `pre_grasp_z` drops to ~0.016\u202fm, leaving insufficient approach clearance for the gripper to close.  \n*Fix:* Raise the floor in line 60 from `0.008` to `0.020`\u202fm, ensuring a minimum 5\u202fmm clearance above even the flattest observed cubes before the grasp attempt.\n\n**Mode 2: Lift height insufficient after grasp**  \n*Episodes:* 5000, 5002, 5005 (same 3) \u2013 grasp succeeded but cube remained at ~0.015\u202fm.  \n*Root cause:* Line 98\u201199 computes `lift_z_raw = REQUIRED_Z + cz`. When `cz` is ~0.015\u202fm, `lift_z_raw` \u2248 0.080\u202fm, but the subsequent `max(REQUIRED_Z, lift_z_raw)` correctly caps at 0.065\u202fm. However, the observed final `z` (~0.015\u202fm) indicates the robot never actually reached the lift pose; the grasp itself failed or slipped, so the lift step was never executed.  \n*Fix:* Add a pre\u2011grasp height guard: if `cz < 0.025`, skip the grasp and retry with a higher `pre_grasp_z` (line 61), preventing attempts on objects too close to the table.",
+   "reverted_to": 4
+  },
+  {
+   "round": 6,
+   "n": 8,
+   "k": 3,
+   "success": 0.375,
+   "gt_k": 3,
+   "self_k": 5,
+   "errors": 0,
+   "wall_s": 15.5,
+   "usd_cum": 0.01091,
+   "code": "round_6/skill.py",
+   "diff": "round_6/diff.patch",
+   "lines": 148
+  }
+ ],
+ "best_round": 4,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 4,
+  "chosen": 4,
+  "rows": [
+   {
+    "round": 4,
+    "practice": "7/8",
+    "recheck": "13/16",
+    "total_k": 20,
+    "total_n": 24
+   },
+   {
+    "round": 5,
+    "practice": "5/8",
+    "recheck": "11/16",
+    "total_k": 16,
+    "total_n": 24
+   },
+   {
+    "round": 6,
+    "practice": "3/8",
+    "recheck": "5/16",
+    "total_k": 8,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 44,
+  "p": 0.88,
+  "lo": 0.761949211134,
+  "hi": 0.943824762894,
+  "source": "gt",
+  "best_round": 4,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 7.64,
+  "self_report_true": 44,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100016,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0166,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100016/end_front.jpg"
+   },
+   {
+    "seed": 100017,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100017/end_front.jpg"
+   },
+   {
+    "seed": 100036,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100036/end_front.jpg"
+   },
+   {
+    "seed": 100037,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100037/end_front.jpg"
+   },
+   {
+    "seed": 100039,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0149,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100039/end_front.jpg"
+   },
+   {
+    "seed": 100041,
+    "error": "",
+    "metrics": {
+     "red_cube_z": 0.0148,
+     "required_z": 0.065
+    },
+    "frame": "eval/episodes/ep_100041/end_front.jpg"
+   }
+  ]
+ },
+ "models": {
+  "coder": {
+   "alias": "nano",
+   "id": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "nvidia": true,
+   "calls": 6,
+   "prompt_tokens": 28138,
+   "completion_tokens": 28879,
+   "usd": 0.008619,
+   "price_in": 0.06,
+   "price_out": 0.24
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 5,
+   "prompt_tokens": 30827,
+   "completion_tokens": 1844,
+   "usd": 0.002292,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.010911,
+  "compute_usd": 0.0,
+  "total_usd": 0.010911,
+  "calls": 11,
+  "prompt_tokens": 58965,
+  "completion_tokens": 30723,
+  "compute_seconds": 289.13,
+  "backend": "local"
+ },
+ "wall_time_s": 446.6,
+ "practice_episodes": 48,
+ "created": "2026-10-24 03:45:28",
+ "skill_file": "best_skill.py"
+}

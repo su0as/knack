@@ -1,0 +1,6 @@
+- Fixed grasp failures by adding a short settle (0.05 s) after the pre‑grasp move and before calling `grasp()`. This gives the arm time to settle on the cube and eliminates the “holding: null” errors.
+- Adjusted the pre‑grasp height to sit just above the observed cube top: `pre_grasp_z = max(0.014, cz - 0.002)`. This uses the measured base height (`cz`) and guarantees the fingers are positioned slightly above the cube surface.
+- Clamped the lift height to guarantee the required clearance: `lift_z = max(REQUIRED_Z, REQUIRED_Z + cz)` and then limited it to the safe workspace ceiling. This ensures the final pose is always at least 0.065 m above the table regardless of observation noise.
+- Added a final verification step after the lift: re‑observe the scene, check that `robot.holding()` still returns the red cube, and confirm the reported `z` meets the required clearance (with a small tolerance). If any check fails, the episode retries.
+- Improved robustness of `move_to` calls by wrapping them in `try/except` and by clamping the target coordinates to the reachable workspace (`x ∈ [0.04,0.32]`, `y ∈ [-0.26,0.26]`). Any motion exception now triggers a retry rather than aborting the whole skill.
+- Preserved all existing retry limits, wait times and safety margins while incorporating the above fixes, keeping the overall flow unchanged.

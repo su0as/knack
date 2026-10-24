@@ -1,0 +1,159 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -8,20 +8,30 @@
+     Returns True when the cube is securely held at the target height.
+     """
+     RED_NAME = "red_cube"
+-    # Desired clearance above the table (metres)
+-    CLEARANCE = 0.05
+-    # Extra safety margin added to the target height
+-    LIFT_Z = 0.065  # ≈0.015 (cube base) + 0.05 (clearance) + 0.0005 margin
+-    # Safety margin in the horizontal plane
++    # Required clearance above the table (metres)
++    REQUIRED_Z = 0.065          # 0.015 (cube base) + 0.05 (clearance)
++    # Height for the low‑z pre‑grasp pose (just above the cube)
++    PRE_GRASP_Z = 0.055
++    # Extra safety margin added to the final lift height
++    LIFT_Z = 0.07               # a little above REQUIRED_Z for safety
++    # Horizontal safety offset to stay inside the reachable band
+     HOFFSET = 0.005
++    # Speeds
++    SPEED_APPROACH = 0.10       # short pre‑grasp move (still safe)
++    SPEED_LIFT = 0.07           # slower lift to stay within safety layer
++    # Wait times (seconds)
++    WAIT_AFTER_OBSERVE = 0.5
++    WAIT_AFTER_MOVE = 0.1
++    WAIT_AFTER_GRASP = 0.2
++    MAX_RETRIES = 12
+ 
+-    # Retry loop (max attempts to avoid infinite loops in case of persistent failure)
+-    max_retries = 10
+-    for attempt in range(max_retries):
++    for attempt in range(MAX_RETRIES):
++        # 1. Perceive the scene and wait for a stable observation
+         obs = robot.observe()
++        robot.wait(WAIT_AFTER_OBSERVE)
++
+         objs = obs.get("objects", {})
+         if RED_NAME not in objs:
+-            # Red cube not present in this perception – try again next cycle
+             robot.log("red_cube not seen, retry")
+             robot.wait(0.2)
+             continue
+@@ -29,76 +39,67 @@
+         cube = objs[RED_NAME]
+         cx, cy, cz = cube["pos"]
+         cyaw = cube["yaw"]
+-        # Compute a safe tool‑point just above the cube centre
++
++        # 2. Compute a safe tool‑point just above the cube centre
+         target_x = cx
+         target_y = cy
+-        target_z = LIFT_Z
+-        # Slight offset to stay inside the reachable band and avoid edge effects
++        # Small horizontal offset to avoid edge effects
+         target_x += HOFFSET * (1 if target_x >= 0.15 else -1)
+         target_y += HOFFSET * (1 if target_y >= 0.0 else -1)
+ 
+-        # Build move arguments
+-        move_args = {
++        # 3. Pre‑grasp move (low z, faster speed)
++        pre_grasp_args = {
+             "x": target_x,
+             "y": target_y,
+-            "z": target_z,
+-            "yaw": cyaw,          # align fingers with cube faces
+-            "speed": 0.07           # slow approach
++            "z": PRE_GRASP_Z,
++            "yaw": cyaw,
++            "speed": SPEED_APPROACH
+         }
++        try:
++            robot.move_to(**pre_grasp_args)
++        except Exception as e:
++            robot.log(f"pre_grasp move_to exception: {e}")
++            robot.wait(0.2)
++            continue
++        robot.wait(WAIT_AFTER_MOVE)
+ 
+-        # Try to move to the target pose
+-        try:
+-            move_res = robot.move_to(**move_args)
+-        except Exception as e:
+-            # MotionError or any unexpected exception – restart with fresh perception
+-            robot.log(f"move_to exception: {e}")
++        # 4. Attempt to close the gripper
++        if not robot.grasp():
++            robot.log("grasp failed, retry")
++            robot.wait(0.2)
++            continue
++        robot.wait(WAIT_AFTER_GRASP)
++
++        # 5. Verify that the red cube is actually held
++        if robot.holding() != RED_NAME:
++            robot.log(f"holding check failed: got {robot.holding()}, retry")
+             robot.wait(0.2)
+             continue
+ 
+-        if not move_res.get("ok", False):
+-            # Target was unreachable or blocked – restart
+-            robot.log("move_to blocked")
++        # 6. Lift to the required height (≈5 cm clearance)
++        lift_args = {
++            "x": target_x,
++            "y": target_y,
++            "z": LIFT_Z,
++            "yaw": cyaw,
++            "speed": SPEED_LIFT
++        }
++        try:
++            robot.move_to(**lift_args)
++        except Exception as e:
++            robot.log(f"lift move_to exception: {e}")
+             robot.wait(0.2)
+             continue
+ 
+-        # Close the gripper to grasp
+-        grasp_ok = robot.grasp()
+-        if not grasp_ok:
+-            robot.log("grasp failed, retry")
+-            robot.wait(0.2)
+-            continue
+-
+-        # Verify that the red cube is actually held
+-        held = robot.holding()
+-        if held != RED_NAME:
+-            robot.log(f"holding check failed: got {held}, retry")
+-            robot.wait(0.2)
+-            continue
+-
+-        # Lift a bit higher to guarantee the 5 cm clearance
+-        lift_target = {
+-            "x": target_x,
+-            "y": target_y,
+-            "z": 0.08,          # 8 cm above table, safely above required 5 cm
+-            "yaw": cyaw,
+-            "speed": 0.07
+-        }
+-        try:
+-            robot.move_to(**lift_target)
+-        except Exception as e:
+-            robot.log(f"lift move exception: {e}")
+-            robot.wait(0.2)
+-            continue
+-
+-        # Final verification – ensure we are still holding and at sufficient height
++        # 7. Final verification – still holding and at sufficient height
+         if robot.holding() == RED_NAME:
+             robot.log("success: red cube securely lifted")
+             return True
+ 
+-        # If we reach here something went wrong; retry
++        # 8. If we reach here something unexpected happened; retry
+         robot.log("unexpected end, retry")
+         robot.wait(0.2)
+ 
+-    # If we exit the loop we failed to secure the cube
++    # Failure after all retries
+     robot.log("failed to pick up red cube after retries")
+     return False

@@ -1,0 +1,5 @@
+- First attempt at the stack task; no prior results yet.
+- Perception is noisy (~1 cm per reading, fresh noise each call), so I average several get_pose() readings before every critical action; yaw is averaged with a 4θ trick to respect the cube's 90° symmetry.
+- Plan: average red pose → approach from above with fingers aligned to red's yaw → slow descend to z=0.015 → grasp → verify holding after a lift → re-average blue pose while it is unoccluded → carry over blue at height, rotating gripper to blue's yaw → slow descend to just above stacked height → release → retreat → verify red's z ≈ blue z + 0.03.
+- Whole stack attempt is wrapped in a bounded 2-try loop so a failed grasp or a toppled place triggers one recovery attempt.
+- Moves near cubes are slow (0.04–0.06), travel moves at 0.25; all move_to calls are wrapped against MotionError.

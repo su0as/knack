@@ -1,0 +1,6 @@
+- Lowered the pre‑grasp floor to 0.008 m and combined it with a safety margin (≥ 0.016 m and at least 1 mm above the cube centre) so the gripper can sit just above very flat objects while staying clear of the table.
+- Added an explicit safety‑margin calculation (`pre_grasp_z = max(PRE_GRASP_MIN, pre_grasp_z_raw, cz + HEIGHT_OFFSET)`) to guarantee the gripper is above the cube and inside the safe vertical band.
+- Inserted a short settle (`SETTLE_AFTER_MOVE`) after every `move_to` and wrapped all moves in `try/except` with automatic retry on any exception, preserving the existing retry loop.
+- Strengthened the final verification: after lifting we re‑observe, confirm `robot.holding()` still returns the red cube and that its reported `z` meets the required clearance (with a small tolerance); any failure triggers a retry.
+- Preserved all existing timing, horizontal clamping and retry limits, keeping the behaviour that already succeeded in most episodes.
+- Added clearer variable names and comments for future debugging without altering the overall control flow.

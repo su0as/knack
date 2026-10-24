@@ -1,0 +1,217 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Lift</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261024-031059-lift-kimi-k3-gt-real &middot; 2026-10-24 03:14:46</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Pick up the red cube and hold it at least 5 cm above the table.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: real &middot; 8 practice episodes in 1 rounds</p>
+<div><span class='chip'><b>CODER</b>moonshotai/Kimi-K3 <em>$3.00 / $15.00 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">100%</div><div>50/50 layouts &middot; Wilson 95% CI 93% to 100%</div><div class='ci'><div class='ci-band' style='left:92.9%;width:7.1%'></div><div class='ci-dot' style='left:100.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:100%'></span><em>R1<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>moonshotai/Kimi-K3</code></td><td>1</td><td>1,613</td><td>4,994</td><td>$0.0796</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>0</td><td>0</td><td>0</td><td>$0.0000</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>88 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>1</th><th>1,613</th><th>4,994</th><th>$0.0796</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details open><summary>Round 1: 8/8 practice episodes &middot; 0 errors &middot; $0.0796 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Task: grasp red_cube and hold it ≥5 cm above the table. Perception is noisy (~1 cm pos, several deg yaw) and every observe() is a fresh sample, so I average 6 readings per estimate (→ ~4 mm std) and average yaw in 4·angle space to respect the cube&#x27;s 90° symmetry wrap at ±π/4.
+- Grip force/mass/friction vary a lot, so grasping can fail or the cube can slip during the lift: verify with robot.holding() after grasp and after lift, and retry the whole sense→approach→grasp cycle up to 4 times (re-sensing each attempt in case the cube was pushed).
+- Approach plan: open fingers, move to (x, y, 0.08) aligned to cube yaw, descend slowly (0.05 m/s) to tool z=0.015 (pads around cube middle, fingertips 2.5 mm above table, safely under the 30 N limit), grasp, then lift straight up to tool z=0.10 so the cube bottom sits ~8.5 cm up with margin over the 5 cm bar.
+- All moves that could be out of reach are wrapped in `except Exception` (MotionError isn&#x27;t importable), with a home() fallback; never hard-code positions — everything comes from observe().</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,88 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+TARGET = &quot;red_cube&quot;</span>
+<span class='add'>+GRASP_Z = 0.015   # tool-point height: finger pads wrap the cube&#x27;s middle</span>
+<span class='add'>+LIFT_Z = 0.10     # after lift, cube centre ~0.10 m -&gt; bottom ~0.085 m &gt; 5 cm</span>
+<span class='add'>+MAX_ATTEMPTS = 4</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _sense(robot, name, n=6):</span>
+<span class='add'>+    &quot;&quot;&quot;Average n noisy observations of one object -&gt; ((x, y, z), yaw) or None.&quot;&quot;&quot;</span>
+<span class='add'>+    sx = sy = sz = 0.0</span>
+<span class='add'>+    s4 = c4 = 0.0</span>
+<span class='add'>+    k = 0</span>
+<span class='add'>+    for _ in range(n):</span>
+<span class='add'>+        obs = robot.observe()</span>
+<span class='add'>+        o = obs[&quot;objects&quot;].get(name)</span>
+<span class='add'>+        if o is None:</span>
+<span class='add'>+            continue</span>
+<span class='add'>+        sx += o[&quot;pos&quot;][0]</span>
+<span class='add'>+        sy += o[&quot;pos&quot;][1]</span>
+<span class='add'>+        sz += o[&quot;pos&quot;][2]</span>
+<span class='add'>+        # cube yaw lives in [-pi/4, pi/4): average in 4*angle space to avoid wrap error</span>
+<span class='add'>+        s4 += math.sin(4.0 * o[&quot;yaw&quot;])</span>
+<span class='add'>+        c4 += math.cos(4.0 * o[&quot;yaw&quot;])</span>
+<span class='add'>+        k += 1</span>
+<span class='add'>+    if k == 0:</span>
+<span class='add'>+        return None</span>
+<span class='add'>+    return (sx / k, sy / k, sz / k), math.atan2(s4, c4) / 4.0</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _try_grasp(robot):</span>
+<span class='add'>+    est = _sense(robot, TARGET)</span>
+<span class='add'>+    if est is None:</span>
+<span class='add'>+        robot.log(&quot;target not visible&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    (x, y, _z), yaw = est</span>
+<span class='add'>+    robot.log(&quot;grasp target at&quot;, round(x, 4), round(y, 4), &quot;yaw&quot;, round(yaw, 3))</span>
+<span class='add'>+    robot.release()</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(x, y, 0.08, yaw=yaw)</span>
+<span class='add'>+        robot.move_to(x, y, GRASP_Z, yaw=yaw, speed=0.05)</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(&quot;approach failed:&quot;, e)</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.home()</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            pass</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    robot.grasp()</span>
+<span class='add'>+    return robot.holding() == TARGET</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _lift_and_check(robot):</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_by(dz=LIFT_Z - GRASP_Z, speed=0.08)</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(&quot;lift failed:&quot;, e)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    robot.wait(0.3)</span>
+<span class='add'>+    if robot.holding() != TARGET:</span>
+<span class='add'>+        robot.log(&quot;cube lost during lift&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    est = _sense(robot, TARGET, n=3)</span>
+<span class='add'>+    if est is None:</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    (_x, _y, z), _yaw = est</span>
+<span class='add'>+    robot.log(&quot;held cube z =&quot;, round(z, 4))</span>
+<span class='add'>+    return z &gt;= 0.05</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    robot.release()</span>
+<span class='add'>+    for attempt in range(MAX_ATTEMPTS):</span>
+<span class='add'>+        if _try_grasp(robot):</span>
+<span class='add'>+            if _lift_and_check(robot):</span>
+<span class='add'>+                return True</span>
+<span class='add'>+            # cube slipped and fell back to the table -&gt; re-sense and retry</span>
+<span class='add'>+        else:</span>
+<span class='add'>+            robot.log(&quot;grasp attempt&quot;, attempt, &quot;found nothing&quot;)</span>
+<span class='add'>+        # back off upward before the next attempt</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_by(dz=0.06)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                robot.home()</span>
+<span class='add'>+            except Exception:</span>
+<span class='add'>+                pass</span>
+<span class='add'>+    return False</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><p class="muted">No held-out failures.</p></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+TARGET = &quot;red_cube&quot;
+GRASP_Z = 0.015   # tool-point height: finger pads wrap the cube&#x27;s middle
+LIFT_Z = 0.10     # after lift, cube centre ~0.10 m -&gt; bottom ~0.085 m &gt; 5 cm
+MAX_ATTEMPTS = 4
+
+
+def _sense(robot, name, n=6):
+    &quot;&quot;&quot;Average n noisy observations of one object -&gt; ((x, y, z), yaw) or None.&quot;&quot;&quot;
+    sx = sy = sz = 0.0
+    s4 = c4 = 0.0
+    k = 0
+    for _ in range(n):
+        obs = robot.observe()
+        o = obs[&quot;objects&quot;].get(name)
+        if o is None:
+            continue
+        sx += o[&quot;pos&quot;][0]
+        sy += o[&quot;pos&quot;][1]
+        sz += o[&quot;pos&quot;][2]
+        # cube yaw lives in [-pi/4, pi/4): average in 4*angle space to avoid wrap error
+        s4 += math.sin(4.0 * o[&quot;yaw&quot;])
+        c4 += math.cos(4.0 * o[&quot;yaw&quot;])
+        k += 1
+    if k == 0:
+        return None
+    return (sx / k, sy / k, sz / k), math.atan2(s4, c4) / 4.0
+
+
+def _try_grasp(robot):
+    est = _sense(robot, TARGET)
+    if est is None:
+        robot.log(&quot;target not visible&quot;)
+        return False
+    (x, y, _z), yaw = est
+    robot.log(&quot;grasp target at&quot;, round(x, 4), round(y, 4), &quot;yaw&quot;, round(yaw, 3))
+    robot.release()
+    try:
+        robot.move_to(x, y, 0.08, yaw=yaw)
+        robot.move_to(x, y, GRASP_Z, yaw=yaw, speed=0.05)
+    except Exception as e:
+        robot.log(&quot;approach failed:&quot;, e)
+        try:
+            robot.home()
+        except Exception:
+            pass
+        return False
+    robot.grasp()
+    return robot.holding() == TARGET
+
+
+def _lift_and_check(robot):
+    try:
+        robot.move_by(dz=LIFT_Z - GRASP_Z, speed=0.08)
+    except Exception as e:
+        robot.log(&quot;lift failed:&quot;, e)
+        return False
+    robot.wait(0.3)
+    if robot.holding() != TARGET:
+        robot.log(&quot;cube lost during lift&quot;)
+        return False
+    est = _sense(robot, TARGET, n=3)
+    if est is None:
+        return False
+    (_x, _y, z), _yaw = est
+    robot.log(&quot;held cube z =&quot;, round(z, 4))
+    return z &gt;= 0.05
+
+
+def run(robot):
+    robot.release()
+    for attempt in range(MAX_ATTEMPTS):
+        if _try_grasp(robot):
+            if _lift_and_check(robot):
+                return True
+            # cube slipped and fell back to the table -&gt; re-sense and retry
+        else:
+            robot.log(&quot;grasp attempt&quot;, attempt, &quot;found nothing&quot;)
+        # back off upward before the next attempt
+        try:
+            robot.move_by(dz=0.06)
+        except Exception:
+            try:
+                robot.home()
+            except Exception:
+                pass
+    return False
+</pre></section>
+</div></body></html>

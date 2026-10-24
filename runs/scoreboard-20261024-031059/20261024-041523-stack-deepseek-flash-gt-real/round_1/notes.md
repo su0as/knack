@@ -1,0 +1,6 @@
+- First version: perceive both cubes by colour, average 3 noisy `get_pose` readings to fight the ~1 cm camera noise, then grasp the red cube with a small spiral of XY offsets so a bad reading doesn't doom the episode.
+- Grasp at z=0.015 (cube centre height) with yaw = red cube's yaw so the fingers line up with its faces; verify with `robot.holding()` after every `grasp()`.
+- After lifting, estimate the grasp offset (cube centre minus tool point) from a few fresh readings and subtract it when placing, so an off-centre grip doesn't shift the stack.
+- Place by descending to z≈0.046 above the blue cube's averaged position (red bottom ≈ blue top at 0.030), release, retreat, then verify red is ~3 cm above blue and roughly aligned.
+- All risky moves wrapped in try/except MotionError-style handling; slow speeds (0.05) near objects, default speed for travel.
+- Bounded retries everywhere; return False on unrecoverable failure, True only after a successful stack check.

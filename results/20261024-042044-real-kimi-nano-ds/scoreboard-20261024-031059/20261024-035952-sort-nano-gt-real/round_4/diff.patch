@@ -1,0 +1,53 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -1,5 +1,5 @@
+ # --------------------------------------------------------------
+-#  Sort‑by‑colour skill – improved version (Round 2 fixes)
++#  Sort‑by‑colour skill – improved version (Round 3 fixes)
+ # --------------------------------------------------------------
+ import math
+ import numpy as np  # allowed import
+@@ -84,13 +84,18 @@
+                 if not move_res["ok"] or not robot.grasp():
+                     return False
+ 
+-            # 6. Verify that the object is actually held
++            # 6. Verification lift before holding check (Mode 1 fix)
++            # Lift a little to be sure the cube is securely held
++            move_res = safe_move_to(ox, oy, 0.04, yaw=oyaw, speed=0.07)
++            if not move_res["ok"]:
++                robot.release()
++                continue
+             if robot.holding() != obj_name:
+-                # Drop any loosely held object and retry
++                # Not holding – drop and retry
+                 robot.release()
+                 continue
+ 
+-            # 7. Lift clear of the surface
++            # 7. Final lift clear of the surface
+             lift_z = 0.05                     # 5 cm above table
+             safe_move_to(ox, oy, lift_z, yaw=oyaw, speed=0.07)
+ 
+@@ -106,7 +111,7 @@
+     def place_into_tray(tray_name, grip_pose):
+         """
+         Move the gripper above the centre of the given tray,
+-        lower to release height, release, then lift away.
++        lower to release height, release, nudge, then lift away.
+         """
+         # 1. Get tray centre (fresh pose)
+         tray_pose = robot.get_pose(tray_name)
+@@ -127,7 +132,11 @@
+         # 4. Release the object
+         robot.release()
+ 
+-        # 5. Lift away to avoid dragging; use a fresh safe height
++        # 5. Micro‑adjust to centre of tray (Mode 2 fix)
++        micro_z = release_z + 0.005
++        safe_move_to(tx, ty, micro_z, speed=0.03)
++
++        # 6. Lift away to avoid dragging; use a fresh safe height
+         lift_z = 0.05               # 5 cm above table
+         safe_move_to(tx, ty, lift_z, speed=0.07)
+ 

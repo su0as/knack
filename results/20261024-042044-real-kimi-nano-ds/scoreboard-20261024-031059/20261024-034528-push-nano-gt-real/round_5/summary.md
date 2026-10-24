@@ -1,0 +1,7 @@
+**Mode 1 – Approach blocked (5 episodes, seeds 5000‑5004)**  
+*Root cause:* The initial `move_to` to `approach_z = puck_z + CLEARANCE_ABOVE` (line 37) places the robot at ~0.04 m. The puck’s side geometry or corridor walls cause a collision before the gripper can descend, triggering the retry loop (lines 43‑53) which only lifts `approach_z` by 0.005 m. The small increment is insufficient to clear the obstacle, so the robot repeatedly attempts from the same blocked pose.  
+*Fix:* Increase the initial clearance buffer to `0.045` m (line 8) and add a third retry step of `+0.005` m (line 52) before giving up. This gives the robot enough vertical room to slide into position without colliding.
+
+**Mode 2 – Push step too small / premature stop (5 episodes, seeds 5005‑5007)**  
+*Root cause:* After a successful push, the code lifts to `approach_z` (line 105) but does not re‑center the puck before the next iteration. The push distance `push_step` is capped by `dist` (line 83), yet the puck’s pose drifts laterally during approach/descent, causing subsequent pushes to miss the target radius. The final `dist` values (~0.10 m) exceed the tolerance (0.035 m) because the cumulative push vector diverges from the target direction.  
+*Fix:* After each push, re‑observe (line 72) and recompute `delta` before the next push attempt, ensuring the direction always points at the target centre. This aligns pushes with the remaining vector and stops drift.

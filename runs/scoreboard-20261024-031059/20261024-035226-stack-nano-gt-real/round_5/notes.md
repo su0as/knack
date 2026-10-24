@@ -1,0 +1,9 @@
+- Fixed perception abort: the skill now **continues** to the next overall attempt instead of returning False when cubes are missing after the second observation.  
+- Removed the strict “holding == red_cube” check that restarted the whole sequence; a quick re‑grasp is attempted only once and then execution proceeds.  
+- Lowered the placement‑offset threshold to **0.015 m** and added **automatic target scaling** toward the observed red centre on each retry, guaranteeing convergence within the two placement attempts.  
+- Improved pick‑move robustness: corrective xy‑shift is limited to **0.005 m** and directed opposite the error vector; shift only occurs when `error_m > 0.005`.  
+- Added short‑stop recovery for placement: after a failed move the gripper backs off in height, the target xy is shifted toward the held cube, and the move is retried (up to two placement attempts) without resetting the overall attempt counter.  
+- Allowed up to **two retries per subtask** (pick and placement) while preserving the global **3‑attempt** limit.  
+- Used slow speeds for fine motions (0.07 m/s) and logged `error_m` for debugging.  
+- The skill now returns **True only after a successful release with no object still held**, preserving the original success criterion.  
+- All changes keep the robot within safety limits and stay within the simulated‑time budget.

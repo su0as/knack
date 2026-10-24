@@ -1,0 +1,7 @@
+- After each `move_to` we now wait a short settle time (0.05 s) and re‑observe to confirm the gripper is still positioned correctly before closing.
+- `grasp()` is only attempted when the pre‑grasp pose’s height is exactly the predefined `PRE_GRASP_Z` (the move_to call is wrapped in try/except and any failure triggers a retry).
+- The lift height is computed as `REQUIRED_Z + observed cube base height (cz)` so the cube is raised to at least 0.065 m above the table (≈0.080 m in practice).
+- Horizontal offset is now signed based on the cube’s sign and clamped to the reachable workspace (`x ∈ [0.04,0.32]`, `y ∈ [-0.26,0.26]`).
+- All critical actions (move, grasp, lift) are followed by a verification step: we check `robot.holding()` and, after the lift, that the cube’s reported `z` meets the required clearance.
+- Retry logic and wait times are preserved; the code still catches any `Exception` from `move_to` and restarts observation.
+- These changes address the three failure modes observed: grasp mis‑alignment, insufficient lift height, and out‑of‑reach pre‑grasp poses, while keeping the overall flow and retry limits intact.

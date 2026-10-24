@@ -1,0 +1,7 @@
+- First version: no demonstration available, so I built a perceive→plan→push→re-observe loop that corrects for the ~1 cm position noise and varying friction by re-reading poses every iteration.
+- Push direction u = unit vector from puck to target. Contact point is placed behind the puck at distance r + 0.012 so the open fingers clear the puck on descent.
+- Yaw is set perpendicular to the push direction: the 5 cm opening is narrower than the 6 cm puck, so the fingers must straddle the push line and contact the puck with their front edges rather than trying to close on it.
+- Tool point kept at z = 0.02 (fingertips reach 0.0075, well inside the puck's 0–0.02 height band) and moves near the puck at speed 0.05.
+- Push step = remaining distance + 0.02 overshoot, clamped to [0.03, 0.07] m, so we converge in a few iterations without launching the puck out of the 4 cm zone.
+- All moves wrapped in try/except Exception (MotionError is an Exception subclass); if the yawed approach fails I retry without yaw, and if the descent is blocked I lift and try the next iteration.
+- Success check: final puck–target centre distance < 0.035 m (zone radius 0.04 m, leaving margin for camera noise).

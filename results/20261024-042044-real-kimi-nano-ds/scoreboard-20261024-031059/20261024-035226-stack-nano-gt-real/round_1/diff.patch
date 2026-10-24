@@ -1,0 +1,75 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,72 @@
++import math, numpy as np, itertools, functools, collections
++
++def run(robot):
++    """
++    Stack the red cube on top of the blue cube and release it.
++    The skill is deliberately simple but includes basic retry logic
++    and safety checks for the noisy perception model.
++    """
++    MAX_ATTEMPTS = 3  # how many times we retry the whole sequence
++
++    for attempt in range(MAX_ATTEMPTS):
++        # ------------------------------------------------------------------
++        # 1. Perceive -------------------------------------------------------
++        obs = robot.observe()
++        objs = obs.get("objects", {})
++        red = objs.get("red_cube")
++        blue = objs.get("blue_cube")
++        if red is None or blue is None:
++            robot.log("Target cubes not found")
++            return False
++
++        # ------------------------------------------------------------------
++        # 2. Pick the red cube ---------------------------------------------
++        #   Move just above the red cube's centre (a small lift to avoid
++        #   colliding with the table)
++        rx, ry, rz = red["pos"]
++        pick_z = rz + 0.02  # 2 cm above the centre
++        try:
++            robot.move_to(rx, ry, pick_z, speed=0.07)
++        except Exception:  # catches MotionError and any unexpected exception
++            robot.log("Pick move failed")
++            return False
++
++        robot.grasp()  # close fingers around the red cube
++        if robot.holding() != "red_cube":
++            robot.log("Grasp verification failed")
++            if attempt == MAX_ATTEMPTS - 1:
++                return False
++            continue  # retry from the start
++
++        # ------------------------------------------------------------------
++        # 3. Lift and position over the blue cube -------------------------
++        robot.move_by(dz=0.02, speed=0.07)  # raise a little to clear the red cube
++
++        #   Compute the centre height where the red cube should rest on the blue cube
++        #   blue centre z + half its height + half red height = blue_z + 0.015 + 0.015
++        bx, by, bz = blue["pos"]
++        place_z = bz + 0.015 + 0.015  # 0.03 m above the table
++
++        try:
++            robot.move_to(bx, by, place_z, speed=0.07)
++        except Exception:
++            robot.log("Place move failed")
++            return False
++
++        # ------------------------------------------------------------------
++        # 4. Release --------------------------------------------------------
++        robot.release()
++
++        #   Verify that nothing is being held any more
++        if robot.holding() is None:
++            return True  # success
++        else:
++            robot.log("Release verification failed, still holding")
++            if attempt == MAX_ATTEMPTS - 1:
++                return False
++            # Attempt a simple recovery: lower back, re‑grasp and try again
++            robot.move_by(dz=-0.02, speed=0.07)
++            robot.grasp()
++
++    # If we exhaust attempts without success
++    return False

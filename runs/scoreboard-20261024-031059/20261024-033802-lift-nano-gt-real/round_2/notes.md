@@ -1,0 +1,8 @@
+- Perception is noisy; refresh the scene after a short wait (0.5 s) before using poses.
+- Grasp often fails because the fingers don’t seat properly; add a low‑z “pre‑grasp” move (≈0.05 m) with a slightly faster speed (0.10 m/s) and a brief settle wait before closing.
+- The initial approach height must be low enough to be reachable; use ~0.055 m (just above the cube base) then lift to the required 0.065 m after a successful grasp.
+- After each critical action (move, grasp, lift) re‑check the object’s pose and holding status; retry a bounded number of times.
+- Guard all `move_to` calls with try/except to catch `MotionError` and fall back to a fresh observation.
+- Keep lift speed slow (≈0.07 m/s) to stay inside the safety layer; use the higher speed only for the short pre‑grasp approach.
+- Target lift height is 0.065 m (5 cm above the table). After reaching it, verify that the cube is still held before returning True.
+- All changes preserve the existing logic flow and retry limits, but incorporate the fixes identified from the failure analysis.

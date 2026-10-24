@@ -1,0 +1,8 @@
+- Perception is noisy (≈1 cm position error, several‑degree yaw error); rely on the fresh `observe()` data each time and never hard‑code coordinates.  
+- Align the gripper’s closing direction (`yaw`) with the object’s reported `yaw` so the fingers meet the cube faces.  
+- Use a low speed (≈0.05–0.07 m/s) for the approach and placement phases; raise speed only for safe travel between pre‑grasp and release heights.  
+- Grasp at z ≈ 0.015 m (the cube’s centre) and lift a little before moving to the target tray to avoid collisions.  
+- After each major action (especially `grasp`) re‑check the state; if a check fails, retry a bounded number of times.  
+- Wrap every `move_to` that might be out of reach in a `try/except MotionError` block and fall back to a safer target or abort.  
+- The workspace limits are strict; keep all target (x,y,z) values inside the allowed ranges or let the safety layer clamp them.  
+- This first version processes the two cubes sequentially: pick each cube, lift, move to its matching tray’s centre, lower, release, then lift away.

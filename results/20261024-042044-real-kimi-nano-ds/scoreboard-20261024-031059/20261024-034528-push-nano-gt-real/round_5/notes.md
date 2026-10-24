@@ -1,0 +1,4 @@
+- Raised `CLEARANCE_ABOVE` to **0.025 m** and added a second **+0.005 m lift** after the first retry to clear side obstacles.
+- Reduced `MAX_PUSH_PER_STEP` to **0.010 m** so pushes stay inside the target radius.
+- After a descent exception, explicitly lift the approach height by **0.01 m** before the next push iteration to avoid fingertip collision.
+- Preserved all working patterns: slow speed, re‑observe after moves, bounded retries, and the perceive→approach→touch→push→lift→verify flow.

@@ -1,0 +1,193 @@
+{
+ "round": 3,
+ "n": 8,
+ "k": 6,
+ "success": 0.75,
+ "gt_k": 6,
+ "self_k": 6,
+ "errors": 2,
+ "wall_s": 20.3,
+ "usd_cum": 0.09632,
+ "code": "round_3/skill.py",
+ "diff": "round_3/diff.patch",
+ "lines": 84,
+ "notes": "- First version: no demonstration available, so I built a perceive\u2192plan\u2192push\u2192re-observe loop that corrects for the ~1 cm position noise and varying friction by re-reading poses every iteration.\n- Push direction u = unit vector from puck to target. Contact point is placed behind the puck at distance r + 0.012 so the open fingers clear the puck on descent.\n- Yaw is set perpendicular to the push direction: the 5 cm opening is narrower than the 6 cm puck, so the fingers must straddle the push line and contact the puck with their front edges rather than trying to close on it.\n- Tool point kept at z = 0.02 (fingertips reach 0.0075, well inside the puck's 0\u20130.02 height band) and moves near the puck at speed 0.05.\n- Push step = remaining distance + 0.02 overshoot, clamped to [0.03, 0.07] m, so we converge in a few iterations without launching the puck out of the 4 cm zone.\n- All moves wrapped in try/except Exception (MotionError is an Exception subclass); if the yawed approach fails I retry without yaw, and if the descent is blocked I lift and try the next iteration.\n- Success check: final puck\u2013target centre distance < 0.035 m (zone radius 0.04 m, leaving margin for camera noise).",
+ "episodes": [
+  {
+   "seed": 3000,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0074,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 45 s exceeded",
+    "traceback": "  skill.py line 55, in run: res = robot.move_to(cx, cy, 0.02, yaw=yaw, speed=0.05)\nEpisodeTimeout: time budget of 45 s exceeded"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0868,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3002,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.008,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3003,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0094,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3004,
+   "reward": true,
+   "success_gt": true,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 45 s exceeded",
+    "traceback": "  skill.py line 76, in run: robot.move_to(ex, ey, 0.12, yaw=yaw, speed=0.15)\nEpisodeTimeout: time budget of 45 s exceeded"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0055,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0171,
+    "tolerance": 0.035,
+    "upright": false
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0098,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 3007,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0098,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

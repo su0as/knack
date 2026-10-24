@@ -1,0 +1,267 @@
+{
+ "task": "lift",
+ "seed": 100049,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "red_cube_z": 0.0989,
+  "required_z": 0.065
+ },
+ "trace": [
+  {
+   "t": 0.4,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 0.4,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.4,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.4,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.4,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.4,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.4,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.4,
+   "call": "log",
+   "result": "grasp target at 0.1809 -0.0132 yaw -0.228"
+  },
+  {
+   "t": 0.8,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 1.56,
+   "call": "move_to(0.181, -0.013, 0.080, yaw=-0.228)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1808,
+     -0.0133,
+     0.0798
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 2.88,
+   "call": "move_to(0.181, -0.013, 0.015, yaw=-0.228, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1808,
+     -0.0132,
+     0.0149
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.38,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0272
+   }
+  },
+  {
+   "t": 3.38,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 4.48,
+   "call": "move_to(0.181, -0.013, 0.100, yaw=2.913, speed=0.080)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1809,
+     -0.0133,
+     0.0995
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 4.78,
+   "call": "wait(0.30)",
+   "result": "ok"
+  },
+  {
+   "t": 4.78,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 4.78,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 4.78,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 4.78,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 4.78,
+   "call": "log",
+   "result": "held cube z = 0.106"
+  }
+ ],
+ "n_calls": 20,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 5.28,
+ "wall_time": 0.6,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1828,
+     -0.0147,
+     0.0149
+    ],
+    "yaw": -0.2672,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1567,
+     0.0546,
+     0.0149
+    ],
+    "yaw": 0.714,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 5.28,
+  "gripper": {
+   "pos": [
+    0.1808,
+    -0.0133,
+    0.0993
+   ],
+   "yaw": 2.9128,
+   "opening": 0.0272,
+   "holding": "red_cube"
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1805,
+     -0.0142,
+     0.0989
+    ],
+    "yaw": -0.2297,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1567,
+     0.0546,
+     0.0149
+    ],
+    "yaw": 0.714,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1828,
+   "y": -0.0147,
+   "yaw": -0.2672,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1567,
+   "y": 0.0546,
+   "yaw": 0.714,
+   "fp": 0.0225
+  }
+ }
+}

@@ -1,0 +1,193 @@
+{
+ "round": 1,
+ "n": 8,
+ "k": 6,
+ "success": 0.75,
+ "gt_k": 6,
+ "self_k": 5,
+ "errors": 0,
+ "wall_s": 8.6,
+ "usd_cum": 0.00967,
+ "code": "round_1/skill.py",
+ "diff": "round_1/diff.patch",
+ "lines": 136,
+ "notes": "- First version: perceive both cubes by colour, average 3 noisy `get_pose` readings to fight the ~1 cm camera noise, then grasp the red cube with a small spiral of XY offsets so a bad reading doesn't doom the episode.\n- Grasp at z=0.015 (cube centre height) with yaw = red cube's yaw so the fingers line up with its faces; verify with `robot.holding()` after every `grasp()`.\n- After lifting, estimate the grasp offset (cube centre minus tool point) from a few fresh readings and subtract it when placing, so an off-centre grip doesn't shift the stack.\n- Place by descending to z\u22480.046 above the blue cube's averaged position (red bottom \u2248 blue top at 0.030), release, retreat, then verify red is ~3 cm above blue and roughly aligned.\n- All risky moves wrapped in try/except MotionError-style handling; slow speeds (0.05) near objects, default speed for travel.\n- Bounded retries everywhere; return False on unrecoverable failure, True only after a successful stack check.",
+ "episodes": [
+  {
+   "seed": 1000,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.011,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0368,
+    "z_gap": -0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1002,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0041,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0147
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.038,
+    "z_gap": 0.0,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1004,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0016,
+    "z_gap": 0.0299,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0083,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0058,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1007,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0145,
+    "z_gap": 0.0297,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

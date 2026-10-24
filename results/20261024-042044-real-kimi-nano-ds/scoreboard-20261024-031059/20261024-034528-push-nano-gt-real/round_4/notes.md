@@ -1,0 +1,5 @@
+- Collisions during the initial `move_to` are solved by raising the approach height by ~0.01 m and adding a small xy offset toward the target, which clears side obstacles.
+- Push steps were too large for the narrow gap; `MAX_PUSH_PER_STEP` is now 0.015 m and the loop allows up to 8 attempts, retrying after a blocked move.
+- When a `move_by` is blocked we lift back to the safe approach height, re‑observe, and continue instead of aborting the episode.
+- All speeds stay at 0.05 m/s, the perceive→approach→touch→push→lift→verify flow is preserved, and approach height is clamped to the safe workspace.
+- The code now only catches `Exception`, never uses a bare `except`, and never returns `False` on a transient error.

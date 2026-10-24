@@ -1,0 +1,7 @@
+- The previous submission was cut off mid-expression (`speed=` with no value), so the module never parsed; I rewrote the whole skill cleanly and closed every call.
+- Kept the working strategy: perceive puck + target each iteration, compute a contact point behind the puck along the target direction, align the fingers perpendicular to the push, descend, push, verify, lift.
+- Fixed the truncation and made the lift-back a complete `move_to(..., LIFT_Z, ...)` call.
+- Push height set to 0.015 (puck centre height) so the pads contact the puck body, not the table.
+- Push length is `dist + 0.02` clamped to [0.03, 0.07] so each stroke makes progress without over-shooting the zone.
+- Bounded retries (12) with a final re-read check; returns True only when the puck is within the zone tolerance.
+- All risky moves wrapped in `try/except Exception` (no bare except) and `ok` flags checked so a blocked move triggers a re-plan instead of a crash.

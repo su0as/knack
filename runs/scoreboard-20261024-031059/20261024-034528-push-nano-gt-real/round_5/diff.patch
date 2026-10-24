@@ -1,0 +1,41 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -4,8 +4,8 @@
+ 
+ # ---------- configuration ----------
+ MAX_PUSH_ATTEMPTS = 8          # total pushes we will try
+-MAX_PUSH_PER_STEP = 0.015      # 1.5 cm per step – fits the narrow corridor
+-CLEARANCE_ABOVE = 0.018        # 1.8 cm clearance to avoid side collisions
++MAX_PUSH_PER_STEP = 0.010      # 1.0 cm per step – fits the narrow corridor
++CLEARANCE_ABOVE = 0.025        # 2.5 cm clearance to avoid side collisions
+ MIN_APPROACH_Z = 0.014         # lowest safe height
+ SLOW_SPEED = 0.05              # m/s, used everywhere
+ 
+@@ -40,12 +40,16 @@
+     approach_z = min(approach_z, 0.26)
+ 
+     # Try to move to the approach pose; if blocked, raise height a bit and retry
+-    for _ in range(2):
++    for retry in range(2):
+         try:
+             robot.move_to(approach_xy[0], approach_xy[1], approach_z, speed=SLOW_SPEED)
+             break
+         except Exception:
++            # first lift step
+             approach_z = min(approach_z + 0.005, 0.26)
++            # second lift step after the first retry (extra +0.005 m)
++            if retry == 0:
++                approach_z = min(approach_z + 0.005, 0.26)
+             robot.move_to(approach_xy[0], approach_xy[1], approach_z, speed=SLOW_SPEED)
+ 
+     # ---------- 3. descend to touch the puck top ----------
+@@ -58,6 +62,9 @@
+             # Lift a little and try the descent again
+             robot.move_by(dz=0.005, speed=SLOW_SPEED)
+             robot.move_by(dz=-0.0125, speed=SLOW_SPEED)
++
++    # Ensure we are a bit higher to avoid collision on the next descent
++    approach_z = min(approach_z + 0.01, 0.26)
+ 
+     # ---------- 4. iterative pushing ----------
+     for _ in range(MAX_PUSH_ATTEMPTS):

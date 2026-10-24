@@ -1,0 +1,568 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Stack</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261024-041523-stack-deepseek-flash-gt-real &middot; 2026-10-24 04:18:52</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Stack the red cube on top of the blue cube and let go.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: real &middot; 16 practice episodes in 2 rounds</p>
+<div><span class='chip'><b>CODER</b>deepseek-ai/DeepSeek-V4.1-Flash <em>$0.30 / $1.20 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">96%</div><div>48/50 layouts &middot; Wilson 95% CI 87% to 99%</div><div class='ci'><div class='ci-band' style='left:86.5%;width:12.4%'></div><div class='ci-dot' style='left:96.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:75%'></span><em>R1<br>6/8</em></div><div class='bar'><span style='height:100%'></span><em>R2<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>deepseek-ai/DeepSeek-V4.1-Flash</code></td><td>3</td><td>13,202</td><td>31,595</td><td>$0.0399</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>1</td><td>5,468</td><td>374</td><td>$0.0004</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>161 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>4</th><th>18,670</th><th>31,969</th><th>$0.0403</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details><summary>Round 1: 6/8 practice episodes &middot; 0 errors &middot; $0.0097 so far</summary><div class='muted'>coder notes</div><pre>- First version: perceive both cubes by colour, average 3 noisy `get_pose` readings to fight the ~1 cm camera noise, then grasp the red cube with a small spiral of XY offsets so a bad reading doesn&#x27;t doom the episode.
+- Grasp at z=0.015 (cube centre height) with yaw = red cube&#x27;s yaw so the fingers line up with its faces; verify with `robot.holding()` after every `grasp()`.
+- After lifting, estimate the grasp offset (cube centre minus tool point) from a few fresh readings and subtract it when placing, so an off-centre grip doesn&#x27;t shift the stack.
+- Place by descending to z≈0.046 above the blue cube&#x27;s averaged position (red bottom ≈ blue top at 0.030), release, retreat, then verify red is ~3 cm above blue and roughly aligned.
+- All risky moves wrapped in try/except MotionError-style handling; slow speeds (0.05) near objects, default speed for travel.
+- Bounded retries everywhere; return False on unrecoverable failure, True only after a successful stack check.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Off-target placement (2 episodes: 1001, 1003)**
+*Root cause:* The robot releases the red cube at the *blue* cube&#x27;s XY position (`place_x = bx - off_x`, `place_y = by - off_y`), but the blue cube drifts during the approach. In seed 1001, the release lands at (0.126, 0.016) while the blue cube is at (0.137, 0.010), causing a 4.3 cm lateral offset. The `off_x/off_y` calibration (lines 83–101) assumes static cubes.
+*Fix:* Freeze the blue cube pose at lift start and use that pose for placement coordinates, or add a final `robot.move_to(blue_x, blue_y, 0.05)` before release to re-center over the blue cube.
+
+**Mode 2: Premature release / drop (3 episodes: 1005, 1006, 1007)**
+*Root cause:* The robot releases the red cube while translating away from the stack (line 115) without verifying the gripper is directly above the target. In seed 1005, the red cube ends at z=0.045 but x/y are offset by ~0.038 m, indicating a side-slip during the release trajectory.
+*Fix:* After `robot.release()` (line 115), insert a brief `robot.move_by(dz=0.02, speed=0.1)` to lift clear *before* the final retreat move (line 117), ensuring gravity does not pull the cube sideways.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,135 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _avg_pos(robot, name, n=3):</span>
+<span class='add'>+    xs = []</span>
+<span class='add'>+    ys = []</span>
+<span class='add'>+    zs = []</span>
+<span class='add'>+    for _ in range(n):</span>
+<span class='add'>+        p = robot.get_pose(name)</span>
+<span class='add'>+        xs.append(p[&quot;pos&quot;][0])</span>
+<span class='add'>+        ys.append(p[&quot;pos&quot;][1])</span>
+<span class='add'>+        zs.append(p[&quot;pos&quot;][2])</span>
+<span class='add'>+    return (sum(xs) / n, sum(ys) / n, sum(zs) / n)</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _find(robot, color):</span>
+<span class='add'>+    obs = robot.observe()</span>
+<span class='add'>+    for name, o in obs[&quot;objects&quot;].items():</span>
+<span class='add'>+        if o.get(&quot;color&quot;) == color:</span>
+<span class='add'>+            return name</span>
+<span class='add'>+    return None</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+</span>
+<span class='add'>+    red = _find(robot, &quot;red&quot;)</span>
+<span class='add'>+    blue = _find(robot, &quot;blue&quot;)</span>
+<span class='add'>+    if red is None or blue is None:</span>
+<span class='add'>+        robot.log(&quot;missing cubes&quot;, red, blue)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    red_yaw = robot.get_pose(red)[&quot;yaw&quot;]</span>
+<span class='add'>+</span>
+<span class='add'>+    # Spiral of small XY offsets to recover from a bad camera reading.</span>
+<span class='add'>+    offsets = [</span>
+<span class='add'>+        (0.0, 0.0),</span>
+<span class='add'>+        (0.006, 0.0), (-0.006, 0.0),</span>
+<span class='add'>+        (0.0, 0.006), (0.0, -0.006),</span>
+<span class='add'>+        (0.006, 0.006), (-0.006, -0.006),</span>
+<span class='add'>+        (0.006, -0.006), (-0.006, 0.006),</span>
+<span class='add'>+    ]</span>
+<span class='add'>+</span>
+<span class='add'>+    grasped = False</span>
+<span class='add'>+    for dx, dy in offsets:</span>
+<span class='add'>+        x, y, z = _avg_pos(robot, red)</span>
+<span class='add'>+        tx, ty = x + dx, y + dy</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(tx, ty, 0.08, yaw=red_yaw, speed=0.15)</span>
+<span class='add'>+            robot.move_to(tx, ty, 0.015, yaw=red_yaw, speed=0.05)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                robot.move_to(tx, ty, 0.08, speed=0.15)</span>
+<span class='add'>+            except Exception:</span>
+<span class='add'>+                pass</span>
+<span class='add'>+            continue</span>
+<span class='add'>+</span>
+<span class='add'>+        if robot.grasp() and robot.holding() == red:</span>
+<span class='add'>+            grasped = True</span>
+<span class='add'>+            break</span>
+<span class='add'>+</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_to(tx, ty, 0.08, speed=0.15)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            pass</span>
+<span class='add'>+</span>
+<span class='add'>+    if not grasped:</span>
+<span class='add'>+        robot.log(&quot;failed to grasp red cube&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # Lift straight up.</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_by(dz=0.08, speed=0.15)</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        pass</span>
+<span class='add'>+</span>
+<span class='add'>+    if robot.holding() != red:</span>
+<span class='add'>+        robot.log(&quot;lost red cube during lift&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # Estimate how far the cube centre sits from the tool point while held.</span>
+<span class='add'>+    off_x = 0.0</span>
+<span class='add'>+    off_y = 0.0</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        n = 3</span>
+<span class='add'>+        gx = gy = rx = ry = 0.0</span>
+<span class='add'>+        for _ in range(n):</span>
+<span class='add'>+            g = robot.observe()[&quot;gripper&quot;][&quot;pos&quot;]</span>
+<span class='add'>+            r = robot.get_pose(red)[&quot;pos&quot;]</span>
+<span class='add'>+            gx += g[0]</span>
+<span class='add'>+            gy += g[1]</span>
+<span class='add'>+            rx += r[0]</span>
+<span class='add'>+            ry += r[1]</span>
+<span class='add'>+        ox = (rx - gx) / n</span>
+<span class='add'>+        oy = (ry - gy) / n</span>
+<span class='add'>+        # Only trust the estimate if it is small and plausible.</span>
+<span class='add'>+        if abs(ox) &lt; 0.015 and abs(oy) &lt; 0.015:</span>
+<span class='add'>+            off_x, off_y = ox, oy</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        pass</span>
+<span class='add'>+</span>
+<span class='add'>+    bx, by, bz = _avg_pos(robot, blue)</span>
+<span class='add'>+    place_x = bx - off_x</span>
+<span class='add'>+    place_y = by - off_y</span>
+<span class='add'>+    place_z = 0.046  # red bottom ~0.031, blue top ~0.030</span>
+<span class='add'>+</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(place_x, place_y, 0.12, speed=0.15)</span>
+<span class='add'>+        robot.move_to(place_x, place_y, place_z, speed=0.05)</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        robot.log(&quot;failed to reach place position&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    robot.release()</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(place_x, place_y, 0.12, speed=0.15)</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        pass</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+    robot.wait(0.3)</span>
+<span class='add'>+</span>
+<span class='add'>+    # Verify the stack.</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        rp = robot.get_pose(red)[&quot;pos&quot;]</span>
+<span class='add'>+        bp = robot.get_pose(blue)[&quot;pos&quot;]</span>
+<span class='add'>+        dz = rp[2] - bp[2]</span>
+<span class='add'>+        dxy = math.hypot(rp[0] - bp[0], rp[1] - bp[1])</span>
+<span class='add'>+        robot.log(&quot;stack check dz=%.4f dxy=%.4f&quot; % (dz, dxy))</span>
+<span class='add'>+        if dz &gt; 0.02 and dxy &lt; 0.025:</span>
+<span class='add'>+            return True</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        pass</span>
+<span class='add'>+</span>
+<span class='add'>+    return False</span></pre></details><details open><summary>Round 2: 8/8 practice episodes &middot; 0 errors &middot; $0.0403 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Only seeds 1001 and 1003 failed; both are &quot;off-target placement&quot; (red ended on the table beside blue, xy_offset ≈ 0.037). The other 6 succeeded with z_gap ≈ 0.0298, so the grasp, lift, descent height (0.046) and release sequence are sound — keep them.
+- Root cause is perception noise, not drift: in seed 1001 the three blue readings spanned y from 0.010 to 0.035 (≈2.5 cm), so a 3-sample mean was badly biased. Switched to a **median of 7–9 samples** for every pose read (robust to outliers).
+- Replaced the fragile &quot;estimate grasp offset then subtract&quot; placement with a **closed-loop XY alignment**: while holding red, repeatedly read red and blue, compute delta = blue − red, and `move_by(dx, dy)` until the held red cube is centred over blue (≤2 mm). This cancels both the grasp offset and the blue-pose noise directly.
+- Kept the spiral-of-offsets grasp, `holding()` verification, slow speeds near objects, and bounded try/except around every risky move.
+- Descent height is now adaptive: `place_z = blue_z + 0.031` clamped to [0.044, 0.050] (≈0.046 for blue_z≈0.015), matching what worked.
+- Added a straight-up `move_by(dz=0.03)` immediately after release (before retreating) so the cube is never dragged sideways.
+- Final stack check uses median poses; success requires dz &gt; 0.02 and dxy &lt; 0.025.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_1/skill.py</span>
+<span class=''>+++ round_2/skill.py</span>
+<span class='hunk'>@@ -1,16 +1,42 @@</span>
+<span class=''> import math</span>
+<span class=''> </span>
+<span class=''> </span>
+<span class='del'>-def _avg_pos(robot, name, n=3):</span>
+<span class='del'>-    xs = []</span>
+<span class='del'>-    ys = []</span>
+<span class='del'>-    zs = []</span>
+<span class='add'>+def _median(vals):</span>
+<span class='add'>+    s = sorted(vals)</span>
+<span class='add'>+    n = len(s)</span>
+<span class='add'>+    if n == 0:</span>
+<span class='add'>+        return 0.0</span>
+<span class='add'>+    if n % 2 == 1:</span>
+<span class='add'>+        return s[n // 2]</span>
+<span class='add'>+    return 0.5 * (s[n // 2 - 1] + s[n // 2])</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _robust_pos(robot, name, n=7):</span>
+<span class='add'>+    &quot;&quot;&quot;Median of n noisy pose readings -&gt; robust (x, y, z).&quot;&quot;&quot;</span>
+<span class='add'>+    xs, ys, zs = [], [], []</span>
+<span class=''>     for _ in range(n):</span>
+<span class='del'>-        p = robot.get_pose(name)</span>
+<span class='del'>-        xs.append(p[&quot;pos&quot;][0])</span>
+<span class='del'>-        ys.append(p[&quot;pos&quot;][1])</span>
+<span class='del'>-        zs.append(p[&quot;pos&quot;][2])</span>
+<span class='del'>-    return (sum(xs) / n, sum(ys) / n, sum(zs) / n)</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            p = robot.get_pose(name)[&quot;pos&quot;]</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            continue</span>
+<span class='add'>+        xs.append(p[0])</span>
+<span class='add'>+        ys.append(p[1])</span>
+<span class='add'>+        zs.append(p[2])</span>
+<span class='add'>+    if not xs:</span>
+<span class='add'>+        return None</span>
+<span class='add'>+    return (_median(xs), _median(ys), _median(zs))</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def _robust_yaw(robot, name, n=5):</span>
+<span class='add'>+    vals = []</span>
+<span class='add'>+    for _ in range(n):</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            vals.append(robot.get_pose(name)[&quot;yaw&quot;])</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            continue</span>
+<span class='add'>+    if not vals:</span>
+<span class='add'>+        return 0.0</span>
+<span class='add'>+    return _median(vals)</span>
+<span class=''> </span>
+<span class=''> </span>
+<span class=''> def _find(robot, color):</span>
+<span class='hunk'>@@ -30,9 +56,8 @@</span>
+<span class=''>         robot.log(&quot;missing cubes&quot;, red, blue)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class='del'>-    red_yaw = robot.get_pose(red)[&quot;yaw&quot;]</span>
+<span class='del'>-</span>
+<span class='del'>-    # Spiral of small XY offsets to recover from a bad camera reading.</span>
+<span class='add'>+    # ---------- Grasp the red cube ----------</span>
+<span class='add'>+    # Spiral of small XY offsets so one bad reading does not doom the episode.</span>
+<span class=''>     offsets = [</span>
+<span class=''>         (0.0, 0.0),</span>
+<span class=''>         (0.006, 0.0), (-0.006, 0.0),</span>
+<span class='hunk'>@@ -43,11 +68,14 @@</span>
+<span class=''> </span>
+<span class=''>     grasped = False</span>
+<span class=''>     for dx, dy in offsets:</span>
+<span class='del'>-        x, y, z = _avg_pos(robot, red)</span>
+<span class='del'>-        tx, ty = x + dx, y + dy</span>
+<span class='add'>+        rp = _robust_pos(robot, red, 7)</span>
+<span class='add'>+        if rp is None:</span>
+<span class='add'>+            break</span>
+<span class='add'>+        ryaw = _robust_yaw(robot, red, 5)</span>
+<span class='add'>+        tx, ty = rp[0] + dx, rp[1] + dy</span>
+<span class=''>         try:</span>
+<span class='del'>-            robot.move_to(tx, ty, 0.08, yaw=red_yaw, speed=0.15)</span>
+<span class='del'>-            robot.move_to(tx, ty, 0.015, yaw=red_yaw, speed=0.05)</span>
+<span class='add'>+            robot.move_to(tx, ty, 0.08, yaw=ryaw, speed=0.15)</span>
+<span class='add'>+            robot.move_to(tx, ty, 0.015, yaw=ryaw, speed=0.05)</span>
+<span class=''>         except Exception:</span>
+<span class=''>             try:</span>
+<span class=''>                 robot.move_to(tx, ty, 0.08, speed=0.15)</span>
+<span class='hunk'>@@ -79,56 +107,75 @@</span>
+<span class=''>         robot.log(&quot;lost red cube during lift&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class='del'>-    # Estimate how far the cube centre sits from the tool point while held.</span>
+<span class='del'>-    off_x = 0.0</span>
+<span class='del'>-    off_y = 0.0</span>
+<span class='del'>-    try:</span>
+<span class='del'>-        n = 3</span>
+<span class='del'>-        gx = gy = rx = ry = 0.0</span>
+<span class='del'>-        for _ in range(n):</span>
+<span class='del'>-            g = robot.observe()[&quot;gripper&quot;][&quot;pos&quot;]</span>
+<span class='del'>-            r = robot.get_pose(red)[&quot;pos&quot;]</span>
+<span class='del'>-            gx += g[0]</span>
+<span class='del'>-            gy += g[1]</span>
+<span class='del'>-            rx += r[0]</span>
+<span class='del'>-            ry += r[1]</span>
+<span class='del'>-        ox = (rx - gx) / n</span>
+<span class='del'>-        oy = (ry - gy) / n</span>
+<span class='del'>-        # Only trust the estimate if it is small and plausible.</span>
+<span class='del'>-        if abs(ox) &lt; 0.015 and abs(oy) &lt; 0.015:</span>
+<span class='del'>-            off_x, off_y = ox, oy</span>
+<span class='del'>-    except Exception:</span>
+<span class='del'>-        pass</span>
+<span class='del'>-</span>
+<span class='del'>-    bx, by, bz = _avg_pos(robot, blue)</span>
+<span class='del'>-    place_x = bx - off_x</span>
+<span class='del'>-    place_y = by - off_y</span>
+<span class='del'>-    place_z = 0.046  # red bottom ~0.031, blue top ~0.030</span>
+<span class='add'>+    # ---------- Move above the blue cube ----------</span>
+<span class='add'>+    bp = _robust_pos(robot, blue, 9)</span>
+<span class='add'>+    if bp is None:</span>
+<span class='add'>+        robot.log(&quot;cannot see blue cube&quot;)</span>
+<span class='add'>+        return False</span>
+<span class=''> </span>
+<span class=''>     try:</span>
+<span class='del'>-        robot.move_to(place_x, place_y, 0.12, speed=0.15)</span>
+<span class='del'>-        robot.move_to(place_x, place_y, place_z, speed=0.05)</span>
+<span class='add'>+        robot.move_to(bp[0], bp[1], 0.12, speed=0.15)</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        robot.log(&quot;cannot reach above blue cube&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # ---------- Closed-loop XY alignment of held red over blue ----------</span>
+<span class='add'>+    for _ in range(4):</span>
+<span class='add'>+        if robot.holding() != red:</span>
+<span class='add'>+            robot.log(&quot;lost red cube during alignment&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+        rp = _robust_pos(robot, red, 7)</span>
+<span class='add'>+        bp = _robust_pos(robot, blue, 7)</span>
+<span class='add'>+        if rp is None or bp is None:</span>
+<span class='add'>+            break</span>
+<span class='add'>+        ex = bp[0] - rp[0]</span>
+<span class='add'>+        ey = bp[1] - rp[1]</span>
+<span class='add'>+        if abs(ex) &lt; 0.002 and abs(ey) &lt; 0.002:</span>
+<span class='add'>+            break</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            robot.move_by(dx=ex, dy=ey, speed=0.05)</span>
+<span class='add'>+        except Exception:</span>
+<span class='add'>+            break</span>
+<span class='add'>+</span>
+<span class='add'>+    # ---------- Descend and release ----------</span>
+<span class='add'>+    bp = _robust_pos(robot, blue, 7)</span>
+<span class='add'>+    if bp is None:</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    place_z = bp[2] + 0.031          # red centre = blue centre + 0.030</span>
+<span class='add'>+    if place_z &lt; 0.044:</span>
+<span class='add'>+        place_z = 0.044</span>
+<span class='add'>+    if place_z &gt; 0.050:</span>
+<span class='add'>+        place_z = 0.050</span>
+<span class='add'>+</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(bp[0], bp[1], place_z, speed=0.04)</span>
+<span class=''>     except Exception:</span>
+<span class=''>         robot.log(&quot;failed to reach place position&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class=''>     robot.release()</span>
+<span class='add'>+    # Lift straight up before retreating so the cube is not dragged sideways.</span>
+<span class=''>     try:</span>
+<span class='del'>-        robot.move_to(place_x, place_y, 0.12, speed=0.15)</span>
+<span class='add'>+        robot.move_by(dz=0.03, speed=0.05)</span>
+<span class='add'>+    except Exception:</span>
+<span class='add'>+        pass</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(0.16, 0.0, 0.14, speed=0.15)</span>
+<span class=''>     except Exception:</span>
+<span class=''>         pass</span>
+<span class=''>     robot.home()</span>
+<span class=''>     robot.wait(0.3)</span>
+<span class=''> </span>
+<span class='del'>-    # Verify the stack.</span>
+<span class='add'>+    # ---------- Verify the stack ----------</span>
+<span class=''>     try:</span>
+<span class='del'>-        rp = robot.get_pose(red)[&quot;pos&quot;]</span>
+<span class='del'>-        bp = robot.get_pose(blue)[&quot;pos&quot;]</span>
+<span class='del'>-        dz = rp[2] - bp[2]</span>
+<span class='del'>-        dxy = math.hypot(rp[0] - bp[0], rp[1] - bp[1])</span>
+<span class='del'>-        robot.log(&quot;stack check dz=%.4f dxy=%.4f&quot; % (dz, dxy))</span>
+<span class='del'>-        if dz &gt; 0.02 and dxy &lt; 0.025:</span>
+<span class='del'>-            return True</span>
+<span class='add'>+        rp = _robust_pos(robot, red, 5)</span>
+<span class='add'>+        bp = _robust_pos(robot, blue, 5)</span>
+<span class='add'>+        if rp is not None and bp is not None:</span>
+<span class='add'>+            dz = rp[2] - bp[2]</span>
+<span class='add'>+            dxy = math.hypot(rp[0] - bp[0], rp[1] - bp[1])</span>
+<span class='add'>+            robot.log(&quot;stack check dz=%.4f dxy=%.4f&quot; % (dz, dxy))</span>
+<span class='add'>+            if dz &gt; 0.02 and dxy &lt; 0.025:</span>
+<span class='add'>+                return True</span>
+<span class=''>     except Exception:</span>
+<span class=''>         pass</span>
+<span class=''> </span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100012/end_front.jpg"><figcaption>seed 100012<br></figcaption></figure><figure><img src="eval/episodes/ep_100041/end_front.jpg"><figcaption>seed 100041<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+
+def _median(vals):
+    s = sorted(vals)
+    n = len(s)
+    if n == 0:
+        return 0.0
+    if n % 2 == 1:
+        return s[n // 2]
+    return 0.5 * (s[n // 2 - 1] + s[n // 2])
+
+
+def _robust_pos(robot, name, n=7):
+    &quot;&quot;&quot;Median of n noisy pose readings -&gt; robust (x, y, z).&quot;&quot;&quot;
+    xs, ys, zs = [], [], []
+    for _ in range(n):
+        try:
+            p = robot.get_pose(name)[&quot;pos&quot;]
+        except Exception:
+            continue
+        xs.append(p[0])
+        ys.append(p[1])
+        zs.append(p[2])
+    if not xs:
+        return None
+    return (_median(xs), _median(ys), _median(zs))
+
+
+def _robust_yaw(robot, name, n=5):
+    vals = []
+    for _ in range(n):
+        try:
+            vals.append(robot.get_pose(name)[&quot;yaw&quot;])
+        except Exception:
+            continue
+    if not vals:
+        return 0.0
+    return _median(vals)
+
+
+def _find(robot, color):
+    obs = robot.observe()
+    for name, o in obs[&quot;objects&quot;].items():
+        if o.get(&quot;color&quot;) == color:
+            return name
+    return None
+
+
+def run(robot):
+    robot.home()
+
+    red = _find(robot, &quot;red&quot;)
+    blue = _find(robot, &quot;blue&quot;)
+    if red is None or blue is None:
+        robot.log(&quot;missing cubes&quot;, red, blue)
+        return False
+
+    # ---------- Grasp the red cube ----------
+    # Spiral of small XY offsets so one bad reading does not doom the episode.
+    offsets = [
+        (0.0, 0.0),
+        (0.006, 0.0), (-0.006, 0.0),
+        (0.0, 0.006), (0.0, -0.006),
+        (0.006, 0.006), (-0.006, -0.006),
+        (0.006, -0.006), (-0.006, 0.006),
+    ]
+
+    grasped = False
+    for dx, dy in offsets:
+        rp = _robust_pos(robot, red, 7)
+        if rp is None:
+            break
+        ryaw = _robust_yaw(robot, red, 5)
+        tx, ty = rp[0] + dx, rp[1] + dy
+        try:
+            robot.move_to(tx, ty, 0.08, yaw=ryaw, speed=0.15)
+            robot.move_to(tx, ty, 0.015, yaw=ryaw, speed=0.05)
+        except Exception:
+            try:
+                robot.move_to(tx, ty, 0.08, speed=0.15)
+            except Exception:
+                pass
+            continue
+
+        if robot.grasp() and robot.holding() == red:
+            grasped = True
+            break
+
+        robot.release()
+        try:
+            robot.move_to(tx, ty, 0.08, speed=0.15)
+        except Exception:
+            pass
+
+    if not grasped:
+        robot.log(&quot;failed to grasp red cube&quot;)
+        return False
+
+    # Lift straight up.
+    try:
+        robot.move_by(dz=0.08, speed=0.15)
+    except Exception:
+        pass
+
+    if robot.holding() != red:
+        robot.log(&quot;lost red cube during lift&quot;)
+        return False
+
+    # ---------- Move above the blue cube ----------
+    bp = _robust_pos(robot, blue, 9)
+    if bp is None:
+        robot.log(&quot;cannot see blue cube&quot;)
+        return False
+
+    try:
+        robot.move_to(bp[0], bp[1], 0.12, speed=0.15)
+    except Exception:
+        robot.log(&quot;cannot reach above blue cube&quot;)
+        return False
+
+    # ---------- Closed-loop XY alignment of held red over blue ----------
+    for _ in range(4):
+        if robot.holding() != red:
+            robot.log(&quot;lost red cube during alignment&quot;)
+            return False
+        rp = _robust_pos(robot, red, 7)
+        bp = _robust_pos(robot, blue, 7)
+        if rp is None or bp is None:
+            break
+        ex = bp[0] - rp[0]
+        ey = bp[1] - rp[1]
+        if abs(ex) &lt; 0.002 and abs(ey) &lt; 0.002:
+            break
+        try:
+            robot.move_by(dx=ex, dy=ey, speed=0.05)
+        except Exception:
+            break
+
+    # ---------- Descend and release ----------
+    bp = _robust_pos(robot, blue, 7)
+    if bp is None:
+        return False
+    place_z = bp[2] + 0.031          # red centre = blue centre + 0.030
+    if place_z &lt; 0.044:
+        place_z = 0.044
+    if place_z &gt; 0.050:
+        place_z = 0.050
+
+    try:
+        robot.move_to(bp[0], bp[1], place_z, speed=0.04)
+    except Exception:
+        robot.log(&quot;failed to reach place position&quot;)
+        return False
+
+    robot.release()
+    # Lift straight up before retreating so the cube is not dragged sideways.
+    try:
+        robot.move_by(dz=0.03, speed=0.05)
+    except Exception:
+        pass
+    try:
+        robot.move_to(0.16, 0.0, 0.14, speed=0.15)
+    except Exception:
+        pass
+    robot.home()
+    robot.wait(0.3)
+
+    # ---------- Verify the stack ----------
+    try:
+        rp = _robust_pos(robot, red, 5)
+        bp = _robust_pos(robot, blue, 5)
+        if rp is not None and bp is not None:
+            dz = rp[2] - bp[2]
+            dxy = math.hypot(rp[0] - bp[0], rp[1] - bp[1])
+            robot.log(&quot;stack check dz=%.4f dxy=%.4f&quot; % (dz, dxy))
+            if dz &gt; 0.02 and dxy &lt; 0.025:
+                return True
+    except Exception:
+        pass
+
+    return False
+</pre></section>
+</div></body></html>

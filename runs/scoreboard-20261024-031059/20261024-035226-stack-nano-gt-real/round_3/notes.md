@@ -1,0 +1,5 @@
+- Increased the pick‑height clearance by +0.01 m (now rz + 0.03 m) and added a tiny seat‑down move after closing to improve grasp security; short‑stop moves are now logged and retried with a small xy shift or dz back‑off.  
+- Added a hover‑and‑check step before placement: move to `place_z‑0.01`, compute the red‑cube xy offset, and if it exceeds 0.015 m adjust the target towards the observed red centre by `factor = 1‑0.015/offset` to bring the offset within the threshold before committing to the final placement move.  
+- Implemented robust move‑to handling: on any `ok:false` response we log `error_m`, back‑off `dz = –0.02 m` (or shift xy) and retry once, preventing early aborts due to joint limits or contact.  
+- Kept the overall retry limit but moved retries inside each subtask so only failing steps are repeated; release success is verified and a simple recovery (lower, re‑grasp) is performed on failure.  
+- All positions are read at runtime from `robot.observe()`/`robot.get_pose()`; no hard‑coded coordinates remain.

@@ -1,0 +1,6 @@
+- Identify the red and blue cubes by colour from the observation dictionary.
+- Compute a safe pick height a little above the red cube’s centre and move there with a slow speed.
+- Close the gripper and verify that the red cube is actually being held; retry a few times on failure.
+- Lift the gripper slightly to clear the red cube, then compute the centre height needed to place the red cube on top of the blue cube (blue centre + half‑height + red half‑height).
+- Move to that placement pose above the blue cube, open the gripper to release, and verify that nothing is being held.
+- Use modest retry limits and catch motion errors to keep the skill robust despite perception noise.

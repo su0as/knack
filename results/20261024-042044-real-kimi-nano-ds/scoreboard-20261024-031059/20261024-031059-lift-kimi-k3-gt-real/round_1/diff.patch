@@ -1,0 +1,91 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,88 @@
++import math
++
++TARGET = "red_cube"
++GRASP_Z = 0.015   # tool-point height: finger pads wrap the cube's middle
++LIFT_Z = 0.10     # after lift, cube centre ~0.10 m -> bottom ~0.085 m > 5 cm
++MAX_ATTEMPTS = 4
++
++
++def _sense(robot, name, n=6):
++    """Average n noisy observations of one object -> ((x, y, z), yaw) or None."""
++    sx = sy = sz = 0.0
++    s4 = c4 = 0.0
++    k = 0
++    for _ in range(n):
++        obs = robot.observe()
++        o = obs["objects"].get(name)
++        if o is None:
++            continue
++        sx += o["pos"][0]
++        sy += o["pos"][1]
++        sz += o["pos"][2]
++        # cube yaw lives in [-pi/4, pi/4): average in 4*angle space to avoid wrap error
++        s4 += math.sin(4.0 * o["yaw"])
++        c4 += math.cos(4.0 * o["yaw"])
++        k += 1
++    if k == 0:
++        return None
++    return (sx / k, sy / k, sz / k), math.atan2(s4, c4) / 4.0
++
++
++def _try_grasp(robot):
++    est = _sense(robot, TARGET)
++    if est is None:
++        robot.log("target not visible")
++        return False
++    (x, y, _z), yaw = est
++    robot.log("grasp target at", round(x, 4), round(y, 4), "yaw", round(yaw, 3))
++    robot.release()
++    try:
++        robot.move_to(x, y, 0.08, yaw=yaw)
++        robot.move_to(x, y, GRASP_Z, yaw=yaw, speed=0.05)
++    except Exception as e:
++        robot.log("approach failed:", e)
++        try:
++            robot.home()
++        except Exception:
++            pass
++        return False
++    robot.grasp()
++    return robot.holding() == TARGET
++
++
++def _lift_and_check(robot):
++    try:
++        robot.move_by(dz=LIFT_Z - GRASP_Z, speed=0.08)
++    except Exception as e:
++        robot.log("lift failed:", e)
++        return False
++    robot.wait(0.3)
++    if robot.holding() != TARGET:
++        robot.log("cube lost during lift")
++        return False
++    est = _sense(robot, TARGET, n=3)
++    if est is None:
++        return False
++    (_x, _y, z), _yaw = est
++    robot.log("held cube z =", round(z, 4))
++    return z >= 0.05
++
++
++def run(robot):
++    robot.release()
++    for attempt in range(MAX_ATTEMPTS):
++        if _try_grasp(robot):
++            if _lift_and_check(robot):
++                return True
++            # cube slipped and fell back to the table -> re-sense and retry
++        else:
++            robot.log("grasp attempt", attempt, "found nothing")
++        # back off upward before the next attempt
++        try:
++            robot.move_by(dz=0.06)
++        except Exception:
++            try:
++                robot.home()
++            except Exception:
++                pass
++    return False

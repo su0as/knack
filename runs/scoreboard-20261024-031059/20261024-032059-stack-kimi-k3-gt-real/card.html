@@ -1,0 +1,216 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Stack</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261024-032059-stack-kimi-k3-gt-real &middot; 2026-10-24 03:31:49</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Stack the red cube on top of the blue cube and let go.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: real &middot; 8 practice episodes in 1 rounds</p>
+<div><span class='chip'><b>CODER</b>moonshotai/Kimi-K3 <em>$3.00 / $15.00 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">98%</div><div>49/50 layouts &middot; Wilson 95% CI 90% to 100%</div><div class='ci'><div class='ci-band' style='left:89.5%;width:10.1%'></div><div class='ci-dot' style='left:98.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:100%'></span><em>R1<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>moonshotai/Kimi-K3</code></td><td>1</td><td>1,610</td><td>7,988</td><td>$0.1203</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>0</td><td>0</td><td>0</td><td>$0.0000</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>92 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>1</th><th>1,610</th><th>7,988</th><th>$0.1203</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details open><summary>Round 1: 8/8 practice episodes &middot; 0 errors &middot; $0.1203 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- First attempt at the stack task; no prior results yet.
+- Perception is noisy (~1 cm per reading, fresh noise each call), so I average several get_pose() readings before every critical action; yaw is averaged with a 4θ trick to respect the cube&#x27;s 90° symmetry.
+- Plan: average red pose → approach from above with fingers aligned to red&#x27;s yaw → slow descend to z=0.015 → grasp → verify holding after a lift → re-average blue pose while it is unoccluded → carry over blue at height, rotating gripper to blue&#x27;s yaw → slow descend to just above stacked height → release → retreat → verify red&#x27;s z ≈ blue z + 0.03.
+- Whole stack attempt is wrapped in a bounded 2-try loop so a failed grasp or a toppled place triggers one recovery attempt.
+- Moves near cubes are slow (0.04–0.06), travel moves at 0.25; all move_to calls are wrapped against MotionError.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,87 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    # ---------------- helpers ----------------</span>
+<span class='add'>+    def find_by_color(obs, color):</span>
+<span class='add'>+        for name, o in obs[&quot;objects&quot;].items():</span>
+<span class='add'>+            if o.get(&quot;color&quot;) == color:</span>
+<span class='add'>+                return name</span>
+<span class='add'>+        return None</span>
+<span class='add'>+</span>
+<span class='add'>+    def avg_pose(name, n=5):</span>
+<span class='add'>+        &quot;&quot;&quot;Average n noisy readings; yaw averaged via 4*theta (90 deg cube symmetry).&quot;&quot;&quot;</span>
+<span class='add'>+        sx = sy = sz = 0.0</span>
+<span class='add'>+        s4 = c4 = 0.0</span>
+<span class='add'>+        for _ in range(n):</span>
+<span class='add'>+            p = robot.get_pose(name)</span>
+<span class='add'>+            sx += p[&quot;pos&quot;][0]</span>
+<span class='add'>+            sy += p[&quot;pos&quot;][1]</span>
+<span class='add'>+            sz += p[&quot;pos&quot;][2]</span>
+<span class='add'>+            a = 4.0 * p[&quot;yaw&quot;]</span>
+<span class='add'>+            s4 += math.sin(a)</span>
+<span class='add'>+            c4 += math.cos(a)</span>
+<span class='add'>+        yaw = math.atan2(s4, c4) / 4.0</span>
+<span class='add'>+        return (sx / n, sy / n, sz / n), yaw</span>
+<span class='add'>+</span>
+<span class='add'>+    def safe_move(x, y, z, yaw=None, speed=None):</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            return robot.move_to(x, y, z, yaw=yaw, speed=speed)</span>
+<span class='add'>+        except Exception as e:</span>
+<span class='add'>+            robot.log(&quot;move failed:&quot;, e)</span>
+<span class='add'>+            return None</span>
+<span class='add'>+</span>
+<span class='add'>+    # ---------------- identify cubes ----------------</span>
+<span class='add'>+    obs = robot.observe()</span>
+<span class='add'>+    red = find_by_color(obs, &quot;red&quot;)</span>
+<span class='add'>+    blue = find_by_color(obs, &quot;blue&quot;)</span>
+<span class='add'>+    if red is None or blue is None:</span>
+<span class='add'>+        robot.log(&quot;could not identify red/blue cubes&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    robot.release()  # make sure fingers are open</span>
+<span class='add'>+</span>
+<span class='add'>+    for attempt in range(2):</span>
+<span class='add'>+        # ----- perceive red -----</span>
+<span class='add'>+        (rx, ry, rz), ryaw = avg_pose(red, 5)</span>
+<span class='add'>+        robot.log(&quot;red at&quot;, rx, ry, rz, &quot;yaw&quot;, ryaw)</span>
+<span class='add'>+</span>
+<span class='add'>+        # ----- approach and grasp red -----</span>
+<span class='add'>+        if safe_move(rx, ry, 0.09, yaw=ryaw, speed=0.25) is None:</span>
+<span class='add'>+            return False</span>
+<span class='add'>+        safe_move(rx, ry, 0.015, yaw=ryaw, speed=0.06)</span>
+<span class='add'>+        robot.grasp()</span>
+<span class='add'>+        robot.move_by(dz=0.09, speed=0.1)</span>
+<span class='add'>+        if robot.holding() != red:</span>
+<span class='add'>+            robot.log(&quot;grasp failed on attempt&quot;, attempt)</span>
+<span class='add'>+            robot.release()</span>
+<span class='add'>+            robot.move_by(dz=0.05, speed=0.1)</span>
+<span class='add'>+            continue</span>
+<span class='add'>+</span>
+<span class='add'>+        # ----- perceive blue while unoccluded -----</span>
+<span class='add'>+        (bx, by, bz), byaw = avg_pose(blue, 7)</span>
+<span class='add'>+        robot.log(&quot;blue at&quot;, bx, by, bz, &quot;yaw&quot;, byaw)</span>
+<span class='add'>+</span>
+<span class='add'>+        # ----- carry over blue, aligning yaw (90 deg symmetry) -----</span>
+<span class='add'>+        place_z = bz + 0.033  # red centre ~3 mm above its final stacked height</span>
+<span class='add'>+        if safe_move(bx, by, 0.12, yaw=byaw, speed=0.25) is None:</span>
+<span class='add'>+            robot.release()</span>
+<span class='add'>+            return False</span>
+<span class='add'>+        if robot.holding() != red:</span>
+<span class='add'>+            robot.log(&quot;lost red during carry&quot;)</span>
+<span class='add'>+            continue</span>
+<span class='add'>+        safe_move(bx, by, bz + 0.06, yaw=byaw, speed=0.1)</span>
+<span class='add'>+        safe_move(bx, by, place_z, yaw=byaw, speed=0.04)</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        robot.move_by(dz=0.09, speed=0.1)</span>
+<span class='add'>+</span>
+<span class='add'>+        # ----- verify the stack -----</span>
+<span class='add'>+        (nx, ny, nz), _ = avg_pose(red, 5)</span>
+<span class='add'>+        (bx2, by2, bz2), _ = avg_pose(blue, 3)</span>
+<span class='add'>+        robot.log(&quot;after place red z =&quot;, nz, &quot;expected ~&quot;, bz2 + 0.03)</span>
+<span class='add'>+        if nz &gt; bz2 + 0.02 and abs(nx - bx2) &lt; 0.02 and abs(ny - by2) &lt; 0.02:</span>
+<span class='add'>+            robot.log(&quot;stack succeeded&quot;)</span>
+<span class='add'>+            return True</span>
+<span class='add'>+        robot.log(&quot;stack verification failed on attempt&quot;, attempt)</span>
+<span class='add'>+</span>
+<span class='add'>+    return False</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100034/end_front.jpg"><figcaption>seed 100034<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+
+def run(robot):
+    # ---------------- helpers ----------------
+    def find_by_color(obs, color):
+        for name, o in obs[&quot;objects&quot;].items():
+            if o.get(&quot;color&quot;) == color:
+                return name
+        return None
+
+    def avg_pose(name, n=5):
+        &quot;&quot;&quot;Average n noisy readings; yaw averaged via 4*theta (90 deg cube symmetry).&quot;&quot;&quot;
+        sx = sy = sz = 0.0
+        s4 = c4 = 0.0
+        for _ in range(n):
+            p = robot.get_pose(name)
+            sx += p[&quot;pos&quot;][0]
+            sy += p[&quot;pos&quot;][1]
+            sz += p[&quot;pos&quot;][2]
+            a = 4.0 * p[&quot;yaw&quot;]
+            s4 += math.sin(a)
+            c4 += math.cos(a)
+        yaw = math.atan2(s4, c4) / 4.0
+        return (sx / n, sy / n, sz / n), yaw
+
+    def safe_move(x, y, z, yaw=None, speed=None):
+        try:
+            return robot.move_to(x, y, z, yaw=yaw, speed=speed)
+        except Exception as e:
+            robot.log(&quot;move failed:&quot;, e)
+            return None
+
+    # ---------------- identify cubes ----------------
+    obs = robot.observe()
+    red = find_by_color(obs, &quot;red&quot;)
+    blue = find_by_color(obs, &quot;blue&quot;)
+    if red is None or blue is None:
+        robot.log(&quot;could not identify red/blue cubes&quot;)
+        return False
+
+    robot.release()  # make sure fingers are open
+
+    for attempt in range(2):
+        # ----- perceive red -----
+        (rx, ry, rz), ryaw = avg_pose(red, 5)
+        robot.log(&quot;red at&quot;, rx, ry, rz, &quot;yaw&quot;, ryaw)
+
+        # ----- approach and grasp red -----
+        if safe_move(rx, ry, 0.09, yaw=ryaw, speed=0.25) is None:
+            return False
+        safe_move(rx, ry, 0.015, yaw=ryaw, speed=0.06)
+        robot.grasp()
+        robot.move_by(dz=0.09, speed=0.1)
+        if robot.holding() != red:
+            robot.log(&quot;grasp failed on attempt&quot;, attempt)
+            robot.release()
+            robot.move_by(dz=0.05, speed=0.1)
+            continue
+
+        # ----- perceive blue while unoccluded -----
+        (bx, by, bz), byaw = avg_pose(blue, 7)
+        robot.log(&quot;blue at&quot;, bx, by, bz, &quot;yaw&quot;, byaw)
+
+        # ----- carry over blue, aligning yaw (90 deg symmetry) -----
+        place_z = bz + 0.033  # red centre ~3 mm above its final stacked height
+        if safe_move(bx, by, 0.12, yaw=byaw, speed=0.25) is None:
+            robot.release()
+            return False
+        if robot.holding() != red:
+            robot.log(&quot;lost red during carry&quot;)
+            continue
+        safe_move(bx, by, bz + 0.06, yaw=byaw, speed=0.1)
+        safe_move(bx, by, place_z, yaw=byaw, speed=0.04)
+        robot.release()
+        robot.move_by(dz=0.09, speed=0.1)
+
+        # ----- verify the stack -----
+        (nx, ny, nz), _ = avg_pose(red, 5)
+        (bx2, by2, bz2), _ = avg_pose(blue, 3)
+        robot.log(&quot;after place red z =&quot;, nz, &quot;expected ~&quot;, bz2 + 0.03)
+        if nz &gt; bz2 + 0.02 and abs(nx - bx2) &lt; 0.02 and abs(ny - by2) &lt; 0.02:
+            robot.log(&quot;stack succeeded&quot;)
+            return True
+        robot.log(&quot;stack verification failed on attempt&quot;, attempt)
+
+    return False
+</pre></section>
+</div></body></html>

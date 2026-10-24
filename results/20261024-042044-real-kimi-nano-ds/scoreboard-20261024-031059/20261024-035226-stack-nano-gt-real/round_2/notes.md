@@ -1,0 +1,8 @@
+- Added a perception sanity check with one extra observation to avoid false‑negative skips.  
+- After grasping, seat the cube with a tiny `move_by(dz=0.01)` and re‑verify holding before proceeding.  
+- Lift a bit higher (0.02 m) to clear the red cube before positioning.  
+- Compute the exact placement height (blue centre + 0.015 + 0.015).  
+- Before releasing, re‑observe the red cube and abort if its xy‑offset from the target exceeds 0.02 m; retry the placement move once.  
+- Validate that the gripper is empty after `release()`; on failure perform a simple recovery (lower, re‑grasp) and retry once.  
+- Kept the overall retry limit (3 attempts) but moved the retry logic inside the steps so only failing sub‑steps are repeated.  
+- All new checks are defensive and do not change the successful path when everything already works.

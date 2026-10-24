@@ -1,0 +1,253 @@
+{
+ "task": "push",
+ "seed": 50002,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.1101,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 4.06,
+   "call": "move_to(0.161, -0.022, 0.009, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1683,
+     -0.0229,
+     0.0239
+    ],
+    "error_m": 0.0125,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 5.76,
+   "call": "move_to(0.168, -0.023, 0.011, yaw=1.438, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1758,
+     -0.0239,
+     0.0242
+    ],
+    "error_m": 0.0126,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 7.56,
+   "call": "move_to(0.176, -0.009, 0.024, yaw=1.440, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1807,
+     -0.0096,
+     0.0301
+    ],
+    "error_m": 0.0076
+   }
+  },
+  {
+   "t": 9.64,
+   "call": "move_to(0.161, -0.022, 0.009, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1701,
+     -0.0229,
+     0.0258
+    ],
+    "error_m": 0.0151,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 9.64,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 11.3,
+   "call": "move_to(0.170, -0.018, 0.026, yaw=1.439, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1738,
+     -0.0187,
+     0.0305
+    ],
+    "error_m": 0.006
+   }
+  },
+  {
+   "t": 13.24,
+   "call": "move_to(0.161, -0.022, 0.009, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1707,
+     -0.0229,
+     0.0262
+    ],
+    "error_m": 0.0158,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 13.24,
+   "call": "observe()",
+   "result": "ok"
+  }
+ ],
+ "n_calls": 9,
+ "printed": [],
+ "safety_events": [
+  {
+   "t": 0.0,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.009 clamped to 0.014"
+  },
+  {
+   "t": 4.06,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.011 clamped to 0.014"
+  },
+  {
+   "t": 7.56,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.009 clamped to 0.014"
+  },
+  {
+   "t": 11.3,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.009 clamped to 0.014"
+  }
+ ],
+ "safety_summary": {
+  "clamp": 4,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 13.74,
+ "wall_time": 1.05,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1537,
+     -0.0094,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1693,
+     0.1024,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 13.74,
+  "gripper": {
+   "pos": [
+    0.1703,
+    -0.0226,
+    0.0262
+   ],
+   "yaw": 1.442,
+   "opening": 0.0515,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1721,
+     -0.0077,
+     0.0084
+    ],
+    "yaw": -0.0005,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1693,
+     0.1024,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1693,
+   "y": 0.1024,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1537,
+   "y": -0.0094,
+   "yaw": -0.0763,
+   "fp": 0.035
+  }
+ }
+}

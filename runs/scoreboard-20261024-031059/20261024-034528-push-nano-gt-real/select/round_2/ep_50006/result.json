@@ -1,0 +1,253 @@
+{
+ "task": "push",
+ "seed": 50006,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.1087,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 4.72,
+   "call": "move_to(0.102, 0.081, 0.012, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1093,
+     0.0862,
+     0.0239
+    ],
+    "error_m": 0.0138,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 6.42,
+   "call": "move_to(0.109, 0.086, 0.011, yaw=2.242, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1162,
+     0.0915,
+     0.0242
+    ],
+    "error_m": 0.0134,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 8.22,
+   "call": "move_to(0.127, 0.082, 0.024, yaw=2.246, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1315,
+     0.0848,
+     0.0303
+    ],
+    "error_m": 0.0081
+   }
+  },
+  {
+   "t": 10.42,
+   "call": "move_to(0.102, 0.081, 0.012, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.111,
+     0.0881,
+     0.0262
+    ],
+    "error_m": 0.0171,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 10.42,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 12.08,
+   "call": "move_to(0.115, 0.085, 0.026, yaw=2.245, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1175,
+     0.0873,
+     0.0305
+    ],
+    "error_m": 0.0058
+   }
+  },
+  {
+   "t": 14.06,
+   "call": "move_to(0.102, 0.081, 0.012, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.112,
+     0.0889,
+     0.0265
+    ],
+    "error_m": 0.0183,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 14.06,
+   "call": "observe()",
+   "result": "ok"
+  }
+ ],
+ "n_calls": 9,
+ "printed": [],
+ "safety_events": [
+  {
+   "t": 0.0,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.012 clamped to 0.014"
+  },
+  {
+   "t": 4.72,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.011 clamped to 0.014"
+  },
+  {
+   "t": 8.22,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.012 clamped to 0.014"
+  },
+  {
+   "t": 12.08,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.012 clamped to 0.014"
+  }
+ ],
+ "safety_summary": {
+  "clamp": 4,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 14.56,
+ "wall_time": 1.02,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.0978,
+     0.0805,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1735,
+     0.0074,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 14.56,
+  "gripper": {
+   "pos": [
+    0.1121,
+    0.0889,
+    0.0265
+   ],
+   "yaw": 2.2415,
+   "opening": 0.0497,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1098,
+     0.0956,
+     0.0088
+    ],
+    "yaw": 0.025,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1735,
+     0.0074,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1735,
+   "y": 0.0074,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.0978,
+   "y": 0.0805,
+   "yaw": -0.4975,
+   "fp": 0.035
+  }
+ }
+}

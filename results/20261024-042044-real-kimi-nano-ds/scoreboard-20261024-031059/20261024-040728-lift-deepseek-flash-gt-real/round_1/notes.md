@@ -1,0 +1,7 @@
+- First version: no prior results, so I'll build a robust perceive→approach→descend→grasp→verify→lift loop.
+- Perception is noisy (~1 cm, several degrees), so I average 4 fresh get_pose() reads before each attempt.
+- Cube is 3 cm; grasp at z≈0.016 puts the pads around its middle. Approach from z=0.10 first, then descend slowly (0.05 m/s).
+- Align fingers with the cube's yaw so the pads meet the faces.
+- Verify with robot.holding() after grasp; if it fails, release, re-observe and retry with small XY nudges (bounded to 5 attempts).
+- Lift to z≈0.13–0.14 (≈10 cm above table, well past the 5 cm requirement) and re-verify holding.
+- Catch MotionError around every move so an out-of-reach target doesn't kill the episode.

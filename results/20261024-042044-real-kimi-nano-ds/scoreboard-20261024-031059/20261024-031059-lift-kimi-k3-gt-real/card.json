@@ -1,0 +1,84 @@
+{
+ "run_id": "20261024-031059-lift-kimi-k3-gt-real",
+ "task": "lift",
+ "title": "Lift",
+ "instruction": "Pick up the red cube and hold it at least 5 cm above the table.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "real",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 8,
+   "success": 1.0,
+   "gt_k": 8,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 9.3,
+   "usd_cum": 0.07958,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 89
+  }
+ ],
+ "best_round": 1,
+ "selection": null,
+ "eval": {
+  "n": 50,
+  "k": 50,
+  "p": 1.0,
+  "lo": 0.928649965826,
+  "hi": 1.0,
+  "source": "gt",
+  "best_round": 1,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 5.25,
+  "self_report_true": 50,
+  "judge": null,
+  "failures": []
+ },
+ "models": {
+  "coder": {
+   "alias": "kimi-k3",
+   "id": "moonshotai/Kimi-K3",
+   "nvidia": false,
+   "calls": 1,
+   "prompt_tokens": 1613,
+   "completion_tokens": 4994,
+   "usd": 0.079576,
+   "price_in": 3.0,
+   "price_out": 15.0
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 0,
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "usd": 0.0,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.079576,
+  "compute_usd": 0.0,
+  "total_usd": 0.079576,
+  "calls": 1,
+  "prompt_tokens": 1613,
+  "completion_tokens": 4994,
+  "compute_seconds": 88.02,
+  "backend": "local"
+ },
+ "wall_time_s": 226.5,
+ "practice_episodes": 8,
+ "created": "2026-10-24 03:14:46",
+ "skill_file": "best_skill.py"
+}

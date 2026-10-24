@@ -1,0 +1,193 @@
+{
+ "round": 2,
+ "n": 8,
+ "k": 8,
+ "success": 1.0,
+ "gt_k": 8,
+ "self_k": 8,
+ "errors": 0,
+ "wall_s": 9.6,
+ "usd_cum": 0.04029,
+ "code": "round_2/skill.py",
+ "diff": "round_2/diff.patch",
+ "lines": 183,
+ "notes": "- Only seeds 1001 and 1003 failed; both are \"off-target placement\" (red ended on the table beside blue, xy_offset \u2248 0.037). The other 6 succeeded with z_gap \u2248 0.0298, so the grasp, lift, descent height (0.046) and release sequence are sound \u2014 keep them.\n- Root cause is perception noise, not drift: in seed 1001 the three blue readings spanned y from 0.010 to 0.035 (\u22482.5 cm), so a 3-sample mean was badly biased. Switched to a **median of 7\u20139 samples** for every pose read (robust to outliers).\n- Replaced the fragile \"estimate grasp offset then subtract\" placement with a **closed-loop XY alignment**: while holding red, repeatedly read red and blue, compute delta = blue \u2212 red, and `move_by(dx, dy)` until the held red cube is centred over blue (\u22642 mm). This cancels both the grasp offset and the blue-pose noise directly.\n- Kept the spiral-of-offsets grasp, `holding()` verification, slow speeds near objects, and bounded try/except around every risky move.\n- Descent height is now adaptive: `place_z = blue_z + 0.031` clamped to [0.044, 0.050] (\u22480.046 for blue_z\u22480.015), matching what worked.\n- Added a straight-up `move_by(dz=0.03)` immediately after release (before retreating) so the cube is never dragged sideways.\n- Final stack check uses median poses; success requires dz > 0.02 and dxy < 0.025.",
+ "episodes": [
+  {
+   "seed": 2000,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0047,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0147
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2001,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0052,
+    "z_gap": 0.0297,
+    "red_held": false,
+    "blue_z": 0.0147
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2002,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0011,
+    "z_gap": 0.0299,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2003,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.007,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2004,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0061,
+    "z_gap": 0.0298,
+    "red_held": false,
+    "blue_z": 0.0147
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0115,
+    "z_gap": 0.0296,
+    "red_held": false,
+    "blue_z": 0.0147
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0016,
+    "z_gap": 0.0299,
+    "red_held": false,
+    "blue_z": 0.0149
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2007,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "xy_offset": 0.0034,
+    "z_gap": 0.0299,
+    "red_held": false,
+    "blue_z": 0.0148
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

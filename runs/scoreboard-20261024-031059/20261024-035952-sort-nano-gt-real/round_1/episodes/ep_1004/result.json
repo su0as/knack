@@ -1,0 +1,334 @@
+{
+ "task": "sort",
+ "seed": 1004,
+ "error": {
+  "type": "NameError",
+  "message": "name 'MotionError' is not defined",
+  "traceback": "  skill.py line 108, in run: grip_pose = pick(\"blue_cube\")\n  skill.py line 42, in pick: move_res = safe_move_to(ox, oy, pre_z, yaw=oyaw, speed=0.07)\n  skill.py line 20, in safe_move_to: except MotionError:\nNameError: name 'MotionError' is not defined"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "red_cube_tray_dx": 0.0143,
+  "red_cube_tray_dy": 0.0228,
+  "red_cube_z": 0.0241,
+  "red_cube_held": false,
+  "blue_cube_tray_dx": 0.2699,
+  "blue_cube_tray_dy": 0.1264,
+  "blue_cube_z": 0.0149,
+  "blue_cube_held": false,
+  "red_ok": true,
+  "blue_ok": "False"
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 1.72,
+   "call": "move_to(0.183, 0.013, 0.025, yaw=-0.318, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.183,
+     0.0125,
+     0.0249
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 1.96,
+   "call": "move_to(0.183, 0.013, 0.015, yaw=-0.318, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1828,
+     0.0125,
+     0.0147
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 2.46,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0272
+   }
+  },
+  {
+   "t": 3.0,
+   "call": "move_to(0.183, 0.013, 0.050, yaw=-0.318, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1829,
+     0.0125,
+     0.0497
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 3.0,
+   "call": "get_pose('red_tray')",
+   "result": {
+    "pos": [
+     0.0814,
+     -0.0975,
+     0.0
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 5.96,
+   "call": "move_to(0.081, -0.098, 0.025, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0828,
+     -0.0983,
+     0.0262
+    ],
+    "error_m": 0.002
+   }
+  },
+  {
+   "t": 7.7,
+   "call": "move_to(0.081, -0.098, 0.015, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0846,
+     -0.1,
+     0.0183
+    ],
+    "error_m": 0.0052
+   }
+  },
+  {
+   "t": 8.1,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 10.46,
+   "call": "move_to(0.183, 0.013, 0.050, yaw=-0.318, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.183,
+     0.0125,
+     0.0499
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 10.46,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 10.46,
+   "call": "move_to(0.344, -0.020, 0.025, yaw=-0.237, speed=0.070)",
+   "error": "SAFETY HALT: target x=0.344 m is outside the safe workspace [0.04, 0.32] by 0.024 m"
+  }
+ ],
+ "n_calls": 12,
+ "printed": [],
+ "safety_events": [
+  {
+   "t": 10.46,
+   "kind": "workspace",
+   "action": "halt",
+   "detail": "x=0.344 outside [0.04, 0.32] by 0.024 m"
+  }
+ ],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 1
+ },
+ "halted": "target x=0.344 m is outside the safe workspace [0.04, 0.32] by 0.024 m",
+ "sim_time": 10.96,
+ "wall_time": 2.23,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1803,
+     0.0011,
+     0.0149
+    ],
+    "yaw": -0.1732,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1882,
+     -0.0609,
+     0.0149
+    ],
+    "yaw": 0.7614,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.0891,
+     -0.1015,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.1186,
+     0.1162,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "final_obs": {
+  "time": 10.96,
+  "gripper": {
+   "pos": [
+    0.1831,
+    0.0125,
+    0.05
+   ],
+   "yaw": 2.8234,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1034,
+     -0.0787,
+     0.0241
+    ],
+    "yaw": -0.3604,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.3885,
+     -0.0101,
+     0.0149
+    ],
+    "yaw": 0.224,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.0891,
+     -0.1015,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.1186,
+     0.1162,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_tray": {
+   "x": 0.0891,
+   "y": -0.1015,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "blue_tray": {
+   "x": 0.1186,
+   "y": 0.1162,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "red_cube": {
+   "x": 0.1803,
+   "y": 0.0011,
+   "yaw": -0.1732,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1882,
+   "y": -0.0609,
+   "yaw": 0.7614,
+   "fp": 0.0225
+  }
+ }
+}

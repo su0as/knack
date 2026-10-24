@@ -1,0 +1,90 @@
+import math
+
+
+def run(robot):
+    robot.home()
+
+    def clamp(v, lo, hi):
+        return min(max(v, lo), hi)
+
+    def read():
+        obs = robot.observe()
+        p = obs["objects"]["puck"]["pos"]
+        t = obs["fixtures"]["target"]["pos"]
+        r = obs["objects"]["puck"]["size"]["radius"]
+        return p, t, r
+
+    PUSH_Z = 0.015   # puck centre height; pads contact the puck body
+    LIFT_Z = 0.12    # safe travel height
+
+    for attempt in range(12):
+        p, t, r = read()
+        dx = t[0] - p[0]
+        dy = t[1] - p[1]
+        dist = math.hypot(dx, dy)
+        robot.log("attempt", attempt, "dist", round(dist, 4))
+        if dist < 0.015:
+            return True
+
+        ux = dx / dist
+        uy = dy / dist
+
+        # Contact point behind the puck, clear of its radius.
+        margin = r + 0.012
+        cx = clamp(p[0] - ux * margin, 0.04, 0.32)
+        cy = clamp(p[1] - uy * margin, -0.26, 0.26)
+
+        # Fingers perpendicular to the push so the open jaws straddle the line.
+        yaw = math.atan2(uy, ux) + math.pi / 2.0
+
+        # --- approach from above ---
+        reached = False
+        try:
+            res = robot.move_to(cx, cy, LIFT_Z, yaw=yaw, speed=0.15)
+            reached = res.get("ok", True)
+        except Exception:
+            reached = False
+        if not reached:
+            try:
+                res = robot.move_to(cx, cy, LIFT_Z, speed=0.15)
+                reached = res.get("ok", True)
+            except Exception:
+                reached = False
+        if not reached:
+            continue
+
+        # --- descend to push height ---
+        try:
+            res = robot.move_to(cx, cy, PUSH_Z, yaw=yaw, speed=0.10)
+            if not res.get("ok", True):
+                try:
+                    robot.move_to(cx, cy, LIFT_Z, yaw=yaw, speed=0.15)
+                except Exception:
+                    pass
+                continue
+        except Exception:
+            continue
+
+        # --- push forward ---
+        push = min(max(dist + 0.02, 0.03), 0.07)
+        ex = clamp(cx + ux * push, 0.04, 0.32)
+        ey = clamp(cy + uy * push, -0.26, 0.26)
+        try:
+            robot.move_to(ex, ey, PUSH_Z, yaw=yaw, speed=0.05)
+        except Exception:
+            pass
+
+        # --- quick success check before spending time on the lift ---
+        p2, t2, r2 = read()
+        d2 = math.hypot(t2[0] - p2[0], t2[1] - p2[1])
+        if d2 < 0.02:
+            return True
+
+        # --- lift clear before re-planning ---
+        try:
+            robot.move_to(ex, ey, LIFT_Z, yaw=yaw, speed=0.15)
+        except Exception:
+            pass
+
+    p, t, r = read()
+    return math.hypot(t[0] - p[0], t[1] - p[1]) < 0.02

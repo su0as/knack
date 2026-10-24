@@ -1,0 +1,7 @@
+**Mode 1: Persistent grasp failure (55/56 episodes)**  
+*Root cause:* The verification check at line 66 (`robot.holding() != "red_cube"`) triggers a re‑grasp after every successful `move_to`. The re‑grasp sequence (lines 68‑72) releases the cube, lifts, and re‑grasps, but the gripper often ends holding `None` because the initial `grasp()` at line 62 does not secure the cube reliably. The subsequent `move_by(dz=-0.01)` at line 72 may place the gripper out of the cube’s reach, causing the second `grasp()` to fail.  
+*Fix:* Remove the automatic re‑grasp block (lines 66‑75). After the initial `grasp()` at line 62, assume success unless `holding()` returns something other than `"red_cube"`. If verification fails, log and abort the current overall attempt rather than looping a fragile re‑grasp.
+
+**Mode 2: Placement target drift (1/56 episodes)**  
+*Root cause:* During placement recovery (lines 96‑114), the code shifts the target toward the red cube by a fixed `factor=0.5` (line 112) when the offset exceeds 0.015 m. This large move can push the target past the blue cube or into an unreachable workspace, causing subsequent `move_to` failures (line 117) and aborting the episode.  
+*Fix:* Reduce the adjustment factor to `0.1` and add a maximum shift limit (e.g., `max_shift=0.02`) to keep the target within a safe radius of the blue cube centre.
