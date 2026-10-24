@@ -36,6 +36,7 @@ Would we build with it again? Yes. A full learning run that turned a task senten
 **Used for:** optional parallel practice backend (`--backend nebius`), one CPU job per practice round.
 
 What needs work
+0. **Onboarding facts (24 Oct 2026):** sign-in with the same GitHub identity as Token Factory created a *separate* AI Cloud tenant (`default-project-eu-west2`) after a contact-details form and an email code. Before any job can run, Billing asks for full billing details and a card, and charges a **$25 top-up on submit**. The two $25 Token Factory promo codes from this hackathon could not be used there. For a student team that wants to try one 3-minute CPU job, a $25 card charge is the biggest barrier in the whole stack; a small AI Cloud trial credit (even $5) would remove it.
 1. **Hackathon credits do not cover AI Cloud.** The promo credits apply to Token Factory only, so Serverless Jobs are real spend for participants. A small AI Cloud credit would let Physical AI teams use the jobs product the track is built around.
 2. **Minimum job timeout is 1 hour** (`--timeout` minimum `1h`). Fine for billing (jobs are billed while running), but surprising for 3-minute batch jobs.
 3. **Injected files are limited to 64 KiB**, so a source tarball cannot be injected; Knack uploads it to Object Storage instead, which adds a bucket and access-key setup step before the first job.
