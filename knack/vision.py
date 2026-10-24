@@ -204,7 +204,7 @@ class VisionPerception:
 
     def summary(self) -> dict:
         e = np.array(self.errors_mm) if self.errors_mm else np.array([np.nan])
-        y = np.array(self.yaw_errors_deg) if self.yaw_errors_deg else np.array([np.nan])
+        y = np.array(self.yaw_errors_deg) if self.yaw_errors_deg else np.array([0.0])
         return {
             "calls": self.calls, "lookups": self.lookups, "misses": self.misses,
             "detection_rate": round(1 - self.misses / self.lookups, 4) if self.lookups else None,

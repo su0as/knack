@@ -25,8 +25,13 @@ def test_vision_finds_objects_and_fixtures(task_id):
     for seed in range(4):
         env = SimEnv(TASKS[task_id], 7000 + seed, realism="vision")
         v = VisionPerception(env)
-        v.observe()
+        seen = v.observe()
         s = v.summary()
+        for n, d in seen["objects"].items():
+            print("  ", n, "est", [round(x, 4) for x in d["pos"]], "true", [round(float(x), 4) for x in env.object_pose(n)[0]],
+                  "px", d["pixels"], d["camera"])
+        print("   fixtures", {k: [round(float(x), 4) for x in val] for k, val in seen["fixtures"].items()},
+              {k: [round(float(x), 4) for x in env.fixture_pos(k)] for k in env.fixture_spec})
         print(task_id, seed, s)
         errs.append(s["pos_err_mm_median"])
         misses += s["misses"]
