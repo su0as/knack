@@ -77,6 +77,8 @@ flowchart LR
 
 Read this section in order: the camera-grade results are the point, the easy-mode table is context. All runs on 23-24 Oct 2026, zero demonstrations, 8 parallel practice episodes per round, held-out success on **50 unseen layouts** with a Wilson 95% interval. Cost is the exact Token Factory bill for the whole run (every model call), from `ledger.jsonl`.
 
+![What practice adds: first version vs practised version on the same 50 held-out layouts](docs/figures/practice_gain.png)
+
 **1. Practice turns failing first attempts into working skills, measured directly.** "Camera-grade" means `--realism real`: about 8 mm of pose noise per reading, as a cheap arm with an overhead camera sees (details in 2). `knack exp gain` re-runs each run's *first* version (written before any feedback) on the exact 50 held-out layouts the practised version was scored on. Where the best version was round 1 the two numbers match exactly, which checks that the comparison is like for like.
 
 | run | first version | after practice | gain |
@@ -109,6 +111,8 @@ Sources: `results/20261023-101415-practice-gain`, repeat runs in `results/*-real
 | stack | 4% · $0.012 | 62% · $0.045 (repeat: 62%) | 64% · $0.108 | 96% · $0.040 | 98% · $0.120 | 57% |
 | into the tray | | 88% · $0.002 | 98% · $0.005 | | | 97% |
 | sort by colour | 42% · $0.011 | 36% · $0.036 | 100% · $0.013 | 100% · $0.011 | 100% · $0.176 (2nd attempt) | 100% |
+
+![Cost of a verified skill vs held-out success, camera-grade scenes](docs/figures/cost_vs_success_camera.png)
 
 Sources: `results/*-real-stack-push`, `*-real-super-replicate`, `*-real-4tasks`, `*-real-kimi-nano-ds`; reference fixtures from `knack oracle all --realism real` (30 layouts each). Blank cells were not run. How to read it:
 - **Every skill cost between $0.002 and $0.12.** For context only (different benchmark, LIBERO-Pro), ASPIRE's published chart puts open-weight coding agents at about $40 to $55 per task.
