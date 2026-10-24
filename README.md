@@ -115,7 +115,7 @@ Sources: `results/*-real-stack-push`, `*-real-super-replicate`, `*-real-4tasks`,
 - **Under camera noise, Nemotron 3 Ultra is the strongest NVIDIA coder on 4 of 6 scenes, and fails push** (its rewrites kept adding clearance logic that drove the arm into its workspace limits). Super is the cheapest Nemotron that learns, and it is where practice visibly matters (section 1).
 - **The best open coder in these runs was DeepSeek V4.1 Flash**, not a Nemotron model. We report it because the point of the scoreboard is to measure, not to advertise.
 - Practised skills beat the hand-written reference on stack (Ultra 64%, Super 62%, DeepSeek 96%, Kimi 98% vs 57%).
-- Kimi K3 (the open-weight point on ASPIRE's chart) solved lift, stack and sort first time, at 10 to 40 times the cost of Nemotron Ultra, and never finished push: three attempts died on Token Factory request timeouts and one on HTTP 529 "System is overloaded" (`docs/FEEDBACK.md`).
+- Kimi K3 (the open-weight point on ASPIRE's chart) solved lift, stack and sort first time, at 10 to 40 times the cost of Nemotron Ultra, and never finished push: both attempts died on Token Factory request timeouts, and its first sort attempt hit HTTP 529 "System is overloaded" (`docs/FEEDBACK.md`).
 
 **3. With near-perfect perception the scenes are easy: Nemotron 3 Ultra programs all six for under 7 cents each, mostly first try.** Standard perception (about 2 mm pose noise):
 
