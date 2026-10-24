@@ -135,11 +135,12 @@ class Handler(BaseHTTPRequestHandler):
             reward = "vlm"
         else:
             instruction = ""
-        run_id = time.strftime("%Y%m%d-%H%M%S") + f"-{task}-{coder}-{reward}"
+        realism = "real" if str(body.get("realism", "sim")) == "real" else "sim"
+        run_id = time.strftime("%Y%m%d-%H%M%S") + f"-{task}-{coder}-{reward}" + ("-real" if realism == "real" else "")
         cmd = [sys.executable, "-m", "knack", "learn", task, "--run-id", run_id, "--coder", coder, "--reward", reward,
                "--rounds", str(int(body.get("rounds", 4))), "--n", str(int(body.get("n", 8))),
                "--eval", str(int(body.get("eval", 50))), "--budget", str(float(body.get("budget", 1.0))),
-               "--runs", str(self.runs_root)]
+               "--runs", str(self.runs_root), "--realism", realism]
         if instruction:
             cmd += ["--instruction", instruction]
         if body.get("mock"):

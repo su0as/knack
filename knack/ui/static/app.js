@@ -52,7 +52,7 @@ async function refreshRuns(selectNewest) {
 
 async function start() {
   const body = {
-    task: $("task").value, instruction: $("instruction").value, coder: $("coder").value, reward: $("reward").value,
+    task: $("task").value, instruction: $("instruction").value, coder: $("coder").value, reward: $("reward").value, realism: $("realism").value,
     n: +$("n").value, rounds: +$("rounds").value, eval: 50, budget: 1.0, mock: $("mock").checked,
   };
   $("go").disabled = true;
@@ -115,7 +115,7 @@ function render() {
   $("empty").classList.add("hidden");
   renderLoop(st);
   $("roundlbl").textContent = st.phase && st.phase.startsWith("evaluating") ? "EVAL" : `ROUND ${st.round || 0}/${st.rounds_max}`;
-  $("phase").textContent = `${st.phase || ""}  ${st.elapsed ? Math.round(st.elapsed) + " s" : ""}${st.mock ? "  (mock run)" : ""}${st.error ? "  " + st.error : ""}`;
+  $("phase").textContent = `${st.phase || ""}  ${st.elapsed ? Math.round(st.elapsed) + " s" : ""}${st.realism === "real" ? "  · camera-grade perception" : ""}${st.mock ? "  (mock run)" : ""}${st.error ? "  " + st.error : ""}`;
   $("spend").textContent = usd((st.cost || {}).total_usd);
   renderChips(st);
   renderTiles(st);
