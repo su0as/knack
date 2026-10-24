@@ -134,7 +134,7 @@ def strip_thinking(text: str) -> tuple[str, str]:
 class LLMClient:
     """Thin wrapper over the OpenAI SDK pointed at Nebius Token Factory."""
 
-    def __init__(self, ledger: Ledger, key: str | None = None, url: str | None = None, timeout: float = 300.0, max_retries: int = 4):
+    def __init__(self, ledger: Ledger, key: str | None = None, url: str | None = None, timeout: float = 300.0, max_retries: int = 6):
         self.ledger = ledger
         self.key = key or api_key()
         self.url = url or base_url()
@@ -192,7 +192,9 @@ class LLMClient:
                     break
             if n404 == len(bases):
                 raise LLMError(f"{m.id}: model not found at {bases}. Run `knack models` to list available IDs.") from last_err
-            time.sleep(min(30.0, 2.0 * (2 ** attempt)))
+            # 429/5xx/529 "System is overloaded" and timeouts: back off longer (live, 24 Oct 2026: Kimi K3 on
+            # Token Factory returned 529 and timed out; a short back-off gave up and killed the run)
+            time.sleep(min(120.0, 5.0 * (2 ** attempt)))
         raise LLMError(f"{m.id}: giving up after retries: {last_err}")
 
     def _finish(self, role: str, m: ModelInfo, resp, latency: float) -> Reply:
