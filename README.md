@@ -105,17 +105,17 @@ Sources: `results/20261023-101415-practice-gain`, repeat runs in `results/*-real
 |---|---|---|---|---|---|---|
 | lift | 88% · $0.011 | 84% · $0.014 | 88% · $0.004 | 100% · $0.004 | 100% · $0.080 | 100% |
 | place in circle | | 80% · $0.002 | 86% · $0.006 | | | 97% |
-| push puck | 0% · $0.011 | 82% · $0.028 (repeat: 64%) | 10% · $0.100 | 88% · $0.120 | no result (timeouts) | 87% |
+| push puck | 0% · $0.011 | 82% · $0.028 (repeat: 64%) | 10% · $0.100 | 88% · $0.120 | no result (timed out twice) | 87% |
 | stack | 4% · $0.012 | 62% · $0.045 (repeat: 62%) | 64% · $0.108 | 96% · $0.040 | 98% · $0.120 | 57% |
 | into the tray | | 88% · $0.002 | 98% · $0.005 | | | 97% |
-| sort by colour | 42% · $0.011 | 36% · $0.036 | 100% · $0.013 | 100% · $0.011 | no result (server overloaded) | 100% |
+| sort by colour | 42% · $0.011 | 36% · $0.036 | 100% · $0.013 | 100% · $0.011 | 100% · $0.176 (2nd attempt) | 100% |
 
 Sources: `results/*-real-stack-push`, `*-real-super-replicate`, `*-real-4tasks`, `*-real-kimi-nano-ds`; reference fixtures from `knack oracle all --realism real` (30 layouts each). Blank cells were not run. How to read it:
 - **Every skill cost between $0.002 and $0.12.** For context only (different benchmark, LIBERO-Pro), ASPIRE's published chart puts open-weight coding agents at about $40 to $55 per task.
 - **Under camera noise, Nemotron 3 Ultra is the strongest NVIDIA coder on 4 of 6 scenes, and fails push** (its rewrites kept adding clearance logic that drove the arm into its workspace limits). Super is the cheapest Nemotron that learns, and it is where practice visibly matters (section 1).
 - **The best open coder in these runs was DeepSeek V4.1 Flash**, not a Nemotron model. We report it because the point of the scoreboard is to measure, not to advertise.
 - Practised skills beat the hand-written reference on stack (Ultra 64%, Super 62%, DeepSeek 96%, Kimi 98% vs 57%).
-- Kimi K3 (the open-weight point on ASPIRE's chart) solved lift and stack but two of its four runs died on Token Factory request timeouts and an HTTP 529 "System is overloaded"; see `docs/FEEDBACK.md`.
+- Kimi K3 (the open-weight point on ASPIRE's chart) solved lift, stack and sort first time, at 10 to 40 times the cost of Nemotron Ultra, and never finished push: three attempts died on Token Factory request timeouts and one on HTTP 529 "System is overloaded" (`docs/FEEDBACK.md`).
 
 **3. With near-perfect perception the scenes are easy: Nemotron 3 Ultra programs all six for under 7 cents each, mostly first try.** Standard perception (about 2 mm pose noise):
 
