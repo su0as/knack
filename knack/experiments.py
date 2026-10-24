@@ -372,14 +372,14 @@ def figures(patterns: list[str], out_dir: str = "docs/figures") -> list[str]:
         ax.set_xscale("log")
         ax.set_ylim(0, 1.05)
         ax.set_xlabel("USD per verified skill (log scale)")
-        fig.text(0.01, 0.01, "Filled: Knack, camera-grade scenes, mean over the scenes each model ran (subsets differ). "
+        fig.text(0.01, 0.01, "Filled: Knack, camera-grade scenes, mean over the scenes each model ran (subsets differ).\n"
                  "Hollow: ASPIRE's published chart, LIBERO-Pro, a different benchmark (context only).", fontsize=7, color=grey)
         ax.set_ylabel("mean held-out success")
         ax.set_title("Cost of a verified robot skill on Token Factory (lime = NVIDIA Nemotron, red = other open models)", loc="left", fontsize=9)
         for s in ("top", "right"):
             ax.spines[s].set_visible(False)
         f = out / "cost_vs_success_camera.png"
-        fig.tight_layout(rect=(0, 0.04, 1, 1))
+        fig.tight_layout(rect=(0, 0.07, 1, 1))
         fig.savefig(f, dpi=170)
         plt.close(fig)
         written.append(str(f))
