@@ -1,0 +1,5 @@
+- First attempt: simple colour‑matching pick‑and‑place.
+- Home, observe, then for each cube find tray of same colour.
+- Move above object → descend to grasp height → grasp → lift → move above target tray → lower → release → lift.
+- Use the object's yaw to align the gripper fingers.
+- No recovery yet; will add retries and occlusion handling after seeing results.

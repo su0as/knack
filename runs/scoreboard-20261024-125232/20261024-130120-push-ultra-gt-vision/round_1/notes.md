@@ -1,0 +1,4 @@
+- First version: push the orange puck into the green zone by positioning behind it and pushing along the puck→target vector.
+- Puck radius 0.03m, too wide for gripper (max 5cm opening). Must push, not grasp.
+- Gripper fingertips reach 1.25cm below tool point; puck center at z≈0.01, so tool point at z≈0.015 contacts mid-height.
+- Need to re-observe after push to verify success; may need multiple pushes.

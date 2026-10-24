@@ -1,0 +1,6 @@
+- Added a safe “pre‑place” hover (≈2 cm above the tray) before descending to the release height; this eliminates the contact that caused most failures.
+- After releasing, the arm retraction to the pre‑place height is performed before the wait, preventing the gripper from colliding with the tray edge.
+- All `move_to` calls now wrap the motion in a try/except to catch `MotionError` (or any reachability issue) and fail gracefully.
+- Grasp verification is reinforced with a single retry if the held object does not match the intended name.
+- Low speed (0.07 m/s) is kept for all precise moves; the code stays well within the safety limits.
+- The helper is still modular and returns `False` with a log on any unrecoverable step.

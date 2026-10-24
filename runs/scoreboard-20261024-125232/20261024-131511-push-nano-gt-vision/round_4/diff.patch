@@ -1,0 +1,66 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -17,8 +17,8 @@
+         robot.log("Perception error: " + str(e))
+         return False
+ 
+-    px, py, pz = puck_pose['pos']
+-    tx, ty, tz = target_pose['pos']
++    px, py, _ = puck_pose['pos']
++    tx, ty, _ = target_pose['pos']
+ 
+     # --------------------------------------------------------------
+     # 2. Quick success test
+@@ -42,7 +42,7 @@
+     contact_z = 0.015                            # table‑level height
+ 
+     # --------------------------------------------------------------
+-    # 4. Workspace safety check
++    # 4. Workspace safety check for the contact point
+     # --------------------------------------------------------------
+     if not (0.04 <= contact_x <= 0.32 and
+             -0.26 <= contact_y <= 0.26 and
+@@ -73,16 +73,37 @@
+             return False
+ 
+     # --------------------------------------------------------------
+-    # 7. Push the puck (up to three iterations, larger distance)
++    # 7. Push the puck (bounded iterations, safety‑aware distance)
+     # --------------------------------------------------------------
+-    push_distance = 0.12                           # ≥0.12 m to meet tolerance
+     max_pushes = 3
++    desired_push = 0.12                           # ≥0.12 m to meet tolerance
+     for _ in range(max_pushes):
++        # Compute a push distance that keeps the new tool point inside the
++        # allowed workspace.  y‑component is clamped to the remaining margin.
++        # Remaining safe margin in y:
++        margin_pos = 0.26 - contact_y
++        margin_neg = -0.26 - contact_y
++        # Required dy for the full desired push:
++        dy_full = uy * desired_push
++        if dy_full > margin_pos:                     # would overshoot positive side
++            push_distance = margin_pos / uy if uy != 0 else 0.0
++        elif dy_full < margin_neg:                   # would overshoot negative side
++            push_distance = margin_neg / uy if uy != 0 else 0.0
++        else:
++            push_distance = desired_push
++
++        # Clamp to non‑negative and also respect x‑range
++        push_distance = max(0.0, push_distance)
++        new_x = contact_x + ux * push_distance
++        if not (0.04 <= new_x <= 0.32):
++            robot.log("Push would exceed x safe range – aborting.")
++            break
++
++        # Build the move_by command with the safe displacement
++        dx_move = ux * push_distance
++        dy_move = uy * push_distance
+         try:
+-            robot.move_by(dx=ux * push_distance,
+-                          dy=uy * push_distance,
+-                          dz=0,
+-                          speed=0.07)
++            robot.move_by(dx=dx_move, dy=dy_move, dz=0, speed=0.07)
+         except Exception as e:
+             robot.log("Push move failed: " + str(e))
+             break

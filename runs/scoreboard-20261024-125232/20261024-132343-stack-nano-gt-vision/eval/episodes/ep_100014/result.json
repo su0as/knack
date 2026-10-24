@@ -1,0 +1,290 @@
+{
+ "task": "stack",
+ "seed": 100014,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "xy_offset": 0.0004,
+  "z_gap": 0.0299,
+  "red_held": false,
+  "blue_z": 0.0147
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Moving to approach pose"
+  },
+  {
+   "t": 1.4,
+   "call": "move_to(0.157, 0.033, 0.050, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1564,
+     0.0326,
+     0.0498
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 1.4,
+   "call": "log",
+   "result": "Descending to grasp height"
+  },
+  {
+   "t": 1.94,
+   "call": "move_to(0.157, 0.033, 0.015, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1563,
+     0.0326,
+     0.0148
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 2.58,
+   "call": "move_to(0.157, 0.033, 0.015, yaw=0.592, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1565,
+     0.0326,
+     0.0149
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 2.58,
+   "call": "log",
+   "result": "Ensuring gripper is open"
+  },
+  {
+   "t": 2.98,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 2.98,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 3.48,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0279
+   }
+  },
+  {
+   "t": 3.48,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 3.48,
+   "call": "log",
+   "result": "Lifting the cube"
+  },
+  {
+   "t": 5.46,
+   "call": "move_to(0.112, -0.086, 0.065, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1116,
+     -0.0856,
+     0.0644
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 5.46,
+   "call": "log",
+   "result": "Descending to target centre"
+  },
+  {
+   "t": 5.76,
+   "call": "move_to(0.112, -0.086, 0.045, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1113,
+     -0.0853,
+     0.0446
+    ],
+    "error_m": 0.0009
+   }
+  },
+  {
+   "t": 5.76,
+   "call": "log",
+   "result": "Releasing"
+  },
+  {
+   "t": 6.16,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 6.16,
+   "call": "log",
+   "result": "Task completed"
+  }
+ ],
+ "n_calls": 18,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 6.66,
+ "wall_time": 1.13,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1565,
+     0.0326,
+     0.0149
+    ],
+    "yaw": 0.5916,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1119,
+     -0.0858,
+     0.0149
+    ],
+    "yaw": -0.2567,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 6.66,
+  "gripper": {
+   "pos": [
+    0.1119,
+    -0.0858,
+    0.0449
+   ],
+   "yaw": 0.9167,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1118,
+     -0.0855,
+     0.0446
+    ],
+    "yaw": -0.6542,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1119,
+     -0.0858,
+     0.0147
+    ],
+    "yaw": -0.2567,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1565,
+   "y": 0.0326,
+   "yaw": 0.5916,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1119,
+   "y": -0.0858,
+   "yaw": -0.2567,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 1,
+  "lookups": 2,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 0.01,
+  "pos_err_mm_p90": 0.02,
+  "yaw_err_deg_median": 0.0,
+  "by_camera": {
+   "overhead": 2,
+   "front": 0
+  },
+  "fixtures_mapped": [],
+  "fixture_err_mm": {}
+ }
+}

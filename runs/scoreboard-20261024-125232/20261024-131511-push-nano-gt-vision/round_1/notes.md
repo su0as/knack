@@ -1,0 +1,5 @@
+- Removed the forbidden `from robot.api import *` line; all robot calls are now made directly via the `robot` argument.
+- Added a simple reachability guard that checks the target pose against the safety layer limits before calling `move_to`; this avoids raising `MotionError` and lets the skill fail gracefully by returning `False`.
+- Simplified error handling: no `try/except MotionError` blocks are used – if the pose is out of bounds we abort early, otherwise we assume the move is allowed.
+- Kept the same high‑level logic (perceive, compute push direction, approach, light grasp, push, release) but made the code robust to the new import rule and safety constraints.
+- Updated comments to reflect the changes and kept the skill within the allowed import set (`math` only).

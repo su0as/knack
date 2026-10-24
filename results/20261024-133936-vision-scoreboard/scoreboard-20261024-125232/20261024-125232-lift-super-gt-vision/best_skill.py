@@ -1,0 +1,79 @@
+import math
+
+def run(robot):
+    """Pick up the red cube and hold it at least 5 cm above the table."""
+    MAX_RETRIES = 3
+    APPROACH_HEIGHT = 0.05   # metres above cube centre for safe approach
+    LIFT_HEIGHT = 0.065      # centre height needed for 5 cm clearance (0.05 + half_size)
+
+    def get_red_cube_pose():
+        """Return (x, y, z, yaw) of the red cube, or None if not visible."""
+        try:
+            obs = robot.observe()
+            cube = obs["objects"].get("red_cube")
+            if cube is None:
+                return None
+            pos = cube["pos"]
+            yaw = cube["yaw"]
+            return pos[0], pos[1], pos[2], yaw
+        except Exception:
+            return None
+
+    # 1. Start from a known safe pose
+    robot.home()
+
+    # 2. Locate the red cube (with retries if occluded)
+    cube_pose = None
+    for _ in range(MAX_RETRIES):
+        cube_pose = get_red_cube_pose()
+        if cube_pose is not None:
+            break
+        # Move gripper a bit to the side to uncover possible occlusion
+        current = robot.observe()["gripper"]["pos"]
+        robot.move_by(dx=0.05, dy=0.0, dz=0.0, speed=0.1)
+        robot.wait(0.2)
+    if cube_pose is None:
+        # Could not find the cube after trying to uncover it
+        return False
+
+    cx, cy, cz, cyaw = cube_pose
+    half_size = 0.015  # cube size is 0.03 m, half is 0.015 m
+
+    # 3. Move to a safe approach point above the cube
+    approach_z = cz + APPROACH_HEIGHT
+    try:
+        robot.move_to(cx, cy, approach_z, yaw=cyaw, speed=0.15)
+    except Exception:
+        return False
+
+    # 4. Descend slowly to grasp height (aim for cube centre)
+    grasp_z = cz  # centre of cube; finger pads will be around mid‑height
+    try:
+        robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.07)
+    except Exception:
+        return False
+
+    # 5. Close the fingers
+    if not robot.grasp():
+        # Grasp failed – open and try once more
+        robot.release()
+        robot.wait(0.1)
+        if not robot.grasp():
+            return False
+
+    # 6. Verify we are holding something
+    if robot.holding() != "red_cube":
+        return False
+
+    # 7. Lift to required clearance (centre height >= 0.065 m)
+    lift_z = cz + LIFT_HEIGHT
+    try:
+        robot.move_to(cx, cy, lift_z, yaw=cyaw, speed=0.15)
+    except Exception:
+        return False
+
+    # Optional: hold for a moment to demonstrate stability
+    robot.wait(0.2)
+
+    # Task succeeded if we are still holding the cube
+    return robot.holding() == "red_cube"

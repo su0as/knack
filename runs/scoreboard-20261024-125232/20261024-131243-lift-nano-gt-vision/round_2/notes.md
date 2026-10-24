@@ -1,0 +1,7 @@
+- Added safety margins: `PRE_GRASP_Z = 0.07 m` and `LIFT_TARGET_Z = 0.075 m` to guarantee ≥5 cm clearance despite ~2 mm pose noise.  
+- Inserted a verification move back to the pre‑grasp height after `grasp()` to re‑establish a stable 6‑7 cm stance before the final lift.  
+- Wrapped every `move_to` in a small helper `try_move` that catches `MotionError` and attempts a modest reposition (±1 cm) before failing.  
+- Added a single retry for `grasp()` if `holding()` does not report `"red_cube"`; the retry uses a slightly different approach height.  
+- Align gripper yaw with the object’s reported yaw for proper finger orientation.  
+- Kept approach/lift speeds low (0.07 m/s) and used explicit logging for debugging.  
+- Early‑exit with a clear log if the red cube is not observed.

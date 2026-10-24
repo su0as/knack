@@ -1,0 +1,58 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -1,6 +1,7 @@
+ import math
+ 
+ def run(robot):
++    """Push the puck into the target zone."""
+     # Helper to get pose safely, returning None if missing
+     def safe_get_pose(name):
+         try:
+@@ -32,8 +33,8 @@
+     ux, uy = dx / dist_xy, dy / dist_xy  # unit vector toward target
+ 
+     # 3. Choose a point behind the puck to start pushing
+-    # Offset behind puck by puck_radius + a small clearance
+-    offset = puck_radius + 0.015  # 1.5 cm clearance
++    # Offset behind puck by puck_radius + a small clearance (reduced to minimise pose error)
++    offset = puck_radius + 0.005  # 0.5 cm clearance
+     push_start = [
+         puck_pos[0] - ux * offset,
+         puck_pos[1] - uy * offset,
+@@ -42,17 +43,15 @@
+ 
+     # 4. Define pushing height (tool point height)
+     # Fingertips are 1.25 cm below tool point; we want them just above the puck's equator.
+-    # Puck centre z ≈ 0.01 (radius 0.015? actually height 0.02, centre at 0.01)
+-    # Set tool point z so fingertips are ~0.005 above table (safe contact)
+     push_z = 0.02  # a bit above table, will contact side of puck
+ 
+     try:
+-        # Move to a safe clearance above the push start
+-        robot.move_to(push_start[0], push_start[1], push_start[2] + 0.1, speed=0.2)
++        # Move to a safe clearance above the push start (increased clearance)
++        robot.move_to(push_start[0], push_start[1], push_start[2] + 0.15, speed=0.2)
+         # Lower to pushing height
+         robot.move_to(push_start[0], push_start[1], push_z, speed=0.05)
+-        # Push forward along the direction for a distance
+-        push_distance = 0.08  # 8 cm push, should be enough to move puck toward target
++        # Push forward along the direction for a distance (increased push distance)
++        push_distance = 0.12  # 12 cm push
+         push_end = [
+             push_start[0] + ux * push_distance,
+             push_start[1] + uy * push_distance,
+@@ -66,10 +65,11 @@
+         return False
+ 
+     # 5. Retract slightly to avoid dragging puck back
++    # Move forward along push direction and lift up
+     retract = [
+-        push_end[0] - ux * 0.02,
+-        push_end[1] - uy * 0.02,
+-        push_end[2]
++        push_end[0] + ux * 0.02,
++        push_end[1] + uy * 0.02,
++        push_end[2] + 0.05
+     ]
+     try:
+         robot.move_to(retract[0], retract[1], retract[2], speed=0.05)

@@ -1,0 +1,8 @@
+- The red cube is always present but its pose has ~2 mm noise; we must query it with `get_pose` for a cleaner target.
+- Align the gripper’s closing direction with the cube’s reported yaw so the fingers can slide under its faces.
+- Move to a safe “pre‑grasp” height a few centimeters above the cube (z≈0.06 m) before descending.
+- After a successful `grasp()`, lift to at least z=0.06 m (≈5 cm above the table) before returning.
+- Wrap every `move_to` in a `try/except MotionError` and fall back to a small reposition if the target is unreachable.
+- Keep speeds low (≈0.07 m/s) for approach and lift to stay within the time budget and avoid overshoot.
+- Verify `robot.holding()` after `grasp()`; retry once if the object isn’t held.
+- Use the observed object name (`red_cube`) directly; if it’s missing we abort safely.

@@ -1,0 +1,108 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -8,7 +8,7 @@
+     """
+ 
+     # --------------------------------------------------------------
+-    # 1. Perceive the scene (with guarded perception)
++    # 1. Perceive the scene (guarded perception)
+     # --------------------------------------------------------------
+     try:
+         puck_pose = robot.get_pose('puck')
+@@ -64,10 +64,12 @@
+     # --------------------------------------------------------------
+     # 6. Light contact – ensure we are holding the puck
+     # --------------------------------------------------------------
++    # tiny lateral nudge to improve finger‑puck contact
++    robot.move_by(dx=0.001, dy=0, speed=0.07)
+     robot.grasp()                                 # close fingers fully
+     if robot.holding() is None:
+-        # tiny downward press to guarantee finger‑puck contact
+-        robot.move_by(dz=-0.001, speed=0.07)
++        # deeper downward press to guarantee contact
++        robot.move_by(dz=-0.002, speed=0.07)
+         if robot.holding() is None:
+             robot.log("Failed to acquire contact after press")
+             return False
+@@ -78,52 +80,64 @@
+     max_pushes = 3
+     desired_push = 0.12                           # ≥0.12 m to meet tolerance
+     for _ in range(max_pushes):
+-        # Compute a push distance that keeps the new tool point inside the
+-        # allowed workspace.  y‑component is clamped to the remaining margin.
+-        # Remaining safe margin in y:
++        # ---- compute safe push distance respecting x‑margin ----
++        # remaining x margin in the direction of ux
++        if abs(ux) > 1e-6:
++            if ux > 0:
++                max_x_push = (0.32 - contact_x) / ux
++            else:
++                max_x_push = (0.04 - contact_x) / ux
++        else:
++            max_x_push = float('inf')
++
++        # y‑margin check (same logic as before)
+         margin_pos = 0.26 - contact_y
+         margin_neg = -0.26 - contact_y
+-        # Required dy for the full desired push:
+         dy_full = uy * desired_push
+-        if dy_full > margin_pos:                     # would overshoot positive side
+-            push_distance = margin_pos / uy if uy != 0 else 0.0
+-        elif dy_full < margin_neg:                   # would overshoot negative side
+-            push_distance = margin_neg / uy if uy != 0 else 0.0
++        if dy_full > margin_pos:                     # would overshoot positive y
++            push_distance = margin_pos / uy if abs(uy) > 1e-6 else 0.0
++        elif dy_full < margin_neg:                   # would overshoot negative y
++            push_distance = margin_neg / uy if abs(uy) > 1e-6 else 0.0
+         else:
+             push_distance = desired_push
+ 
+-        # Clamp to non‑negative and also respect x‑range
++        # cap by the x‑margin and ensure non‑negative
++        push_distance = min(push_distance, max_x_push)
+         push_distance = max(0.0, push_distance)
+-        new_x = contact_x + ux * push_distance
++
++        # displacement for this push
++        dx_move = ux * push_distance
++        dy_move = uy * push_distance
++        new_x = contact_x + dx_move
++
++        # final x‑range safety check
+         if not (0.04 <= new_x <= 0.32):
+             robot.log("Push would exceed x safe range – aborting.")
+             break
+ 
+-        # Build the move_by command with the safe displacement
+-        dx_move = ux * push_distance
+-        dy_move = uy * push_distance
++        # ---- execute the push ----
+         try:
+             robot.move_by(dx=dx_move, dy=dy_move, dz=0, speed=0.07)
+         except Exception as e:
+             robot.log("Push move failed: " + str(e))
+             break
+ 
+-        # Verify new pose of the puck
++        # ---- verify new puck pose ----
+         try:
+             new_pose = robot.get_pose('puck')
+         except Exception as e:
+             robot.log("Perception error during push: " + str(e))
+             break
+ 
+-        # Check if we are inside the target circle
++        # success test
+         if math.hypot(new_pose['pos'][0] - tx, new_pose['pos'][1] - ty) < 0.04:
+-            # Success path: release and final verification
++            # release and final verification
+             robot.release()
+             final = robot.get_pose('puck')
+             if math.hypot(final['pos'][0] - tx, final['pos'][1] - ty) < 0.04:
+                 return True
+             else:
+-                # Fell just short – treat as failure but keep cleanup
++                # fell just short – treat as failure but continue cleanup
+                 break
+ 
+     # --------------------------------------------------------------

@@ -1,0 +1,5 @@
+- Increased the clearance above the tray from 0.020 m to 0.030 m to avoid collisions when the gripper is already holding a cube.  
+- Raised the initial approach height for the target object from +0.005 m to +0.010 m, giving more room before the safety‑limited descent.  
+- Inserted a brief `robot.wait(0.1)` immediately after `robot.release()` before the micro‑adjust nudge, allowing the cube to settle and stabilising the hold state.  
+- Added a hold‑verification check just before release (after reaching release height) to abort if the object is no longer held, preventing early false failures.  
+- Preserved all retry loops, logging, and the overall pick‑and‑place flow to keep previously successful behaviours intact.

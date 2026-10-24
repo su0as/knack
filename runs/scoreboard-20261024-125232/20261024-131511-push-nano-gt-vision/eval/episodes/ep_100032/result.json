@@ -1,0 +1,265 @@
+{
+ "task": "push",
+ "seed": 100032,
+ "error": {
+  "type": "SafetyViolation",
+  "message": "target y=-0.310 m is outside the safe workspace [-0.26, 0.26] by 0.050 m",
+  "traceback": "  skill.py line 82, in run: robot.move_by(dx=ux * push_distance,\nSafetyViolation: target y=-0.310 m is outside the safe workspace [-0.26, 0.26] by 0.050 m"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.1003,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "get_pose('puck')",
+   "result": {
+    "pos": [
+     0.1363,
+     0.0505,
+     0.0099
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 0.0,
+   "call": "get_pose('target')",
+   "result": {
+    "pos": [
+     0.1343,
+     -0.0523,
+     0.0
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 1.96,
+   "call": "move_to(0.171, 0.050, 0.015, yaw=-1.590, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1712,
+     0.0498,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.46,
+   "call": "grasp()",
+   "result": {
+    "holding": "puck",
+    "opening": 0.0054
+   }
+  },
+  {
+   "t": 2.46,
+   "call": "holding()",
+   "result": "puck"
+  },
+  {
+   "t": 4.2,
+   "call": "move_to(0.169, -0.070, 0.015, yaw=1.552, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1691,
+     -0.0701,
+     0.015
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 4.2,
+   "call": "get_pose('puck')",
+   "result": {
+    "pos": [
+     0.1319,
+     0.0484,
+     0.0099
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 5.94,
+   "call": "move_to(0.167, -0.190, 0.015, yaw=1.551, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1668,
+     -0.1902,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 5.94,
+   "call": "get_pose('puck')",
+   "result": {
+    "pos": [
+     0.1319,
+     0.0484,
+     0.0099
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 5.94,
+   "call": "move_to(0.164, -0.310, 0.015, yaw=1.551, speed=0.070)",
+   "error": "SAFETY HALT: target y=-0.310 m is outside the safe workspace [-0.26, 0.26] by 0.050 m"
+  }
+ ],
+ "n_calls": 10,
+ "printed": [],
+ "safety_events": [
+  {
+   "t": 5.94,
+   "kind": "workspace",
+   "action": "halt",
+   "detail": "y=-0.310 outside [-0.26, 0.26] by 0.050 m"
+  }
+ ],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 1
+ },
+ "halted": "target y=-0.310 m is outside the safe workspace [-0.26, 0.26] by 0.050 m",
+ "sim_time": 6.44,
+ "wall_time": 0.9,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1351,
+     0.0504,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1328,
+     -0.0519,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 6.44,
+  "gripper": {
+   "pos": [
+    0.1668,
+    -0.1901,
+    0.015
+   ],
+   "yaw": 1.5513,
+   "opening": 0.0,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1317,
+     0.0484,
+     0.0099
+    ],
+    "yaw": -0.0839,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1328,
+     -0.0519,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1328,
+   "y": -0.0519,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1351,
+   "y": 0.0504,
+   "yaw": 0.5448,
+   "fp": 0.035
+  }
+ },
+ "perception": {
+  "calls": 4,
+  "lookups": 4,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 0.71,
+  "pos_err_mm_p90": 1.19,
+  "yaw_err_deg_median": 0.0,
+  "by_camera": {
+   "overhead": 4,
+   "front": 0
+  },
+  "fixtures_mapped": [
+   "target"
+  ],
+  "fixture_err_mm": {
+   "target": 1.51
+  }
+ }
+}

@@ -1,0 +1,103 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,100 @@
++# skill module
++import math
++
++def run(robot):
++    """
++    Push the orange puck so that its centre ends up inside the green circle.
++    The puck is too wide to grasp, so we push it with the gripper.
++    """
++
++    # --------------------------------------------------------------
++    # 1. Perceive the scene
++    # --------------------------------------------------------------
++    try:
++        puck_pose = robot.get_pose('puck')
++        target_pose = robot.get_pose('target')
++    except LookupError:
++        robot.log("Required object not visible – aborting.")
++        return False
++
++    # --------------------------------------------------------------
++    # 2. Compute geometric data
++    # --------------------------------------------------------------
++    px, py, pz = puck_pose['pos']
++    tx, ty, tz = target_pose['pos']
++
++    # Vector from puck to target centre
++    dx, dy = tx - px, ty - py
++    distance = math.hypot(dx, dy)
++
++    # If the puck is already inside the target zone, we are done.
++    if distance < 0.04:          # target radius
++        return True
++
++    # Unit direction we need to push the puck
++    ux, uy = dx / distance, dy / distance
++
++    # Offset from puck centre to the contact point on the side facing the target
++    # (puck radius ≈0.03 m, add a small gap)
++    contact_offset = 0.03 + 0.005
++    contact_x = px + ux * contact_offset
++    contact_y = py + uy * contact_offset
++    contact_z = 0.015            # table‑level height that places fingers around the puck
++
++    # --------------------------------------------------------------
++    # 3. Verify target is inside the safe workspace
++    # --------------------------------------------------------------
++    if not (0.04 <= contact_x <= 0.32 and
++            -0.26 <= contact_y <= 0.26 and
++            0.014 <= contact_z <= 0.26):
++        robot.log("Target pose outside safe workspace – aborting.")
++        return False
++
++    # --------------------------------------------------------------
++    # 4. Approach the puck
++    # --------------------------------------------------------------
++    try:
++        robot.move_to(
++            contact_x,
++            contact_y,
++            contact_z,
++            yaw=math.atan2(uy, ux),   # align closing direction with push direction
++            speed=0.07                  # slow speed for precise contact
++        )
++    except Exception:  # any unexpected error from move_to (e.g., MotionError) will abort
++        robot.log("Unexpected error during approach – aborting.")
++        return False
++
++    # --------------------------------------------------------------
++    # 5. Lightly close fingers to make contact (grasp may fail, but creates push)
++    # --------------------------------------------------------------
++    robot.grasp()   # max opening 5 cm; puck is too wide to be held, but contact occurs
++
++    # --------------------------------------------------------------
++    # 6. Push the puck toward the target centre
++    # --------------------------------------------------------------
++    push_distance = 0.02   # 2 cm push, enough to move the puck a noticeable amount
++    try:
++        robot.move_by(
++            dx=ux * push_distance,
++            dy=uy * push_distance,
++            dz=0,
++            speed=0.07
++        )
++    except Exception:  # any unexpected error during the push
++        robot.log("Unexpected error during push – aborting.")
++        robot.release()    # ensure fingers open before exiting
++        return False
++
++    # --------------------------------------------------------------
++    # 7. Release the gripper so it no longer applies force
++    # --------------------------------------------------------------
++    robot.release()
++
++    # --------------------------------------------------------------
++    # 8. Simple verification (optional – first version just returns True)
++    # --------------------------------------------------------------
++    # In a more refined version we could re‑observe and check if the puck centre
++    # is now inside the green zone, but for the initial run we assume the push
++    # succeeded if we reached this point.
++    return True

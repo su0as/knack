@@ -1,0 +1,192 @@
+{
+ "round": 2,
+ "n": 8,
+ "k": 8,
+ "success": 1.0,
+ "gt_k": 8,
+ "self_k": 8,
+ "errors": 0,
+ "wall_s": 8.9,
+ "usd_cum": 0.00901,
+ "code": "round_2/skill.py",
+ "diff": "round_2/diff.patch",
+ "lines": 95,
+ "notes": "- Adjusted push height (push_z) to 0.02\u202fm to contact the puck\u2019s side without slipping.\n- Reduced the clearance offset (puck_radius + 0.005\u202fm) to minimise pose error while still avoiding collision.\n- Increased push distance to 0.12\u202fm to give the puck enough momentum to reach the target zone.\n- Added explicit try\u2011except blocks around all move_to calls and logged any motion errors before homing and returning False.\n- Early\u2011exit if puck or target missing from observation, and a final verification step that re\u2011observes the scene and checks the puck\u2019s distance to the target centre.",
+ "perception": {
+  "episodes": 8,
+  "lookups": 16,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "median_of_episode_median_err_mm": 0.5
+ },
+ "episodes": [
+  {
+   "seed": 2000,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0128,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2001,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0293,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2002,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0261,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2003,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0278,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2004,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0185,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0293,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0242,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2007,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0169,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

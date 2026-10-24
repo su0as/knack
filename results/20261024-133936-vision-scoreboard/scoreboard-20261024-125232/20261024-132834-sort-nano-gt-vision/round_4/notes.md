@@ -1,0 +1,6 @@
+- Increased the Z‑adjustment step in `safe_move` from 0.001 m to 0.005 m (and kept the speed‑halving logic) so the gripper can clear higher obstacles that were blocking motion.
+- Added a micro‑adjustment after each release: a slow move to the tray centre at **+0.001 m** to nudge the cube fully inside before the final retreat.
+- Strengthened the grasp‑retry logic: after a failed first `grasp()` we perform a small lift‑and‑lower “shake‑off” (via `safe_move`) before the second attempt, then verify that the object is actually held.
+- Kept all retry loops, logging, and the overall pick‑and‑place flow unchanged, preserving behaviours that already succeeded.
+- Slowed the critical descent and micro‑adjust moves to 0.04 m/s (or 0.03 m/s for the nudge) to avoid contact‑related failures.
+- All changes are incremental and do not alter the successful parts of the previous version.

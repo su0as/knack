@@ -1,0 +1,6 @@
+- Added explicit safety‑range clamping of the push displacement (dx, dy) before calling `move_by`; the y‑component is limited to stay inside the allowed [-0.26, 0.26] band and the resulting x‑position is checked against [0.04, 0.32]. If the required move would breach these limits the episode aborts, eliminating the SafetyViolation failures.
+- Replaced the fixed 0.12 m push with a computed admissible `push_distance` that respects the current contact pose’s workspace bounds, while still targeting the ≥0.12 m total displacement needed to meet the 0.035 m tolerance.
+- Wrapped every `get_pose('puck')` inside the push loop with a try/except guard; perception loss now logs the episode and aborts cleanly instead of crashing.
+- Kept the light‑contact logic (tiny downward press after `grasp()`) and the verification of `holding()`. If the puck is not held after the press the episode is aborted, fixing the gripper‑contact failures.
+- All motion calls (`move_to`, `move_by`) are now enclosed in `try/except` blocks to catch `MotionError` and any other exception, log the failure and perform a clean release before returning `False`.
+- The core workflow (quick‑success test, side‑on offset, approach yaw, approach, light contact, push loop, final verification, cleanup) is unchanged, preserving all previously successful behaviours.

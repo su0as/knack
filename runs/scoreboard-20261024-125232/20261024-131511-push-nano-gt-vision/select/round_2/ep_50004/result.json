@@ -1,0 +1,267 @@
+{
+ "task": "push",
+ "seed": 50004,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.1041,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "get_pose('puck')",
+   "result": {
+    "pos": [
+     0.1516,
+     -0.0789,
+     0.0099
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 0.0,
+   "call": "get_pose('target')",
+   "result": {
+    "pos": [
+     0.1599,
+     0.0253,
+     0.0
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 2.22,
+   "call": "move_to(0.117, -0.076, 0.015, yaw=1.491, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1167,
+     -0.0761,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.72,
+   "call": "grasp()",
+   "result": {
+    "holding": "puck",
+    "opening": 0.0071
+   }
+  },
+  {
+   "t": 2.72,
+   "call": "holding()",
+   "result": "puck"
+  },
+  {
+   "t": 3.48,
+   "call": "move_to(0.121, -0.026, 0.015, yaw=1.491, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1207,
+     -0.0262,
+     0.0149
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.48,
+   "call": "get_pose('puck')",
+   "result": {
+    "pos": [
+     0.157,
+     -0.0787,
+     0.0099
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 4.24,
+   "call": "move_to(0.125, 0.024, 0.015, yaw=1.491, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1247,
+     0.0237,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 4.24,
+   "call": "get_pose('puck')",
+   "result": {
+    "pos": [
+     0.157,
+     -0.0787,
+     0.0099
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 4.64,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 4.64,
+   "call": "get_pose('puck')",
+   "result": {
+    "pos": [
+     0.157,
+     -0.0787,
+     0.0099
+    ],
+    "yaw": 0.0
+   }
+  }
+ ],
+ "n_calls": 11,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 5.14,
+ "wall_time": 1.05,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1516,
+     -0.0791,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1587,
+     0.0253,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 5.14,
+  "gripper": {
+   "pos": [
+    0.1246,
+    0.0236,
+    0.0149
+   ],
+   "yaw": 1.4915,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1567,
+     -0.0787,
+     0.0099
+    ],
+    "yaw": -0.0372,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1587,
+     0.0253,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1587,
+   "y": 0.0253,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1516,
+   "y": -0.0791,
+   "yaw": -0.2357,
+   "fp": 0.035
+  }
+ },
+ "perception": {
+  "calls": 5,
+  "lookups": 5,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 0.29,
+  "pos_err_mm_p90": 0.29,
+  "yaw_err_deg_median": 0.0,
+  "by_camera": {
+   "overhead": 5,
+   "front": 0
+  },
+  "fixtures_mapped": [
+   "target"
+  ],
+  "fixture_err_mm": {
+   "target": 1.18
+  }
+ }
+}

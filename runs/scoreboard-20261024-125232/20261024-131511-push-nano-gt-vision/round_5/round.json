@@ -1,0 +1,196 @@
+{
+ "round": 5,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 0,
+ "errors": 1,
+ "wall_s": 8.2,
+ "usd_cum": 0.00813,
+ "code": "round_5/skill.py",
+ "diff": "round_5/diff.patch",
+ "lines": 148,
+ "notes": "- Fixed contact\u2011acquisition failures: added a tiny lateral nudge before closing the gripper and increased the downward press depth; double\u2011checked `holding()` after the press and abort cleanly if still missing.\n- Added full workspace clamping for every push: compute the maximum admissible push distance using both x\u2011 and y\u2011margins, cap it, and enforce `0.04\u202f\u2264\u202fnew_x\u202f\u2264\u202f0.32`. Any violation aborts the episode instead of raising a SafetyViolation.\n- Prevented cumulative drift by capping `push_distance` with the remaining x\u2011margin each iteration and by resetting the push logic when the margin is exhausted.\n- Wrapped all `move_to`/`move_by` calls in `try/except` blocks, logging failures and performing a clean release before returning `False`.\n- Minor robustness improvements: guard division by zero, use explicit non\u2011negative clamping, and keep the overall workflow unchanged.",
+ "perception": {
+  "episodes": 8,
+  "lookups": 32,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "median_of_episode_median_err_mm": 0.38
+ },
+ "episodes": [
+  {
+   "seed": 5000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0636,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0982,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.1021,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.1135,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "SafetyViolation",
+    "message": "target x=0.006 m is outside the safe workspace [0.04, 0.32] by 0.034 m",
+    "traceback": "  skill.py line 120, in run: robot.move_by(dx=dx_move, dy=dy_move, dz=0, speed=0.07)\nSafetyViolation: target x=0.006 m is outside the safe workspace [0.04, 0.32] by 0.034 m"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0912,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.073,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.1203,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.117,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

@@ -1,0 +1,64 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -1,4 +1,4 @@
+-# skill module – fixed version
++# skill module – updated version
+ # -------------------------------------------------
+ # Allowed imports
+ import math
+@@ -52,8 +52,8 @@
+             )
+             # reduce speed but keep it above the safety minimum
+             speed = max(0.04, speed * 0.5)
+-            # lower the target a tiny amount to avoid the obstacle
+-            cur_z -= 0.001
++            # lower the target a bit more to clear the obstacle
++            cur_z -= 0.005
+             z = cur_z
+         robot.log("move_to failed after retries")
+         return False
+@@ -75,13 +75,7 @@
+         # ---- first grasp attempt ----
+         if not robot.grasp():
+             robot.log("grasp failed, retrying")
+-            if not robot.grasp():
+-                return False
+-
+-        # ---- verify hold; if not held, shake‑off and retry once ----
+-        if robot.holding() != obj_name:
+-            robot.log("hold verification failed – shaking off")
+-            # lift slightly, then lower again to break partial contact
++            # shake‑off: lift slightly then lower again
+             shake = list(obj['pos'])
+             shake[2] += 0.01
+             if not safe_move(*shake, speed=0.05):
+@@ -89,9 +83,15 @@
+             if not robot.grasp():
+                 robot.log("grasp after shake failed")
+                 return False
++            # after shake we must be holding the object
+             if robot.holding() != obj_name:
+                 robot.log("still not holding after shake")
+                 return False
++
++        # ---- verify hold (should be true now) ----
++        if robot.holding() != obj_name:
++            robot.log("hold verification failed")
++            return False
+ 
+         # ---- hover above the tray centre (clearance) ----
+         clearance = 0.020                         # 2 cm above tray
+@@ -112,6 +112,13 @@
+         # ---- release the object ----
+         robot.release()
+ 
++        # ---- micro‑adjust: nudge cube into tray before retracting ----
++        if not safe_move(
++            tray['pos'][0], tray['pos'][1],
++            tray['pos'][2] + 0.001, speed=0.03
++        ):
++            return False
++
+         # ---- retract to clearance before waiting ----
+         if not safe_move(
+             tray['pos'][0], tray['pos'][1],

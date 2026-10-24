@@ -1,0 +1,248 @@
+{
+ "round": 1,
+ "n": 8,
+ "k": 8,
+ "success": 1.0,
+ "gt_k": 8,
+ "self_k": 8,
+ "errors": 0,
+ "wall_s": 13.7,
+ "usd_cum": 0.00663,
+ "code": "round_1/skill.py",
+ "diff": "round_1/diff.patch",
+ "lines": 136,
+ "notes": "- First version: need to pick up each cube and place in matching colored tray\n- Cubes are 3cm, center at z\u22480.015 on table; grasp at z\u22480.015 (tool point) puts fingers at mid-height\n- Trays have inner half-size 0.044m (8.8cm square), walls 2.5cm high\n- Must handle perception noise, verify grasps, retry on failure, catch MotionError\n- Approach: observe \u2192 for each color: move above cube \u2192 lower \u2192 grasp \u2192 verify \u2192 lift \u2192 move above tray \u2192 lower \u2192 release \u2192 verify",
+ "perception": {
+  "episodes": 8,
+  "lookups": 80,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "median_of_episode_median_err_mm": 0.04
+ },
+ "episodes": [
+  {
+   "seed": 1000,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0034,
+    "red_cube_tray_dy": 0.0081,
+    "red_cube_z": 0.0189,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0039,
+    "blue_cube_tray_dy": 0.002,
+    "blue_cube_z": 0.0189,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1001,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0037,
+    "red_cube_tray_dy": 0.0073,
+    "red_cube_z": 0.0189,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0045,
+    "blue_cube_tray_dy": 0.0064,
+    "blue_cube_z": 0.0189,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1002,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0035,
+    "red_cube_tray_dy": 0.0036,
+    "red_cube_z": 0.0189,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0075,
+    "blue_cube_tray_dy": 0.0074,
+    "blue_cube_z": 0.0189,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1003,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0051,
+    "red_cube_tray_dy": 0.0033,
+    "red_cube_z": 0.0189,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0043,
+    "blue_cube_tray_dy": 0.008,
+    "blue_cube_z": 0.0189,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1004,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0056,
+    "red_cube_tray_dy": 0.0049,
+    "red_cube_z": 0.0189,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0047,
+    "blue_cube_tray_dy": 0.0066,
+    "blue_cube_z": 0.0189,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1005,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0067,
+    "red_cube_tray_dy": 0.0081,
+    "red_cube_z": 0.0189,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0023,
+    "blue_cube_tray_dy": 0.0028,
+    "blue_cube_z": 0.0189,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1006,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0009,
+    "red_cube_tray_dy": 0.0026,
+    "red_cube_z": 0.0189,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0006,
+    "blue_cube_tray_dy": 0.0059,
+    "blue_cube_z": 0.0189,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 1007,
+   "reward": true,
+   "success_gt": true,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.008,
+    "red_cube_tray_dy": 0.0055,
+    "red_cube_z": 0.0189,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0009,
+    "blue_cube_tray_dy": 0.0014,
+    "blue_cube_z": 0.0189,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

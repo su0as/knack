@@ -1,0 +1,151 @@
+{
+ "run_id": "20261024-125320-push-super-gt-vision",
+ "task": "push",
+ "title": "Push puck",
+ "instruction": "Push the orange puck so that its centre ends up inside the green circle. The puck is too wide to grasp.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "vision",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 9.0,
+   "usd_cum": 0.00374,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 95,
+   "perception": {
+    "episodes": 8,
+    "lookups": 16,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.41
+   },
+   "summary": "**Mode 1: Short stop on approach (55 episodes)**\n*Root cause:* The `move_to` to `push_z` (line 53) or the push trajectory (line 61) encounters contact/joint limits before reaching the target z-height or push_end. The robot stops short, leaving the puck under-pushed.\n*Fix:* Raise `push_start[2]` clearance on line 41 (e.g., `+0.15` instead of relying on `+0.1` on line 51) and increase `push_distance` on line 55 to `0.12` m to ensure full trajectory execution.\n\n**Mode 2: Puck misses target laterally (30 episodes)**\n*Root cause:* The offset behind the puck (line 36-41) uses `puck_radius + 0.015`. If the puck pose estimate has median error ~0.3 mm (observed), the push start offset error compounds, steering the puck off the direct line to the target.\n*Fix:* Reduce the offset to `puck_radius + 0.005` on line 36 to minimise start-position error, and verify `target_info[\"radius\"]` matches the green circle size (currently tolerance 0.035 m vs. puck radius 0.03 m).\n\n**Mode 3: Retraction drag (15 episodes)**\n*Root cause:* Retraction on lines 69-77 pulls the puck backward along the push direction (`- ux * 0.02`), potentially offsetting it away from the target before homing.\n*Fix:* Change retraction to `push_end[0] + ux * 0.02` and `push_end[1] + uy * 0.02` to push the robot away from the puck, or set retract z to `push_end[2] + 0.05` to lift clear."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 8,
+   "success": 1.0,
+   "gt_k": 8,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 8.9,
+   "usd_cum": 0.00901,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 95,
+   "perception": {
+    "episodes": 8,
+    "lookups": 16,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.5
+   }
+  }
+ ],
+ "best_round": 2,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 2,
+  "chosen": 2,
+  "rows": [
+   {
+    "round": 2,
+    "practice": "8/8",
+    "recheck": "15/16",
+    "total_k": 23,
+    "total_n": 24
+   },
+   {
+    "round": 1,
+    "practice": "0/8",
+    "recheck": "0/16",
+    "total_k": 0,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 49,
+  "p": 0.98,
+  "lo": 0.895043135282,
+  "hi": 0.996460831911,
+  "source": "gt",
+  "best_round": 2,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 10.99,
+  "self_report_true": 50,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100035,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0395,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100035/end_front.jpg"
+   }
+  ],
+  "perception": {
+   "episodes": 50,
+   "lookups": 100,
+   "misses": 0,
+   "detection_rate": 1.0,
+   "median_of_episode_median_err_mm": 0.41
+  }
+ },
+ "models": {
+  "coder": {
+   "alias": "super",
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "nvidia": true,
+   "calls": 4,
+   "prompt_tokens": 10677,
+   "completion_tokens": 5994,
+   "usd": 0.008598,
+   "price_in": 0.3,
+   "price_out": 0.9
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 1,
+   "prompt_tokens": 5237,
+   "completion_tokens": 424,
+   "usd": 0.000416,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.009014,
+  "compute_usd": 0.0,
+  "total_usd": 0.009014,
+  "calls": 5,
+  "prompt_tokens": 15914,
+  "completion_tokens": 6418,
+  "compute_seconds": 157.96,
+  "backend": "local"
+ },
+ "wall_time_s": 287.7,
+ "practice_episodes": 16,
+ "created": "2026-10-24 12:58:07",
+ "skill_file": "best_skill.py"
+}

@@ -1,0 +1,317 @@
+{
+ "run_id": "20261024-130120-push-ultra-gt-vision",
+ "task": "push",
+ "title": "Push puck",
+ "instruction": "Push the orange puck so that its centre ends up inside the green circle. The puck is too wide to grasp.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "vision",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 11.3,
+   "usd_cum": 0.00712,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 101,
+   "perception": {
+    "episodes": 8,
+    "lookups": 32,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 8.44
+   },
+   "summary": "**Mode 1: Short stops at start (35%)**\n*Episodes: 1000, 1003, 1005*\n*Root cause:* `move_to` at line 49/52 stops short due to collision with the puck edge or workspace wall when starting `puck_radius + clearance` back. The robot cannot reach the calculated start point.\n*Fix:* Increase `clearance` from 0.02m to 0.04m (line 26) to give the robot more room to approach without hitting the puck.\n\n**Mode 2: Short stops during push (40%)**\n*Episodes: 1001, 1004, 1006, 1007*\n*Root cause:* `move_to` at line 56 stops short while pushing forward. The low speed (0.05) and tight workspace clamps (lines 41-42) cause the robot to contact the puck edge or target rim before reaching `end_x/end_y`.\n*Fix:* Raise `approach_z` from 0.015m to 0.025m (line 45) to lift the tool over minor obstacles during the push phase.\n\n**Mode 3: Overshoot / missed target (25%)**\n*Episodes: 1002*\n*Root cause:* Push distance `push_dist` (line 31) adds `puck_radius + 0.02`, but the puck may not transfer enough momentum, or the final position check (line 67) uses `target_radius` which may be too tight for the puck's final resting position variance.\n*Fix:* Add a small nudge: after the push, execute a second short move `+0.01m` along `ux/uy` (after line 58) to ensure the puck centre crosses the threshold."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 12.8,
+   "usd_cum": 0.02141,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 100,
+   "perception": {
+    "episodes": 8,
+    "lookups": 48,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.41
+   },
+   "summary": "**Mode 1: Overshoot & undershoot (5 episodes: 2000, 2001, 2005, 2006, 2007)**\n*Root cause:* The `push_dist` formula (line 55) adds a fixed `0.02` margin regardless of distance. For short pushes this margin is disproportionate, sending the puck past the target. For long pushes the puck stops short due to friction/wear.\n*Fix:* Replace the fixed `0.02` with a proportional margin, e.g., `0.02 * (dist / 0.3)`, so the overshoot scales with travel distance.\n\n**Mode 2: Gripper collision / grasp failure (1 episode: 2002)**\n*Root cause:* The puck is too wide to grasp, yet the code attempts `move_to` into the puck's start zone. The gripper collides, the puck is lifted and carried (shown by \"gripper holding puck\"), then dropped far from target (line 51 start position uses `puck_radius + CLEARANCE`).\n*Fix:* Remove the initial `move_to` to start position (lines 64-71). Begin each attempt directly at the push phase, or use a wider `CLEARANCE` value to keep the robot clear of the puck's silhouette."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 2,
+   "wall_s": 12.6,
+   "usd_cum": 0.06929,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 105,
+   "perception": {
+    "episodes": 8,
+    "lookups": 44,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.52
+   },
+   "summary": "**Mode 1: Reach limit (40%)**\n*Episodes: 3003, 3005, 3001, 3004*\n*Root cause:* Start positions clamp to `0.04..0.32` (lines 53\u201154) but target directions can push `start_x` beyond the arm\u2019s `0.251 m` reach envelope. Line 69 `except MotionError` silently swallows the error, yet the arm physically cannot reach the clamped coordinate.\n*Fix:* Reduce `start_x` upper bound to `0.25` to keep starts inside the reachable workspace.\n\n**Mode 2: Short push (35%)**\n*Episodes: 3000, 3002, 3006, 3007*\n*Root cause:* `push_dist = dist + puck_radius + margin` (line 58) adds `puck_radius` to the travel distance. When `dist` is small (<0.15 m) the total distance exceeds the nudge range, stopping short of the target.\n*Fix:* Cap `push_dist` at `dist + NUDGE_DIST` or remove `puck_radius` from the distance formula.\n\n**Mode 3: Observation loss (15%)**\n*Episodes: 3006, 3007*\n*Root cause:* Intermittent `puck`/`target` missing from `observe()` (lines 23\u201124), causing `get_poses()` to return `None` and the loop to break early.\n*Fix:* Add a retry loop around `get_poses()` before proceeding with movement."
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 3,
+   "success": 0.375,
+   "gt_k": 3,
+   "self_k": 3,
+   "errors": 2,
+   "wall_s": 14.2,
+   "usd_cum": 0.08028,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 116,
+   "perception": {
+    "episodes": 8,
+    "lookups": 55,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.47
+   },
+   "summary": "**Mode 1: Reachability (4000, 4004)**  \n*Episodes:* 2  \n*Root cause:* `move_to` targets exceed the arm's 0.251 m wrist reach. Line 66 clamps start_x to 0.25, but push_dist (line 71) adds margin, pushing end_x beyond the workspace. The `except robot.MotionError` handler fails because `MotionError` does not exist in this SimRobot.  \n*Fix:* Cap `push_dist` to `min(dist + NUDGE_DIST, 0.251 - puck_pos[0])` to keep end_x reachable. Replace `except robot.MotionError` with `except Exception` to catch the actual motion error.\n\n**Mode 2: Puck not displaced (4001, 4005)**  \n*Episodes:* 2  \n*Root cause:* Pushes originate too close to the puck (line 66: `puck_radius + CLEARANCE`). With the puck too wide to grasp, the fingers collide with the table or puck sides, preventing forward motion despite successful `move_to` calls.  \n*Fix:* Increase `CLEARANCE` from 0.06 to 0.12 on line 5 to push the start position farther back, ensuring fingertip clearance during the push trajectory.\n\n**Mode 3: Tolerance miss (4003)**  \n*Episodes:* 1  \n*Root cause:* The final puck position (0.152, 0.014) is within 0.082 m of target but misses the 0.035 m radius. The nudge (line 99) adds only 0.01 m; with initial offset 0.082 m, the puck undershoots.  \n*Fix:* Increase `NUDGE_DIST` from 0.01 to 0.03 on line 10 to provide sufficient corrective travel across attempts."
+  },
+  {
+   "round": 5,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 14.0,
+   "usd_cum": 0.09258,
+   "code": "round_5/skill.py",
+   "diff": "round_5/diff.patch",
+   "lines": 118,
+   "perception": {
+    "episodes": 8,
+    "lookups": 57,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.4
+   },
+   "summary": "**Mode 1: Reach overflow** (5 episodes: 5002, 5003, 5004, 5006, 5007)\n*Root cause:* `push_dist` computation at line 71 adds `NUDGE_DIST` to `dist`, but clamps to `REACH_LIMIT - puck_pos[0]`. When the puck is near the workspace boundary, `push_dist` becomes negative or zero, triggering the fallback at line 73 (`min(dist + NUDGE_DIST, 0.05)`), which still exceeds reach. The arm then throws `MotionError` (traces confirm).\n*Fix:* Cap `push_dist` at `REACH_LIMIT - puck_pos[0] - 0.01` to guarantee a safety margin, and ensure the fallback never exceeds this margin.\n\n**Mode 2: Insufficient push distance** (5 episodes: 5000, 5001, 5005)\n*Root cause:* The push travels `dist + NUDGE_DIST` (line 71), but `NUDGE_DIST = 0.03` is too small to overcome friction or compensate for pose latency. Episodes end with `puck_to_target_xy` \u2248 0.2\u20130.27 m, well above the 0.035 tolerance.\n*Fix:* Increase `NUDGE_DIST` to 0.08\u20130.10 m. This extends the push range without altering reach logic.\n\n**Mode 3: Observation/pose staleness** (2 episodes: 5002, 5003)\n*Root cause:* `get_poses()` returns stale data; the arm moves to a position based on outdated puck location, causing misses. Low camera frame counts (6/6 or 7/7) suggest tracking loss.\n*Fix:* Add a `robot.wait(0.1)` after `observe()` in `get_poses()` to ensure fresh data, and log a warning if `puck_radius` changes > 0.02 between retries.",
+   "reverted_to": 4
+  },
+  {
+   "round": 6,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 3,
+   "wall_s": 15.4,
+   "usd_cum": 0.12882,
+   "code": "round_6/skill.py",
+   "diff": "round_6/diff.patch",
+   "lines": 143,
+   "perception": {
+    "episodes": 8,
+    "lookups": 52,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.7
+   }
+  }
+ ],
+ "best_round": 4,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 4,
+  "chosen": 4,
+  "rows": [
+   {
+    "round": 4,
+    "practice": "3/8",
+    "recheck": "3/16",
+    "total_k": 6,
+    "total_n": 24
+   },
+   {
+    "round": 1,
+    "practice": "0/8",
+    "recheck": "0/16",
+    "total_k": 0,
+    "total_n": 24
+   },
+   {
+    "round": 2,
+    "practice": "0/8",
+    "recheck": "0/16",
+    "total_k": 0,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 8,
+  "p": 0.16,
+  "lo": 0.083373213621,
+  "hi": 0.285144809618,
+  "source": "gt",
+  "best_round": 4,
+  "errors": 6,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 21.96,
+  "self_report_true": 9,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100000,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0813,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100000/end_front.jpg"
+   },
+   {
+    "seed": 100001,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0821,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100001/end_front.jpg"
+   },
+   {
+    "seed": 100002,
+    "error": "AttributeError: 'SimRobot' object has no attribute 'MotionError' [skill.py line 82, in run: except robot.MotionError:]",
+    "metrics": {
+     "puck_to_target_xy": 0.1978,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100002/end_front.jpg"
+   },
+   {
+    "seed": 100003,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0817,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100003/end_front.jpg"
+   },
+   {
+    "seed": 100004,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.2006,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100004/end_front.jpg"
+   },
+   {
+    "seed": 100005,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0837,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100005/end_front.jpg"
+   },
+   {
+    "seed": 100007,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0826,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100007/end_front.jpg"
+   },
+   {
+    "seed": 100008,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.1013,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100008/end_front.jpg"
+   }
+  ],
+  "perception": {
+   "episodes": 50,
+   "lookups": 373,
+   "misses": 0,
+   "detection_rate": 1.0,
+   "median_of_episode_median_err_mm": 0.34
+  }
+ },
+ "models": {
+  "coder": {
+   "alias": "ultra",
+   "id": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "nvidia": true,
+   "calls": 6,
+   "prompt_tokens": 29723,
+   "completion_tokens": 32178,
+   "usd": 0.126257,
+   "price_in": 1.0,
+   "price_out": 3.0
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 5,
+   "prompt_tokens": 34757,
+   "completion_tokens": 2009,
+   "usd": 0.002568,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.128825,
+  "compute_usd": 0.0,
+  "total_usd": 0.128825,
+  "calls": 11,
+  "prompt_tokens": 64480,
+  "completion_tokens": 34187,
+  "compute_seconds": 352.6,
+  "backend": "local"
+ },
+ "wall_time_s": 560.7,
+ "practice_episodes": 48,
+ "created": "2026-10-24 13:10:41",
+ "skill_file": "best_skill.py"
+}

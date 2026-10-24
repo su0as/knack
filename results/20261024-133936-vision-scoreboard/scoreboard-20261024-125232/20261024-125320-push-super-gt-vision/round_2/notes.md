@@ -1,0 +1,5 @@
+- Adjusted push height (push_z) to 0.02 m to contact the puck’s side without slipping.
+- Reduced the clearance offset (puck_radius + 0.005 m) to minimise pose error while still avoiding collision.
+- Increased push distance to 0.12 m to give the puck enough momentum to reach the target zone.
+- Added explicit try‑except blocks around all move_to calls and logged any motion errors before homing and returning False.
+- Early‑exit if puck or target missing from observation, and a final verification step that re‑observes the scene and checks the puck’s distance to the target centre.

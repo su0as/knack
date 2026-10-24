@@ -1,0 +1,7 @@
+- Increase clearance from 0.02m to 0.04m to avoid collision when approaching behind the puck (Mode 1 fix).
+- Raise approach_z from 0.015m to 0.025m to lift tool point over minor obstacles during push (Mode 2 fix).
+- Add a small nudge move (+0.01m along push vector) after the main push to ensure puck crosses threshold (Mode 3 fix).
+- Catch MotionError explicitly instead of bare Exception.
+- Re-observe target pose each verification step (fixtures don't move but good practice).
+- Fix bug in second-push block: `dist2` was used before assignment, and `dx2`/`dy2` variable naming was inconsistent.
+- Structure as a loop with max 2 push attempts, each with approach → push → nudge → verify.

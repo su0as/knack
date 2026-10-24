@@ -1,0 +1,68 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -1,4 +1,4 @@
+-# skill module – updated version
++# skill module – final version
+ # -------------------------------------------------
+ # Allowed imports
+ import math
+@@ -93,20 +93,24 @@
+             robot.log("hold verification failed")
+             return False
+ 
+-        # ---- hover above the tray centre (clearance) ----
++        # ---- move to tray with clearance, shifted to avoid fixture contact ----
+         clearance = 0.030                         # increased clearance to avoid collision
+-        if not safe_move(
+-            tray['pos'][0], tray['pos'][1],
+-            tray['pos'][2] + clearance, speed=0.07
+-        ):
++        # shift target away from tray edge to prevent being blocked
++        shift_x = -0.02 if tray['pos'][0] > 0 else 0.02
++        shift_y = -0.02 if tray['pos'][1] > 0 else 0.02
++        target_x = tray['pos'][0] + shift_x
++        target_y = tray['pos'][1] + shift_y
++
++        if not safe_move(target_x, target_y,
++                         tray['pos'][2] + clearance, speed=0.07):
+             return False
+ 
+         # ---- descend to release height (just above table) ----
+         release_z = tray['pos'][2] + 0.005        # ~5 mm above tabletop
+-        if not safe_move(
+-            tray['pos'][0], tray['pos'][1], release_z,
+-            speed=0.04
+-        ):
++        # also shift release target slightly
++        release_x = tray['pos'][0] + shift_x
++        release_y = tray['pos'][1] + shift_y
++        if not safe_move(release_x, release_y, release_z, speed=0.04):
+             return False
+ 
+         # ---- verify we are still holding before release ----
+@@ -116,20 +120,16 @@
+ 
+         # ---- release the object ----
+         robot.release()
+-        robot.wait(0.1)                           # brief pause for cube to settle
++        robot.wait(0.2)                           # brief pause for cube to settle
+ 
+         # ---- micro‑adjust: nudge cube into tray before retracting ----
+-        if not safe_move(
+-            tray['pos'][0], tray['pos'][1],
+-            tray['pos'][2] + 0.001, speed=0.03
+-        ):
++        if not safe_move(release_x, release_y,
++                         release_z + 0.001, speed=0.03):
+             return False
+ 
+         # ---- retract to clearance before waiting ----
+-        if not safe_move(
+-            tray['pos'][0], tray['pos'][1],
+-            tray['pos'][2] + clearance, speed=0.07
+-        ):
++        if not safe_move(release_x, release_y,
++                         tray['pos'][2] + clearance, speed=0.07):
+             return False
+ 
+         robot.wait(0.3)                           # let the cube settle

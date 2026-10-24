@@ -1,0 +1,7 @@
+- Fixed Grasp failures by approaching the **red cube** directly (its observed pose) and ensuring the fingers are open before closing; now `robot.holding()` correctly returns "red_cube".
+- Resolved XY misalignment: the approach move now uses the red cube’s coordinates, while the final target x‑y is taken from the blue cube’s centre.
+- Corrected Z‑gap/stacking: after lifting to a safe clearance (`tz + 0.02`) we descend to the exact stacking centre (`tz`) before release, guaranteeing the red cube is placed on top of the blue cube at the proper height.
+- Added defensive checks after each critical `move_to` (wrap in `try/except Exception`) and use low speed (0.07 m/s) for precision.
+- Verify gripper state (`robot.open()` before `grasp`) and confirm `robot.holding()` matches the expected object name; abort on verification failure.
+- All poses are computed at runtime from `observe()`; no hard‑coded coordinates remain.
+- Keep the same logging and return‑value convention; the skill now returns `True` only when the full stack‑and‑release sequence succeeds.

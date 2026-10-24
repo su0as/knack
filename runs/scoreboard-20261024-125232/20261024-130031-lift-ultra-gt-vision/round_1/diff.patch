@@ -1,0 +1,60 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,57 @@
++import math
++
++def run(robot):
++    # 1. Perceive: get red cube pose
++    obs = robot.observe()
++    if "red_cube" not in obs["objects"]:
++        robot.log("red_cube not visible in initial observe")
++        return False
++    cube = obs["objects"]["red_cube"]
++    cx, cy, cz = cube["pos"]
++    cyaw = cube["yaw"]
++
++    # 2. Move above the cube, then down to grasp height
++    # Approach from above to avoid collisions
++    approach_z = 0.10  # safe approach height
++    grasp_z = 0.015    # cube centre height (3 cm cube on table)
++
++    try:
++        # Move to approach position
++        robot.move_to(cx, cy, approach_z, yaw=cyaw, speed=0.15)
++        # Descend to grasp height
++        robot.move_to(cx, cy, grasp_z, yaw=cyaw, speed=0.05)
++    except Exception as e:
++        robot.log(f"MotionError during approach: {e}")
++        return False
++
++    # 3. Grasp with retries
++    max_grasp_attempts = 3
++    for attempt in range(max_grasp_attempts):
++        robot.grasp()
++        robot.wait(0.2)  # let grasp settle
++        if robot.holding() == "red_cube":
++            robot.log(f"Grasp succeeded on attempt {attempt+1}")
++            break
++        robot.log(f"Grasp attempt {attempt+1} failed, retrying")
++        robot.release()
++        robot.wait(0.1)
++    else:
++        robot.log("All grasp attempts failed")
++        return False
++
++    # 4. Lift to at least 5 cm above table (z >= 0.05)
++    lift_z = 0.07  # 7 cm above table, comfortably above 5 cm
++    try:
++        robot.move_to(cx, cy, lift_z, yaw=cyaw, speed=0.10)
++    except Exception as e:
++        robot.log(f"MotionError during lift: {e}")
++        return False
++
++    # 5. Verify still holding after lift
++    robot.wait(0.2)
++    if robot.holding() == "red_cube":
++        robot.log("Successfully lifted red cube above 5 cm")
++        return True
++    else:
++        robot.log("Lost cube during lift")
++        return False

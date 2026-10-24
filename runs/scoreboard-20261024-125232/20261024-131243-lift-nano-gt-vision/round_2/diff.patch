@@ -1,0 +1,133 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -1,4 +1,4 @@
+-# skill module – first version
++# skill module – improved version
+ import math
+ import numpy as np
+ 
+@@ -8,65 +8,87 @@
+     Returns True if the lift appears successful, otherwise False.
+     """
+ 
++    # -------------------------------------------------
+     # 1. Perceive the scene
++    # -------------------------------------------------
+     obs = robot.observe()
+-    red = obs["objects"].get("red_cube")
+-    if red is None:
+-        # Red cube vanished – nothing to do
++    if "red_cube" not in obs["objects"]:
+         robot.log("red_cube missing in observation")
+         return False
+ 
+-    # 2. Get a cleaner pose (reduces camera noise)
+-    pose = robot.get_pose("red_cube")  # {"pos": [...], "yaw": ...}
++    # -------------------------------------------------
++    # 2. Get a clean pose (reduces camera noise)
++    # -------------------------------------------------
++    pose = robot.get_pose("red_cube")          # {"pos": [...], "yaw": ...}
+     x_obj, y_obj, z_obj = pose["pos"]
+     yaw_obj = pose["yaw"]
+ 
+-    # 3. Plan a safe pre‑grasp pose a little above the cube
+-    #    Table is at z=0, we need >0.05 m (5 cm) for the final hold.
+-    #    We first go to z≈0.06 m, then descend to grasp.
+-    pre_grasp_z = 0.06          # 6 cm above base (well inside workspace)
+-    grasp_z = 0.018               # just above the cube centre (≈0.015 m) to allow closing
+-    lift_target_z = 0.06          # 6 cm above table, satisfies “≥5 cm”
++    # -------------------------------------------------
++    # 3. Parameters with safety margins
++    # -------------------------------------------------
++    PRE_GRASP_Z   = 0.07   # 7 cm above table – buffer for noise
++    GRASP_Z       = 0.018  # just above the cube centre (~0.015 m)
++    LIFT_TARGET_Z = 0.075  # 7.5 cm – guarantees ≥5 cm clearance
+ 
+-    # 4. Move to pre‑grasp location (x, y stay over the object)
+-    try:
+-        robot.move_to(x_obj, y_obj, pre_grasp_z,
+-                      yaw=yaw_obj, speed=0.07)
+-    except Exception as e:  # MotionError is raised for unreachable targets
+-        robot.log(f"move_to pre‑grasp failed: {e}")
++    # -------------------------------------------------
++    # 4. Helper: safe move with optional fallback
++    # -------------------------------------------------
++    def try_move(x, y, z, yaw=None, speed=0.07, name=""):
++        """Attempt a move_to; on failure try small reposition offsets."""
++        try:
++            return robot.move_to(x, y, z, yaw=yaw, speed=speed)
++        except Exception as e:                     # MotionError or other
++            robot.log(f"{name} move_to failed: {e}")
++            # try a few small offsets (±1 cm) to stay inside reachable band
++            for dx, dy in [(0.01, 0), (-0.01, 0), (0, 0.01), (0, -0.01)]:
++                ok = robot.move_to(x + dx, y + dy, z, yaw=yaw, speed=speed)
++                if ok["ok"]:
++                    return ok
++            return {"ok": False}
++
++    # -------------------------------------------------
++    # 5. Move to pre‑grasp height
++    # -------------------------------------------------
++    if not try_move(x_obj, y_obj, PRE_GRASP_Z, yaw=yaw_obj,
++                    speed=0.07, name="pre‑grasp"):
+         return False
+ 
+-    # 5. Lower slightly to the grasp height
+-    try:
+-        robot.move_to(x_obj, y_obj, grasp_z,
+-                      yaw=yaw_obj, speed=0.07)
+-    except Exception as e:
+-        robot.log(f"move_to grasp height failed: {e}")
++    # -------------------------------------------------
++    # 6. Descend to grasp height
++    # -------------------------------------------------
++    if not try_move(x_obj, y_obj, GRASP_Z, yaw=yaw_obj,
++                    speed=0.07, name="grasp descend"):
+         return False
+ 
+-    # 6. Close the fingers
++    # -------------------------------------------------
++    # 7. Close the fingers
++    # -------------------------------------------------
+     if not robot.grasp():
+-        robot.log("grasp() returned False – retrying once")
+-        # Simple retry: lift a bit, re‑approach from a slightly different angle
+-        robot.move_to(x_obj, y_obj, pre_grasp_z + 0.01, yaw=yaw_obj, speed=0.07)
+-        robot.move_to(x_obj, y_obj, grasp_z, yaw=yaw_obj, speed=0.07)
++        robot.log("grasp() failed – retrying")
++        # lift a bit and re‑approach from a slightly different angle
++        if not try_move(x_obj, y_obj, PRE_GRASP_Z + 0.01, yaw=yaw_obj,
++                        speed=0.07, name="grasp retry approach"):
++            return False
++        if not try_move(x_obj, y_obj, GRASP_Z, yaw=yaw_obj,
++                        speed=0.07, name="grasp retry descend"):
++            return False
+         if not robot.grasp():
+-            robot.log("grasp() failed again – giving up")
++            robot.log("grasp() failed again – abort")
+             return False
+ 
+-    # 7. Verify that the cube is actually held
++    # -------------------------------------------------
++    # 8. Verify that the cube is actually held
++    # -------------------------------------------------
+     if robot.holding() != "red_cube":
+         robot.log("holding check failed")
+         return False
+ 
+-    # 8. Lift to the required height (≥5 cm above table)
+-    try:
+-        robot.move_to(x_obj, y_obj, lift_target_z,
+-                      yaw=yaw_obj, speed=0.07)
+-    except Exception as e:
+-        robot.log(f"move_to lift failed: {e}")
++    # -------------------------------------------------
++    # 9. Lift to the required height (≥5 cm)
++    # -------------------------------------------------
++    if not try_move(x_obj, y_obj, LIFT_TARGET_Z, yaw=yaw_obj,
++                    speed=0.07, name="lift"):
+         return False
+ 
+-    # 9. Success – keep the object held at the target height
+     robot.log("red_cube lifted to required height")
+     return True

@@ -1,0 +1,6 @@
+- First version: need to perceive both cubes, pick up red, place on blue, release.
+- Cubes are 3cm; blue top at z=0.03, red center when stacked at z=0.045.
+- Grasp at cube center height (z=0.015) with yaw aligned to cube.
+- Place at blue's x,y, z=0.045, then lower a touch to ensure contact.
+- Verify grasp and placement with robot.holding() and re-observation.
+- Handle MotionError and missing objects (gripper occlusion).

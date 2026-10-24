@@ -1,0 +1,191 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -4,16 +4,16 @@
+ def run(robot):
+     """
+     Push the orange puck so that its centre ends up inside the green circle.
+-    The puck is too wide to grasp, so we push it with the gripper.
++    The puck cannot be grasped, so we push it with the gripper.
+     """
+ 
+     # --------------------------------------------------------------
+-    # 1. Perceive the scene (guarded perception)
++    # 1. Perceive the scene
+     # --------------------------------------------------------------
+     try:
+         puck_pose = robot.get_pose('puck')
+         target_pose = robot.get_pose('target')
+-    except Exception as e:                     # PerceptionError or other failure
++    except Exception as e:
+         robot.log("Perception error: " + str(e))
+         return False
+ 
+@@ -23,11 +23,11 @@
+     # --------------------------------------------------------------
+     # 2. Quick success test
+     # --------------------------------------------------------------
+-    if math.hypot(tx - px, ty - py) < 0.04:    # target radius
++    if math.hypot(tx - px, ty - py) < 0.04:   # target radius
+         return True
+ 
+     # --------------------------------------------------------------
+-    # 3. Geometry: push direction and side‑on contact point
++    # 3. Geometry of a side‑on contact point
+     # --------------------------------------------------------------
+     dx, dy = tx - px, ty - py
+     distance = math.hypot(dx, dy)
+@@ -36,13 +36,13 @@
+     # offset perpendicular to push direction (side‑on contact)
+     side_offset_x = -uy
+     side_offset_y = ux
+-    contact_offset = 0.03 + 0.005                  # puck radius + small gap
++    contact_offset = 0.03 + 0.005                    # puck radius + tiny gap
+     contact_x = px + side_offset_x * contact_offset
+     contact_y = py + side_offset_y * contact_offset
+-    contact_z = 0.015                            # table‑level height
++    contact_z = 0.015                               # table height
+ 
+     # --------------------------------------------------------------
+-    # 4. Workspace safety check for the contact point
++    # 4. Verify contact point is inside the safe workspace
+     # --------------------------------------------------------------
+     if not (0.04 <= contact_x <= 0.32 and
+             -0.26 <= contact_y <= 0.26 and
+@@ -62,57 +62,80 @@
+         return False
+ 
+     # --------------------------------------------------------------
+-    # 6. Light contact – ensure we are holding the puck
++    # 6. Light contact – try to acquire the puck
+     # --------------------------------------------------------------
+-    # tiny lateral nudge to improve finger‑puck contact
++    # tiny lateral nudge
+     robot.move_by(dx=0.001, dy=0, speed=0.07)
+-    robot.grasp()                                 # close fingers fully
++    robot.grasp()                                     # close fully
++
++    # verify contact; if missing, try a deeper press (max 2 attempts)
+     if robot.holding() is None:
+-        # deeper downward press to guarantee contact
+         robot.move_by(dz=-0.002, speed=0.07)
+         if robot.holding() is None:
+             robot.log("Failed to acquire contact after press")
+             return False
+ 
+     # --------------------------------------------------------------
+-    # 7. Push the puck (bounded iterations, safety‑aware distance)
++    # 7. Push loop – keep pushing until tolerance reached or margins exhausted
+     # --------------------------------------------------------------
+-    max_pushes = 3
+-    desired_push = 0.12                           # ≥0.12 m to meet tolerance
++    max_pushes = 5
+     for _ in range(max_pushes):
+-        # ---- compute safe push distance respecting x‑margin ----
+-        # remaining x margin in the direction of ux
+-        if abs(ux) > 1e-6:
+-            if ux > 0:
+-                max_x_push = (0.32 - contact_x) / ux
++        # re‑read current puck pose (may have moved after grasp)
++        try:
++            cur_pose = robot.get_pose('puck')
++        except Exception as e:
++            robot.log("Perception error during push: " + str(e))
++            break
++
++        cur_x, cur_y, _ = cur_pose['pos']
++        cur_dist = math.hypot(tx - cur_x, ty - cur_y)
++        if cur_dist < 0.035:                     # already inside target circle
++            robot.release()
++            return True
++
++        # vector from current puck centre to target
++        dx_to = tx - cur_x
++        dy_to = ty - cur_y
++        ux_to, uy_to = dx_to / cur_dist, dy_to / cur_dist
++
++        # how far do we still need to travel to meet the tolerance?
++        needed = cur_dist - 0.035                # excess beyond the 0.035 m radius
++        if needed <= 0:
++            robot.release()
++            return True
++
++        # ---- safety‑margin calculations ----
++        # x‑margin in the push direction
++        if abs(ux_to) > 1e-6:
++            if ux_to > 0:
++                max_x_push = (0.32 - contact_x) / ux_to
+             else:
+-                max_x_push = (0.04 - contact_x) / ux
++                max_x_push = (0.04 - contact_x) / ux_to
+         else:
+             max_x_push = float('inf')
+ 
+-        # y‑margin check (same logic as before)
+-        margin_pos = 0.26 - contact_y
+-        margin_neg = -0.26 - contact_y
+-        dy_full = uy * desired_push
+-        if dy_full > margin_pos:                     # would overshoot positive y
+-            push_distance = margin_pos / uy if abs(uy) > 1e-6 else 0.0
+-        elif dy_full < margin_neg:                   # would overshoot negative y
+-            push_distance = margin_neg / uy if abs(uy) > 1e-6 else 0.0
++        # y‑margin in the push direction
++        if abs(uy_to) > 1e-6:
++            if uy_to > 0:
++                max_y_push = (0.26 - contact_y) / uy_to
++            else:
++                max_y_push = (-0.26 - contact_y) / uy_to
+         else:
+-            push_distance = desired_push
++            max_y_push = float('inf')
+ 
+-        # cap by the x‑margin and ensure non‑negative
+-        push_distance = min(push_distance, max_x_push)
+-        push_distance = max(0.0, push_distance)
++        # maximum safe push distance for this iteration
++        safe_push = min(max_x_push, max_y_push, needed)
++        safe_push = max(1e-5, safe_push)        # avoid zero‑length moves
+ 
+         # displacement for this push
+-        dx_move = ux * push_distance
+-        dy_move = uy * push_distance
++        dx_move = ux_to * safe_push
++        dy_move = uy_to * safe_push
++
++        # final safety check before execution
+         new_x = contact_x + dx_move
+-
+-        # final x‑range safety check
+-        if not (0.04 <= new_x <= 0.32):
+-            robot.log("Push would exceed x safe range – aborting.")
++        new_y = contact_y + dy_move
++        if not (0.04 <= new_x <= 0.32 and -0.26 <= new_y <= 0.26):
++            robot.log("Push would exit safe workspace – aborting.")
+             break
+ 
+         # ---- execute the push ----
+@@ -122,23 +145,12 @@
+             robot.log("Push move failed: " + str(e))
+             break
+ 
+-        # ---- verify new puck pose ----
++        # after the move, verify the new pose
+         try:
+             new_pose = robot.get_pose('puck')
+         except Exception as e:
+-            robot.log("Perception error during push: " + str(e))
++            robot.log("Perception error after push: " + str(e))
+             break
+-
+-        # success test
+-        if math.hypot(new_pose['pos'][0] - tx, new_pose['pos'][1] - ty) < 0.04:
+-            # release and final verification
+-            robot.release()
+-            final = robot.get_pose('puck')
+-            if math.hypot(final['pos'][0] - tx, final['pos'][1] - ty) < 0.04:
+-                return True
+-            else:
+-                # fell just short – treat as failure but continue cleanup
+-                break
+ 
+     # --------------------------------------------------------------
+     # 8. Cleanup on any failure – ensure gripper is open

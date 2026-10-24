@@ -1,0 +1,8 @@
+- Removed the non‑existent `robot.open()` call that caused the AttributeError.
+- Replaced it with a safe `robot.release()` before closing the grasp to guarantee the fingers start open.
+- Kept all runtime perception (`observe()`, `get_pose()`) and eliminated any hard‑coded coordinates.
+- Added explicit error handling around every movement (catch `Exception` and log before returning `False`).
+- Verified that the red cube is actually held after `grasp()`; abort on mismatch.
+- Computed stacking height from the blue cube’s centre + its side length (using the red cube’s size for the offset) and lifted to a small clearance before descending.
+- Used low speed (0.07 m/s) for precision moves and retained the existing logging / return‑value convention.
+- All geometry is derived from the current episode’s perception, so the skill works for any randomised layout.

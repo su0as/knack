@@ -1,0 +1,4 @@
+- The original script had a syntax error due to an incorrectly formed f‑string (missing closing brace) and a bare `except:` clause.
+- Fixed the f‑string, replaced the bare except with `except Exception as e:` to avoid catching system‑exit signals.
+- Added a small comment clarifying the helper's purpose and kept the overall structure unchanged.
+- Verified indentation and that all function calls match their signatures.

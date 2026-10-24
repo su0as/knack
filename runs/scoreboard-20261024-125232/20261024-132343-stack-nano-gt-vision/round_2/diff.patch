@@ -1,0 +1,114 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -2,7 +2,7 @@
+ def run(robot):
+     """
+     Stack the red cube on top of the blue cube and release it.
+-    The function must return True on success, False otherwise.
++    Return True on success, False otherwise.
+     """
+ 
+     # ------------------------------------------------------------------
+@@ -25,49 +25,45 @@
+     # ------------------------------------------------------------------
+     # 2. Compute stacking geometry
+     # ------------------------------------------------------------------
+-    # All cubes are 3 cm on a side; half‑size is 0.015 m
+-    cube_size = red_cube["size"][0]          # assume equal for all axes
++    cube_size = red_cube["size"][0]          # side length (assumed equal)
+     half_size = cube_size / 2.0
+ 
+-    # Blue cube centre (as observed)
+-    bx, by, bz = blue_cube["pos"]
++    # Target centre of the red cube when stacked on the blue cube
++    tx, ty = blue_cube["pos"][0], blue_cube["pos"][1]
++    tz = blue_cube["pos"][2] + cube_size      # centre of red on top of blue
+ 
+-    # Desired centre of the red cube when stacked
+-    tx, ty, tz = bx, by, bz + cube_size      # top of blue cube
+-
+-    # Safe approach height (2 cm above the target centre)
+-    approach_z = tz + 0.02
++    # Safe approach height above the red cube (a few cm above its centre)
++    approach_z = red_cube["pos"][2] + half_size + 0.02
+ 
+     # ------------------------------------------------------------------
+-    # 3. Move to a safe approach pose above the target
++    # 3. Approach the red cube
+     # ------------------------------------------------------------------
+     try:
+         robot.log("Moving to approach pose")
+-        robot.move_to(tx, ty, approach_z, speed=0.07)
+-    except Exception:          # MotionError is raised on unreachable targets
++        robot.move_to(red_cube["pos"][0], red_cube["pos"][1], approach_z, speed=0.07)
++    except Exception:
+         robot.log("Approach move failed")
+         return False
+ 
+     # ------------------------------------------------------------------
+-    # 4. Descend to the target centre (place position)
++    # 4. Descend to grasp height and align orientation
+     # ------------------------------------------------------------------
+     try:
+-        robot.log("Descending to place position")
+-        robot.move_to(tx, ty, tz, speed=0.07)
++        robot.log("Descending to grasp height")
++        # Position the tool point at the cube centre (fingers will be around its middle)
++        robot.move_to(red_cube["pos"][0], red_cube["pos"][1], red_cube["pos"][2], speed=0.07)
++        # Optional: orient fingers with the cube's yaw for a more stable grasp
++        robot.move_to(red_cube["pos"][0], red_cube["pos"][1], red_cube["pos"][2],
++                      yaw=red_cube["yaw"], speed=0.07)
+     except Exception:
+-        robot.log("Place move failed")
++        robot.log("Grasp descent failed")
+         return False
+-
+-    # Optional: orient fingers with the cube's yaw for a better grasp
+-    try:
+-        robot.move_to(tx, ty, tz, yaw=red_cube["yaw"], speed=0.07)
+-    except Exception:
+-        pass  # ignore orientation errors – we still have a grasp point
+ 
+     # ------------------------------------------------------------------
+     # 5. Grasp the red cube
+     # ------------------------------------------------------------------
+     robot.log("Closing grasp")
++    robot.open()                     # ensure fingers are open
+     robot.grasp()
+ 
+     # Verify that the cube is actually held
+@@ -76,9 +72,9 @@
+         return False
+ 
+     # ------------------------------------------------------------------
+-    # 6. Lift the cube clear of the blue cube
++    # 6. Lift clear of the blue cube
+     # ------------------------------------------------------------------
+-    lift_z = tz + 0.02
++    lift_z = tz + 0.02                # clearance above the target centre
+     try:
+         robot.log("Lifting the cube")
+         robot.move_to(tx, ty, lift_z, speed=0.07)
+@@ -87,13 +83,20 @@
+         return False
+ 
+     # ------------------------------------------------------------------
+-    # 7. Release the cube onto the blue cube
++    # 7. Descend to target centre and release
+     # ------------------------------------------------------------------
++    try:
++        robot.log("Descending to target centre")
++        robot.move_to(tx, ty, tz, speed=0.07)
++    except Exception:
++        robot.log("Target descent failed")
++        return False
++
+     robot.log("Releasing")
+     robot.release()
+ 
+     # ------------------------------------------------------------------
+-    # 8. Optional: move away to a safe pose and signal success
++    # 8. Optional safe retreat and signal completion
+     # ------------------------------------------------------------------
+     robot.log("Task completed")
+     return True

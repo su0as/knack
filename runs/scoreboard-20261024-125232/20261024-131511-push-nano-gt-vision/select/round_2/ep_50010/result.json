@@ -1,0 +1,246 @@
+{
+ "task": "push",
+ "seed": 50010,
+ "error": {
+  "type": "PerceptionError",
+  "message": "puck is not visible from the cameras right now (occluded?)",
+  "traceback": "  skill.py line 91, in run: new_pose = robot.get_pose('puck')\nPerceptionError: puck is not visible from the cameras right now (occluded?)"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.0778,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "get_pose('puck')",
+   "result": {
+    "pos": [
+     0.1123,
+     0.0784,
+     0.0099
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 0.0,
+   "call": "get_pose('target')",
+   "result": {
+    "pos": [
+     0.1455,
+     -0.0158,
+     0.0
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 2.24,
+   "call": "move_to(0.145, 0.090, 0.015, yaw=-1.232, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1453,
+     0.09,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.74,
+   "call": "grasp()",
+   "result": {
+    "holding": "puck",
+    "opening": 0.0188
+   }
+  },
+  {
+   "t": 2.74,
+   "call": "holding()",
+   "result": "puck"
+  },
+  {
+   "t": 3.48,
+   "call": "move_to(0.162, 0.043, 0.015, yaw=1.909, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.162,
+     0.0428,
+     0.0149
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.48,
+   "call": "get_pose('puck')",
+   "result": {
+    "pos": [
+     0.1277,
+     0.0301,
+     0.0099
+    ],
+    "yaw": 0.0
+   }
+  },
+  {
+   "t": 4.22,
+   "call": "move_to(0.179, -0.004, 0.015, yaw=1.909, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1787,
+     -0.0045,
+     0.0149
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 4.22,
+   "call": "get_pose('puck')",
+   "error": "not visible"
+  }
+ ],
+ "n_calls": 9,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 4.72,
+ "wall_time": 1.12,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1123,
+     0.0788,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1441,
+     -0.0159,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 4.72,
+  "gripper": {
+   "pos": [
+    0.1786,
+    -0.0044,
+    0.0149
+   ],
+   "yaw": 1.9088,
+   "opening": 0.0,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1122,
+     0.0551,
+     0.0099
+    ],
+    "yaw": -0.0132,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1441,
+     -0.0159,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1441,
+   "y": -0.0159,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1123,
+   "y": 0.0788,
+   "yaw": 0.4411,
+   "fp": 0.035
+  }
+ },
+ "perception": {
+  "calls": 4,
+  "lookups": 4,
+  "misses": 1,
+  "detection_rate": 0.75,
+  "pos_err_mm_median": 0.39,
+  "pos_err_mm_p90": 23.53,
+  "yaw_err_deg_median": 0.0,
+  "by_camera": {
+   "overhead": 3,
+   "front": 0
+  },
+  "fixtures_mapped": [
+   "target"
+  ],
+  "fixture_err_mm": {
+   "target": 1.39
+  }
+ }
+}

@@ -1,0 +1,5 @@
+- Grasp often fails when the gripper hits the tray edge; we now approach 5 mm above the cube and add a small “shake‑off” lift before re‑trying the grasp.
+- Descending to the release height was causing collisions; we introduced a safe_move helper that retries with slower speed and a tiny Z‑adjustment, and we always hover (≈2 cm) above the tray before lowering.
+- Hold verification sometimes missed a partial hold; we now perform a single retry after the shake‑off and only proceed if the object is actually held.
+- All critical moves are wrapped with retry logic and logged; precise steps use slower speeds (0.04‑0.05 m/s) and the pre‑place hover eliminates contact‑related failures.
+- The overall flow (approach → grasp → verify → hover → release → retract) is unchanged, so existing successful behaviours are preserved.

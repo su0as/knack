@@ -1,0 +1,35 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -66,7 +66,7 @@
+ 
+         # ---- approach above the object (lift a bit) ----
+         approach = list(obj['pos'])
+-        approach[2] += 0.005                     # ~5 mm above centre
++        approach[2] += 0.010                     # raise initial approach height
+         yaw_angle = obj.get('yaw', 0.0)
+ 
+         if not safe_move(*approach, yaw=yaw_angle, speed=0.07):
+@@ -94,7 +94,7 @@
+             return False
+ 
+         # ---- hover above the tray centre (clearance) ----
+-        clearance = 0.020                         # 2 cm above tray
++        clearance = 0.030                         # increased clearance to avoid collision
+         if not safe_move(
+             tray['pos'][0], tray['pos'][1],
+             tray['pos'][2] + clearance, speed=0.07
+@@ -109,8 +109,14 @@
+         ):
+             return False
+ 
++        # ---- verify we are still holding before release ----
++        if robot.holding() != obj_name:
++            robot.log("hold lost during descent, abort")
++            return False
++
+         # ---- release the object ----
+         robot.release()
++        robot.wait(0.1)                           # brief pause for cube to settle
+ 
+         # ---- micro‑adjust: nudge cube into tray before retracting ----
+         if not safe_move(

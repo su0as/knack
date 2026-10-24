@@ -1,0 +1,232 @@
+{
+ "task": "push",
+ "seed": 50015,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.136,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 1.42,
+   "call": "move_to(0.219, -0.015, 0.015, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2195,
+     -0.0148,
+     0.015
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 5.58,
+   "call": "move_to(0.084, 0.141, 0.015, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0842,
+     0.141,
+     0.015
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 6.08,
+   "call": "wait(0.50)",
+   "result": "ok"
+  },
+  {
+   "t": 6.08,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 6.08,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 7.56,
+   "call": "move_to(0.225, 0.122, 0.015, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2251,
+     0.1222,
+     0.015
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 10.78,
+   "call": "move_to(0.068, 0.095, 0.015, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0677,
+     0.0946,
+     0.015
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 11.28,
+   "call": "wait(0.50)",
+   "result": "ok"
+  },
+  {
+   "t": 11.28,
+   "call": "observe()",
+   "result": "ok"
+  }
+ ],
+ "n_calls": 10,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 11.78,
+ "wall_time": 0.97,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1863,
+     0.0228,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1154,
+     0.1033,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 11.78,
+  "gripper": {
+   "pos": [
+    0.0677,
+    0.0946,
+    0.015
+   ],
+   "yaw": 2.52,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.2448,
+     0.0614,
+     0.0099
+    ],
+    "yaw": 0.482,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1154,
+     0.1033,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1154,
+   "y": 0.1033,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1863,
+   "y": 0.0228,
+   "yaw": 0.3442,
+   "fp": 0.035
+  }
+ },
+ "perception": {
+  "calls": 4,
+  "lookups": 4,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 0.39,
+  "pos_err_mm_p90": 0.42,
+  "yaw_err_deg_median": 0.0,
+  "by_camera": {
+   "overhead": 4,
+   "front": 0
+  },
+  "fixtures_mapped": [
+   "target"
+  ],
+  "fixture_err_mm": {
+   "target": 1.61
+  }
+ }
+}

@@ -1,0 +1,7 @@
+- Increased NUDGE_DIST from 0.01 to 0.08 to overcome friction and pose latency (failure mode 2).
+- Added REACH_LIMIT = 0.251 and capped push_dist/nudge positions to stay within reachable workspace with 1 cm safety margin (failure mode 1).
+- Added robot.wait(0.1) after observe() in get_poses() and radius-change warning to combat stale poses (failure mode 3).
+- Replaced fixed 0.32 x-clamp with REACH_LIMIT for end/nudge positions; kept start_x clamp at 0.25.
+- Removed proportional margin; push distance is now dist + NUDGE_DIST, capped by reach limits in both x and y.
+- Kept push_yaw = atan2(uy, ux) (parallel to push) as in round 4 which had 38% success; changing it risks regression.
+- All motion errors caught with robot.MotionError; speeds and heights unchanged.

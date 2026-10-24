@@ -1,0 +1,99 @@
+# skill module
+def run(robot):
+    """
+    Stack the red cube on top of the blue cube and release it.
+    The function must return True on success, False otherwise.
+    """
+
+    # ------------------------------------------------------------------
+    # 1. Perceive the scene
+    # ------------------------------------------------------------------
+    obs = robot.observe()
+    objects = obs.get("objects", {})
+    red_cube = blue_cube = None
+
+    for name, data in objects.items():
+        if data.get("color") == "red" and data.get("shape") == "cube":
+            red_cube = data
+        elif data.get("color") == "blue" and data.get("shape") == "cube":
+            blue_cube = data
+
+    if red_cube is None or blue_cube is None:
+        robot.log("Target cubes not found")
+        return False
+
+    # ------------------------------------------------------------------
+    # 2. Compute stacking geometry
+    # ------------------------------------------------------------------
+    # All cubes are 3 cm on a side; half‑size is 0.015 m
+    cube_size = red_cube["size"][0]          # assume equal for all axes
+    half_size = cube_size / 2.0
+
+    # Blue cube centre (as observed)
+    bx, by, bz = blue_cube["pos"]
+
+    # Desired centre of the red cube when stacked
+    tx, ty, tz = bx, by, bz + cube_size      # top of blue cube
+
+    # Safe approach height (2 cm above the target centre)
+    approach_z = tz + 0.02
+
+    # ------------------------------------------------------------------
+    # 3. Move to a safe approach pose above the target
+    # ------------------------------------------------------------------
+    try:
+        robot.log("Moving to approach pose")
+        robot.move_to(tx, ty, approach_z, speed=0.07)
+    except Exception:          # MotionError is raised on unreachable targets
+        robot.log("Approach move failed")
+        return False
+
+    # ------------------------------------------------------------------
+    # 4. Descend to the target centre (place position)
+    # ------------------------------------------------------------------
+    try:
+        robot.log("Descending to place position")
+        robot.move_to(tx, ty, tz, speed=0.07)
+    except Exception:
+        robot.log("Place move failed")
+        return False
+
+    # Optional: orient fingers with the cube's yaw for a better grasp
+    try:
+        robot.move_to(tx, ty, tz, yaw=red_cube["yaw"], speed=0.07)
+    except Exception:
+        pass  # ignore orientation errors – we still have a grasp point
+
+    # ------------------------------------------------------------------
+    # 5. Grasp the red cube
+    # ------------------------------------------------------------------
+    robot.log("Closing grasp")
+    robot.grasp()
+
+    # Verify that the cube is actually held
+    if robot.holding() != "red_cube":
+        robot.log("Grasp verification failed")
+        return False
+
+    # ------------------------------------------------------------------
+    # 6. Lift the cube clear of the blue cube
+    # ------------------------------------------------------------------
+    lift_z = tz + 0.02
+    try:
+        robot.log("Lifting the cube")
+        robot.move_to(tx, ty, lift_z, speed=0.07)
+    except Exception:
+        robot.log("Lift move failed")
+        return False
+
+    # ------------------------------------------------------------------
+    # 7. Release the cube onto the blue cube
+    # ------------------------------------------------------------------
+    robot.log("Releasing")
+    robot.release()
+
+    # ------------------------------------------------------------------
+    # 8. Optional: move away to a safe pose and signal success
+    # ------------------------------------------------------------------
+    robot.log("Task completed")
+    return True

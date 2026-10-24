@@ -1,0 +1,5 @@
+- Fixed contact‑acquisition failures: added a tiny lateral nudge before closing the gripper and increased the downward press depth; double‑checked `holding()` after the press and abort cleanly if still missing.
+- Added full workspace clamping for every push: compute the maximum admissible push distance using both x‑ and y‑margins, cap it, and enforce `0.04 ≤ new_x ≤ 0.32`. Any violation aborts the episode instead of raising a SafetyViolation.
+- Prevented cumulative drift by capping `push_distance` with the remaining x‑margin each iteration and by resetting the push logic when the margin is exhausted.
+- Wrapped all `move_to`/`move_by` calls in `try/except` blocks, logging failures and performing a clean release before returning `False`.
+- Minor robustness improvements: guard division by zero, use explicit non‑negative clamping, and keep the overall workflow unchanged.

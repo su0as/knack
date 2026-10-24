@@ -1,0 +1,204 @@
+{
+ "round": 6,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 0,
+ "errors": 3,
+ "wall_s": 8.7,
+ "usd_cum": 0.01022,
+ "code": "round_6/skill.py",
+ "diff": "round_6/diff.patch",
+ "lines": 160,
+ "notes": "- Fixed truncation of push distance: compute the remaining distance to the target and push exactly the needed amount, allowing a second push if the first is clipped by workspace margins.  \n- Added strict workspace\u2011margin guard before each `move_by` to guarantee the new tool point stays inside the safe x\u2011 and y\u2011ranges; any violation aborts the push loop instead of raising a SafetyViolation.  \n- Improved contact acquisition: after the initial lateral nudge we attempt up to two downward presses and abort cleanly if the puck is still not held.  \n- Wrapped all `move_to`/`move_by` calls in `try/except`, logging failures and releasing the gripper on error to avoid stuck states.  \n- Re\u2011perceived the puck after each push and break early when the tolerance is already met, preventing unnecessary iterations.  \n- Dynamically compute a safe push distance each iteration (capped by x\u2011, y\u2011margins and the needed distance), eliminating cumulative drift and ensuring progress even when the first push is truncated.  \n- Added a minimum positive push distance (1e\u20115) to avoid zero\u2011length moves that would otherwise be ignored.  \n- Minor clean\u2011up of comments and variable names while preserving the successful workflow from earlier rounds.",
+ "perception": {
+  "episodes": 8,
+  "lookups": 63,
+  "misses": 1,
+  "detection_rate": 0.9841,
+  "median_of_episode_median_err_mm": 0.41
+ },
+ "episodes": [
+  {
+   "seed": 6000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "SafetyViolation",
+    "message": "target y=0.302 m is outside the safe workspace [-0.26, 0.26] by 0.042 m",
+    "traceback": "  skill.py line 143, in run: robot.move_by(dx=dx_move, dy=dy_move, dz=0, speed=0.07)\nSafetyViolation: target y=0.302 m is outside the safe workspace [-0.26, 0.26] by 0.042 m"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.1047,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "SafetyViolation",
+    "message": "target y=-0.311 m is outside the safe workspace [-0.26, 0.26] by 0.051 m",
+    "traceback": "  skill.py line 143, in run: robot.move_by(dx=dx_move, dy=dy_move, dz=0, speed=0.07)\nSafetyViolation: target y=-0.311 m is outside the safe workspace [-0.26, 0.26] by 0.051 m"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.1131,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.1177,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0671,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "SafetyViolation",
+    "message": "target y=0.319 m is outside the safe workspace [-0.26, 0.26] by 0.059 m",
+    "traceback": "  skill.py line 143, in run: robot.move_by(dx=dx_move, dy=dy_move, dz=0, speed=0.07)\nSafetyViolation: target y=0.319 m is outside the safe workspace [-0.26, 0.26] by 0.059 m"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.096,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.1086,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0824,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.1067,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

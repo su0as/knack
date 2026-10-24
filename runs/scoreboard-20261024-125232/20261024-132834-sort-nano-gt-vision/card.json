@@ -1,0 +1,372 @@
+{
+ "run_id": "20261024-132834-sort-nano-gt-vision",
+ "task": "sort",
+ "title": "Sort by colour",
+ "instruction": "Put the red cube into the red tray and the blue cube into the blue tray.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "vision",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 2,
+   "errors": 0,
+   "wall_s": 8.2,
+   "usd_cum": 0.00091,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 85,
+   "perception": {
+    "episodes": 8,
+    "lookups": 16,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.03
+   },
+   "summary": "**Mode 1: Approach collision (55%)**  \n*Episodes:* 1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007  \n*Root cause:* `move_to` to the tray target (line 65) stops short because the robot arm contacts the table or joint limits while descending from `place_target[2] += 0.005` (line 63). The 5\u202fmm clearance is insufficient for the approach trajectory.  \n*Fix:* Increase clearance to `+0.015` on line 63 and add a pre\u2011place `move_to` at `place_target[2] + 0.020` (line 65) to swing over the tray before descending.\n\n**Mode 2: Grasp failure after placement (29%)**  \n*Episodes:* 1000, 1003, 1004, 1005, 1007  \n*Root cause:* `release()` (line 72) is called while the arm is still at tray height; the gripper may collide with the tray edge, causing the subsequent `grasp()` retries (lines 51\u201152) to fail.  \n*Fix:* After `release()` (line 72), execute `robot.move_to(place_target[0], place_target[1], place_target[2] + 0.020, speed=0.07)` (new line) before the `wait(0.3)` on line 73 to retract clear of the tray."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 3,
+   "errors": 0,
+   "wall_s": 10.4,
+   "usd_cum": 0.00242,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 104,
+   "perception": {
+    "episodes": 8,
+    "lookups": 16,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.03
+   },
+   "summary": "**Mode 1: Grasp failure (55 episodes)**\n- **Root cause:** `grasp()` returns `False` or object not secured (lines 50\u201159). Many traces show `holding()` remains `null` after first attempt, triggering retry that still fails.\n- **Fix:** Add a pre\u2011grasp `move_to` 5\u202fmm above the object (line 38\u201144) to ensure clear approach, and log `robot.log(\"grasp succeeded\")` after each attempt to surface silent failures.\n\n**Mode 2: Motion blocked short of target (45 episodes)**\n- **Root cause:** `move_to` descends to `release_height` (line 76) or pre\u2011place hover (line 68) and contacts the tray or joint limit before reaching `z=0.005`. The code lacks a collision\u2011check or step\u2011down profile.\n- **Fix:** Insert a `robot.wait(0.1)` after each `move_to` that reports `\"stopped short\"` and retry with a reduced speed (`speed=0.04`) before proceeding to release.\n\n**Mode 3: Hold verification failure (12 episodes)**\n- **Root cause:** After `grasp()` the code checks `robot.holding() != obj_name` (line 56) and retries, but the second grasp also fails to establish a stable hold, leaving the cube on the table.\n- **Fix:** Before the verification check, execute `robot.move_to(obj['pos'][0], obj['pos'][1], obj['pos'][2]+0.01, speed=0.05)` to shake off any partial contact, then re\u2011attempt `grasp()`."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 8.9,
+   "usd_cum": 0.00428,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 133,
+   "perception": {
+    "episodes": 8,
+    "lookups": 16,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.03
+   },
+   "summary": "**Mode 1: Motion blocked before grasp (55% of seeds)**\n- **Episodes:** 3000, 3001, 3003, 3004, 3006, 3007\n- **Root cause:** `safe_move` descends only 0.001\u202fm per retry (lines\u202f56\u201157). The object is at z\u22480.020\u202fm; two reductions (0.002\u202fm total) are insufficient to clear the obstacle, so both trials fail.\n- **Fix:** Increase descent increment to 0.005\u202fm (change line\u202f56 to `cur_z -= 0.005`) or raise the initial approach z by 0.005\u202fm (line\u202f69).\n\n**Mode 2: Grasp succeeds but placement fails (30% of seeds)**\n- **Episodes:** 3002, 3005\n- **Root cause:** After release, the robot retreats to the tray (lines\u202f116\u2011120) but the final `safe_move` often stops short (blocked by contact), leaving the cube outside the tray.\n- **Fix:** Add a post\u2011release micro\u2011adjustment: after `robot.release()` (line\u202f113), execute `robot.move_to(tray_pos_x, tray_pos_y, tray_pos_z + 0.001, speed=0.03)` to nudge the cube into the tray before retracting.\n\n**Mode 3: Grasp never acquired (15% of seeds)**\n- **Episodes:** 3002 (second grasp), 3005 (first grasp)\n- **Root cause:** `robot.grasp()` returns failure; the retry logic (lines\u202f78\u201179) does not alter pose, so the second attempt repeats the same failed motion.\n- **Fix:** Before the second grasp, invoke `safe_move(*shake, speed=0.05)` (line\u202f87) to lift and re\u2011lower, breaking partial contact as already coded, ensuring a clean closure."
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 8.3,
+   "usd_cum": 0.00592,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 140,
+   "perception": {
+    "episodes": 8,
+    "lookups": 16,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.02
+   },
+   "summary": "**Mode 1: Approach collision (50%)**\n- **Episodes:** 4000, 4001, 4003, 4004, 4005\n- **Root cause:** `safe_move` descends to `release_z` (line 105\u2013109) but the tray approach (line 98\u2013102) uses the same `speed=0.07`. When the arm is already holding a cube, the lowered release height brings the gripper into collision with the tray or table edge before the slower descent can clear it. The retry loop (lines 39\u201359) then fails because `cur_z` cannot drop further.\n- **Fix:** Increase clearance above tray before descent (line 97: change `0.020` to `0.030`). This gives the arm room to transition from hover to release height without hitting the tray.\n\n**Mode 2: Grasp failure after approach (30%)**\n- **Episodes:** 4002, 4006\n- **Root cause:** `safe_move` stops short (lines 46\u201352) and retries with reduced speed and lower `z` (lines 54\u201357). After two trials the arm is too low to reach the object, so `grasp()` never executes (line 76) and the cube remains untouched.\n- **Fix:** Raise the initial approach `z` by 0.005\u202fm (line 69: `approach[2] += 0.010` instead of `0.005`) to give the retry loop more room before hitting the safety minimum.\n\n**Mode 3: Hold verification missed (20%)**\n- **Episodes:** 4002, 4004, 4005\n- **Root cause:** When `grasp()` succeeds but the object shifts during the tray descent (lines 105\u2013110), `robot.holding()` (line 92) may no longer match `obj_name`, causing an early `False` return even though the cube is physically in the gripper.\n- **Fix:** Add a brief `robot.wait(0.1)` after `robot.release()` (line 113) before the micro\u2011adjust move (line 116) to let the cube settle and stabilize the hold state."
+  },
+  {
+   "round": 5,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 7.9,
+   "usd_cum": 0.00772,
+   "code": "round_5/skill.py",
+   "diff": "round_5/diff.patch",
+   "lines": 146,
+   "perception": {
+    "episodes": 8,
+    "lookups": 16,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.03
+   },
+   "summary": "**Mode 1: Hold loss during descent** (4 episodes: 5000, 5001, 5003, 5005)  \n*Root cause:* The robot releases the object at release height but the gripper opens or slips before the cube settles in the tray (lines 113\u2013118). The `holding()` check after descent fails, triggering an abort.  \n*Fix:* Add a brief `robot.wait(0.1)` after `robot.release()` (line 119) before the micro\u2011adjust nudge, allowing the cube to settle and the gripper to fully open before descent begins.\n\n**Mode 2: Motion blocked by contact/joint limit** (3 episodes: 5002, 5004, 5005)  \n*Root cause:* `safe_move` retries with reduced speed and lowered z, but the target pose still intersects a fixture or the table, causing repeated stops short (lines 31\u201359, specifically 54\u201356).  \n*Fix:* Before the first `safe_move` in `pick_and_place` (line 72), shift the approach pose away from the tray edge by \u20130.02 m in x or y, ensuring the subsequent descent path is unobstructed."
+  },
+  {
+   "round": 6,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 8.1,
+   "usd_cum": 0.00986,
+   "code": "round_6/skill.py",
+   "diff": "round_6/diff.patch",
+   "lines": 146,
+   "perception": {
+    "episodes": 8,
+    "lookups": 16,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 0.09
+   }
+  }
+ ],
+ "best_round": 1,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 6,
+  "chosen": 1,
+  "rows": [
+   {
+    "round": 1,
+    "practice": "0/8",
+    "recheck": "0/16",
+    "total_k": 0,
+    "total_n": 24
+   },
+   {
+    "round": 2,
+    "practice": "0/8",
+    "recheck": "0/16",
+    "total_k": 0,
+    "total_n": 24
+   },
+   {
+    "round": 3,
+    "practice": "0/8",
+    "recheck": "0/16",
+    "total_k": 0,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 0,
+  "p": 0.0,
+  "lo": 0.0,
+  "hi": 0.071350034174,
+  "source": "gt",
+  "best_round": 1,
+  "errors": 1,
+  "halts": 1,
+  "safety_clamps": 75,
+  "mean_sim_time": 11.4,
+  "self_report_true": 25,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100000,
+    "error": "",
+    "metrics": {
+     "red_cube_tray_dx": 0.1121,
+     "red_cube_tray_dy": 0.2061,
+     "red_cube_z": 0.0149,
+     "red_cube_held": false,
+     "blue_cube_tray_dx": 0.0478,
+     "blue_cube_tray_dy": 0.2512,
+     "blue_cube_z": 0.0149,
+     "blue_cube_held": false,
+     "red_ok": "False",
+     "blue_ok": "False"
+    },
+    "frame": "eval/episodes/ep_100000/end_front.jpg"
+   },
+   {
+    "seed": 100001,
+    "error": "",
+    "metrics": {
+     "red_cube_tray_dx": 0.0011,
+     "red_cube_tray_dy": 0.0697,
+     "red_cube_z": 0.015,
+     "red_cube_held": false,
+     "blue_cube_tray_dx": 0.0842,
+     "blue_cube_tray_dy": 0.1576,
+     "blue_cube_z": 0.0149,
+     "blue_cube_held": false,
+     "red_ok": "False",
+     "blue_ok": "False"
+    },
+    "frame": "eval/episodes/ep_100001/end_front.jpg"
+   },
+   {
+    "seed": 100002,
+    "error": "",
+    "metrics": {
+     "red_cube_tray_dx": 0.0496,
+     "red_cube_tray_dy": 0.0932,
+     "red_cube_z": 0.0149,
+     "red_cube_held": false,
+     "blue_cube_tray_dx": 0.1183,
+     "blue_cube_tray_dy": 0.0773,
+     "blue_cube_z": 0.0149,
+     "blue_cube_held": false,
+     "red_ok": "False",
+     "blue_ok": "False"
+    },
+    "frame": "eval/episodes/ep_100002/end_front.jpg"
+   },
+   {
+    "seed": 100003,
+    "error": "",
+    "metrics": {
+     "red_cube_tray_dx": 0.0787,
+     "red_cube_tray_dy": 0.0069,
+     "red_cube_z": 0.0149,
+     "red_cube_held": false,
+     "blue_cube_tray_dx": 0.006,
+     "blue_cube_tray_dy": 0.2763,
+     "blue_cube_z": 0.0149,
+     "blue_cube_held": false,
+     "red_ok": "False",
+     "blue_ok": "False"
+    },
+    "frame": "eval/episodes/ep_100003/end_front.jpg"
+   },
+   {
+    "seed": 100004,
+    "error": "",
+    "metrics": {
+     "red_cube_tray_dx": 0.0769,
+     "red_cube_tray_dy": 0.055,
+     "red_cube_z": 0.0149,
+     "red_cube_held": false,
+     "blue_cube_tray_dx": 0.053,
+     "blue_cube_tray_dy": 0.2255,
+     "blue_cube_z": 0.0149,
+     "blue_cube_held": false,
+     "red_ok": "False",
+     "blue_ok": "False"
+    },
+    "frame": "eval/episodes/ep_100004/end_front.jpg"
+   },
+   {
+    "seed": 100005,
+    "error": "",
+    "metrics": {
+     "red_cube_tray_dx": 0.0315,
+     "red_cube_tray_dy": 0.1827,
+     "red_cube_z": 0.0158,
+     "red_cube_held": false,
+     "blue_cube_tray_dx": 0.1305,
+     "blue_cube_tray_dy": 0.1263,
+     "blue_cube_z": 0.0149,
+     "blue_cube_held": false,
+     "red_ok": "False",
+     "blue_ok": "False"
+    },
+    "frame": "eval/episodes/ep_100005/end_front.jpg"
+   },
+   {
+    "seed": 100006,
+    "error": "",
+    "metrics": {
+     "red_cube_tray_dx": 0.0692,
+     "red_cube_tray_dy": 0.0228,
+     "red_cube_z": 0.0149,
+     "red_cube_held": false,
+     "blue_cube_tray_dx": 0.0366,
+     "blue_cube_tray_dy": 0.3388,
+     "blue_cube_z": 0.0149,
+     "blue_cube_held": false,
+     "red_ok": "False",
+     "blue_ok": "False"
+    },
+    "frame": "eval/episodes/ep_100006/end_front.jpg"
+   },
+   {
+    "seed": 100007,
+    "error": "",
+    "metrics": {
+     "red_cube_tray_dx": 0.026,
+     "red_cube_tray_dy": 0.0791,
+     "red_cube_z": 0.0149,
+     "red_cube_held": false,
+     "blue_cube_tray_dx": 0.0283,
+     "blue_cube_tray_dy": 0.082,
+     "blue_cube_z": 0.0149,
+     "blue_cube_held": false,
+     "red_ok": "False",
+     "blue_ok": "False"
+    },
+    "frame": "eval/episodes/ep_100007/end_front.jpg"
+   }
+  ],
+  "perception": {
+   "episodes": 50,
+   "lookups": 100,
+   "misses": 0,
+   "detection_rate": 1.0,
+   "median_of_episode_median_err_mm": 0.03
+  }
+ },
+ "models": {
+  "coder": {
+   "alias": "nano",
+   "id": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "nvidia": true,
+   "calls": 6,
+   "prompt_tokens": 28924,
+   "completion_tokens": 23973,
+   "usd": 0.007489,
+   "price_in": 0.06,
+   "price_out": 0.24
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 5,
+   "prompt_tokens": 31377,
+   "completion_tokens": 2024,
+   "usd": 0.002368,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.009857,
+  "compute_usd": 0.0,
+  "total_usd": 0.009857,
+  "calls": 11,
+  "prompt_tokens": 60301,
+  "completion_tokens": 25997,
+  "compute_seconds": 239.93,
+  "backend": "local"
+ },
+ "wall_time_s": 662.0,
+ "practice_episodes": 48,
+ "created": "2026-10-24 13:39:36",
+ "skill_file": "best_skill.py"
+}

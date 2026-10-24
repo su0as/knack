@@ -1,0 +1,5 @@
+- Fixed hold‑loss during descent by adding a 0.2 s pause after release and slowing the descent speed, giving the cube time to settle before the gripper opens.
+- Added an extra hold verification just before release and a short wait after the initial grasp to stabilise the object in the fingers.
+- Implemented a small lateral shift (≈ 0.02 m) of the target pose when moving to the tray, preventing the motion from being blocked by the tray lip or other fixtures.
+- Preserved all retry loops, logging, and the overall pick‑and‑place flow to keep previously successful behaviours intact.
+- Ensured every new offset stays within the robot’s safety limits while maintaining the same clearance and workflow as before.

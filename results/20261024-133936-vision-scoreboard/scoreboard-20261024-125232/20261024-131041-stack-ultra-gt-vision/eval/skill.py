@@ -1,0 +1,94 @@
+import math
+
+def run(robot):
+    # Perceive initial scene
+    obs = robot.observe()
+    objects = obs.get("objects", {})
+    
+    # Get poses of red and blue cubes
+    red_name = "red_cube"
+    blue_name = "blue_cube"
+    
+    if red_name not in objects or blue_name not in objects:
+        # Maybe gripper occluding; move home and re-observe
+        robot.home()
+        robot.wait(0.5)
+        obs = robot.observe()
+        objects = obs.get("objects", {})
+        if red_name not in objects or blue_name not in objects:
+            return False
+    
+    red_pos = objects[red_name]["pos"]
+    red_yaw = objects[red_name]["yaw"]
+    blue_pos = objects[blue_name]["pos"]
+    blue_yaw = objects[blue_name]["yaw"]
+    
+    # --- Pick up red cube ---
+    # Approach above red cube
+    approach_x, approach_y = red_pos[0], red_pos[1]
+    approach_z = 0.10  # well above
+    try:
+        robot.move_to(approach_x, approach_y, approach_z, yaw=red_yaw, speed=0.15)
+    except Exception:
+        return False
+    
+    # Descend to grasp height (cube center at z=0.015)
+    grasp_z = 0.015
+    try:
+        robot.move_to(approach_x, approach_y, grasp_z, yaw=red_yaw, speed=0.05)
+    except Exception:
+        return False
+    
+    # Grasp
+    if not robot.grasp():
+        # Retry once: lift a bit and re-descend
+        robot.move_to(approach_x, approach_y, 0.03, yaw=red_yaw, speed=0.05)
+        robot.move_to(approach_x, approach_y, grasp_z, yaw=red_yaw, speed=0.05)
+        if not robot.grasp():
+            return False
+    
+    # Verify holding
+    if robot.holding() != red_name:
+        return False
+    
+    # Lift red cube clear
+    lift_z = 0.12
+    try:
+        robot.move_to(approach_x, approach_y, lift_z, yaw=red_yaw, speed=0.15)
+    except Exception:
+        return False
+    
+    # --- Place on blue cube ---
+    # Move above blue cube
+    target_x, target_y = blue_pos[0], blue_pos[1]
+    # Red cube center when stacked: blue top (0.03) + half red height (0.015) = 0.045
+    place_z = 0.045
+    try:
+        robot.move_to(target_x, target_y, lift_z, yaw=blue_yaw, speed=0.15)
+        robot.move_to(target_x, target_y, place_z, yaw=blue_yaw, speed=0.05)
+    except Exception:
+        return False
+    
+    # Lower a tiny bit more to ensure contact (1-2 mm)
+    try:
+        robot.move_by(dz=-0.002, speed=0.02)
+    except Exception:
+        pass
+    
+    # Release
+    robot.release()
+    robot.wait(0.3)
+    
+    # Verify release and stack
+    if robot.holding() is not None:
+        return False
+    
+    # Re-observe to confirm red is on blue (rough check: red z > 0.03)
+    obs = robot.observe()
+    objects = obs.get("objects", {})
+    if red_name in objects:
+        red_z = objects[red_name]["pos"][2]
+        if red_z > 0.035:  # center above blue top
+            return True
+    
+    return False

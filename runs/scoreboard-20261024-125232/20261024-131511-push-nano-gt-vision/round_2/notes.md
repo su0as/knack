@@ -1,0 +1,6 @@
+- Fixed Mode 1 (approach blocked) by computing a side‑on contact point: the offset from the puck centre is taken perpendicular to the push direction, so the gripper contacts the puck on its side and can reach the target pose without hitting the puck edge or joint limits.  
+- Up‑scaled the push distance to 0.05 m and added a second push iteration if after the first move the puck is still outside the 0.04 m target radius.  
+- Replaced the full‑close `grasp()` with a light contact: after the approach we attempt a normal `grasp()`. If `robot.holding()` is still `None` we apply a tiny downward press (`move_by(dz=-0.001)`) to guarantee finger‑puck contact without fully closing the fingers.  
+- Added explicit checks of the `ok` field returned by `move_to` and `move_by`; any failure aborts the episode cleanly.  
+- Kept all imports to `math` only, removed any forbidden imports, and avoided bare `except:` statements.  
+- Added a final verification that re‑observes the puck and returns `True` only when its centre lies inside the target circle.

@@ -1,0 +1,248 @@
+{
+ "round": 5,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 0,
+ "errors": 0,
+ "wall_s": 7.9,
+ "usd_cum": 0.00772,
+ "code": "round_5/skill.py",
+ "diff": "round_5/diff.patch",
+ "lines": 146,
+ "notes": "- Increased the clearance above the tray from\u202f0.020\u202fm to\u202f0.030\u202fm to avoid collisions when the gripper is already holding a cube.  \n- Raised the initial approach height for the target object from\u202f+0.005\u202fm to\u202f+0.010\u202fm, giving more room before the safety\u2011limited descent.  \n- Inserted a brief `robot.wait(0.1)` immediately after `robot.release()` before the micro\u2011adjust nudge, allowing the cube to settle and stabilising the hold state.  \n- Added a hold\u2011verification check just before release (after reaching release height) to abort if the object is no longer held, preventing early false failures.  \n- Preserved all retry loops, logging, and the overall pick\u2011and\u2011place flow to keep previously successful behaviours intact.",
+ "perception": {
+  "episodes": 8,
+  "lookups": 16,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "median_of_episode_median_err_mm": 0.03
+ },
+ "episodes": [
+  {
+   "seed": 5000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0075,
+    "red_cube_tray_dy": 0.0654,
+    "red_cube_z": 0.015,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.099,
+    "blue_cube_tray_dy": 0.0559,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.033,
+    "red_cube_tray_dy": 0.1923,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.1091,
+    "blue_cube_tray_dy": 0.0195,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0003,
+    "red_cube_tray_dy": 0.0654,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0332,
+    "blue_cube_tray_dy": 0.1073,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0041,
+    "red_cube_tray_dy": 0.2333,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0434,
+    "blue_cube_tray_dy": 0.1014,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0007,
+    "red_cube_tray_dy": 0.0617,
+    "red_cube_z": 0.0223,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0626,
+    "blue_cube_tray_dy": 0.2585,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0013,
+    "red_cube_tray_dy": 0.0594,
+    "red_cube_z": 0.0256,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0821,
+    "blue_cube_tray_dy": 0.2808,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0026,
+    "red_cube_tray_dy": 0.0293,
+    "red_cube_z": 0.0208,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0293,
+    "blue_cube_tray_dy": 0.2783,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0364,
+    "red_cube_tray_dy": 0.2505,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0754,
+    "blue_cube_tray_dy": 0.0852,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

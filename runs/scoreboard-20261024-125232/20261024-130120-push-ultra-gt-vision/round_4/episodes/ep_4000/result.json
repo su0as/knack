@@ -1,0 +1,235 @@
+{
+ "task": "push",
+ "seed": 4000,
+ "error": {
+  "type": "AttributeError",
+  "message": "'SimRobot' object has no attribute 'MotionError'",
+  "traceback": "  skill.py line 82, in run: except robot.MotionError:\nAttributeError: 'SimRobot' object has no attribute 'MotionError'"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.0811,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 1.5,
+   "call": "move_to(0.090, -0.092, 0.050, yaw=1.107, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0899,
+     -0.0918,
+     0.05
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 1.82,
+   "call": "move_to(0.090, -0.092, 0.025, yaw=1.107, speed=0.100)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0899,
+     -0.0917,
+     0.0248
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 5.84,
+   "call": "move_to(0.179, 0.087, 0.025, yaw=1.107, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1794,
+     0.0867,
+     0.0249
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 6.1,
+   "call": "move_to(0.184, 0.096, 0.025, yaw=1.107, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.184,
+     0.0959,
+     0.025
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 6.6,
+   "call": "wait(0.50)",
+   "result": "ok"
+  },
+  {
+   "t": 6.6,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 6.6,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 6.6,
+   "call": "move_to(0.229, 0.246, 0.050, yaw=-1.877, speed=0.100)",
+   "error": "MotionError: target (0.229, 0.246, 0.050) unreachable (wrist point is 0.420 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.336 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  }
+ ],
+ "n_calls": 10,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 7.1,
+ "wall_time": 1.58,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1286,
+     -0.0121,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1753,
+     0.0808,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 7.1,
+  "gripper": {
+   "pos": [
+    0.1839,
+    0.0958,
+    0.025
+   ],
+   "yaw": 1.1067,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1975,
+     0.1587,
+     0.0099
+    ],
+    "yaw": 0.3867,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1753,
+     0.0808,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1753,
+   "y": 0.0808,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1286,
+   "y": -0.0121,
+   "yaw": 0.157,
+   "fp": 0.035
+  }
+ },
+ "perception": {
+  "calls": 4,
+  "lookups": 4,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 3.14,
+  "pos_err_mm_p90": 4.39,
+  "yaw_err_deg_median": 0.0,
+  "by_camera": {
+   "overhead": 4,
+   "front": 0
+  },
+  "fixtures_mapped": [
+   "target"
+  ],
+  "fixture_err_mm": {
+   "target": 1.11
+  }
+ }
+}

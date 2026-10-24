@@ -1,0 +1,7 @@
+- Added a visibility guard around every `get_pose` call – if a `PerceptionError` (or any exception) occurs the episode is logged and aborted instead of crashing.
+- Increased the push distance to 0.12 m (≈12 cm) and allowed up to three pushes, guaranteeing the puck can travel far enough to meet the 0.035 m tolerance.
+- Release is now performed only after a successful push (inside the success branch) and also as a clean‑up on failure, preventing premature releases.
+- Improved grasp reliability: after the initial close, if the puck isn’t held we apply a tiny downward press and try once more; if still empty we abort the episode.
+- All motion calls are wrapped with exception handling that logs failures and aborts cleanly, preserving the safety‑layer behaviour.
+- Kept the side‑on contact offset, workspace checks, and light‑contact logic from the previous working version.
+- No new imports were added; only `math` is used, and there are no bare `except:` statements.

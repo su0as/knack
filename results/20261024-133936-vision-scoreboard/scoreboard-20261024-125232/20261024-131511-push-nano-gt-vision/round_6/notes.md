@@ -1,0 +1,8 @@
+- Fixed truncation of push distance: compute the remaining distance to the target and push exactly the needed amount, allowing a second push if the first is clipped by workspace margins.  
+- Added strict workspace‑margin guard before each `move_by` to guarantee the new tool point stays inside the safe x‑ and y‑ranges; any violation aborts the push loop instead of raising a SafetyViolation.  
+- Improved contact acquisition: after the initial lateral nudge we attempt up to two downward presses and abort cleanly if the puck is still not held.  
+- Wrapped all `move_to`/`move_by` calls in `try/except`, logging failures and releasing the gripper on error to avoid stuck states.  
+- Re‑perceived the puck after each push and break early when the tolerance is already met, preventing unnecessary iterations.  
+- Dynamically compute a safe push distance each iteration (capped by x‑, y‑margins and the needed distance), eliminating cumulative drift and ensuring progress even when the first push is truncated.  
+- Added a minimum positive push distance (1e‑5) to avoid zero‑length moves that would otherwise be ignored.  
+- Minor clean‑up of comments and variable names while preserving the successful workflow from earlier rounds.

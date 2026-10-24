@@ -1,0 +1,7 @@
+- Fixed MotionError import by catching robot.MotionError (the exception class lives on the robot object).
+- Added retry loop (3 tries, 0.2 s wait) around pose acquisition to handle intermittent observation loss.
+- Clamped start_x upper bound to 0.25 m to stay inside the arm's 0.251 m reach envelope.
+- Removed puck_radius from push_dist formula; now push_dist = dist + margin (proportional) capped at dist + NUDGE_DIST so short pushes don't overshoot.
+- Unified clamp usage and fixed variable naming (target_pos vs target["pos"]).
+- Kept the structured attempt flow: high-Z approach → lower to push height → slow push → nudge → verify with re-observation.
+- Added early exit if puck already in target.

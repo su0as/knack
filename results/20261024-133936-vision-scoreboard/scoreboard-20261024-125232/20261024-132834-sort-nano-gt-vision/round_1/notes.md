@@ -1,0 +1,7 @@
+- Vision noise is a few mm and objects can disappear if occluded; always verify poses with `robot.observe()` and handle missing entries or `LookupError` on `get_pose()`.
+- Simple sequential pick‑and‑place works: lift a small amount above the object, align gripper yaw with the object’s yaw, close, then move to the corresponding tray centre and release.
+- Use low speed (≈0.07 m/s) for approach and placement moves, and catch `MotionError` to recover from unreachable targets.
+- Verify that the gripper actually holds the intended object before moving; a single retry on `grasp()` is enough in most cases.
+- Keep the logic modular (pick‑and‑place helper) so it can be reused if the layout changes.
+- Remember the safety limits: stay inside x∈[0.04,0.32], y∈[‑0.26,0.26], z∈[0.014,0.26]; the code stays well within them.
+- Return `True` only after both cubes have been placed; any failure logs the reason and returns `False`.

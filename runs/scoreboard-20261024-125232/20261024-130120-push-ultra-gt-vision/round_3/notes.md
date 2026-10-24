@@ -1,0 +1,7 @@
+- The fixed 0.02 m push margin causes large overshoot on short pushes and undershoot on long ones. Replaced with a proportional margin `0.02 * (dist / 0.3)`.
+- The gripper collides with the puck when moving to the start position because the fingertips (1.25 cm below tool point) hit the puck at the old APPROACH_Z=0.025 m. Now approach the start position at a safe height (0.05 m), then lower to push height (0.025 m) before pushing.
+- Increased CLEARANCE from 0.04 m to 0.06 m to keep the robot further clear of the puck’s silhouette.
+- Aligned gripper yaw with the push direction (fingers perpendicular to push) for cleaner contact.
+- Catch `MotionError` explicitly instead of bare `Exception`.
+- Structured each attempt as: high‑Z approach → lower to push height → slow push → nudge → verify.
+- Re‑read poses at the start of every attempt and after each verification.

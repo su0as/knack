@@ -1,0 +1,5 @@
+- First version: need to pick up each cube and place in matching colored tray
+- Cubes are 3cm, center at z≈0.015 on table; grasp at z≈0.015 (tool point) puts fingers at mid-height
+- Trays have inner half-size 0.044m (8.8cm square), walls 2.5cm high
+- Must handle perception noise, verify grasps, retry on failure, catch MotionError
+- Approach: observe → for each color: move above cube → lower → grasp → verify → lift → move above tray → lower → release → verify

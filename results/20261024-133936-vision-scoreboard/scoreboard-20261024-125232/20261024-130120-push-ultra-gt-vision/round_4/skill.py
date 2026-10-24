@@ -1,0 +1,115 @@
+import math
+
+def run(robot):
+    # Constants
+    CLEARANCE = 0.06          # keep start position clear of puck silhouette
+    APPROACH_Z = 0.025        # push height (fingertips ~0.0125 m above table)
+    SAFE_Z = 0.05             # collision-free approach height
+    TRAVEL_SPEED = 0.10
+    PUSH_SPEED = 0.05
+    NUDGE_DIST = 0.01
+    MAX_ATTEMPTS = 3
+    POSE_RETRIES = 3
+    POSE_RETRY_WAIT = 0.2
+
+    def clamp(v, lo, hi):
+        return max(lo, min(hi, v))
+
+    def in_target(puck_pos, target_pos, target_radius):
+        return math.hypot(puck_pos[0] - target_pos[0], puck_pos[1] - target_pos[1]) <= target_radius
+
+    def get_poses():
+        """Return (puck_pos, target_pos, puck_radius, target_radius) or (None,)*4."""
+        obs = robot.observe()
+        puck = obs["objects"].get("puck")
+        target = obs["fixtures"].get("target")
+        if not puck or not target:
+            return None, None, None, None
+        puck_pos = puck["pos"]
+        target_pos = target["pos"]
+        puck_radius = puck["size"]["radius"]
+        target_radius = target["radius"]
+        return puck_pos, target_pos, puck_radius, target_radius
+
+    # Initial pose acquisition with retries
+    puck_pos = target_pos = puck_radius = target_radius = None
+    for _ in range(POSE_RETRIES):
+        puck_pos, target_pos, puck_radius, target_radius = get_poses()
+        if puck_pos is not None:
+            break
+        robot.wait(POSE_RETRY_WAIT)
+    if puck_pos is None:
+        return False
+
+    if in_target(puck_pos, target_pos, target_radius):
+        return True
+
+    for attempt in range(MAX_ATTEMPTS):
+        # Re-read poses at start of each attempt (with retries)
+        for _ in range(POSE_RETRIES):
+            puck_pos, target_pos, puck_radius, target_radius = get_poses()
+            if puck_pos is not None:
+                break
+            robot.wait(POSE_RETRY_WAIT)
+        if puck_pos is None:
+            continue
+
+        dx = target_pos[0] - puck_pos[0]
+        dy = target_pos[1] - puck_pos[1]
+        dist = math.hypot(dx, dy)
+        if dist < 1e-6:
+            return True
+        ux, uy = dx / dist, dy / dist
+        push_yaw = math.atan2(uy, ux)  # fingers perpendicular to push direction
+
+        # Start position behind puck (clamped to reachable workspace)
+        start_x = clamp(puck_pos[0] - ux * (puck_radius + CLEARANCE), 0.04, 0.25)  # 0.25 < 0.251 reach limit
+        start_y = clamp(puck_pos[1] - uy * (puck_radius + CLEARANCE), -0.26, 0.26)
+
+        # Push end position: through puck toward target + proportional margin, capped
+        margin = 0.02 * (dist / 0.3)
+        push_dist = min(dist + margin, dist + NUDGE_DIST)
+        end_x = clamp(puck_pos[0] + ux * push_dist, 0.04, 0.32)
+        end_y = clamp(puck_pos[1] + uy * push_dist, -0.26, 0.26)
+
+        # Nudge position: a tiny bit further
+        nudge_x = clamp(end_x + ux * NUDGE_DIST, 0.04, 0.32)
+        nudge_y = clamp(end_y + uy * NUDGE_DIST, -0.26, 0.26)
+
+        # 1. Approach start position at safe height
+        try:
+            robot.move_to(start_x, start_y, SAFE_Z, speed=TRAVEL_SPEED, yaw=push_yaw)
+        except robot.MotionError:
+            continue
+
+        # 2. Lower to push height
+        try:
+            robot.move_to(start_x, start_y, APPROACH_Z, speed=TRAVEL_SPEED, yaw=push_yaw)
+        except robot.MotionError:
+            continue
+
+        # 3. Push forward slowly
+        try:
+            robot.move_to(end_x, end_y, APPROACH_Z, speed=PUSH_SPEED, yaw=push_yaw)
+        except robot.MotionError:
+            pass  # may have stopped short due to contact; continue to nudge
+
+        # 4. Small nudge to ensure crossing threshold
+        try:
+            robot.move_to(nudge_x, nudge_y, APPROACH_Z, speed=PUSH_SPEED, yaw=push_yaw)
+        except robot.MotionError:
+            pass
+
+        # 5. Verify
+        robot.wait(0.5)
+        puck_pos, target_pos, puck_radius, target_radius = get_poses()
+        if puck_pos is not None and in_target(puck_pos, target_pos, target_radius):
+            return True
+
+    # Final verification after all attempts
+    robot.wait(0.5)
+    puck_pos, target_pos, puck_radius, target_radius = get_poses()
+    if puck_pos is not None and in_target(puck_pos, target_pos, target_radius):
+        return True
+
+    return False

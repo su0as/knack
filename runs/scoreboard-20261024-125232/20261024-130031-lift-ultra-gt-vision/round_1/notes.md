@@ -1,0 +1,4 @@
+- First version for the "Lift" task: pick up the red cube and hold it ≥5 cm above the table.
+- Use robot.observe() to locate the red cube, then move to its (x, y) at a grasp height (z ≈ 0.015, cube centre), aligning yaw with the cube's reported yaw.
+- Grasp, verify with robot.holding(), then lift to z ≥ 0.05 (e.g., 0.07) and verify again.
+- Include bounded retries for grasp and motion errors.

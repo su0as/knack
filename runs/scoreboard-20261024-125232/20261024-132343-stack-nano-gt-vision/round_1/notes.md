@@ -1,0 +1,8 @@
+- The scene provides object colours and shapes; we can identify the red and blue cubes by `color` and `shape`.
+- The target pose for the red cube is directly above the blue cube’s centre at `z = blue_z + size` (the top of the blue cube).
+- A safe “approach” height a few centimetres above the target centre avoids collisions; then we descend to the target centre.
+- Use low speed (≈0.07 m/s) for precise moves and wrap every `move_to` in a `try/except MotionError` to stay within the budget.
+- After descending, align the gripper’s closing direction with the cube’s yaw (optional but helps a stable grasp) and call `grasp()`.
+- Verify the grasp with `robot.holding()`; if it fails, abort the episode.
+- Lift the cube a small amount, then move to the target x‑y (same as the blue cube) and release.
+- All coordinates are read at runtime from `observe()` – no hard‑coding.

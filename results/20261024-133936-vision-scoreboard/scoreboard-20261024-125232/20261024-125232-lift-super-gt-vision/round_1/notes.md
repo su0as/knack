@@ -1,0 +1,5 @@
+- First attempt: simple pick-and-lift using perception to locate the red cube.
+- Will home, then repeatedly observe until the red cube is visible (handle missing due to occlusion).
+- Approach from above, descend slowly to grasp, verify grasp, then lift to a height where the cube's bottom is ≥5 cm above the table.
+- Use bounded retries and catch MotionError for unreachable targets.
+- No hard‑coded coordinates; all positions derived from observed poses.

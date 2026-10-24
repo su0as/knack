@@ -1,0 +1,7 @@
+- Fixed MotionError handling: replaced `except robot.MotionError` with `except Exception` to catch actual motion errors.
+- Increased CLEARANCE from 0.06 to 0.12 for fingertip clearance during push.
+- Increased NUDGE_DIST from 0.01 to 0.03 for sufficient corrective travel.
+- Capped push_dist to `min(dist + NUDGE_DIST, 0.251 - puck_pos[0])` to keep end_x within 0.251m reach limit.
+- Rewrote entire skill with clean logic: proper pose acquisition with retries, unified clamp function, correct variable names, structured attempt flow (approach high → lower → push → nudge → verify).
+- Added early exit if puck already in target.
+- All moves use safe speeds and heights; reachable bounds respected.

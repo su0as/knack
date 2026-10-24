@@ -1,0 +1,42 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -25,11 +25,14 @@
+     # ------------------------------------------------------------------
+     # 2. Compute stacking geometry
+     # ------------------------------------------------------------------
+-    cube_size = red_cube["size"][0]          # side length (assumed equal)
++    # Assume cubes are roughly the same size; use red cube's side length
++    cube_size = red_cube["size"][0]          # side length
+     half_size = cube_size / 2.0
+ 
+-    # Target centre of the red cube when stacked on the blue cube
++    # Centre of the blue cube (target x,y)
+     tx, ty = blue_cube["pos"][0], blue_cube["pos"][1]
++
++    # Height of the stacking centre: top of blue cube + size of red cube
+     tz = blue_cube["pos"][2] + cube_size      # centre of red on top of blue
+ 
+     # Safe approach height above the red cube (a few cm above its centre)
+@@ -50,7 +53,7 @@
+     # ------------------------------------------------------------------
+     try:
+         robot.log("Descending to grasp height")
+-        # Position the tool point at the cube centre (fingers will be around its middle)
++        # Position tool point at the cube centre (fingers will be around its middle)
+         robot.move_to(red_cube["pos"][0], red_cube["pos"][1], red_cube["pos"][2], speed=0.07)
+         # Optional: orient fingers with the cube's yaw for a more stable grasp
+         robot.move_to(red_cube["pos"][0], red_cube["pos"][1], red_cube["pos"][2],
+@@ -60,10 +63,11 @@
+         return False
+ 
+     # ------------------------------------------------------------------
+-    # 5. Grasp the red cube
++    # 5. Ensure gripper is open, then grasp the red cube
+     # ------------------------------------------------------------------
++    robot.log("Ensuring gripper is open")
++    robot.release()          # open fully (no AttributeError)
+     robot.log("Closing grasp")
+-    robot.open()                     # ensure fingers are open
+     robot.grasp()
+ 
+     # Verify that the cube is actually held
