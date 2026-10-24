@@ -1,0 +1,179 @@
+{
+ "task": "lift",
+ "seed": 100035,
+ "error": {
+  "type": "SafetyViolation",
+  "message": "target z=-0.006 m is outside the safe workspace [0.014, 0.26] by 0.021 m",
+  "traceback": "  skill.py line 32, in run: robot.move_to(cx, cy, cz, yaw=cyaw, speed=0.07)\nSafetyViolation: target z=-0.006 m is outside the safe workspace [0.014, 0.26] by 0.021 m"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "red_cube_z": 0.0149,
+  "required_z": 0.065
+ },
+ "trace": [
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.18,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.94,
+   "call": "move_to(0.122, 0.023, 0.044, yaw=-0.751, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1216,
+     0.0231,
+     0.0433
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 0.94,
+   "call": "move_to(0.122, 0.023, -0.006, yaw=-0.751, speed=0.070)",
+   "error": "SAFETY HALT: target z=-0.006 m is outside the safe workspace [0.014, 0.26] by 0.021 m"
+  }
+ ],
+ "n_calls": 4,
+ "printed": [],
+ "safety_events": [
+  {
+   "t": 0.94,
+   "kind": "workspace",
+   "action": "halt",
+   "detail": "z=-0.006 outside [0.014, 0.26] by 0.021 m"
+  }
+ ],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 1
+ },
+ "halted": "target z=-0.006 m is outside the safe workspace [0.014, 0.26] by 0.021 m",
+ "sim_time": 1.44,
+ "wall_time": 0.06,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1204,
+     0.0241,
+     0.0149
+    ],
+    "yaw": 0.7554,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1824,
+     -0.0608,
+     0.0149
+    ],
+    "yaw": 0.2215,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 1.44,
+  "gripper": {
+   "pos": [
+    0.1219,
+    0.0231,
+    0.0435
+   ],
+   "yaw": 2.391,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1204,
+     0.0241,
+     0.0149
+    ],
+    "yaw": 0.7554,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1824,
+     -0.0608,
+     0.0149
+    ],
+    "yaw": 0.2215,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {},
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1204,
+   "y": 0.0241,
+   "yaw": 0.7554,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1824,
+   "y": -0.0608,
+   "yaw": 0.2215,
+   "fp": 0.0225
+  }
+ }
+}
