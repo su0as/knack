@@ -61,6 +61,14 @@ REAL_PERCEPTION_NOTE = ("Perception note for this scene: object poses come from 
                         "than usual between episodes.")
 
 
+VISION_PERCEPTION_NOTE = ("Perception note for this scene: object poses come from a computer-vision pipeline (OpenCV) "
+                          "on an overhead RGB-D camera, with a front camera as backup, not from the simulator. Typical "
+                          "error is a few millimetres, worse when an object is partly hidden. An object that neither camera "
+                          "can see (for example under the gripper or under another object) is missing from observe()['objects'], "
+                          "and get_pose() raises LookupError for it: move the gripper out of the way and look again. Object "
+                          "mass, friction and grip force also vary between episodes.")
+
+
 REWARD_NOTES = {
     "gt": "Success is measured by the simulator's ground-truth check.",
     "vlm": ("Success is judged by a vision model looking at camera frames of the final scene. It can be wrong. "

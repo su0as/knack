@@ -119,7 +119,7 @@ class Learner:
             raise ValueError("reward must be gt, vlm or self")
         if self.custom and cfg.reward == "gt":
             raise ValueError("a custom instruction has no ground-truth check; use --reward vlm")
-        run_id = cfg.run_id or f"{_now()}-{cfg.task}-{_slug(cfg.coder)}-{cfg.reward}" + ("-real" if cfg.realism == "real" else "")
+        run_id = cfg.run_id or f"{_now()}-{cfg.task}-{_slug(cfg.coder)}-{cfg.reward}" + {"real": "-real", "vision": "-vision"}.get(cfg.realism, "")
         self.run_id = run_id
         self.dir = Path(cfg.runs_root) / run_id
         self.dir.mkdir(parents=True, exist_ok=True)
@@ -302,6 +302,10 @@ class Learner:
             parts.append("check: " + ", ".join(f"{k}={v}" for k, v in r["metrics"].items()))
         if reward in ("gt", "vlm") and r.get("final_obs"):
             parts.append("final: " + _obj_brief(r["final_obs"]))
+        pc = r.get("perception") or {}
+        if pc.get("lookups"):
+            parts.append(f"camera: {pc['lookups'] - pc['misses']}/{pc['lookups']} object sightings, "
+                         f"median error {pc['pos_err_mm_median']} mm")
         sc = r.get("safety_summary") or {}
         if sc.get("clamp"):
             parts.append(f"safety clamps: {sc['clamp']}")
@@ -359,6 +363,8 @@ class Learner:
         first = prompts.first_user(self.instruction, self.task.title, example, lib, probe_log)
         if self.cfg.realism == "real":
             first = prompts.REAL_PERCEPTION_NOTE + "\n\n" + first
+        elif self.cfg.realism == "vision":
+            first = prompts.VISION_PERCEPTION_NOTE + "\n\n" + first
         msgs = [{"role": "system", "content": prompts.CODER_SYSTEM}, {"role": "user", "content": first}]
         code, notes = self._coder("round_1_write", msgs)
         if notes:
@@ -396,6 +402,9 @@ class Learner:
             "code": f"round_{k}/skill.py", "diff": f"round_{k}/diff.patch", "lines": code.count("\n") + 1,
             "notes": (self.notes or "")[:1500],
         }
+        perc = _perception_agg(results)
+        if perc:
+            rec["perception"] = perc
         if self.judge and not self.custom:
             rec["judge"] = judge_metrics([(bool(r.get("success_gt")), (r.get("judge") or {}).get("success")) for r in results])
         compact = [{"seed": r["seed"], "reward": r["reward"], "success_gt": r.get("success_gt"), "self_report": r.get("self_report"),
@@ -536,7 +545,7 @@ class Learner:
               "safety_clamps": sum((r.get("safety_summary") or {}).get("clamp", 0) for r in results),
               "mean_sim_time": round(sum(r.get("sim_time") or 0 for r in results) / max(1, n), 2),
               "self_report_true": sum(r.get("self_report") is True for r in results),
-              "judge": jm, "failures": gallery}
+              "judge": jm, "failures": gallery, "perception": _perception_agg(results)}
         compact = [{"seed": r["seed"], "success_gt": r.get("success_gt"), "self_report": r.get("self_report"), "judge": r.get("judge"),
                     "error": r.get("error"), "metrics": r.get("metrics"), "frames": r.get("frames")} for r in results]
         (self.dir / "eval" / "eval.json").write_text(json.dumps({**ev, "episodes": compact}, indent=1, default=str), encoding="utf-8")
@@ -598,6 +607,19 @@ class Learner:
             card["saved_to_library"] = True
         self._set(status=status, phase="done", card="card.json")
         return card
+
+
+def _perception_agg(results: list) -> dict | None:
+    """Pool the per-episode OpenCV perception stats (vision mode only)."""
+    ps = [r.get("perception") for r in results if r.get("perception")]
+    if not ps:
+        return None
+    lookups = sum(p["lookups"] for p in ps)
+    misses = sum(p["misses"] for p in ps)
+    meds = sorted(p["pos_err_mm_median"] for p in ps if p.get("pos_err_mm_median") == p.get("pos_err_mm_median"))
+    return {"episodes": len(ps), "lookups": lookups, "misses": misses,
+            "detection_rate": round(1 - misses / lookups, 4) if lookups else None,
+            "median_of_episode_median_err_mm": meds[len(meds) // 2] if meds else None}
 
 
 def make_runner(cfg: LearnConfig, ledger: Ledger, run_dir: Path):

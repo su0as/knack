@@ -60,13 +60,18 @@ def card_markdown(card: dict) -> str:
         "",
         f"- Demonstrations used: **0**",
         f"- Reward during practice: `{card['reward']}`" + (" (custom instruction, vision judge only)" if card.get("custom_instruction") else ""),
-        f"- Perception and physics: `{card.get('realism', 'sim')}`" + (" (camera-grade noise, about 8 mm; wider mass, friction and grip randomisation)" if card.get("realism") == "real" else " (about 2 mm noise, light randomisation)"),
+        f"- Perception and physics: `{card.get('realism', 'sim')}`" + {"real": " (camera-grade noise, about 8 mm; wider mass, friction and grip randomisation)",
+         "vision": " (poses from OpenCV 5 on rendered RGB-D cameras; wider mass, friction and grip randomisation)"}.get(card.get("realism"), " (about 2 mm noise, light randomisation)"),
         f"- Practice: {len(card['rounds'])} rounds, {card['practice_episodes']} episodes; best version from round {card.get('best_round')}",
     ]
     if ev:
         lines.append(f"- Held-out success ({'ground truth' if ev.get('source') == 'gt' else 'vision judge'}): "
                      f"**{ev['k']}/{ev['n']} = {_pct(ev['p'])}** (Wilson 95% CI {_pct(ev['lo'])} to {_pct(ev['hi'])})")
         lines.append(f"- Safety layer: {ev.get('halts', 0)} halts, {ev.get('safety_clamps', 0)} clamps over {ev['n']} episodes")
+        pc = ev.get("perception")
+        if pc:
+            lines.append(f"- OpenCV perception on held-out episodes: {pc['lookups'] - pc['misses']}/{pc['lookups']} object sightings "
+                         f"({pc['detection_rate']:.0%}), median per-episode position error {pc['median_of_episode_median_err_mm']} mm")
         j = ev.get("judge")
         if j and j.get("decided"):
             lines.append(f"- Vision judge vs ground truth ({j['n']} episodes): accuracy {_pct(j['accuracy'])}, "
@@ -108,6 +113,9 @@ def card_html(card: dict, run_dir: Path) -> str:
               f"<div class='ci-dot' style='left:{ev['p'] * 100:.1f}%'></div></div>")
     code = (run_dir / "best_skill.py").read_text(encoding="utf-8") if (run_dir / "best_skill.py").exists() else ""
     j = (ev.get("judge") or {})
+    pcx = (ev or {}).get("perception") if isinstance(ev, dict) else None
+    perc_line = (f" OpenCV perception: {pcx['detection_rate']:.0%} of object sightings, median error "
+                 f"{pcx['median_of_episode_median_err_mm']} mm." if pcx else "")
     judge_line = (f"<p>Vision judge vs ground truth on {j['n']} held-out episodes: accuracy {_pct(j['accuracy'])}, "
                   f"abstained {_pct(j['abstain_rate'])}, false-success rate {_pct(j['false_success_rate'])}.</p>") if j.get("decided") else ""
     mock = "<p class='warn'>MOCK RUN: canned code, estimated tokens. Plumbing test only.</p>" if card.get("mock") else ""
@@ -160,7 +168,7 @@ details{{border-top:1px solid #232a33;padding:8px 0}} summary{{cursor:pointer;fo
 <div>{chips}</div></section>
 <div class="grid"><section><div class="muted">HELD-OUT SUCCESS ({esc(ev.get('source', 'n/a'))})</div>
 <div class="big">{_pct(ev.get('p'))}</div><div>{ev.get('k', '-')}/{ev.get('n', '-')} layouts &middot; Wilson 95% CI {_pct(ev.get('lo'))} to {_pct(ev.get('hi'))}</div>{ci}
-<p class="muted">Safety layer: {ev.get('halts', 0)} halts, {ev.get('safety_clamps', 0)} clamps.</p>{judge_line}</section>
+<p class="muted">Safety layer: {ev.get('halts', 0)} halts, {ev.get('safety_clamps', 0)} clamps.{perc_line}</p>{judge_line}</section>
 <section><div class="muted">PRACTICE CURVE</div><div class="bars">{bars}</div></section></div>
 <section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr>{rows}
 <tr><td>compute</td><td>{esc(str(r.get('backend')))}</td><td></td><td></td><td>{r.get('compute_seconds', 0):.0f} s</td><td>${r['compute_usd']:.4f}</td></tr>

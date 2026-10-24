@@ -280,7 +280,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--verbose", "-v", action="store_true", help="print metrics and the last robot calls of failed seeds")
     p.add_argument("--min", type=float, default=1.0, help="exit non-zero if any scene's success is below this")
     p.add_argument("--out", default="runs/_oracle")
-    p.add_argument("--realism", default="sim", choices=["sim", "real"])
+    p.add_argument("--realism", default="sim", choices=["sim", "real", "vision"])
     p.set_defaults(fn=cmd_oracle)
 
     p = sub.add_parser("eval", help="evaluate a skill file on held-out layouts (ground truth)")
@@ -295,8 +295,8 @@ def build_parser() -> argparse.ArgumentParser:
     def learn_args(p):
         p.add_argument("--rounds", type=int, default=4)
         p.add_argument("--select", type=int, default=16, help="fresh layouts used to re-check the top practice versions (0 = off)")
-        p.add_argument("--realism", default="sim", choices=["sim", "real"],
-                       help="real = camera-grade perception noise (~8 mm) and wider mass/friction/grip randomisation")
+        p.add_argument("--realism", default="sim", choices=["sim", "real", "vision"],
+                       help="real = camera-grade perception noise (~8 mm) and wider mass/friction/grip randomisation; vision = poses from OpenCV 5 on rendered RGB-D cameras, same physics as real")
         p.add_argument("--n", type=int, default=8, help="parallel practice episodes per round")
         p.add_argument("--eval", type=int, default=100, help="held-out evaluation episodes")
         p.add_argument("--budget", type=float, default=1.0, help="hard USD cap for this command")
@@ -357,7 +357,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--n", type=int, default=9)
     p.add_argument("--cols", type=int)
     p.add_argument("--out", default="replay.gif")
-    p.add_argument("--realism", choices=["sim", "real"], help="default: the run's own setting")
+    p.add_argument("--realism", choices=["sim", "real", "vision"], help="default: the run's own setting")
     p.add_argument("--compare", action="store_true", help="two rows on the same held-out layouts: round 1 vs the practised version")
     p.set_defaults(fn=cmd_replay)
 

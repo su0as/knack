@@ -36,8 +36,13 @@ def run_episode(spec: dict, out_dir) -> dict:
     env = SimEnv(task, int(spec["seed"]), render_size=size, realism=realism)
     shield = SafetyShield(Limits(), env.geometry)
     max_time = float(spec.get("max_time") or task.max_time)
+    vision = None
+    if realism == "vision":
+        from .vision import VisionPerception
+
+        vision = VisionPerception(env)
     robot = SimRobot(env, shield, max_time=max_time, obs_noise=float(spec.get("obs_noise", REALISM[realism]["pos_noise"])),
-                     yaw_noise=REALISM[realism]["yaw_noise"])
+                     yaw_noise=REALISM[realism]["yaw_noise"], vision=vision)
     rec = None
     if render.get("live", True) or render.get("keyframes", True) or render.get("gif"):
         rec = Recorder(env, out, live_every=0.5 if render.get("live", True) else 0.0,
@@ -100,6 +105,9 @@ def run_episode(spec: dict, out_dir) -> dict:
         "render_error": env.render_error,
         "layout": {k: {kk: round(vv, 4) for kk, vv in v.items()} for k, v in env.layout.items()},
     })
+    if vision is not None:
+        result["perception"] = vision.summary()
+        vision.close()
     env.close()
     write_result(out, result)
     return result

@@ -115,7 +115,7 @@ function render() {
   $("empty").classList.add("hidden");
   renderLoop(st);
   $("roundlbl").textContent = st.phase && st.phase.startsWith("evaluating") ? "EVAL" : `ROUND ${st.round || 0}/${st.rounds_max}`;
-  $("phase").textContent = `${st.phase || ""}  ${st.elapsed ? Math.round(st.elapsed) + " s" : ""}${st.realism === "real" ? "  · camera-grade perception" : ""}${st.mock ? "  (mock run)" : ""}${st.error ? "  " + st.error : ""}`;
+  $("phase").textContent = `${st.phase || ""}  ${st.elapsed ? Math.round(st.elapsed) + " s" : ""}${st.realism === "real" ? "  · camera-grade perception" : st.realism === "vision" ? "  · OpenCV 5 camera perception" : ""}${st.mock ? "  (mock run)" : ""}${st.error ? "  " + st.error : ""}`;
   $("spend").textContent = usd((st.cost || {}).total_usd);
   renderChips(st);
   renderTiles(st);

@@ -177,6 +177,8 @@ def scene_xml(task: Task, layout: dict, dr: dict | None = None, g: ArmGeometry =
 REALISM = {
     "sim": {"mass": (0.8, 1.25), "friction": (0.85, 1.15), "grip": (5.0, 7.0), "pos_noise": 0.002, "yaw_noise": 0.02},
     "real": {"mass": (0.6, 2.0), "friction": (0.5, 1.1), "grip": (3.5, 6.5), "pos_noise": 0.008, "yaw_noise": 0.08},
+    # "vision": same physics as "real", but poses come from OpenCV 5 on rendered RGB-D cameras (knack/vision.py)
+    "vision": {"mass": (0.6, 2.0), "friction": (0.5, 1.1), "grip": (3.5, 6.5), "pos_noise": 0.0, "yaw_noise": 0.0},
 }
 
 

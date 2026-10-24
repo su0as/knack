@@ -84,7 +84,7 @@ class SimRobot:
     """Robot API bound to a SimEnv. All internals are underscored so skills can't reach them."""
 
     def __init__(self, env: SimEnv, shield: SafetyShield | None = None, *, max_time: float = 45.0, obs_noise: float = 0.002, trace_limit: int = 400,
-                 yaw_noise: float = 0.02):
+                 yaw_noise: float = 0.02, vision=None):
         self._env = env
         self._g = env.geometry
         self._shield = shield or SafetyShield(geometry=env.geometry)
@@ -92,6 +92,7 @@ class SimRobot:
         self._max_time = float(max_time)
         self._obs_noise = float(obs_noise)
         self._yaw_noise = float(yaw_noise)
+        self._vision = vision  # knack.vision.VisionPerception when realism == "vision"
         self._noise_rng = np.random.default_rng(env.seed + 7_000_003)
         self._trace: list[dict] = []
         self._trace_limit = trace_limit
@@ -165,11 +166,34 @@ class SimRobot:
             e["wall_height"] = TRAY_WALL_H
         return e
 
+    def _vision_snapshot(self) -> dict:
+        env = self._env
+        v = self._vision.observe()
+        objects = {}
+        for n, det in v["objects"].items():
+            e = self._object_entry(n, noisy=False)
+            e["pos"] = _r(det["pos"])
+            e["yaw"] = _r(det["yaw"])
+            objects[n] = e
+        fixtures = {}
+        for n in env.fixture_spec:
+            if n in v["fixtures"]:
+                e = self._fixture_entry(n, noisy=False)
+                e["pos"] = _r(v["fixtures"][n])
+                fixtures[n] = e
+        return {"objects": objects, "fixtures": fixtures}
+
     def snapshot(self, noisy: bool = False) -> dict:
         """Full scene state (used by the harness, not exposed to skills by name)."""
         env = self._env
         q = env.arm_q()
         k = fk(q, self._g)
+        if noisy and self._vision is not None:
+            seen = self._vision_snapshot()
+            return {"time": round(env.time, 2),
+                    "gripper": {"pos": _r(env.tcp()), "yaw": _r(k["yaw"]), "opening": _r(env.finger_opening()),
+                                "holding": env.held_object()},
+                    **seen}
         return {
             "time": round(env.time, 2),
             "gripper": {
@@ -194,12 +218,28 @@ class SimRobot:
     def observe(self) -> dict:
         self._check_alive()
         obs = self.snapshot(noisy=True)
-        self._log_call("observe()", "ok")
+        if self._vision is not None:
+            missing = [n for n in self._env.obj_spec if n not in obs["objects"]]
+            self._log_call("observe()", {"seen": sorted(obs["objects"]), "not_visible": missing} if missing else "ok")
+        else:
+            self._log_call("observe()", "ok")
         return obs
 
     def get_pose(self, name: str) -> dict:
         self._check_alive()
         env = self._env
+        if self._vision is not None and (name in env.obj_spec or name in env.fixture_spec):
+            seen = self._vision_snapshot()
+            group = seen["objects"] if name in env.obj_spec else seen["fixtures"]
+            if name not in group:
+                self._log_call(f"get_pose({name!r})", error="not visible")
+                from .vision import PerceptionError
+
+                raise PerceptionError(f"{name} is not visible from the cameras right now (occluded?)")
+            e = group[name]
+            out = {"pos": e["pos"], "yaw": e.get("yaw", 0.0)}
+            self._log_call(f"get_pose({name!r})", out)
+            return out
         if name in env.obj_spec:
             e = self._object_entry(name)
             out = {"pos": e["pos"], "yaw": e["yaw"]}
