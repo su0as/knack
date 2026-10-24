@@ -85,15 +85,19 @@ Read this section in order: the camera-grade results are the point, the easy-mod
 | Super, push, camera-grade (repeat run) | 12/50 (24%) | 32/50 (64%), round 6 | **+40 pts** |
 | Super, lift | 0/50 (0%) | 50/50 (100%), round 3 | **+100 pts** |
 | Super, lift, camera-grade | 0/50 (0%) | 42/50 (84%), round 4 | **+84 pts** |
+| Nano (3B active), lift, camera-grade | 0/50 (0%) | 44/50 (88%), round 4 | **+88 pts** |
+| Nano, sort, camera-grade | 0/50 (0%) | 21/50 (42%), round 4 | **+42 pts** |
+| DeepSeek V4.1 Flash, stack, camera-grade | 41/50 (82%) | 48/50 (96%), round 2 | +14 pts |
+| DeepSeek V4.1 Flash, push, camera-grade | 41/50 (82%) | 44/50 (88%), round 4 | +6 pts |
 | Super, sort, camera-grade | 14/50 (28%) | 18/50 (36%), round 5 | +8 pts (within noise) |
 | Super, tray | 23/50 (46%) | 32/50 (64%), round 4 | +18 pts |
 | Super, stack, camera-grade | 29/50 (58%) | 31/50 (62%), round 5 | +4 pts (within noise) |
 | Super, stack, camera-grade (repeat run) | 34/50 (68%) | 31/50 (62%), round 5 | -6 pts (within noise) |
 | Ultra, stack, camera-grade | 32/50 (64%) | 32/50 (64%), round 2 | 0 |
 | Ultra, push, camera-grade | 7/50 (14%) | 5/50 (10%), round 6 | -4 pts |
-| 22 other runs (incl. Ultra on lift, place, tray, sort at camera-grade: 86-100%) | solved in round 1 | | 0 |
+| 27 other runs (incl. Ultra on lift, place, tray, sort and Kimi K3 on lift, stack at camera-grade: 86-100%) | solved in round 1, or failed both ways (Nano push 0%, stack 2-4%) | | about 0 |
 
-Sources: `results/20261023-101415-practice-gain`, repeat runs in `results/*-real-super-replicate` and `results/*-gain-replicate`, four more camera-grade scenes in `results/*-real-4tasks` and `results/*-gain-real-4tasks`. The push gain repeats (+76 and +40 points); on stack under camera noise practice did not beat the first version, and both sit near the hand-written reference (57%), which suggests the noise, not the code, is the limit there. Two lessons went straight back into the code: an 8-episode practice score is too noisy to pick the best version (Ultra's "88%" round equalled its first version on held-out), so Knack now re-checks the top versions on 16 fresh layouts before the final evaluation; and a rewrite that scores worse is discarded (see 5).
+Sources: `results/20261023-101415-practice-gain`, repeat runs in `results/*-real-super-replicate` and `results/*-gain-replicate`, four more camera-grade scenes in `results/*-real-4tasks` and `results/*-gain-real-4tasks`, Nano / DeepSeek / Kimi K3 in `results/*-real-kimi-nano-ds` and `results/*-gain-kimi-nano-ds`. The pattern: strong coders mostly get it right first time; the cheapest model (Nano, 3B active parameters, $0.06 per million input tokens) is where practice matters most, going from 0% to 88% on lift for about a cent. The push gain repeats (+76 and +40 points); on stack under camera noise practice did not beat the first version, and both sit near the hand-written reference (57%), which suggests the noise, not the code, is the limit there. Two lessons went straight back into the code: an 8-episode practice score is too noisy to pick the best version (Ultra's "88%" round equalled its first version on held-out), so Knack now re-checks the top versions on 16 fresh layouts before the final evaluation; and a rewrite that scores worse is discarded (see 5).
 
 **2. Camera-grade scoreboard: held-out success on 50 unseen layouts and the full Token Factory cost of each skill.** `--realism real` adds about 8 mm of pose noise per reading, 0.08 rad of yaw noise and wider mass, friction and grip randomisation (what a cheap arm with an overhead camera sees). Zero demonstrations, up to 6 practice rounds of 8 episodes.
 
