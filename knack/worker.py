@@ -108,9 +108,9 @@ def run_episode(spec: dict, out_dir) -> dict:
 def write_result(out_dir, result: dict):
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    tmp = out / "result.json.tmp"
-    tmp.write_text(json.dumps(result, indent=1, default=str), encoding="utf-8")
-    os.replace(tmp, out / "result.json")
+    from .fsutil import atomic_write_text
+
+    atomic_write_text(out / "result.json", json.dumps(result, indent=1, default=str))  # retries, then raises
 
 
 def failed_result(spec: dict, kind: str, message: str) -> dict:

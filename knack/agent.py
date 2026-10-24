@@ -169,10 +169,10 @@ class Learner:
         self.state["elapsed"] = round(time.time() - self.started, 1)
         s = self.ledger.summary()
         self.state["cost"] = {"llm_usd": s["llm_usd"], "compute_usd": s["compute_usd"], "total_usd": s["total_usd"], "by_role": s["by_role"]}
-        p = self.dir / "state.json"
-        tmp = p.with_suffix(".json.tmp")
-        tmp.write_text(json.dumps(self.state, indent=1, default=str), encoding="utf-8")
-        os.replace(tmp, p)
+        from .fsutil import atomic_write_text
+
+        # best-effort: the console may be reading state.json (Windows refuses to replace an open file)
+        atomic_write_text(self.dir / "state.json", json.dumps(self.state, indent=1, default=str), best_effort=True)
 
     def _event(self, kind: str, **data):
         with (self.dir / "events.jsonl").open("a", encoding="utf-8") as f:

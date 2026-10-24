@@ -21,11 +21,11 @@ def encode_jpeg(arr: np.ndarray, quality: int = 85) -> bytes:
     return buf.getvalue()
 
 
-def atomic_write(path: Path, data: bytes):
-    path = Path(path)
-    tmp = path.with_suffix(path.suffix + ".tmp")
-    tmp.write_bytes(data)
-    os.replace(tmp, path)
+def atomic_write(path: Path, data: bytes, best_effort: bool = True):
+    """Live frames are best-effort: a frame the console is reading right now is simply skipped."""
+    from .fsutil import atomic_write_bytes
+
+    return atomic_write_bytes(path, data, best_effort=best_effort)
 
 
 class Recorder:
@@ -73,7 +73,7 @@ class Recorder:
                 self.enabled = False
                 break
             name = f"{label}_{cam}.jpg"
-            atomic_write(self.out / name, encode_jpeg(img))
+            atomic_write(self.out / name, encode_jpeg(img), best_effort=False)
             out[f"{label}_{cam}"] = name
             if cam == self.live_camera:
                 atomic_write(self.out / "live.jpg", encode_jpeg(img, 70))
