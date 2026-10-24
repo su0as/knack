@@ -21,6 +21,7 @@ from pathlib import Path
 from urllib.parse import unquote, urlparse
 
 STATIC = Path(__file__).resolve().parent / "static"
+STALE_S = 600  # a live run rewrites state.json every few seconds; 10 quiet minutes means it died
 
 
 def _read_json(p: Path):
@@ -41,8 +42,18 @@ def list_runs(root: Path) -> list:
         if not s:
             continue
         ev = s.get("eval") or {}
+        status = s.get("status")
+        # A run that crashed hard (killed process, power loss) never writes a final status. If its state file
+        # has not changed for STALE_S seconds while it claims to be running, show it as stale, not running.
+        if status in ("running", "starting"):
+            try:
+                idle = time.time() - state_file.stat().st_mtime
+            except OSError:
+                idle = 0
+            if idle > STALE_S:
+                status = f"stale (no update for {int(idle // 60)} min)"
         out.append({
-            "run_id": str(state_file.parent.relative_to(root).as_posix()), "task": s.get("task"), "status": s.get("status"),
+            "run_id": str(state_file.parent.relative_to(root).as_posix()), "task": s.get("task"), "status": status,
             "phase": s.get("phase"), "reward": s.get("reward"), "coder": (s.get("models") or {}).get("coder", {}).get("alias"),
             "eval_p": ev.get("p"), "updated": s.get("updated", 0), "mock": s.get("mock"), "instruction": s.get("instruction"),
             "total_usd": (s.get("cost") or {}).get("total_usd"),

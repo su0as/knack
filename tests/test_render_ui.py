@@ -59,3 +59,21 @@ def test_ui_server_endpoints(tmp_path):
             urllib.request.urlopen(base + "/api/runs/r1/file/../../etc/passwd")
     finally:
         srv.shutdown()
+
+
+def test_list_runs_marks_dead_runs_stale(tmp_path):
+    import json
+    import os
+    import time
+
+    from knack.ui.server import list_runs
+
+    d = tmp_path / "20261024-000000-push-super-gt-real"
+    d.mkdir()
+    f = d / "state.json"
+    f.write_text(json.dumps({"task": "push", "status": "running", "updated": 1}), encoding="utf-8")
+    old = time.time() - 3600
+    os.utime(f, (old, old))
+    assert list_runs(tmp_path)[0]["status"].startswith("stale")
+    f.write_text(json.dumps({"task": "push", "status": "running", "updated": 1}), encoding="utf-8")
+    assert list_runs(tmp_path)[0]["status"] == "running"
