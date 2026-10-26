@@ -84,7 +84,27 @@ flowchart LR
 
 ### 5.1 Perception accuracy (OpenCV 5 vs simulator ground truth)
 
-[[perception_bench.md table]]
+![OpenCV 5 pipeline on one sort layout: RGB, depth, colour masks, detections with their error against ground truth](figures/opencv_pipeline_sort.png)
+
+30 random layouts per scene (`results/*-perception-bench-sensor`, `knack exp perception`). Static = the first look,
+nothing occluded. In use = every look while the hand-written reference skill runs, so the gripper occludes objects and
+cubes are held, stacked and dropped into trays. Sensor model: depth noise 4 mm x z^2, 1 mm depth quantisation, RGB noise
+sigma 4, extrinsic calibration error 3 mm / 0.4 deg drawn once per episode.
+
+| scene | static detection | median error | p90 error | max error | yaw error | fixtures | ms per look | in-use detection | in-use median error |
+|---|---|---|---|---|---|---|---|---|---|
+| lift | 100% | 4.29 mm | 7.35 mm | 9.17 mm | 0.26 deg | None mm | 174.1 | 100% of 120 | 4.05 mm |
+| place | 100% | 4.25 mm | 7.05 mm | 8.86 mm | 0.34 deg | 3.15 mm | 190.0 | 100% of 120 | 3.6 mm |
+| push | 100% | 4.3 mm | 8.62 mm | 9.41 mm | None deg | 3.75 mm | 178.3 | 97% of 145 | 3.56 mm |
+| stack | 100% | 4.29 mm | 7.35 mm | 9.17 mm | 0.26 deg | None mm | 179.7 | 100% of 120 | 4.05 mm |
+| tray | 100% | 4.29 mm | 7.28 mm | 8.94 mm | 0.48 deg | 3.1 mm | 177.1 | 100% of 120 | 3.71 mm |
+| sort | 100% | 4.51 mm | 7.4 mm | 9.89 mm | 0.37 deg | 3.38 mm | 186.5 | 99% of 238 | 3.92 mm |
+
+Reading it: about 4 mm median and under 10 mm worst-case position error, with the calibration error the main
+contributor (with a perfect sensor the same pipeline is under 0.4 mm, which is why the sensor model is on by default).
+Detection drops below 100% only in use, when the gripper hides the puck (push) or a cube (sort); those misses are exactly
+the cases the skill has to handle by looking again. One look costs about 180 ms on a GitHub Actions x86 runner
+(two RGB-D renders plus OpenCV).
 
 ### 5.2 Skills learned with OpenCV perception
 
