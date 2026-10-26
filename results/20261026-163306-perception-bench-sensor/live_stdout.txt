@@ -1,0 +1,19 @@
+lift {"static": {"objects": 60, "detected": 60, "detection_rate": 1.0, "pos_err_mm_median": 4.29, "pos_err_mm_p90": 7.35, "pos_err_mm_max": 9.17, "yaw_err_deg_median": 0.26, "fixture_err_mm_median": null, "ms_per_observe_median": 174.1}, "in_use": {"episodes": 30, "lookups": 120, "misses": 0, "detection_rate": 1.0, "pos_err_mm_median_of_episode_medians": 4.05, "reference_skill_success": 30, "n": 30}}
+place {"static": {"objects": 60, "detected": 60, "detection_rate": 1.0, "pos_err_mm_median": 4.25, "pos_err_mm_p90": 7.05, "pos_err_mm_max": 8.86, "yaw_err_deg_median": 0.34, "fixture_err_mm_median": 3.15, "ms_per_observe_median": 190.0}, "in_use": {"episodes": 30, "lookups": 120, "misses": 0, "detection_rate": 1.0, "pos_err_mm_median_of_episode_medians": 3.6, "reference_skill_success": 30, "n": 30}}
+push {"static": {"objects": 30, "detected": 30, "detection_rate": 1.0, "pos_err_mm_median": 4.3, "pos_err_mm_p90": 8.62, "pos_err_mm_max": 9.41, "yaw_err_deg_median": null, "fixture_err_mm_median": 3.75, "ms_per_observe_median": 178.3}, "in_use": {"episodes": 30, "lookups": 145, "misses": 5, "detection_rate": 0.9655, "pos_err_mm_median_of_episode_medians": 3.56, "reference_skill_success": 30, "n": 30}}
+stack {"static": {"objects": 60, "detected": 60, "detection_rate": 1.0, "pos_err_mm_median": 4.29, "pos_err_mm_p90": 7.35, "pos_err_mm_max": 9.17, "yaw_err_deg_median": 0.26, "fixture_err_mm_median": null, "ms_per_observe_median": 179.7}, "in_use": {"episodes": 30, "lookups": 120, "misses": 0, "detection_rate": 1.0, "pos_err_mm_median_of_episode_medians": 4.05, "reference_skill_success": 30, "n": 30}}
+tray {"static": {"objects": 60, "detected": 60, "detection_rate": 1.0, "pos_err_mm_median": 4.29, "pos_err_mm_p90": 7.28, "pos_err_mm_max": 8.94, "yaw_err_deg_median": 0.48, "fixture_err_mm_median": 3.1, "ms_per_observe_median": 177.1}, "in_use": {"episodes": 30, "lookups": 120, "misses": 0, "detection_rate": 1.0, "pos_err_mm_median_of_episode_medians": 3.71, "reference_skill_success": 30, "n": 30}}
+sort {"static": {"objects": 60, "detected": 60, "detection_rate": 1.0, "pos_err_mm_median": 4.51, "pos_err_mm_p90": 7.4, "pos_err_mm_max": 9.89, "yaw_err_deg_median": 0.37, "fixture_err_mm_median": 3.38, "ms_per_observe_median": 186.5}, "in_use": {"episodes": 30, "lookups": 238, "misses": 3, "detection_rate": 0.9874, "pos_err_mm_median_of_episode_medians": 3.92, "reference_skill_success": 29, "n": 30}}
+# OpenCV 5 perception benchmark (simulated RGB-D, ground truth from the simulator)
+
+30 random layouts per scene. Static = first look, nothing occluded. In use = every look while the reference skill runs.
+Sensor model: {'depth_sigma_at_1m': 0.004, 'depth_quant': 0.001, 'rgb_sigma': 4.0, 'calib_trans_m': 0.003, 'calib_rot_deg': 0.4} (depth noise grows with distance squared; extrinsic calibration error drawn once per episode).
+
+| scene | static detection | median error | p90 error | max error | yaw error | fixtures | ms per look | in-use detection | in-use median error |
+|---|---|---|---|---|---|---|---|---|---|
+| lift | 100% | 4.29 mm | 7.35 mm | 9.17 mm | 0.26 deg | None mm | 174.1 | 100% of 120 | 4.05 mm |
+| place | 100% | 4.25 mm | 7.05 mm | 8.86 mm | 0.34 deg | 3.15 mm | 190.0 | 100% of 120 | 3.6 mm |
+| push | 100% | 4.3 mm | 8.62 mm | 9.41 mm | None deg | 3.75 mm | 178.3 | 97% of 145 | 3.56 mm |
+| stack | 100% | 4.29 mm | 7.35 mm | 9.17 mm | 0.26 deg | None mm | 179.7 | 100% of 120 | 4.05 mm |
+| tray | 100% | 4.29 mm | 7.28 mm | 8.94 mm | 0.48 deg | 3.1 mm | 177.1 | 100% of 120 | 3.71 mm |
+| sort | 100% | 4.51 mm | 7.4 mm | 9.89 mm | 0.37 deg | 3.38 mm | 186.5 | 99% of 238 | 3.92 mm |

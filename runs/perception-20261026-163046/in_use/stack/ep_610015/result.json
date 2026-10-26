@@ -1,0 +1,271 @@
+{
+ "task": "stack",
+ "seed": 610015,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "xy_offset": 0.0023,
+  "z_gap": 0.0298,
+  "red_held": false,
+  "blue_z": 0.0148
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "get_pose('red_cube')",
+   "result": {
+    "pos": [
+     0.1395,
+     0.0084,
+     0.0179
+    ],
+    "yaw": -0.1776
+   }
+  },
+  {
+   "t": 0.4,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 1.12,
+   "call": "move_to(0.140, 0.008, 0.080, yaw=-0.178)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1393,
+     0.0084,
+     0.0798
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 1.94,
+   "call": "move_to(0.140, 0.008, 0.016, yaw=-0.178, speed=0.080)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1393,
+     0.0084,
+     0.0159
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 2.44,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0263
+   }
+  },
+  {
+   "t": 2.98,
+   "call": "move_to(0.140, 0.008, 0.090, yaw=-0.178)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1396,
+     0.0084,
+     0.0901
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 2.98,
+   "call": "get_pose('blue_cube')",
+   "result": {
+    "pos": [
+     0.1413,
+     -0.0924,
+     0.018
+    ],
+    "yaw": 0.2395
+   }
+  },
+  {
+   "t": 4.08,
+   "call": "move_to(0.141, -0.092, 0.090, yaw=0.239)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1412,
+     -0.0924,
+     0.0897
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 4.62,
+   "call": "move_to(0.141, -0.092, 0.050, yaw=0.239, speed=0.080)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.141,
+     -0.0922,
+     0.0495
+    ],
+    "error_m": 0.0007
+   }
+  },
+  {
+   "t": 5.02,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 5.38,
+   "call": "move_to(0.141, -0.092, 0.090, yaw=0.239)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1413,
+     -0.0924,
+     0.0901
+    ],
+    "error_m": 0.0001
+   }
+  }
+ ],
+ "n_calls": 11,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 5.88,
+ "wall_time": 0.46,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1405,
+     0.0073,
+     0.0149
+    ],
+    "yaw": -0.1869,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1428,
+     -0.0936,
+     0.0149
+    ],
+    "yaw": 0.2356,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 5.88,
+  "gripper": {
+   "pos": [
+    0.1413,
+    -0.0924,
+    0.09
+   ],
+   "yaw": 0.2395,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.141,
+     -0.092,
+     0.0446
+    ],
+    "yaw": 0.2399,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1428,
+     -0.0936,
+     0.0148
+    ],
+    "yaw": 0.2356,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {},
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1405,
+   "y": 0.0073,
+   "yaw": -0.1869,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1428,
+   "y": -0.0936,
+   "yaw": 0.2356,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 2,
+  "lookups": 4,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 3.59,
+  "pos_err_mm_p90": 15.22,
+  "yaw_err_deg_median": 0.38,
+  "by_camera": {
+   "overhead": 4,
+   "front": 0
+  },
+  "ms_per_observe_median": 189.5,
+  "fixtures_mapped": [],
+  "fixture_err_mm": {}
+ }
+}
