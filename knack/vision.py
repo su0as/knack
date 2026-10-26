@@ -44,8 +44,22 @@ def wrap_quarter(yaw: float) -> float:
     return (yaw + math.pi / 4) % (math.pi / 2) - math.pi / 4
 
 
+# A perfect synthetic render would make perception look better than any real camera. These model a consumer
+# RGB-D camera on a hobby cell: per-pixel depth noise growing with distance, 1 mm depth quantisation, RGB noise,
+# and a per-episode extrinsic calibration error the pipeline does not know about.
+SENSOR = {"depth_sigma_at_1m": 0.004, "depth_quant": 0.001, "rgb_sigma": 4.0,
+          "calib_trans_m": 0.003, "calib_rot_deg": 0.4}
+
+
+def _rot(axis, deg):
+    axis = np.asarray(axis, float) / (np.linalg.norm(axis) or 1.0)
+    a = math.radians(deg)
+    K = np.array([[0, -axis[2], axis[1]], [axis[2], 0, -axis[0]], [-axis[1], axis[0], 0]])
+    return np.eye(3) + math.sin(a) * K + (1 - math.cos(a)) * K @ K
+
+
 class VisionPerception:
-    def __init__(self, env, size=(640, 480)):
+    def __init__(self, env, size=(640, 480), sensor: dict | None = SENSOR):
         import cv2
         import mujoco
 
@@ -65,6 +79,15 @@ class VisionPerception:
         self.by_camera = {c: 0 for c in CAMERAS}
         self.last_error: str | None = None
         self.observe_ms: list[float] = []
+        self.sensor = sensor
+        self._rng = np.random.default_rng(int(env.seed) + 31_337)
+        self._calib = {}
+        for c in CAMERAS:  # fixed for the episode: the camera was mounted/calibrated slightly wrong
+            if sensor:
+                self._calib[c] = (_rot(self._rng.normal(size=3), self._rng.normal(0, sensor["calib_rot_deg"])),
+                                  self._rng.normal(0, sensor["calib_trans_m"] / math.sqrt(3), size=3))
+            else:
+                self._calib[c] = (np.eye(3), np.zeros(3))
 
     # ------------------------------------------------------------------ capture
     def _r(self):
@@ -80,6 +103,11 @@ class VisionPerception:
         r.update_scene(self.env.data, camera=cam)
         depth = r.render().copy()
         r.disable_depth_rendering()
+        if self.sensor:
+            sn = self.sensor
+            depth = depth + self._rng.normal(0.0, 1.0, depth.shape).astype(depth.dtype) * (sn["depth_sigma_at_1m"] * depth ** 2)
+            depth = np.round(depth / sn["depth_quant"]) * sn["depth_quant"]
+            rgb = np.clip(rgb.astype(np.float32) + self._rng.normal(0.0, sn["rgb_sigma"], rgb.shape), 0, 255).astype(np.uint8)
         return rgb, depth
 
     def to_world(self, cam: str, depth: np.ndarray, us: np.ndarray, vs: np.ndarray) -> np.ndarray:
@@ -92,7 +120,8 @@ class VisionPerception:
         y = -(vs + 0.5 - self.h / 2) / f * z
         pc = np.stack([x, y, -z], axis=1)
         R = self.env.data.cam_xmat[cid].reshape(3, 3)
-        return pc @ R.T + self.env.data.cam_xpos[cid]
+        dR, dt = self._calib[cam]
+        return pc @ (dR @ R).T + self.env.data.cam_xpos[cid] + dt
 
     def color_mask(self, rgb: np.ndarray, color: str) -> np.ndarray:
         cv2 = self.cv2

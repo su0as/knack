@@ -400,12 +400,12 @@ def perception_bench(tasks=None, n: int = 30, workers=None, out_root: str = "run
     from .runner import LocalRunner
     from .sim import SimEnv
     from .tasks import TASKS
-    from .vision import VisionPerception, annotate
+    from .vision import SENSOR, VisionPerception, annotate
 
     tasks = list(tasks or TASKS)
     out = Path(out_root) / f"perception-{_stamp()}"
     out.mkdir(parents=True, exist_ok=True)
-    report = {"n_layouts": n, "tasks": {}}
+    report = {"n_layouts": n, "sensor_model": SENSOR, "tasks": {}}
     for tid in tasks:
         errs, yaws, misses, lookups, fix, ms = [], [], 0, 0, [], []
         for i in range(n):
@@ -448,7 +448,8 @@ def perception_bench(tasks=None, n: int = 30, workers=None, out_root: str = "run
         print(tid, json.dumps(report["tasks"][tid]))
     (out / "perception_bench.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
     lines = ["# OpenCV 5 perception benchmark (simulated RGB-D, ground truth from the simulator)", "",
-             f"{n} random layouts per scene. Static = first look, nothing occluded. In use = every look while the reference skill runs.", "",
+             f"{n} random layouts per scene. Static = first look, nothing occluded. In use = every look while the reference skill runs.",
+             f"Sensor model: {SENSOR} (depth noise grows with distance squared; extrinsic calibration error drawn once per episode).", "",
              "| scene | static detection | median error | p90 error | max error | yaw error | fixtures | ms per look | in-use detection | in-use median error |",
              "|---|---|---|---|---|---|---|---|---|---|"]
     for tid, r in report["tasks"].items():
