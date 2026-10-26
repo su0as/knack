@@ -190,7 +190,7 @@ def cmd_card(a):
 def cmd_ui(a):
     from .ui.server import serve
 
-    serve(port=a.port, runs_root=a.runs, open_browser=not a.no_browser)
+    serve(port=a.port, runs_root=a.runs, open_browser=not a.no_browser, host=a.host, public=a.public)
     return 0
 
 
@@ -351,6 +351,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--port", type=int, default=8765)
     p.add_argument("--runs", default="runs")
     p.add_argument("--no-browser", action="store_true")
+    p.add_argument("--host", default="127.0.0.1", help="0.0.0.0 to serve on a network (use with --public)")
+    p.add_argument("--public", action="store_true", help="internet demo: browsing open, new runs need KNACK_PASSCODE and are capped at $0.10")
     p.set_defaults(fn=cmd_ui)
 
     p = sub.add_parser("replay", help="GIF of a skill on a grid of layouts (for videos)")

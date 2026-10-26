@@ -65,6 +65,9 @@ def list_runs(root: Path) -> list:
 class Handler(BaseHTTPRequestHandler):
     runs_root: Path = Path("runs")
     server_version = "knack/0.1"
+    public: bool = False  # internet-facing demo: browsing is open, starting a paid run needs the passcode
+    passcode: str | None = None
+    _last_start = 0.0
 
     def log_message(self, fmt, *args):  # quiet
         if os.environ.get("KNACK_DEBUG"):
@@ -129,6 +132,14 @@ class Handler(BaseHTTPRequestHandler):
         path = urlparse(self.path).path
         if path != "/api/learn":
             return self._json({"error": "not found"}, 404)
+        if self.public:
+            import hmac
+
+            given = self.headers.get("X-Knack-Passcode", "")
+            if not self.passcode or not hmac.compare_digest(given.encode(), self.passcode.encode()):
+                return self._json({"error": "passcode required", "need_passcode": True}, 403)
+            if time.time() - Handler._last_start < 120:
+                return self._json({"error": "one run at a time in the public demo; try again in two minutes"}, 429)
         n = int(self.headers.get("Content-Length", "0") or 0)
         try:
             body = json.loads(self.rfile.read(n) or b"{}")
@@ -149,9 +160,13 @@ class Handler(BaseHTTPRequestHandler):
         realism = str(body.get("realism", "sim"))
         realism = realism if realism in ("sim", "real", "vision") else "sim"
         run_id = time.strftime("%Y%m%d-%H%M%S") + f"-{task}-{coder}-{reward}" + {"real": "-real", "vision": "-vision"}.get(realism, "")
+        rounds, n_eps, n_eval, budget = int(body.get("rounds", 4)), int(body.get("n", 8)), int(body.get("eval", 50)), float(body.get("budget", 1.0))
+        if self.public:  # hard caps for the internet-facing demo
+            rounds, n_eps, n_eval, budget = min(rounds, 6), min(n_eps, 8), min(n_eval, 50), min(budget, 0.10)
+            Handler._last_start = time.time()
         cmd = [sys.executable, "-m", "knack", "learn", task, "--run-id", run_id, "--coder", coder, "--reward", reward,
-               "--rounds", str(int(body.get("rounds", 4))), "--n", str(int(body.get("n", 8))),
-               "--eval", str(int(body.get("eval", 50))), "--budget", str(float(body.get("budget", 1.0))),
+               "--rounds", str(rounds), "--n", str(n_eps),
+               "--eval", str(n_eval), "--budget", str(budget),
                "--runs", str(self.runs_root), "--realism", realism]
         if instruction:
             cmd += ["--instruction", instruction]
@@ -169,10 +184,14 @@ class Handler(BaseHTTPRequestHandler):
         return self._json({"run_id": run_id, "cmd": " ".join(cmd)})
 
 
-def serve(port: int = 8765, runs_root: str = "runs", open_browser: bool = True):
+def serve(port: int = 8765, runs_root: str = "runs", open_browser: bool = True, host: str = "127.0.0.1", public: bool = False):
     Handler.runs_root = Path(runs_root)
-    httpd = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    url = f"http://127.0.0.1:{port}/"
+    Handler.public = public
+    Handler.passcode = os.environ.get("KNACK_PASSCODE") or None
+    if public and not Handler.passcode:
+        print("public mode without KNACK_PASSCODE: the console is read-only (no new runs can be started)")
+    httpd = ThreadingHTTPServer((host, port), Handler)
+    url = f"http://{host}:{port}/"
     print(f"Knack console on {url}  (runs: {Path(runs_root).resolve()})  Ctrl+C to stop")
     if open_browser:
         threading.Timer(0.6, lambda: webbrowser.open(url)).start()

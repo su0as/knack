@@ -57,7 +57,14 @@ async function start() {
   };
   $("go").disabled = true;
   try {
-    const r = await getJSON("/api/learn", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+    const post = (code) => getJSON("/api/learn", { method: "POST", headers: Object.assign({ "Content-Type": "application/json" }, code ? { "X-Knack-Passcode": code } : {}), body: JSON.stringify(body) });
+    let r = await post(sessionStorage.getItem("knack-passcode"));
+    if (r.need_passcode) {
+      const code = prompt("This is the public demo. Browsing every run is open. Starting a new run spends model credits, so it needs the passcode from the submission's testing instructions:");
+      if (!code) return;
+      sessionStorage.setItem("knack-passcode", code);
+      r = await post(code);
+    }
     if (r.error) { alert(r.error); return; }
     S.codeCache = {};
     setTimeout(() => selectRun(r.run_id), 800);
