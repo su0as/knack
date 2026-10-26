@@ -1,0 +1,280 @@
+{
+ "task": "stack",
+ "seed": 100022,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": true,
+ "metrics": {
+  "xy_offset": 0.0048,
+  "z_gap": 0.0298,
+  "red_held": false,
+  "blue_z": 0.0148
+ },
+ "trace": [
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.18,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.74,
+   "call": "move_to(0.151, 0.002, 0.096, yaw=0.621, speed=0.200)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1511,
+     0.0015,
+     0.0959
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.16,
+   "call": "move_to(0.151, 0.002, 0.026, yaw=0.621, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1511,
+     0.0015,
+     0.026
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 2.66,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0274
+   }
+  },
+  {
+   "t": 2.66,
+   "call": "log",
+   "result": "Grasped red cube"
+  },
+  {
+   "t": 3.24,
+   "call": "move_to(0.151, 0.002, 0.126, yaw=0.621, speed=0.200)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1511,
+     0.0015,
+     0.1256
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 4.26,
+   "call": "move_to(0.197, 0.047, 0.126, yaw=-0.349, speed=0.200)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1969,
+     0.0472,
+     0.1256
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 7.36,
+   "call": "move_to(0.197, 0.047, 0.046, yaw=-0.349, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1999,
+     0.0478,
+     0.052
+    ],
+    "error_m": 0.0066
+   }
+  },
+  {
+   "t": 7.76,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 7.76,
+   "call": "log",
+   "result": "Released red cube"
+  },
+  {
+   "t": 8.32,
+   "call": "move_to(0.197, 0.047, 0.126, yaw=2.793, speed=0.200)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1969,
+     0.0471,
+     0.126
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 8.32,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 8.32,
+   "call": "log",
+   "result": "Stack failed: xy_err=0.004, z_err=0.014"
+  }
+ ],
+ "n_calls": 14,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 8.82,
+ "wall_time": 0.71,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1485,
+     0.0005,
+     0.0149
+    ],
+    "yaw": 0.6392,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.194,
+     0.0465,
+     0.0149
+    ],
+    "yaw": -0.3449,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 8.82,
+  "gripper": {
+   "pos": [
+    0.1969,
+    0.0471,
+    0.1262
+   ],
+   "yaw": 2.7928,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.199,
+     0.0479,
+     0.0446
+    ],
+    "yaw": -0.3489,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1943,
+     0.0469,
+     0.0148
+    ],
+    "yaw": -0.3445,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {},
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1485,
+   "y": 0.0005,
+   "yaw": 0.6392,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.194,
+   "y": 0.0465,
+   "yaw": -0.3449,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 2,
+  "lookups": 4,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 7.16,
+  "pos_err_mm_p90": 18.68,
+  "yaw_err_deg_median": 0.45,
+  "by_camera": {
+   "overhead": 4,
+   "front": 0
+  },
+  "ms_per_observe_median": 271.7,
+  "fixtures_mapped": [],
+  "fixture_err_mm": {}
+ }
+}
