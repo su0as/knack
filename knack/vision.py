@@ -164,7 +164,9 @@ class VisionPerception:
                     continue
                 c = np.median(pts[:, :2], axis=0)
             else:
-                pts = pts[pts[:, 2] < TRAY_WALL_TOP + 0.004]
+                # wall tops only: a symmetric ring, so the oblique view of the near walls' outer faces does not bias it
+                rim = pts[(pts[:, 2] > TRAY_WALL_TOP - 0.008) & (pts[:, 2] < TRAY_WALL_TOP + 0.004)]
+                pts = rim if len(rim) >= MIN_PIXELS else pts[pts[:, 2] < TRAY_WALL_TOP + 0.004]
                 if len(pts) < MIN_PIXELS:
                     continue
                 c, _ = self._rect(pts[:, :2])
