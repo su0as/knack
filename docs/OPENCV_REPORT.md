@@ -133,10 +133,10 @@ on the first try:
 | Ultra, push | 0/8 | 0/8 | 1/8 | 5/8 | 5/8 | 4/8 | 28/50 |
 | Nano, stack | 0/8 | 2/8 | 0/8 | 8/8 | | | 49/50 |
 
-The Super lift run is the clearest example of OpenCV output changing the program. Its round 2 trace analysis found 62
-episodes ending millimetres short of the 5 cm target and 12 failed grasps; the final skill wraps every look in a
-`safe_observe()` that looks again when the cube is missing from the camera view (occlusion), verifies the achieved
-height after each move from a fresh observation and corrects it, and retries a grasp from a re-observed pose. None of
+The Super lift run is the clearest example of OpenCV output changing the program. Its round 2 trace analysis reported two failure
+modes: lifts ending millimetres short of the 5 cm target, and failed grasps. The final skill wraps every look in a
+`safe_observe()` that looks again when the cube is missing from the camera view (occlusion), checks the achieved
+gripper height after each move and corrects it, and retries the grasp from a re-observed cube pose. None of
 that was in the first version.
 
 ## 6. Failure cases and limitations
