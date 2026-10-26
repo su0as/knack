@@ -1,0 +1,3 @@
+- Fixed the TypeError by passing the yaw argument positionally to `move_to_pose` (the function expects `target_yaw` as the second parameter, not a keyword `yaw`).
+- Lowered `SAFE_Z` from 0.08 m to 0.065 m so that lifting the cube’s centre to this height satisfies the simulator’s ≥ 5 cm requirement.
+- Left the retry, slow‑approach speed, and grasp‑verification logic unchanged; all three calls to `move_to_pose` now use the corrected call pattern.

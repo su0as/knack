@@ -1,0 +1,177 @@
+{
+ "task": "lift",
+ "seed": 1006,
+ "error": {
+  "type": "TypeError",
+  "message": "run.<locals>.move_to_pose() got an unexpected keyword argument 'yaw'",
+  "traceback": "  skill.py line 64, in run: if not move_to_pose(approach_pos, yaw=cube_yaw, desc=\"approach\"):\nTypeError: run.<locals>.move_to_pose() got an unexpected keyword argument 'yaw'"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "red_cube_z": 0.0149,
+  "required_z": 0.065
+ },
+ "trace": [
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.18,
+   "call": "observe()",
+   "result": "ok"
+  }
+ ],
+ "n_calls": 2,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 0.68,
+ "wall_time": 1.17,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1448,
+     0.0251,
+     0.0149
+    ],
+    "yaw": -0.3176,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1298,
+     0.0921,
+     0.0149
+    ],
+    "yaw": 0.427,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 0.68,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1448,
+     0.0251,
+     0.0149
+    ],
+    "yaw": -0.3176,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1298,
+     0.0921,
+     0.0149
+    ],
+    "yaw": 0.427,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1448,
+   "y": 0.0251,
+   "yaw": -0.3176,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1298,
+   "y": 0.0921,
+   "yaw": 0.427,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 1,
+  "lookups": 2,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 2.8,
+  "pos_err_mm_p90": 2.89,
+  "yaw_err_deg_median": 0.29,
+  "by_camera": {
+   "overhead": 2,
+   "front": 0
+  },
+  "ms_per_observe_median": 504.4,
+  "fixtures_mapped": [],
+  "fixture_err_mm": {}
+ }
+}

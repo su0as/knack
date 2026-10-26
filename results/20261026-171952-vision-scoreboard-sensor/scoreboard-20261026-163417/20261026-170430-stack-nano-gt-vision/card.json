@@ -1,0 +1,204 @@
+{
+ "run_id": "20261026-170430-stack-nano-gt-vision",
+ "task": "stack",
+ "title": "Stack",
+ "instruction": "Stack the red cube on top of the blue cube and let go.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "vision",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 11.9,
+   "usd_cum": 0.00066,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 99,
+   "perception": {
+    "episodes": 8,
+    "lookups": 48,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 3.4
+   },
+   "summary": "**Mode 1: Premature release (5 episodes)**\n*Root cause:* The skill releases the red cube at `place_z = blue_z + 2*half_h` (line 41), but the robot moves to this pose and releases *before* the cube settles on top of the blue cube. The final positions show the red cube at `z=0.015` (same height as blue), indicating it never lifted above the target.\n*Fix:* Increase `place_z` by an additional safety margin (e.g., `+ 0.02`) before the `move_to` call at line 79, allowing the gripper to descend slowly after arrival.\n\n**Mode 2: XY misalignment (4 episodes)**\n*Root cause:* The place pose uses `place_x, place_y = blue_x, blue_y` (line 42) without accounting for the red cube\u2019s offset. The `xy_offset` values (0.03\u20130.066 m) exceed the cube side (0.03 m), causing the red cube to land beside the blue one.\n*Fix:* Shift the place pose by half the red cube\u2019s width in the direction of the gripper approach (e.g., `place_x = blue_x + 0.015`) before the `move_to` at line 79.\n\n**Mode 3: Grasp failure (2 episodes)**\n*Root cause:* The verification loop (lines 60\u201372) retries grasp only 3 times. If the initial `grasp()` at line 56 fails to enclose the cube (common with pose error > 2 cm), the loop exhausts and returns `False` at line 72.\n*Fix:* Increase `max_retries` to 5 and add a `robot.wait(0.2)` after each `robot.release()` at line 65 to let the simulation reset before re\u2011approaching."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 2,
+   "success": 0.25,
+   "gt_k": 2,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 11.1,
+   "usd_cum": 0.0022,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 125,
+   "perception": {
+    "episodes": 8,
+    "lookups": 48,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 2.96
+   },
+   "summary": "**Mode 1: XY offset too large (seeds 2003\u20132007)**  \n*4 episodes*  \nRoot cause: The `offset_x/offset_y` calculation (lines 47\u201350) uses `half_h * sin/cos(place_yaw)`, which overestimates the required shift for yaw angles near 0 or \u03c0, pushing the place pose off the cube.  \nFix: Replace the offset with a fixed 2\u202fcm translation along the world X axis: `offset_x, offset_y = 0.02, 0`. This guarantees the cube lands on the target regardless of yaw.\n\n**Mode 2: Z\u2011gap too small / red_held=False (seeds 2000, 2004\u20132006)**  \n*3 episodes*  \nRoot cause: The place height formula (line 53) computes `blue_z + 0.05\u202fm`. When `blue_z \u2248 0.0147\u202fm`, the resulting `place_z \u2248 0.065\u202fm` leaves only ~2\u202fcm clearance after release, causing the cube to settle slightly below the target or slip. Additionally, `red_held=False` indicates the grasp verification loop (lines 72\u201389) may exit prematurely if `holding()` returns a non\u2011\u201cred_cube\u201d string.  \nFix: Add a 0.01\u202fm safety buffer to the height: `place_z = blue_z + half_h + half_h + 0.03`. Ensure the verification loop checks `robot.holding() == \"red_cube\"` strictly and retries on mismatch."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 11.9,
+   "usd_cum": 0.00341,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 125,
+   "perception": {
+    "episodes": 8,
+    "lookups": 48,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 4.42
+   },
+   "summary": "**Mode 1: Pick failure (5 episodes, seeds 3000\u20133004)**  \n*Root cause:* The robot moves to the pick pose but the grasp is not detected as holding the red cube. The verification loop (lines 71\u201389) retries release and re\u2011approach, yet all attempts fail, leaving the gripper empty.  \n*Fix:* Increase the approach speed or add a small vertical offset (e.g., `+0.01\u202fm` in `place_z`) before closing the gripper to ensure the fingers contact the cube.\n\n**Mode 2: Place pose unreachable (2 episodes, seeds 3006\u20133007)**  \n*Root cause:* `move_to` to the computed `place_x, place_y, place_z` raises `MotionError` (lines 99\u2013102). The XY offset (`offset_x=0.02`) combined with cube poses places the target outside the robot\u2019s workspace or collides with the environment.  \n*Fix:* Reduce the XY offset to `0.005\u202fm` and/or add a check that `place_z` does not exceed the robot\u2019s maximum Z limit before attempting the move.",
+   "reverted_to": 2
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 8,
+   "success": 1.0,
+   "gt_k": 8,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 10.9,
+   "usd_cum": 0.00496,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 126,
+   "perception": {
+    "episodes": 8,
+    "lookups": 48,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 3.62
+   }
+  }
+ ],
+ "best_round": 4,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 4,
+  "chosen": 4,
+  "rows": [
+   {
+    "round": 4,
+    "practice": "8/8",
+    "recheck": "14/16",
+    "total_k": 22,
+    "total_n": 24
+   },
+   {
+    "round": 2,
+    "practice": "2/8",
+    "recheck": "4/16",
+    "total_k": 6,
+    "total_n": 24
+   },
+   {
+    "round": 1,
+    "practice": "0/8",
+    "recheck": "0/16",
+    "total_k": 0,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 49,
+  "p": 0.98,
+  "lo": 0.895043135282,
+  "hi": 0.996460831911,
+  "source": "gt",
+  "best_round": 4,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 41,
+  "mean_sim_time": 5.12,
+  "self_report_true": 50,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100001,
+    "error": "",
+    "metrics": {
+     "xy_offset": 0.0348,
+     "z_gap": 0.0,
+     "red_held": false,
+     "blue_z": 0.0149
+    },
+    "frame": "eval/episodes/ep_100001/end_front.jpg"
+   }
+  ],
+  "perception": {
+   "episodes": 50,
+   "lookups": 300,
+   "misses": 0,
+   "detection_rate": 1.0,
+   "median_of_episode_median_err_mm": 3.9
+  }
+ },
+ "models": {
+  "coder": {
+   "alias": "nano",
+   "id": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+   "nvidia": true,
+   "calls": 4,
+   "prompt_tokens": 16998,
+   "completion_tokens": 11119,
+   "usd": 0.003688,
+   "price_in": 0.06,
+   "price_out": 0.24
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 3,
+   "prompt_tokens": 17011,
+   "completion_tokens": 1037,
+   "usd": 0.001269,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.004957,
+  "compute_usd": 0.0,
+  "total_usd": 0.004957,
+  "calls": 7,
+  "prompt_tokens": 34009,
+  "completion_tokens": 12156,
+  "compute_seconds": 305.74,
+  "backend": "local"
+ },
+ "wall_time_s": 201.5,
+ "practice_episodes": 32,
+ "created": "2026-10-26 17:07:51",
+ "skill_file": "best_skill.py"
+}

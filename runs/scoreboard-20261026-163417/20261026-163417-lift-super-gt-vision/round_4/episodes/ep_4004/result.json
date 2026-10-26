@@ -1,0 +1,261 @@
+{
+ "task": "lift",
+ "seed": 4004,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "red_cube_z": 0.0689,
+  "required_z": 0.065
+ },
+ "trace": [
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.18,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 2.12,
+   "call": "move_to(0.169, 0.064, 0.070, yaw=0.213, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1688,
+     0.0638,
+     0.07
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 2.12,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 3.26,
+   "call": "move_to(0.169, 0.064, 0.015, yaw=0.213, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1687,
+     0.0638,
+     0.0148
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.26,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 3.76,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0278
+   }
+  },
+  {
+   "t": 3.96,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 3.96,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 5.1,
+   "call": "move_to(0.169, 0.064, 0.070, yaw=0.213, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1685,
+     0.0637,
+     0.0693
+    ],
+    "error_m": 0.0008
+   }
+  },
+  {
+   "t": 5.1,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 5.1,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 5.1,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 5.1,
+   "call": "log",
+   "result": "Red cube lifted and held >5 cm above table (z=0.0689)."
+  }
+ ],
+ "n_calls": 14,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 5.6,
+ "wall_time": 2.47,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1729,
+     0.0638,
+     0.0149
+    ],
+    "yaw": 0.2281,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1065,
+     -0.0791,
+     0.0149
+    ],
+    "yaw": -0.0414,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 5.6,
+  "gripper": {
+   "pos": [
+    0.1684,
+    0.0637,
+    0.0692
+   ],
+   "yaw": -2.9282,
+   "opening": 0.0278,
+   "holding": "red_cube"
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.168,
+     0.0628,
+     0.0689
+    ],
+    "yaw": 0.2142,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1065,
+     -0.0791,
+     0.0149
+    ],
+    "yaw": -0.0414,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1729,
+   "y": 0.0638,
+   "yaw": 0.2281,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1065,
+   "y": -0.0791,
+   "yaw": -0.0414,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 6,
+  "lookups": 12,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 5.21,
+  "pos_err_mm_p90": 12.16,
+  "yaw_err_deg_median": 0.64,
+  "by_camera": {
+   "overhead": 12,
+   "front": 0
+  },
+  "ms_per_observe_median": 159.8,
+  "fixtures_mapped": [],
+  "fixture_err_mm": {}
+ }
+}

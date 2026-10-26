@@ -1,0 +1,6 @@
+**Mode 1: Overshoot & scatter** (5 episodes: 3001, 3002, 3003, 3005, 3007)  
+*Root cause:* Push target (`push_x/push_y`) computed beyond reachable workspace or with insufficient margin, causing the puck to overshoot or slide off-axis. Line 37 sets `push_margin = puck_radius + 0.02`, which can place `push_x/push_y` outside the `clamp_point` safe rectangle (lines 47-57) or beyond `max_reach` (line 45), especially when the initial approach position is already near edges.  
+*Fix:* Reduce `push_margin` to `0.5 * puck_radius` (line 37) to keep the push vector inside the workspace, and add a post-clamp check: if `push_x, push_y` equals the clamped approach position, increase `push_margin` by `0.02` and recompute before the push move (after line 60).
+
+**Mode 2: Early termination on first attempt** (2 episodes: 3006, 3000)  
+*Root cause:* Successful first‑attempt distance (`final_dist ≤ target_radius`) is rare; most episodes log a distance > tolerance and retry, but 3006 stops after attempt 0 despite `final_dist=0.0386 > 0.04` due to a logging/timing artifact. No code change needed; ensure the loop condition `if final_dist <= target_radius:` (line 97) uses the exact tolerance from `target_radius` (line 15).

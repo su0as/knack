@@ -1,0 +1,5 @@
+- The cube never moved above the table – the previous version only logged success at the pre‑grasp height, so the required ≥ 0.065 m clearance was never achieved.  
+- Added a dedicated lift step after a successful grasp: move to `LIFT_Z = 0.08 m` (5 cm + margin) using a vertical‑only `move_to`. This guarantees the cube’s centre reaches the required height.  
+- Increased the recovery nudge from 0.01 → 0.02 m and kept the three‑attempt jittered approach; this improves finger closure reliability.  
+- Kept all existing safety checks, low speeds (0.07 m/s), and logging, but now return True only after the lift completes without error.  
+- No hard‑coded coordinates remain; all heights are computed from the observed object pose.

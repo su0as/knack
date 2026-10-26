@@ -1,0 +1,58 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -36,13 +36,13 @@
+     # ------------------------------------------------------------------
+     obj = _pose_from_observation(red['pos'], red['yaw'])
+ 
+-    # Cube centre is roughly at z ≈ 0.015 m.
+-    # Required final height is ≥ 0.065 m (5 cm above table); we add a small margin.
+-    OFFSET = 0.05                     # pre‑grasp offset to reach ~0.065 m
+-    PRE_GRASP_Z = obj.z + OFFSET      # target height before closing fingers
+-    LIFT_Z = 0.08                     # required height with safety margin
+-    APPROACH_SPEED = 0.07             # low speed for safety
+-    LIFT_SPEED = 0.07                 # same speed for the lift
++    # Required final height is >= 0.065 m; we use a safe margin of 0.08 m.
++    PRE_GRASP_Z = obj.z + 0.08          # 8 cm above the cube centre (collision‑free)
++    LIFT_Z = 0.08                       # target height after lift
++    APPROACH_SPEED = 0.07               # low speed for safety
++    LIFT_SPEED = 0.07                   # same speed for the lift
++    NUDGE_DZ = 0.04                     # larger upward nudge on recovery
++    WAIT_AFTER_CLOSE = 0.2              # seconds to let fingers seat
+ 
+     # ------------------------------------------------------------------
+     # 3. Pre‑grasp pose (above the cube)
+@@ -58,6 +58,8 @@
+             result = robot.move_to(pose.x, pose.y, pose.z,
+                                    yaw=pose.yaw, speed=speed)
+             if not result['ok']:
++                # The motion layer signals failure via a blocked state;
++                # treat it as an exception to trigger retry logic.
+                 raise MotionError("move_to blocked")
+             return True
+         except Exception:  # MotionError or any other move‑related exception
+@@ -92,20 +94,21 @@
+             robot.log("Object not held after grasp")
+             return False
+     else:
+-        # First closure failed – try a small upward nudge and retry once
++        # First closure failed – try a larger upward nudge and retry once
+         robot.log("First grasp failed, attempting recovery")
+-        robot.move_by(dz=0.02)  # larger nudge for reliability
++        robot.move_by(dz=NUDGE_DZ)          # larger nudge for reliability
+         if not robot.grasp():
+             robot.log("Second grasp also failed")
+             return False
+         if robot.holding() != 'red_cube':
+             robot.log("Object still not held after recovery")
+             return False
++        # Give fingers a moment to seat before proceeding
++        robot.wait(WAIT_AFTER_CLOSE)
+ 
+     # ------------------------------------------------------------------
+-    # 6. Anti‑slip delay – let the fingers close fully
++    # 6. Anti‑slip delay – let the fingers close fully (already waited above)
+     # ------------------------------------------------------------------
+-    robot.wait(0.3)  # 300 ms pause
+ 
+     # ------------------------------------------------------------------
+     # 7. Lift to the required height (≥ 0.065 m, we use 0.08 m)

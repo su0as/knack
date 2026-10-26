@@ -1,0 +1,1621 @@
+{
+ "task": "sort",
+ "seed": 100045,
+ "error": {
+  "type": "EpisodeTimeout",
+  "message": "time budget of 70 s exceeded",
+  "traceback": "  skill.py line 71, in run: resp = robot.move_to(approach_x, approach_y, target_z,\nEpisodeTimeout: time budget of 70 s exceeded"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "red_cube_tray_dx": 0.0145,
+  "red_cube_tray_dy": 0.0665,
+  "red_cube_z": 0.0149,
+  "red_cube_held": false,
+  "blue_cube_tray_dx": 0.0108,
+  "blue_cube_tray_dy": 0.0656,
+  "blue_cube_z": 0.0149,
+  "blue_cube_held": false,
+  "red_ok": "False",
+  "blue_ok": "False"
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Attempt 1"
+  },
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.149,-0.032,0.035)"
+  },
+  {
+   "t": 3.08,
+   "call": "move_to(0.149, -0.032, 0.035, yaw=-0.068, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1515,
+     -0.0322,
+     0.0403
+    ],
+    "error_m": 0.0055
+   }
+  },
+  {
+   "t": 3.08,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 4.9,
+   "call": "move_to(0.149, -0.032, 0.025, yaw=-0.068, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1538,
+     -0.0326,
+     0.0375
+    ],
+    "error_m": 0.0131,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 4.9,
+   "call": "log",
+   "result": "Contact move failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 4.9,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.190,0.064,0.035)"
+  },
+  {
+   "t": 7.88,
+   "call": "move_to(0.190, 0.064, 0.035, yaw=-0.755, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1942,
+     0.063,
+     0.0409
+    ],
+    "error_m": 0.0073
+   }
+  },
+  {
+   "t": 7.88,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 9.72,
+   "call": "move_to(0.190, 0.064, 0.025, yaw=-0.755, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1977,
+     0.0647,
+     0.0395
+    ],
+    "error_m": 0.0166,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 9.72,
+   "call": "log",
+   "result": "Contact move failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 9.92,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 9.92,
+   "call": "log",
+   "result": "Attempt 2"
+  },
+  {
+   "t": 9.92,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 9.92,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.235,0.053,0.034)"
+  },
+  {
+   "t": 12.44,
+   "call": "move_to(0.235, 0.053, 0.034, yaw=0.265, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2357,
+     0.0518,
+     0.0413
+    ],
+    "error_m": 0.0074
+   }
+  },
+  {
+   "t": 12.44,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 14.3,
+   "call": "move_to(0.235, 0.053, 0.024, yaw=0.265, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2377,
+     0.053,
+     0.0403
+    ],
+    "error_m": 0.0166,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 14.3,
+   "call": "log",
+   "result": "Contact move failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 14.3,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.249,0.037,0.041)"
+  },
+  {
+   "t": 15.56,
+   "call": "move_to(0.249, 0.037, 0.041, yaw=-0.531, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2489,
+     0.0374,
+     0.0409
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 15.56,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 15.8,
+   "call": "move_to(0.249, 0.037, 0.031, yaw=-0.531, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2486,
+     0.0373,
+     0.0304
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 15.8,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 16.3,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0101
+   }
+  },
+  {
+   "t": 16.3,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 16.3,
+   "call": "log",
+   "result": "Holding check failed: expected blue_cube, got red_cube"
+  },
+  {
+   "t": 16.7,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 16.9,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 16.9,
+   "call": "log",
+   "result": "Attempt 3"
+  },
+  {
+   "t": 16.9,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 16.9,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.255,0.017,0.035)"
+  },
+  {
+   "t": 18.16,
+   "call": "move_to(0.255, 0.017, 0.035, yaw=0.124, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2556,
+     0.0167,
+     0.0348
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 18.16,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 18.56,
+   "call": "move_to(0.255, 0.017, 0.025, yaw=0.124, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2561,
+     0.0165,
+     0.0263
+    ],
+    "error_m": 0.002
+   }
+  },
+  {
+   "t": 18.56,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 19.06,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 19.06,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 19.46,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 19.46,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.230,0.098,0.035)"
+  },
+  {
+   "t": 22.26,
+   "call": "move_to(0.230, 0.098, 0.035, yaw=-0.109, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2341,
+     0.099,
+     0.0411
+    ],
+    "error_m": 0.0077
+   }
+  },
+  {
+   "t": 22.26,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 22.72,
+   "call": "move_to(0.230, 0.098, 0.025, yaw=-0.109, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2304,
+     0.0976,
+     0.0247
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 22.72,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 23.22,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 23.22,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 23.62,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 23.82,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 23.82,
+   "call": "log",
+   "result": "Attempt 4"
+  },
+  {
+   "t": 23.82,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 23.82,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.228,0.058,0.035)"
+  },
+  {
+   "t": 24.98,
+   "call": "move_to(0.228, 0.058, 0.035, yaw=0.663, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2286,
+     0.0573,
+     0.0346
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 24.98,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 25.24,
+   "call": "move_to(0.228, 0.058, 0.025, yaw=0.663, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2289,
+     0.0577,
+     0.0255
+    ],
+    "error_m": 0.0011
+   }
+  },
+  {
+   "t": 25.24,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 25.74,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 25.74,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 26.14,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 26.14,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.203,0.087,0.036)"
+  },
+  {
+   "t": 27.26,
+   "call": "move_to(0.203, 0.087, 0.036, yaw=-0.163, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2037,
+     0.0879,
+     0.036
+    ],
+    "error_m": 0.0007
+   }
+  },
+  {
+   "t": 27.26,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 27.88,
+   "call": "move_to(0.203, 0.087, 0.026, yaw=-0.163, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2046,
+     0.0879,
+     0.027
+    ],
+    "error_m": 0.002
+   }
+  },
+  {
+   "t": 27.88,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 28.38,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 28.38,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 28.78,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 28.98,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 28.98,
+   "call": "log",
+   "result": "Attempt 5"
+  },
+  {
+   "t": 28.98,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 28.98,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.196,0.053,0.035)"
+  },
+  {
+   "t": 30.26,
+   "call": "move_to(0.196, 0.053, 0.035, yaw=0.367, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1964,
+     0.0522,
+     0.0349
+    ],
+    "error_m": 0.0007
+   }
+  },
+  {
+   "t": 30.26,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 30.52,
+   "call": "move_to(0.196, 0.053, 0.025, yaw=0.367, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1964,
+     0.0526,
+     0.0252
+    ],
+    "error_m": 0.0008
+   }
+  },
+  {
+   "t": 30.52,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 31.02,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 31.02,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 31.42,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 31.42,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.178,0.080,0.035)"
+  },
+  {
+   "t": 32.78,
+   "call": "move_to(0.178, 0.080, 0.035, yaw=-0.007, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1791,
+     0.081,
+     0.0356
+    ],
+    "error_m": 0.001
+   }
+  },
+  {
+   "t": 32.78,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 33.06,
+   "call": "move_to(0.178, 0.080, 0.025, yaw=-0.007, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1796,
+     0.0809,
+     0.0265
+    ],
+    "error_m": 0.0018
+   }
+  },
+  {
+   "t": 33.06,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 33.56,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 33.56,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 33.96,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 34.16,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 34.16,
+   "call": "log",
+   "result": "Attempt 6"
+  },
+  {
+   "t": 34.16,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 34.16,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.153,0.042,0.035)"
+  },
+  {
+   "t": 34.88,
+   "call": "move_to(0.153, 0.042, 0.035, yaw=0.150, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1544,
+     0.0425,
+     0.0356
+    ],
+    "error_m": 0.0012
+   }
+  },
+  {
+   "t": 34.88,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 35.14,
+   "call": "move_to(0.153, 0.042, 0.025, yaw=0.150, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1546,
+     0.0429,
+     0.0262
+    ],
+    "error_m": 0.0018
+   }
+  },
+  {
+   "t": 35.14,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 35.64,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 35.64,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 36.04,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 36.04,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.150,0.066,0.036)"
+  },
+  {
+   "t": 36.48,
+   "call": "move_to(0.150, 0.066, 0.036, yaw=-0.008, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1505,
+     0.0665,
+     0.0356
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 36.48,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 36.74,
+   "call": "move_to(0.150, 0.066, 0.026, yaw=-0.008, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1513,
+     0.0668,
+     0.0264
+    ],
+    "error_m": 0.0014
+   }
+  },
+  {
+   "t": 36.74,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 37.24,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 37.24,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 37.64,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 37.84,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 37.84,
+   "call": "log",
+   "result": "Attempt 7"
+  },
+  {
+   "t": 37.84,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 37.84,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.144,0.018,0.035)"
+  },
+  {
+   "t": 39.24,
+   "call": "move_to(0.144, 0.018, 0.035, yaw=0.136, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1442,
+     0.0176,
+     0.0352
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 39.24,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 39.5,
+   "call": "move_to(0.144, 0.018, 0.025, yaw=0.136, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1444,
+     0.0178,
+     0.0254
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 39.5,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 40.0,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 40.0,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 40.4,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 40.4,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.117,0.041,0.023)"
+  },
+  {
+   "t": 41.88,
+   "call": "move_to(0.117, 0.041, 0.023, yaw=-0.708, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1184,
+     0.0414,
+     0.0234
+    ],
+    "error_m": 0.002
+   }
+  },
+  {
+   "t": 41.88,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 42.12,
+   "call": "move_to(0.117, 0.041, 0.013, yaw=-0.708, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1183,
+     0.0413,
+     0.0149
+    ],
+    "error_m": 0.0019
+   }
+  },
+  {
+   "t": 42.12,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 42.62,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 42.62,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 43.02,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 43.22,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 43.22,
+   "call": "log",
+   "result": "Attempt 8"
+  },
+  {
+   "t": 43.22,
+   "call": "observe()",
+   "result": {
+    "seen": [
+     "red_cube"
+    ],
+    "not_visible": [
+     "blue_cube"
+    ]
+   }
+  },
+  {
+   "t": 43.22,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.113,0.012,0.023)"
+  },
+  {
+   "t": 43.72,
+   "call": "move_to(0.113, 0.012, 0.023, yaw=-0.205, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1128,
+     0.0125,
+     0.0227
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 43.72,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 43.94,
+   "call": "move_to(0.113, 0.012, 0.013, yaw=-0.205, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.113,
+     0.0126,
+     0.0143
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 43.94,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 44.44,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 44.44,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 44.84,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 45.04,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 45.04,
+   "call": "log",
+   "result": "Attempt 9"
+  },
+  {
+   "t": 45.04,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 45.04,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.112,-0.014,0.023)"
+  },
+  {
+   "t": 45.5,
+   "call": "move_to(0.112, -0.014, 0.023, yaw=-0.194, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1118,
+     -0.0144,
+     0.0227
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 45.5,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 45.74,
+   "call": "move_to(0.112, -0.014, 0.013, yaw=-0.194, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.112,
+     -0.0144,
+     0.0142
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 45.74,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 46.24,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 46.24,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 46.64,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 46.64,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.086,0.050,0.036)"
+  },
+  {
+   "t": 49.18,
+   "call": "move_to(0.086, 0.050, 0.036, yaw=-0.216, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0803,
+     0.0439,
+     0.0326
+    ],
+    "error_m": 0.009
+   }
+  },
+  {
+   "t": 49.18,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 50.92,
+   "call": "move_to(0.086, 0.050, 0.026, yaw=-0.216, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0795,
+     0.0432,
+     0.0233
+    ],
+    "error_m": 0.0098
+   }
+  },
+  {
+   "t": 50.92,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 51.42,
+   "call": "grasp()",
+   "result": {
+    "holding": "blue_cube",
+    "opening": 0.0071
+   }
+  },
+  {
+   "t": 51.42,
+   "call": "holding()",
+   "result": "blue_cube"
+  },
+  {
+   "t": 51.42,
+   "call": "log",
+   "result": "Moving to release zone over blue tray at (0.062,0.133,0.035)"
+  },
+  {
+   "t": 54.24,
+   "call": "move_to(0.062, 0.133, 0.035, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.04,
+     0.0717,
+     0.0249
+    ],
+    "error_m": 0.0661,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 54.24,
+   "call": "log",
+   "result": "Tray approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 54.44,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 54.44,
+   "call": "log",
+   "result": "Attempt 10"
+  },
+  {
+   "t": 54.44,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 54.44,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.102,-0.035,0.035)"
+  },
+  {
+   "t": 56.24,
+   "call": "move_to(0.102, -0.035, 0.035, yaw=-0.118, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1018,
+     -0.0352,
+     0.0351
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 56.24,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 56.5,
+   "call": "move_to(0.102, -0.035, 0.025, yaw=-0.118, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.103,
+     -0.0354,
+     0.0262
+    ],
+    "error_m": 0.0012
+   }
+  },
+  {
+   "t": 56.5,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 57.0,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": -0.0001
+   }
+  },
+  {
+   "t": 57.0,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 57.4,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 57.4,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.101,0.077,0.031)"
+  },
+  {
+   "t": 59.06,
+   "call": "move_to(0.101, 0.077, 0.031, yaw=0.370, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1025,
+     0.0771,
+     0.0318
+    ],
+    "error_m": 0.0019
+   }
+  },
+  {
+   "t": 59.06,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 60.1,
+   "call": "move_to(0.101, 0.077, 0.021, yaw=0.370, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1023,
+     0.0776,
+     0.0219
+    ],
+    "error_m": 0.002
+   }
+  },
+  {
+   "t": 60.1,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 60.6,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0276
+   }
+  },
+  {
+   "t": 60.6,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 61.0,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 61.2,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 61.2,
+   "call": "log",
+   "result": "Attempt 11"
+  },
+  {
+   "t": 61.2,
+   "call": "observe()",
+   "result": {
+    "seen": [
+     "red_cube"
+    ],
+    "not_visible": [
+     "blue_cube"
+    ]
+   }
+  },
+  {
+   "t": 61.2,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.110,-0.061,0.035)"
+  },
+  {
+   "t": 64.7,
+   "call": "move_to(0.110, -0.061, 0.035, yaw=-0.136, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1094,
+     -0.0575,
+     0.0344
+    ],
+    "error_m": 0.0038
+   }
+  },
+  {
+   "t": 64.7,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 66.4,
+   "call": "move_to(0.110, -0.061, 0.025, yaw=-0.136, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1084,
+     -0.0571,
+     0.0246
+    ],
+    "error_m": 0.0045
+   }
+  },
+  {
+   "t": 66.4,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 66.9,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0109
+   }
+  },
+  {
+   "t": 66.9,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 67.3,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 67.5,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 67.5,
+   "call": "log",
+   "result": "Attempt 12"
+  },
+  {
+   "t": 67.5,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 67.5,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.100,-0.068,0.025)"
+  },
+  {
+   "t": 69.2,
+   "call": "move_to(0.100, -0.068, 0.025, yaw=-0.001, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.092,
+     -0.0567,
+     0.0207
+    ],
+    "error_m": 0.0142,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 69.2,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 69.2,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.080,0.058,0.022)"
+  }
+ ],
+ "n_calls": 193,
+ "printed": [],
+ "safety_events": [
+  {
+   "t": 41.88,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.013 clamped to 0.014"
+  },
+  {
+   "t": 43.72,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.013 clamped to 0.014"
+  },
+  {
+   "t": 45.5,
+   "kind": "workspace",
+   "action": "clamp",
+   "detail": "z=0.013 clamped to 0.014"
+  }
+ ],
+ "safety_summary": {
+  "clamp": 3,
+  "halt": 0
+ },
+ "halted": "time budget of 70 s exceeded",
+ "sim_time": 70.5,
+ "wall_time": 6.14,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1341,
+     -0.033,
+     0.0149
+    ],
+    "yaw": -0.0636,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1795,
+     0.0751,
+     0.0149
+    ],
+    "yaw": -0.7484,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.0897,
+     -0.1401,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.0663,
+     0.1299,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "final_obs": {
+  "time": 70.5,
+  "gripper": {
+   "pos": [
+    0.0862,
+    -0.0026,
+    0.0214
+   ],
+   "yaw": 1.4869,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.0752,
+     -0.0736,
+     0.0149
+    ],
+    "yaw": 0.0278,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.0555,
+     0.0643,
+     0.0149
+    ],
+    "yaw": 0.0298,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.0897,
+     -0.1401,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.0663,
+     0.1299,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_tray": {
+   "x": 0.0897,
+   "y": -0.1401,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "blue_tray": {
+   "x": 0.0663,
+   "y": 0.1299,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "red_cube": {
+   "x": 0.1341,
+   "y": -0.033,
+   "yaw": -0.0636,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1795,
+   "y": 0.0751,
+   "yaw": -0.7484,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 12,
+  "lookups": 24,
+  "misses": 2,
+  "detection_rate": 0.9167,
+  "pos_err_mm_median": 7.29,
+  "pos_err_mm_p90": 11.43,
+  "yaw_err_deg_median": 12.71,
+  "by_camera": {
+   "overhead": 15,
+   "front": 7
+  },
+  "ms_per_observe_median": 321.4,
+  "fixtures_mapped": [
+   "blue_tray",
+   "red_tray"
+  ],
+  "fixture_err_mm": {
+   "red_tray": 6.19,
+   "blue_tray": 4.96
+  }
+ }
+}

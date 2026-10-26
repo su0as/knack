@@ -1,0 +1,7 @@
+**Mode 1: Pre‑grasp height missed (5 episodes)**
+*Root cause:* The pre‑grasp pose `PRE_GRASP_Z = obj.z + OFFSET` uses the observed cube height `obj.z ≈ 0.015 m` and adds `OFFSET = 0.05 m`, targeting `0.065 m`. However, the cube’s base sits at `z ≈ 0.015 m`, so the robot approaches at ~`0.065 m` above the table. The required “5 cm above table” means the cube’s top must be ≥ 0.065 m, i.e. the gripper must lift to `z ≥ 0.08 m`. The code never lifts after a successful grasp; it only waits and logs success at the pre‑grasp height.
+*Fix:* After a successful grasp, add a lift step: `hold_pose = Pose(pre_grasp.x, pre_grasp.y, TARGET_Z + 0.03, pre_grasp.yaw)` and `try_move_to(hold_pose, LIFT_SPEED)` (lines 114‑117). This raises the cube to ≥ 0.08 m, satisfying the 5 cm clearance.
+
+**Mode 2: Grasp closure failure (5 episodes)**
+*Root cause:* `robot.grasp()` returns `{"holding": null, "opening": 0.0}` on every attempt (lines 89‑100). The gripper does not close around the cube, likely because the approach pose is too high or the gripper geometry mismatches the cube size. The retry logic lifts only `dz=0.01 m`, which is insufficient if the initial contact is poor.
+*Fix:* Increase the pre‑grasp offset `OFFSET` from `0.05` to `0.08` (line 41) so the robot approaches from `z ≈ 0.095 m`, giving more clearance for finger closure. Additionally, change the recovery nudge to `dz=0.02 m` (line 97) to ensure the gripper clears any shallow contact before the second attempt.

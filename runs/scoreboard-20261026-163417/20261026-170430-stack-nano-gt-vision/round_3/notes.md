@@ -1,0 +1,5 @@
+- Replaced the trig‑based XY offset with a constant 2 cm translation along world X (offset_x = 0.02, offset_y = 0) to eliminate the over‑estimation that pushed the place pose off the target cube.
+- Added an extra 0.01 m safety buffer to the place height: `place_z = blue_z + half_h + half_h + 0.03` (≈ blue_z + 0.06 m) so the cube has enough clearance to settle on the blue cube without slipping.
+- Strengthened the grasp‑verification loop: now checks `robot.holding() == "red_cube"` strictly, retries up to 5 times, and inserts a short `wait(0.2)` after each release to let the simulation settle.
+- Kept all moves slow (≈0.07 m/s), retained existing perception checks and logging, and preserved the existing error‑handling and recovery logic.
+- Minor clean‑up of comments and variable names for clarity while preserving all functionality that previously worked.

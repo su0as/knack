@@ -1,0 +1,5 @@
+- First version: push the orange puck into the green zone by positioning behind it and pushing forward.
+- Puck is too wide to grasp, so use gripper as a pusher.
+- Need to compute push vector from puck to target center, approach from opposite side.
+- Puck center z≈0.01, height 0.02 → push at mid-height (z≈0.01) with tool point at z≈0.0225 (fingertips 0.0125 below tool point).
+- Approach slowly, push at low speed, verify final position, retry if needed.

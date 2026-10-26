@@ -1,0 +1,6 @@
+- Raised approach speed to 0.10 m/s (kept contact/release at 0.05 m/s) to reduce blocking while still being gentle.  
+- Added a cap of 3 fallback attempts per `try_approach` to stop endless fallback loops that exhaust the time budget.  
+- Fixed grasp‑failure handling: after a failed grasp we now `break` out of the colour loop instead of `continue`, so the current colour is retried on the next while iteration rather than skipping to the next colour.  
+- Increased the invisibility‑streak threshold from 3 to 5 frames to avoid prematurely discarding a cube that briefly disappears.  
+- Minor clean‑ups: use `break` to restart the while loop after a colour is abandoned, and keep all existing stability, grasp‑verification and release logic unchanged.  
+- Preserved all successful behaviours from previous versions (stability‑center check, grasp verification, release confirmation, etc.).

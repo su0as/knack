@@ -1,0 +1,216 @@
+{
+ "round": 2,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 0,
+ "errors": 6,
+ "wall_s": 19.8,
+ "usd_cum": 0.02131,
+ "code": "round_2/skill.py",
+ "diff": "round_2/diff.patch",
+ "lines": 87,
+ "notes": "- Fixed bare `except:` on line 67 to `except Exception:` to comply with safety rules.\n- No other changes needed; the push logic and retry structure remain the same.",
+ "perception": {
+  "episodes": 8,
+  "lookups": 23,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "median_of_episode_median_err_mm": 3.36
+ },
+ "episodes": [
+  {
+   "seed": 2000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "SafetyViolation",
+    "message": "target x=0.350 m is outside the safe workspace [0.04, 0.32] by 0.030 m",
+    "traceback": "  skill.py line 49, in run: robot.move_to(approach_x, approach_y, 0.15, speed=0.15)\nSafetyViolation: target x=0.350 m is outside the safe workspace [0.04, 0.32] by 0.030 m"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0547,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "SafetyViolation",
+    "message": "target x=0.392 m is outside the safe workspace [0.04, 0.32] by 0.072 m",
+    "traceback": "  skill.py line 49, in run: robot.move_to(approach_x, approach_y, 0.15, speed=0.15)\nSafetyViolation: target x=0.392 m is outside the safe workspace [0.04, 0.32] by 0.072 m"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0571,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.0872,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "SafetyViolation",
+    "message": "target x=0.004 m is outside the safe workspace [0.04, 0.32] by 0.036 m",
+    "traceback": "  skill.py line 49, in run: robot.move_to(approach_x, approach_y, 0.15, speed=0.15)\nSafetyViolation: target x=0.004 m is outside the safe workspace [0.04, 0.32] by 0.036 m"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0881,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "SafetyViolation",
+    "message": "target y=-0.322 m is outside the safe workspace [-0.26, 0.26] by 0.062 m",
+    "traceback": "  skill.py line 49, in run: robot.move_to(approach_x, approach_y, 0.15, speed=0.15)\nSafetyViolation: target y=-0.322 m is outside the safe workspace [-0.26, 0.26] by 0.062 m"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.1229,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "puck_to_target_xy": 0.062,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "SafetyViolation",
+    "message": "target x=0.005 m is outside the safe workspace [0.04, 0.32] by 0.035 m",
+    "traceback": "  skill.py line 49, in run: robot.move_to(approach_x, approach_y, 0.15, speed=0.15)\nSafetyViolation: target x=0.005 m is outside the safe workspace [0.04, 0.32] by 0.035 m"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.1138,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "SafetyViolation",
+    "message": "target x=0.362 m is outside the safe workspace [0.04, 0.32] by 0.042 m",
+    "traceback": "  skill.py line 49, in run: robot.move_to(approach_x, approach_y, 0.15, speed=0.15)\nSafetyViolation: target x=0.362 m is outside the safe workspace [0.04, 0.32] by 0.042 m"
+   },
+   "metrics": {
+    "puck_to_target_xy": 0.0514,
+    "tolerance": 0.035,
+    "upright": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

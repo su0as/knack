@@ -1,0 +1,35 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -57,7 +57,8 @@
+             puck_radius = 0.03  # safe default ~3 cm
+ 
+     # ---------- 4. Plan contact pose ----------
+-    contact_offset = 0.05  # larger offset to stay clear of fixtures/edges
++    # Larger offset to stay clear of fixtures/edges (Mode 1 fix)
++    contact_offset = 0.08
+     contact_pos = puck_pos - push_dir_u * (puck_radius + contact_offset)
+ 
+     # safety clamp (original limits)
+@@ -88,11 +89,12 @@
+         return False
+ 
+     # ---------- 6. Close fingers to make contact ----------
+-    # Two grasp attempts: first at full height, second after a tiny drop
++    # Two grasp attempts: first at full height, second after a slightly larger drop
++    # (Mode 2 fix: 0.010 m drop for better contact)
+     if not robot.grasp():
+         robot.log("grasp returned False – first attempt")
+         try:
+-            robot.move_to(cx, cy, cz - 0.004, speed=0.07)  # extra drop for stable contact
++            robot.move_to(cx, cy, cz - 0.010, speed=0.07)  # extra drop for stable contact
+             if not robot.grasp():
+                 robot.log("grasp failed again after height drop")
+                 return False
+@@ -117,7 +119,6 @@
+             pass  # give up on this episode
+ 
+     # If after the first push the puck is still outside, try a second tiny push
+-    # (only if we have not yet succeeded)
+     try:
+         final_pos = np.array(robot.get_pose(puck_name)["pos"])
+         if np.linalg.norm(final_pos - target_pos) > target_radius:

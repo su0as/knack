@@ -1,0 +1,260 @@
+{
+ "task": "stack",
+ "seed": 50009,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": false,
+ "metrics": {
+  "xy_offset": 0.0409,
+  "z_gap": -0.0,
+  "red_held": false,
+  "blue_z": 0.0149
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "get_pose('red_cube')",
+   "result": {
+    "pos": [
+     0.1402,
+     -0.011,
+     0.0197
+    ],
+    "yaw": 0.6202
+   }
+  },
+  {
+   "t": 0.0,
+   "call": "get_pose('blue_cube')",
+   "result": {
+    "pos": [
+     0.1372,
+     0.0829,
+     0.02
+    ],
+    "yaw": 0.7114
+   }
+  },
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Moving to pick pose: (0.140, -0.011, 0.020, yaw=0.620)"
+  },
+  {
+   "t": 1.78,
+   "call": "move_to(0.140, -0.011, 0.020, yaw=0.620, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1401,
+     -0.011,
+     0.0197
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 1.78,
+   "call": "log",
+   "result": "Closing gripper"
+  },
+  {
+   "t": 2.28,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0274
+   }
+  },
+  {
+   "t": 2.28,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 2.28,
+   "call": "log",
+   "result": "Moving to place pose: (0.137, 0.083, 0.050, yaw=0.711)"
+  },
+  {
+   "t": 4.24,
+   "call": "move_to(0.137, 0.083, 0.050, yaw=0.711, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1359,
+     0.0814,
+     0.05
+    ],
+    "error_m": 0.002
+   }
+  },
+  {
+   "t": 4.24,
+   "call": "log",
+   "result": "Opening gripper to release"
+  },
+  {
+   "t": 4.64,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 4.64,
+   "call": "holding()"
+  },
+  {
+   "t": 4.64,
+   "call": "log",
+   "result": "Release successful."
+  }
+ ],
+ "n_calls": 14,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 5.14,
+ "wall_time": 1.55,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1382,
+     -0.0144,
+     0.0149
+    ],
+    "yaw": 0.6331,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1347,
+     0.0799,
+     0.0149
+    ],
+    "yaw": 0.7289,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 5.14,
+  "gripper": {
+   "pos": [
+    0.1372,
+    0.0829,
+    0.05
+   ],
+   "yaw": 0.7114,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1466,
+     0.0578,
+     0.0149
+    ],
+    "yaw": 0.6424,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1362,
+     0.0973,
+     0.0149
+    ],
+    "yaw": 0.6984,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1382,
+   "y": -0.0144,
+   "yaw": 0.6331,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1347,
+   "y": 0.0799,
+   "yaw": 0.7289,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 3,
+  "lookups": 6,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 6.35,
+  "pos_err_mm_p90": 6.49,
+  "yaw_err_deg_median": 0.71,
+  "by_camera": {
+   "overhead": 6,
+   "front": 0
+  },
+  "ms_per_observe_median": 165.2,
+  "fixtures_mapped": [],
+  "fixture_err_mm": {}
+ }
+}

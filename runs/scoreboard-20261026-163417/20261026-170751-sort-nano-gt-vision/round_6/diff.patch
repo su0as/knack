@@ -1,0 +1,100 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -20,8 +20,11 @@
+     LATERAL_FALLBACK = 0.02        # m, small shift for fallbacks
+     MAX_GRASP_RETRIES = 5          # more attempts before giving up
+     MAX_ATTEMPTS = 30
+-    LOW_SPEED = 0.05
+-    APPROACH_SPEED = 0.05          # slower speed to avoid blocking
++    LOW_SPEED = 0.05               # slow speed for contact / release
++    APPROACH_SPEED = 0.10          # faster speed for approach moves
++    CONTACT_SPEED = 0.05           # slow speed for contact / release moves
++    MAX_FALLBACK_ATTEMPTS = 3      # limit fallback trials per approach
++    LATERAL_FALLBACK = 0.02
+ 
+     # ----- fallback offsets (always defined) ----------------------------
+     fallback_offsets = [
+@@ -50,6 +53,7 @@
+     def try_approach(x, y, height, description, max_tries=5):
+         """Move to (x,y,height) with up to max_tries attempts (initial + fallbacks)."""
+         tries = 0
++        fallback_tried = 0
+         while tries < max_tries:
+             robot.log(f"Moving to approach at ({x:.3f},{y:.3f},{height:.3f})")
+             try:
+@@ -62,7 +66,6 @@
+                 return True
+             tries += 1
+             robot.log(f"{description} failed: blocked or error")
+-            # if we still have attempts left, try a fallback
+             if tries < max_tries:
+                 for off_x, off_y in fallback_offsets:
+                     nx = clamp(x + off_x, SAFE_X_MIN, SAFE_X_MAX)
+@@ -76,6 +79,9 @@
+                         resp = {"ok": False}
+                     if resp.get("ok"):
+                         return True
++                    fallback_tried += 1
++                    if fallback_tried >= MAX_FALLBACK_ATTEMPTS:
++                        break
+         return False
+ 
+     # ----- main loop -----------------------------------------------------
+@@ -86,13 +92,13 @@
+         objs = obs.get("objects", {})
+         fixtures = obs.get("fixtures", {})
+ 
+-        # ----- track visibility loss ---------------------------------------
++        # ----- track visibility loss (now 5 frames) -----------------------
+         for colour in ("red", "blue"):
+             if not placed[colour]:
+                 if colour not in objs or objs[colour]["shape"] != "cube":
+                     not_visible_streak[colour] += 1
+-                    if not_visible_streak[colour] >= 3:
+-                        robot.log(f"Cube {colour} lost after 3 invisible frames; skipping")
++                    if not_visible_streak[colour] >= 5:
++                        robot.log(f"Cube {colour} lost after 5 invisible frames; skipping")
+                         not_visible_streak[colour] = 0
+                         continue
+                 else:
+@@ -108,7 +114,6 @@
+                     "name": name,
+                 }
+ 
+-        # store only x,y for trays (fixture pos is [x, y, 0])
+         tray_info = {}
+         for name, data in fixtures.items():
+             if data["kind"] == "tray":
+@@ -165,10 +170,11 @@
+                     robot.log(f"Too many grasp failures for {colour}, skipping")
+                     robot.release()
+                     prev_center[colour] = None
+-                    continue
++                    # break out of colour loop to restart the while iteration
++                    break
+                 else:
+-                    # retry the whole attempt on next loop iteration
+-                    continue
++                    # retry this colour on the next while iteration
++                    break
+ 
+             # verify that we really hold the intended cube
+             held = robot.holding()
+@@ -200,7 +206,7 @@
+                             robot.log(f"All tray approaches failed for {colour}; skipping")
+                             continue
+ 
+-            # lower to release height
++            # lower to release height (use slower contact speed)
+             if not try_approach(tray_x, tray_y, RELEASE_HEIGHT,
+                                 "Release descent", max_tries=5):
+                 robot.log(f"Release descent failed for {colour}; skipping")
+@@ -210,7 +216,7 @@
+             robot.log("Releasing cube")
+             robot.release()
+ 
+-            # verify release; if still holding, try a small lift and release again
++            # verify release; if still holding, lift and release again
+             if robot.holding() is not None:
+                 robot.log("Release check failed, retrying lift")
+                 try:

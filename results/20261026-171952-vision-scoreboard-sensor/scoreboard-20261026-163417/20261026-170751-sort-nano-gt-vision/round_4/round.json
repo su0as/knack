@@ -1,0 +1,256 @@
+{
+ "round": 4,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 3,
+ "errors": 2,
+ "wall_s": 49.7,
+ "usd_cum": 0.0073,
+ "code": "round_4/skill.py",
+ "diff": "round_4/diff.patch",
+ "lines": 215,
+ "notes": "- Moved `fallback_offsets` to the top of `run` so it is always defined and can be used by both approach and contact fall\u2011backs (fixes UnboundLocalError).\n- Added a retry counter inside `try_approach` (max 5 attempts) to break out of endless loops that previously exhausted the 70\u202fs budget.\n- Lowered `APPROACH_SPEED` to 0.05\u202fm/s for all contact/approach moves and used the same low speed for the tray\u2011approach; this reduces the chance of being blocked.\n- Expanded the tray\u2011approach fallback list with diagonal shifts (\u00b10.02\u202fm in both x and y) to escape occasional blockages.\n- Reduced `release_z_above` from `RELEASE_HEIGHT + 0.02` to `RELEASE_HEIGHT + 0.01` (\u2248\u202f0.025\u202fm) to stay closer to the tray floor while still clearing the object.\n- Kept all existing safety checks, stability\u2011center logic, grasp retries and release verification, only tightening the problematic sections.\n- All new fallbacks reuse the same `fallback_offsets` list, ensuring the variable is always in scope.\n- The code still returns `True` only when both cubes are successfully placed.",
+ "perception": {
+  "episodes": 8,
+  "lookups": 202,
+  "misses": 62,
+  "detection_rate": 0.6931,
+  "median_of_episode_median_err_mm": 3.56
+ },
+ "episodes": [
+  {
+   "seed": 4000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0184,
+    "red_cube_tray_dy": 0.1282,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.009,
+    "blue_cube_tray_dy": 0.0743,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0077,
+    "red_cube_tray_dy": 0.0783,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0861,
+    "blue_cube_tray_dy": 0.2607,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.025,
+    "red_cube_tray_dy": 0.0977,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0653,
+    "blue_cube_tray_dy": 0.1227,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "MotionError",
+    "message": "target (0.320, 0.160, 0.038) unreachable (wrist point is 0.440 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.358 m. Typical reachable band: 0.10-0.23 m from the base at table height.",
+    "traceback": "  skill.py line 126, in run: if not try_approach(app_x, app_y, app_z,\n  skill.py line 54, in try_approach: resp = robot.move_to(x, y, height,\nMotionError: target (0.320, 0.160, 0.038) unreachable (wrist point is 0.440 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.358 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0035,
+    "red_cube_tray_dy": 0.1315,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.2587,
+    "blue_cube_tray_dy": 0.0018,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0043,
+    "red_cube_tray_dy": 0.0186,
+    "red_cube_z": 0.0189,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0229,
+    "blue_cube_tray_dy": 0.0913,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 70 s exceeded",
+    "traceback": "  skill.py line 164, in run: if not try_approach(tray_x, tray_y, RELEASE_Z_ABOVE,\n  skill.py line 66, in try_approach: resp = robot.move_to(nx, ny, height,\nEpisodeTimeout: time budget of 70 s exceeded"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0662,
+    "red_cube_tray_dy": 0.0284,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0468,
+    "blue_cube_tray_dy": 0.2604,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0199,
+    "red_cube_tray_dy": 0.0677,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0662,
+    "blue_cube_tray_dy": 0.0141,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 4007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0817,
+    "red_cube_tray_dy": 0.0121,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0939,
+    "blue_cube_tray_dy": 0.3084,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

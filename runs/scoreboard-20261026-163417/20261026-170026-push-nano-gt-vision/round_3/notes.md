@@ -1,0 +1,7 @@
+- Reduced `contact_offset` from 0.04 m to 0.01 m and lowered the contact height slightly (≈0.002 m) to sit on the puck’s side, eliminating the frequent grasp‑failure mode.  
+- Added a bounded (max 2) retry loop for `grasp()` after a height reduction, instead of aborting on the first `False` return.  
+- Changed the push distance from `0.95 * push_dist_norm` to the full `push_dist_norm` (i.e., move the puck all the way to the target centre) and kept a secondary small push (½ scale) only if the first push fails to bring the puck inside the zone.  
+- Restored the safety‑clamp ceiling to 0.26 m (original limit) and removed the artificial 0.28 m raise, ensuring the tool point stays within the valid workspace.  
+- Kept all perception reads at runtime, retained try/except around motion calls, and preserved the overall perceive→plan→contact→push→release→verify pipeline.  
+- Simplified the fallback logic: a single lower‑height retry for motion and grasp, and a single deterministic jittered retry for the whole sequence if the first attempt does not succeed.  
+- All coordinates are computed from the observed scene; no hard‑coded values remain.

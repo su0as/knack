@@ -1,0 +1,1416 @@
+{
+ "task": "sort",
+ "seed": 100035,
+ "error": null,
+ "self_report": false,
+ "returned": "False",
+ "success_gt": false,
+ "metrics": {
+  "red_cube_tray_dx": 0.0082,
+  "red_cube_tray_dy": 0.0759,
+  "red_cube_z": 0.0149,
+  "red_cube_held": false,
+  "blue_cube_tray_dx": 0.2122,
+  "blue_cube_tray_dy": 0.0413,
+  "blue_cube_z": 0.0149,
+  "blue_cube_held": false,
+  "red_ok": "False",
+  "blue_ok": "False"
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Attempt 1"
+  },
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.101,0.131,0.033)"
+  },
+  {
+   "t": 4.06,
+   "call": "move_to(0.101, 0.131, 0.033, yaw=-0.435, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1033,
+     0.1329,
+     0.0392
+    ],
+    "error_m": 0.0067
+   }
+  },
+  {
+   "t": 4.06,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 5.9,
+   "call": "move_to(0.101, 0.131, 0.023, yaw=-0.435, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1066,
+     0.1385,
+     0.0363
+    ],
+    "error_m": 0.0161,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 5.9,
+   "call": "log",
+   "result": "Contact move failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 5.9,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.190,-0.071,0.033)"
+  },
+  {
+   "t": 9.36,
+   "call": "move_to(0.190, -0.071, 0.033, yaw=0.476, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1895,
+     -0.0705,
+     0.033
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 9.36,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 9.6,
+   "call": "move_to(0.190, -0.071, 0.023, yaw=0.476, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1894,
+     -0.0706,
+     0.023
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 9.6,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 10.1,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 10.1,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 10.5,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 10.7,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 10.7,
+   "call": "log",
+   "result": "Attempt 2"
+  },
+  {
+   "t": 10.7,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 10.7,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.124,0.136,0.033)"
+  },
+  {
+   "t": 14.3,
+   "call": "move_to(0.124, 0.136, 0.033, yaw=0.645, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1227,
+     0.134,
+     0.0329
+    ],
+    "error_m": 0.002
+   }
+  },
+  {
+   "t": 14.3,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 14.56,
+   "call": "move_to(0.124, 0.136, 0.023, yaw=0.645, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1228,
+     0.1339,
+     0.0235
+    ],
+    "error_m": 0.002
+   }
+  },
+  {
+   "t": 14.56,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 15.06,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0279
+   }
+  },
+  {
+   "t": 15.06,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 15.06,
+   "call": "log",
+   "result": "Moving to release zone over red tray at (0.130,0.036,0.035)"
+  },
+  {
+   "t": 16.54,
+   "call": "move_to(0.130, 0.036, 0.035, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1294,
+     0.0358,
+     0.0349
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 16.54,
+   "call": "log",
+   "result": "Lowering to release height"
+  },
+  {
+   "t": 16.96,
+   "call": "move_to(0.130, 0.036, 0.015, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1291,
+     0.0358,
+     0.0161
+    ],
+    "error_m": 0.0012
+   }
+  },
+  {
+   "t": 16.96,
+   "call": "log",
+   "result": "Releasing cube"
+  },
+  {
+   "t": 17.36,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 17.36,
+   "call": "holding()"
+  },
+  {
+   "t": 17.36,
+   "call": "log",
+   "result": "Successfully placed red cube"
+  },
+  {
+   "t": 17.36,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.210,-0.108,0.034)"
+  },
+  {
+   "t": 19.76,
+   "call": "move_to(0.210, -0.108, 0.034, yaw=0.689, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2095,
+     -0.108,
+     0.0334
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 19.76,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 20.0,
+   "call": "move_to(0.210, -0.108, 0.024, yaw=0.689, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2092,
+     -0.1079,
+     0.0229
+    ],
+    "error_m": 0.0007
+   }
+  },
+  {
+   "t": 20.0,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 20.5,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0001
+   }
+  },
+  {
+   "t": 20.5,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 20.9,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 21.1,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 21.1,
+   "call": "log",
+   "result": "Attempt 3"
+  },
+  {
+   "t": 21.1,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 21.1,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.225,-0.159,0.031)"
+  },
+  {
+   "t": 22.08,
+   "call": "move_to(0.225, -0.159, 0.031, yaw=-0.737, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2247,
+     -0.1591,
+     0.0308
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 22.08,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 22.34,
+   "call": "move_to(0.225, -0.159, 0.021, yaw=-0.737, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.225,
+     -0.1595,
+     0.0219
+    ],
+    "error_m": 0.0014
+   }
+  },
+  {
+   "t": 22.34,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 22.84,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0
+   }
+  },
+  {
+   "t": 22.84,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 23.24,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 23.44,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 23.44,
+   "call": "log",
+   "result": "Attempt 4"
+  },
+  {
+   "t": 23.44,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 23.44,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 23.44,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.129, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 23.44,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 23.64,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 23.64,
+   "call": "log",
+   "result": "Attempt 5"
+  },
+  {
+   "t": 23.64,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 23.64,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 23.64,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.130, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 23.64,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 23.84,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 23.84,
+   "call": "log",
+   "result": "Attempt 6"
+  },
+  {
+   "t": 23.84,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 23.84,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 23.84,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.128, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 23.84,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 24.04,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 24.04,
+   "call": "log",
+   "result": "Attempt 7"
+  },
+  {
+   "t": 24.04,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 24.04,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 24.04,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.124, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 24.04,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 24.24,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 24.24,
+   "call": "log",
+   "result": "Attempt 8"
+  },
+  {
+   "t": 24.24,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 24.24,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 24.24,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.118, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 24.24,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 24.44,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 24.44,
+   "call": "log",
+   "result": "Attempt 9"
+  },
+  {
+   "t": 24.44,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 24.44,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 24.44,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.126, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 24.44,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 24.64,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 24.64,
+   "call": "log",
+   "result": "Attempt 10"
+  },
+  {
+   "t": 24.64,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 24.64,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 24.64,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.130, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 24.64,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 24.84,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 24.84,
+   "call": "log",
+   "result": "Attempt 11"
+  },
+  {
+   "t": 24.84,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 24.84,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.163,0.033)"
+  },
+  {
+   "t": 24.84,
+   "call": "move_to(0.291, -0.163, 0.033, yaw=0.137, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 24.84,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 25.04,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 25.04,
+   "call": "log",
+   "result": "Attempt 12"
+  },
+  {
+   "t": 25.04,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 25.04,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.163,0.033)"
+  },
+  {
+   "t": 25.04,
+   "call": "move_to(0.291, -0.163, 0.033, yaw=0.140, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 25.04,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 25.24,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 25.24,
+   "call": "log",
+   "result": "Attempt 13"
+  },
+  {
+   "t": 25.24,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 25.24,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 25.24,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.116, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 25.24,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 25.44,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 25.44,
+   "call": "log",
+   "result": "Attempt 14"
+  },
+  {
+   "t": 25.44,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 25.44,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 25.44,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.106, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 25.44,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 25.64,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 25.64,
+   "call": "log",
+   "result": "Attempt 15"
+  },
+  {
+   "t": 25.64,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 25.64,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.163,0.033)"
+  },
+  {
+   "t": 25.64,
+   "call": "move_to(0.291, -0.163, 0.033, yaw=0.123, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 25.64,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 25.84,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 25.84,
+   "call": "log",
+   "result": "Attempt 16"
+  },
+  {
+   "t": 25.84,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 25.84,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 25.84,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.121, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 25.84,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 26.04,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 26.04,
+   "call": "log",
+   "result": "Attempt 17"
+  },
+  {
+   "t": 26.04,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 26.04,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.163,0.033)"
+  },
+  {
+   "t": 26.04,
+   "call": "move_to(0.291, -0.163, 0.033, yaw=0.136, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 26.04,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 26.24,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 26.24,
+   "call": "log",
+   "result": "Attempt 18"
+  },
+  {
+   "t": 26.24,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 26.24,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.034)"
+  },
+  {
+   "t": 26.24,
+   "call": "move_to(0.291, -0.164, 0.034, yaw=0.121, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.034) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 26.24,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.034) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 26.44,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 26.44,
+   "call": "log",
+   "result": "Attempt 19"
+  },
+  {
+   "t": 26.44,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 26.44,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.163,0.033)"
+  },
+  {
+   "t": 26.44,
+   "call": "move_to(0.291, -0.163, 0.033, yaw=0.126, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 26.44,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 26.64,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 26.64,
+   "call": "log",
+   "result": "Attempt 20"
+  },
+  {
+   "t": 26.64,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 26.64,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 26.64,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.127, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 26.64,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 26.84,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 26.84,
+   "call": "log",
+   "result": "Attempt 21"
+  },
+  {
+   "t": 26.84,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 26.84,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 26.84,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.126, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 26.84,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 27.04,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 27.04,
+   "call": "log",
+   "result": "Attempt 22"
+  },
+  {
+   "t": 27.04,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 27.04,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.163,0.033)"
+  },
+  {
+   "t": 27.04,
+   "call": "move_to(0.291, -0.163, 0.033, yaw=0.132, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 27.04,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 27.24,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 27.24,
+   "call": "log",
+   "result": "Attempt 23"
+  },
+  {
+   "t": 27.24,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 27.24,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.163,0.033)"
+  },
+  {
+   "t": 27.24,
+   "call": "move_to(0.291, -0.163, 0.033, yaw=0.141, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.416 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 27.24,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.416 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 27.44,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 27.44,
+   "call": "log",
+   "result": "Attempt 24"
+  },
+  {
+   "t": 27.44,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 27.44,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 27.44,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.119, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 27.44,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 27.64,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 27.64,
+   "call": "log",
+   "result": "Attempt 25"
+  },
+  {
+   "t": 27.64,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 27.64,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.163,0.033)"
+  },
+  {
+   "t": 27.64,
+   "call": "move_to(0.291, -0.163, 0.033, yaw=0.130, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 27.64,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 27.84,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 27.84,
+   "call": "log",
+   "result": "Attempt 26"
+  },
+  {
+   "t": 27.84,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 27.84,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.163,0.033)"
+  },
+  {
+   "t": 27.84,
+   "call": "move_to(0.291, -0.163, 0.033, yaw=0.130, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 27.84,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.163, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 28.04,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 28.04,
+   "call": "log",
+   "result": "Attempt 27"
+  },
+  {
+   "t": 28.04,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 28.04,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 28.04,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.129, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 28.04,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 28.24,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 28.24,
+   "call": "log",
+   "result": "Attempt 28"
+  },
+  {
+   "t": 28.24,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 28.24,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 28.24,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.126, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 28.24,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 28.44,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 28.44,
+   "call": "log",
+   "result": "Attempt 29"
+  },
+  {
+   "t": 28.44,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 28.44,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 28.44,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.123, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 28.44,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 28.64,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 28.64,
+   "call": "log",
+   "result": "Attempt 30"
+  },
+  {
+   "t": 28.64,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 28.64,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.291,-0.164,0.033)"
+  },
+  {
+   "t": 28.64,
+   "call": "move_to(0.291, -0.164, 0.033, yaw=0.126, speed=0.070)",
+   "error": "MotionError: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 28.64,
+   "call": "log",
+   "result": "Approach failed: target (0.291, -0.164, 0.033) unreachable (wrist point is 0.417 m from the shoulder; the arm reaches 0.019..0.251 m); horizontal distance from base 0.334 m. Typical reachable band: 0.10-0.23 m from the base at table height."
+  },
+  {
+   "t": 28.84,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 28.84,
+   "call": "log",
+   "result": "Skill finished, success=False"
+  }
+ ],
+ "n_calls": 216,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 29.34,
+ "wall_time": 6.96,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.0849,
+     0.1399,
+     0.0149
+    ],
+    "yaw": -0.431,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1742,
+     -0.0797,
+     0.0149
+    ],
+    "yaw": 0.4887,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.1319,
+     0.0362,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.0616,
+     -0.1245,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "final_obs": {
+  "time": 29.34,
+  "gripper": {
+   "pos": [
+    0.2252,
+    -0.1591,
+    0.0216
+   ],
+   "yaw": 2.405,
+   "opening": 0.0497,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1401,
+     0.1121,
+     0.0149
+    ],
+    "yaw": 0.3488,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.2738,
+     -0.1658,
+     0.0149
+    ],
+    "yaw": 0.1261,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.1319,
+     0.0362,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.0616,
+     -0.1245,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_tray": {
+   "x": 0.1319,
+   "y": 0.0362,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "blue_tray": {
+   "x": 0.0616,
+   "y": -0.1245,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "red_cube": {
+   "x": 0.0849,
+   "y": 0.1399,
+   "yaw": -0.431,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1742,
+   "y": -0.0797,
+   "yaw": 0.4887,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 30,
+  "lookups": 60,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 4.08,
+  "pos_err_mm_p90": 4.28,
+  "yaw_err_deg_median": 0.75,
+  "by_camera": {
+   "overhead": 59,
+   "front": 1
+  },
+  "ms_per_observe_median": 174.1,
+  "fixtures_mapped": [
+   "blue_tray",
+   "red_tray"
+  ],
+  "fixture_err_mm": {
+   "red_tray": 2.41,
+   "blue_tray": 1.73
+  }
+ }
+}

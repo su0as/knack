@@ -1,0 +1,98 @@
+{
+ "run_id": "20261026-164219-stack-super-gt-vision",
+ "task": "stack",
+ "title": "Stack",
+ "instruction": "Stack the red cube on top of the blue cube and let go.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "vision",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 8,
+   "success": 1.0,
+   "gt_k": 8,
+   "self_k": 4,
+   "errors": 0,
+   "wall_s": 12.1,
+   "usd_cum": 0.0021,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 108,
+   "perception": {
+    "episodes": 8,
+    "lookups": 32,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 7.11
+   }
+  }
+ ],
+ "best_round": 1,
+ "selection": null,
+ "eval": {
+  "n": 50,
+  "k": 50,
+  "p": 1.0,
+  "lo": 0.928649965826,
+  "hi": 1.0,
+  "source": "gt",
+  "best_round": 1,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 8.66,
+  "self_report_true": 45,
+  "judge": null,
+  "failures": [],
+  "perception": {
+   "episodes": 50,
+   "lookups": 200,
+   "misses": 0,
+   "detection_rate": 1.0,
+   "median_of_episode_median_err_mm": 5.46
+  }
+ },
+ "models": {
+  "coder": {
+   "alias": "super",
+   "id": "nvidia/nemotron-3-super-120b-a12b",
+   "nvidia": true,
+   "calls": 1,
+   "prompt_tokens": 1652,
+   "completion_tokens": 1786,
+   "usd": 0.002103,
+   "price_in": 0.3,
+   "price_out": 0.9
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 0,
+   "prompt_tokens": 0,
+   "completion_tokens": 0,
+   "usd": 0.0,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.002103,
+  "compute_usd": 0.0,
+  "total_usd": 0.002103,
+  "calls": 1,
+  "prompt_tokens": 1652,
+  "completion_tokens": 1786,
+  "compute_seconds": 141.3,
+  "backend": "local"
+ },
+ "wall_time_s": 82.0,
+ "practice_episodes": 8,
+ "created": "2026-10-26 16:43:41",
+ "skill_file": "best_skill.py"
+}

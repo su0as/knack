@@ -1,0 +1,8 @@
+- The push geometry is now correct: push point = target centre − puck_radius × unit_vector, so the puck's centre arrives at the target when the gripper reaches that point.
+- Clamping only to the safe rectangle (2 cm inside hard limits) avoids the reachability circle that collapsed approach and push points.
+- Yaw is set to the original puck→target direction (ux, uy) so the fingers stay aligned with the intended push line even after clamping.
+- After clamping, a minimum push-distance guard (0.02 m) ensures the gripper travels far enough; if too short, the approach point is moved further back along the original line and re-clamped.
+- Retraction uses a fixed safe pose (0.15, 0, 0.15) to avoid colliding with the moved puck.
+- Each attempt re-observes, so updated puck positions are used for the next push.
+- max_attempts = 3, approach_dist = puck_radius + 0.03, push_z = approach_z = 0.0225.
+- MotionError and other exceptions are caught; the robot recovers to the safe retract pose.

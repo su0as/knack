@@ -1,0 +1,4 @@
+- Increase OVERSHOOT back to 0.02 to ensure the puck travels far enough to cross the target tolerance.
+- Widen the clamping bounds for the start point (and optionally the end point) to keep the robot away from workspace edges: use [0.02, 0.34] for x and [-0.28, 0.28] for y.
+- Add a small backward retreat after the push before the second observation to keep the puck in the camera frame and avoid perception dropouts.
+- Keep the rest of the successful logic (retry loop, verification, slow push speed) unchanged.

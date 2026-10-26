@@ -1,0 +1,5 @@
+- First version: need to locate red cube, move to it, grasp, lift 5+ cm, verify hold.
+- Cube center at z=0.015 (size 0.03). Grasp at that height with yaw aligned to cube.
+- Lift to z >= 0.05 (5 cm above table). Use slow speed near object, default for travel.
+- Re-observe after grasp to confirm holding. Retry grasp once if needed.
+- Catch MotionError for unreachable targets.

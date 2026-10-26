@@ -1,0 +1,8 @@
+- Moved `fallback_offsets` to the top of `run` so it is always defined and can be used by both approach and contact fall‑backs (fixes UnboundLocalError).
+- Added a retry counter inside `try_approach` (max 5 attempts) to break out of endless loops that previously exhausted the 70 s budget.
+- Lowered `APPROACH_SPEED` to 0.05 m/s for all contact/approach moves and used the same low speed for the tray‑approach; this reduces the chance of being blocked.
+- Expanded the tray‑approach fallback list with diagonal shifts (±0.02 m in both x and y) to escape occasional blockages.
+- Reduced `release_z_above` from `RELEASE_HEIGHT + 0.02` to `RELEASE_HEIGHT + 0.01` (≈ 0.025 m) to stay closer to the tray floor while still clearing the object.
+- Kept all existing safety checks, stability‑center logic, grasp retries and release verification, only tightening the problematic sections.
+- All new fallbacks reuse the same `fallback_offsets` list, ensuring the variable is always in scope.
+- The code still returns `True` only when both cubes are successfully placed.

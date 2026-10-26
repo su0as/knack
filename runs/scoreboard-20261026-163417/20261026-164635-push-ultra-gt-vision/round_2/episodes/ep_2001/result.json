@@ -1,0 +1,248 @@
+{
+ "task": "push",
+ "seed": 2001,
+ "error": {
+  "type": "SafetyViolation",
+  "message": "target x=0.392 m is outside the safe workspace [0.04, 0.32] by 0.072 m",
+  "traceback": "  skill.py line 49, in run: robot.move_to(approach_x, approach_y, 0.15, speed=0.15)\nSafetyViolation: target x=0.392 m is outside the safe workspace [0.04, 0.32] by 0.072 m"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "puck_to_target_xy": 0.0571,
+  "tolerance": 0.035,
+  "upright": true
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 1.56,
+   "call": "move_to(0.045, 0.194, 0.150, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0448,
+     0.1946,
+     0.15
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 4.14,
+   "call": "move_to(0.045, 0.194, 0.022, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0448,
+     0.1944,
+     0.0225
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 16.5,
+   "call": "move_to(0.262, -0.105, 0.022, yaw=-0.943, speed=0.030)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.262,
+     -0.1051,
+     0.0225
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 16.7,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 19.36,
+   "call": "move_to(0.045, 0.194, 0.150, speed=0.150)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0448,
+     0.1946,
+     0.15
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 19.66,
+   "call": "wait(0.30)",
+   "result": "ok"
+  },
+  {
+   "t": 19.66,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 19.66,
+   "call": "log",
+   "result": "Attempt 0: final puck-target distance: 0.0563, target radius: 0.04"
+  },
+  {
+   "t": 19.66,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 19.66,
+   "call": "move_to(0.392, -0.040, 0.150, speed=0.150)",
+   "error": "SAFETY HALT: target x=0.392 m is outside the safe workspace [0.04, 0.32] by 0.072 m"
+  }
+ ],
+ "n_calls": 11,
+ "printed": [],
+ "safety_events": [
+  {
+   "t": 19.66,
+   "kind": "workspace",
+   "action": "halt",
+   "detail": "x=0.392 outside [0.04, 0.32] by 0.072 m"
+  }
+ ],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 1
+ },
+ "halted": "target x=0.392 m is outside the safe workspace [0.04, 0.32] by 0.072 m",
+ "sim_time": 20.16,
+ "wall_time": 4.29,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.1285,
+     0.0815,
+     0.0099
+    ],
+    "yaw": -0.0,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1985,
+     -0.0154,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "final_obs": {
+  "time": 20.16,
+  "gripper": {
+   "pos": [
+    0.0448,
+    0.1944,
+    0.15
+   ],
+   "yaw": 2.915,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "puck": {
+    "pos": [
+     0.2553,
+     -0.0222,
+     0.0099
+    ],
+    "yaw": 0.453,
+    "shape": "puck",
+    "size": {
+     "radius": 0.03,
+     "height": 0.02
+    },
+    "color": "orange"
+   }
+  },
+  "fixtures": {
+   "target": {
+    "pos": [
+     0.1985,
+     -0.0154,
+     0.0
+    ],
+    "kind": "zone",
+    "color": "green",
+    "radius": 0.04
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "target": {
+   "x": 0.1985,
+   "y": -0.0154,
+   "yaw": 0.0,
+   "fp": 0.05
+  },
+  "puck": {
+   "x": 0.1285,
+   "y": 0.0815,
+   "yaw": 0.547,
+   "fp": 0.035
+  }
+ },
+ "perception": {
+  "calls": 3,
+  "lookups": 3,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 2.03,
+  "pos_err_mm_p90": 2.13,
+  "yaw_err_deg_median": 0.0,
+  "by_camera": {
+   "overhead": 3,
+   "front": 0
+  },
+  "ms_per_observe_median": 155.3,
+  "fixtures_mapped": [
+   "target"
+  ],
+  "fixture_err_mm": {
+   "target": 1.28
+  }
+ }
+}

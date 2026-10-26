@@ -1,0 +1,316 @@
+{
+ "run_id": "20261026-164635-push-ultra-gt-vision",
+ "task": "push",
+ "title": "Push puck",
+ "instruction": "Push the orange puck so that its centre ends up inside the green circle. The puck is too wide to grasp.",
+ "custom_instruction": false,
+ "reward": "gt",
+ "realism": "vision",
+ "status": "done",
+ "mock": false,
+ "demonstrations": 0,
+ "rounds": [
+  {
+   "round": 1,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 0,
+   "wall_s": 16.7,
+   "usd_cum": 0.00552,
+   "code": "round_1/skill.py",
+   "diff": "round_1/diff.patch",
+   "lines": 69,
+   "perception": {
+    "episodes": 8,
+    "lookups": 16,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 3.82
+   },
+   "summary": "**Mode 1: Overshoot / Under-push (5 episodes)**\n*Root cause:* `push_distance` (line 38) adds `puck_radius + 0.02` to `dist`, but the push stops at the calculated `push_x/push_y`. The puck does not travel far enough to overcome inertia and settle inside the circle.\n*Fix:* Increase `push_distance` margin. Change line 38 to `push_distance = dist + 2 * puck_radius + 0.05` to ensure the robot pushes well beyond the target before retracting.\n\n**Mode 2: Yaw misalignment (2 episodes, seeds 1006/1007)**\n*Root cause:* `push_yaw` (line 44) adds `pi/2` to `atan2(uy, ux)`. If the robot's end-effector orientation convention differs from the simulation, the puck slides sideways instead of forward.\n*Fix:* Verify yaw convention. If pushing forward results in lateral slip, remove the `+ math.pi/2` offset on line 44, or invert the sign to `- math.pi/2`.\n\n**Mode 3: Approach offset (1 episode, seed 1004)**\n*Root cause:* `approach_dist` (line 32) uses `2 * puck_radius + 0.03`. The puck is \"too wide to grasp,\" so the approach point may be too close, causing the robot to collide or push at a suboptimal angle.\n*Fix:* Increase `approach_dist`. Change line 32 to `approach_dist = 3 * puck_radius + 0.05` to ensure a safer, clearer push trajectory."
+  },
+  {
+   "round": 2,
+   "n": 8,
+   "k": 0,
+   "success": 0.0,
+   "gt_k": 0,
+   "self_k": 0,
+   "errors": 6,
+   "wall_s": 19.8,
+   "usd_cum": 0.02131,
+   "code": "round_2/skill.py",
+   "diff": "round_2/diff.patch",
+   "lines": 87,
+   "perception": {
+    "episodes": 8,
+    "lookups": 23,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 3.36
+   },
+   "summary": "**Mode 1: Workspace boundary violation** (6 episodes)\n*Root cause:* `push_distance` calculation (line 39) adds `2*puck_radius + 0.05` to the raw `dist`, pushing the target point outside the allowed x-range [0.04, 0.32] or y-range [-0.26, 0.26]. The `move_to` call at line 49 then triggers a safety halt.\n*Fix:* Cap the push distance so the final target respects workspace limits. Clamp `push_x`/`push_y` to `[0.04+puck_radius, 0.32-puck_radius]` and `[-0.26, 0.26]` respectively before the move.\n\n**Mode 2: Reachability failure** (1 episode)\n*Root cause:* `push_distance` (line 39) produces a target at `0.319, 0.136` where the wrist point exceeds the arm\u2019s 0.251 m reach (line 53). The code retries the same unreachable pose.\n*Fix:* After computing `push_x, push_y`, verify the wrist point distance to base is \u2264 0.251 m. If not, reduce `push_distance` proportionally or choose a shallower push angle.\n\n**Mode 3: Insufficient puck-to-target proximity** (3 episodes)\n*Root cause:* The final distance check (line 79) uses `target_radius` (0.04 m) but episodes show `puck_to_target_xy` \u2248 0.05\u20130.09 m, exceeding tolerance. The approach/retract logic does not guarantee the puck stops inside the circle.\n*Fix:* Increase the approach margin or add a post-push correction step that nudges the puck along the push vector until `final_dist \u2264 target_radius`."
+  },
+  {
+   "round": 3,
+   "n": 8,
+   "k": 1,
+   "success": 0.125,
+   "gt_k": 1,
+   "self_k": 2,
+   "errors": 0,
+   "wall_s": 23.1,
+   "usd_cum": 0.04383,
+   "code": "round_3/skill.py",
+   "diff": "round_3/diff.patch",
+   "lines": 105,
+   "perception": {
+    "episodes": 8,
+    "lookups": 28,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 5.81
+   },
+   "summary": "**Mode 1: Overshoot & scatter** (5 episodes: 3001, 3002, 3003, 3005, 3007)  \n*Root cause:* Push target (`push_x/push_y`) computed beyond reachable workspace or with insufficient margin, causing the puck to overshoot or slide off-axis. Line 37 sets `push_margin = puck_radius + 0.02`, which can place `push_x/push_y` outside the `clamp_point` safe rectangle (lines 47-57) or beyond `max_reach` (line 45), especially when the initial approach position is already near edges.  \n*Fix:* Reduce `push_margin` to `0.5 * puck_radius` (line 37) to keep the push vector inside the workspace, and add a post-clamp check: if `push_x, push_y` equals the clamped approach position, increase `push_margin` by `0.02` and recompute before the push move (after line 60).\n\n**Mode 2: Early termination on first attempt** (2 episodes: 3006, 3000)  \n*Root cause:* Successful first\u2011attempt distance (`final_dist \u2264 target_radius`) is rare; most episodes log a distance > tolerance and retry, but 3006 stops after attempt 0 despite `final_dist=0.0386 > 0.04` due to a logging/timing artifact. No code change needed; ensure the loop condition `if final_dist <= target_radius:` (line 97) uses the exact tolerance from `target_radius` (line 15)."
+  },
+  {
+   "round": 4,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 5,
+   "errors": 0,
+   "wall_s": 20.6,
+   "usd_cum": 0.06356,
+   "code": "round_4/skill.py",
+   "diff": "round_4/diff.patch",
+   "lines": 112,
+   "perception": {
+    "episodes": 8,
+    "lookups": 26,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 3.91
+   },
+   "summary": "**Mode 1: Overshoot & Collision (3 episodes: 4000, 4004, 4006)**\n- **Root cause:** Push point clamped to workspace limits, then nudged `push_margin` larger (lines 63\u201367), driving the robot beyond reachable space. The puck was pushed off-target or collided.\n- **Fix:** Cap `push_margin` at `puck_radius` before the nudge loop, preventing unbounded expansion.\n\n**Mode 2: Approach/Retract Miss (2 episodes: 4000, 4004)**\n- **Root cause:** After push, the robot retreated to `approach_x, approach_y` (lines 84\u201385), but the puck had already moved; the subsequent `observe()` missed the puck or logged stale positions.\n- **Fix:** Move retraction to a fixed safe zone (e.g., `x=0.15, y=0`) independent of approach, then re-observe.\n\n**Mode 3: Yaw Mismatch (1 episode: 4006)**\n- **Root cause:** `push_yaw` computed from vector to target (line 70) misaligned with actual push direction after clamping, causing sideways slip.\n- **Fix:** Recompute `push_yaw` from the clamped `push_x, push_y` vector just before the push call (line 78)."
+  },
+  {
+   "round": 5,
+   "n": 8,
+   "k": 5,
+   "success": 0.625,
+   "gt_k": 5,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 18.0,
+   "usd_cum": 0.09835,
+   "code": "round_5/skill.py",
+   "diff": "round_5/diff.patch",
+   "lines": 105,
+   "perception": {
+    "episodes": 8,
+    "lookups": 26,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 4.01
+   },
+   "summary": "**Mode 1: Clamped push too short** (3 episodes: 5000, 5003, 5004)  \n*Root cause:* The push point is clamped to the safe rectangle (lines 52\u201153), which can shift it toward the centre, reducing the effective push distance. When the clamped push point is too close to the approach point, the puck receives insufficient impulse to reach the target radius.  \n*Fix:* Extend the safe rectangle margins or add a minimum push\u2011distance guard after clamping (e.g., if `push_dist < 0.02` nudge `push_x` further outward).\n\n**Mode 2: Approach\u2011push alignment lost** (2 episodes: 5000, 5003)  \n*Root cause:* After clamping, the approach and push points diverge such that the computed `push_yaw` (line 63) no longer aligns with the intended push direction, causing the robot to veer off\u2011course.  \n*Fix:* Re\u2011compute `push_yaw` using the original (unclamped) direction vector `(ux, uy)` instead of the clamped delta (line 56\u201163).\n\n**Mode 3: Rare; all other failures fall within Mode 1 or 2.**"
+  },
+  {
+   "round": 6,
+   "n": 8,
+   "k": 4,
+   "success": 0.5,
+   "gt_k": 4,
+   "self_k": 8,
+   "errors": 0,
+   "wall_s": 16.4,
+   "usd_cum": 0.11954,
+   "code": "round_6/skill.py",
+   "diff": "round_6/diff.patch",
+   "lines": 123,
+   "perception": {
+    "episodes": 8,
+    "lookups": 23,
+    "misses": 0,
+    "detection_rate": 1.0,
+    "median_of_episode_median_err_mm": 7.53
+   }
+  }
+ ],
+ "best_round": 4,
+ "selection": {
+  "episodes": 16,
+  "previous_choice": 5,
+  "chosen": 4,
+  "rows": [
+   {
+    "round": 4,
+    "practice": "5/8",
+    "recheck": "12/16",
+    "total_k": 17,
+    "total_n": 24
+   },
+   {
+    "round": 5,
+    "practice": "5/8",
+    "recheck": "9/16",
+    "total_k": 14,
+    "total_n": 24
+   },
+   {
+    "round": 6,
+    "practice": "4/8",
+    "recheck": "9/16",
+    "total_k": 13,
+    "total_n": 24
+   }
+  ]
+ },
+ "eval": {
+  "n": 50,
+  "k": 28,
+  "p": 0.56,
+  "lo": 0.423057868001,
+  "hi": 0.688380127898,
+  "source": "gt",
+  "best_round": 4,
+  "errors": 0,
+  "halts": 0,
+  "safety_clamps": 0,
+  "mean_sim_time": 22.01,
+  "self_report_true": 29,
+  "judge": null,
+  "failures": [
+   {
+    "seed": 100002,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0483,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100002/end_front.jpg"
+   },
+   {
+    "seed": 100007,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0573,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100007/end_front.jpg"
+   },
+   {
+    "seed": 100008,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0748,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100008/end_front.jpg"
+   },
+   {
+    "seed": 100012,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0623,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100012/end_front.jpg"
+   },
+   {
+    "seed": 100013,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0796,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100013/end_front.jpg"
+   },
+   {
+    "seed": 100014,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0537,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100014/end_front.jpg"
+   },
+   {
+    "seed": 100016,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0784,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100016/end_front.jpg"
+   },
+   {
+    "seed": 100019,
+    "error": "",
+    "metrics": {
+     "puck_to_target_xy": 0.0511,
+     "tolerance": 0.035,
+     "upright": true
+    },
+    "frame": "eval/episodes/ep_100019/end_front.jpg"
+   }
+  ],
+  "perception": {
+   "episodes": 50,
+   "lookups": 176,
+   "misses": 0,
+   "detection_rate": 1.0,
+   "median_of_episode_median_err_mm": 3.79
+  }
+ },
+ "models": {
+  "coder": {
+   "alias": "ultra",
+   "id": "nvidia/Nemotron-3-Ultra-550b-a55b",
+   "nvidia": true,
+   "calls": 7,
+   "prompt_tokens": 29283,
+   "completion_tokens": 29394,
+   "usd": 0.117465,
+   "price_in": 1.0,
+   "price_out": 3.0
+  },
+  "summarizer": {
+   "alias": "lightning",
+   "id": "nvidia/Nemotron-3_5-Lightning",
+   "nvidia": true,
+   "calls": 5,
+   "prompt_tokens": 27523,
+   "completion_tokens": 1748,
+   "usd": 0.002072,
+   "price_in": 0.06,
+   "price_out": 0.24
+  }
+ },
+ "receipt": {
+  "llm_usd": 0.119537,
+  "compute_usd": 0.0,
+  "total_usd": 0.119537,
+  "calls": 12,
+  "prompt_tokens": 56806,
+  "completion_tokens": 31142,
+  "compute_seconds": 511.53,
+  "backend": "local"
+ },
+ "wall_time_s": 367.2,
+ "practice_episodes": 48,
+ "created": "2026-10-26 16:52:43",
+ "skill_file": "best_skill.py"
+}

@@ -1,0 +1,223 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Stack</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261026-165243-stack-ultra-gt-vision &middot; 2026-10-26 16:53:49</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Stack the red cube on top of the blue cube and let go.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: vision &middot; 8 practice episodes in 1 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/Nemotron-3-Ultra-550b-a55b <em>$1.00 / $3.00 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">100%</div><div>50/50 layouts &middot; Wilson 95% CI 93% to 100%</div><div class='ci'><div class='ci-band' style='left:92.9%;width:7.1%'></div><div class='ci-dot' style='left:100.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 0 clamps. OpenCV perception: 100% of object sightings, median error 3.86 mm.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:100%'></span><em>R1<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/Nemotron-3-Ultra-550b-a55b</code></td><td>1</td><td>1,652</td><td>1,109</td><td>$0.0050</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>0</td><td>0</td><td>0</td><td>$0.0000</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>122 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>1</th><th>1,652</th><th>1,109</th><th>$0.0050</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details open><summary>Round 1: 8/8 practice episodes &middot; 0 errors &middot; $0.0050 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- First attempt at stacking red cube on blue cube
+- Need to observe both cube positions, pick up red, place on blue, release
+- Cubes are 3cm cubes, centers at z=0.015 on table, top of blue at z=0.03, red center at z=0.045 when stacked
+- Will use yaw alignment for grasping, slow speeds near objects, verify holding after grasp</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,91 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    # Observe initial scene</span>
+<span class='add'>+    obs = robot.observe()</span>
+<span class='add'>+    objects = obs.get(&quot;objects&quot;, {})</span>
+<span class='add'>+    </span>
+<span class='add'>+    red = objects.get(&quot;red_cube&quot;)</span>
+<span class='add'>+    blue = objects.get(&quot;blue_cube&quot;)</span>
+<span class='add'>+    </span>
+<span class='add'>+    if not red or not blue:</span>
+<span class='add'>+        robot.log(&quot;Missing cubes in observation&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    red_pos = red[&quot;pos&quot;]</span>
+<span class='add'>+    red_yaw = red[&quot;yaw&quot;]</span>
+<span class='add'>+    blue_pos = blue[&quot;pos&quot;]</span>
+<span class='add'>+    blue_yaw = blue[&quot;yaw&quot;]</span>
+<span class='add'>+    </span>
+<span class='add'>+    robot.log(f&quot;Red at {red_pos}, yaw={red_yaw:.3f}&quot;)</span>
+<span class='add'>+    robot.log(f&quot;Blue at {blue_pos}, yaw={blue_yaw:.3f}&quot;)</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Approach red cube from above, align with its yaw</span>
+<span class='add'>+    # Pre-grasp position: above the cube</span>
+<span class='add'>+    pre_grasp_z = 0.08  # well above cube</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(red_pos[0], red_pos[1], pre_grasp_z, yaw=red_yaw, speed=0.15)</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(f&quot;Move to pre-grasp failed: {e}&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Descend to grasp height (cube center at z=0.015)</span>
+<span class='add'>+    grasp_z = 0.015</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(red_pos[0], red_pos[1], grasp_z, yaw=red_yaw, speed=0.05)</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(f&quot;Descend to grasp failed: {e}&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Grasp</span>
+<span class='add'>+    if not robot.grasp():</span>
+<span class='add'>+        robot.log(&quot;Failed to grasp red cube&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Verify holding</span>
+<span class='add'>+    if robot.holding() != &quot;red_cube&quot;:</span>
+<span class='add'>+        robot.log(&quot;Not holding red cube after grasp&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    robot.log(&quot;Grasped red cube&quot;)</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Lift red cube</span>
+<span class='add'>+    lift_z = 0.10</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(red_pos[0], red_pos[1], lift_z, yaw=red_yaw, speed=0.10)</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(f&quot;Lift failed: {e}&quot;)</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Move above blue cube (align with blue&#x27;s yaw for placement)</span>
+<span class='add'>+    # Blue top surface at z=0.03, so place red center at z=0.045</span>
+<span class='add'>+    place_z = 0.045</span>
+<span class='add'>+    pre_place_z = 0.08</span>
+<span class='add'>+    </span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(blue_pos[0], blue_pos[1], pre_place_z, yaw=blue_yaw, speed=0.15)</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(f&quot;Move above blue failed: {e}&quot;)</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Descend to placement height</span>
+<span class='add'>+    try:</span>
+<span class='add'>+        robot.move_to(blue_pos[0], blue_pos[1], place_z, yaw=blue_yaw, speed=0.05)</span>
+<span class='add'>+    except Exception as e:</span>
+<span class='add'>+        robot.log(f&quot;Descend to place failed: {e}&quot;)</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Release</span>
+<span class='add'>+    robot.release()</span>
+<span class='add'>+    robot.wait(0.2)</span>
+<span class='add'>+    </span>
+<span class='add'>+    # Verify release</span>
+<span class='add'>+    if robot.holding() is not None:</span>
+<span class='add'>+        robot.log(&quot;Still holding after release&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+    </span>
+<span class='add'>+    robot.log(&quot;Stack complete&quot;)</span>
+<span class='add'>+    return True</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><p class="muted">No held-out failures.</p></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    # Observe initial scene
+    obs = robot.observe()
+    objects = obs.get(&quot;objects&quot;, {})
+    
+    red = objects.get(&quot;red_cube&quot;)
+    blue = objects.get(&quot;blue_cube&quot;)
+    
+    if not red or not blue:
+        robot.log(&quot;Missing cubes in observation&quot;)
+        return False
+    
+    red_pos = red[&quot;pos&quot;]
+    red_yaw = red[&quot;yaw&quot;]
+    blue_pos = blue[&quot;pos&quot;]
+    blue_yaw = blue[&quot;yaw&quot;]
+    
+    robot.log(f&quot;Red at {red_pos}, yaw={red_yaw:.3f}&quot;)
+    robot.log(f&quot;Blue at {blue_pos}, yaw={blue_yaw:.3f}&quot;)
+    
+    # Approach red cube from above, align with its yaw
+    # Pre-grasp position: above the cube
+    pre_grasp_z = 0.08  # well above cube
+    try:
+        robot.move_to(red_pos[0], red_pos[1], pre_grasp_z, yaw=red_yaw, speed=0.15)
+    except Exception as e:
+        robot.log(f&quot;Move to pre-grasp failed: {e}&quot;)
+        return False
+    
+    # Descend to grasp height (cube center at z=0.015)
+    grasp_z = 0.015
+    try:
+        robot.move_to(red_pos[0], red_pos[1], grasp_z, yaw=red_yaw, speed=0.05)
+    except Exception as e:
+        robot.log(f&quot;Descend to grasp failed: {e}&quot;)
+        return False
+    
+    # Grasp
+    if not robot.grasp():
+        robot.log(&quot;Failed to grasp red cube&quot;)
+        return False
+    
+    # Verify holding
+    if robot.holding() != &quot;red_cube&quot;:
+        robot.log(&quot;Not holding red cube after grasp&quot;)
+        return False
+    
+    robot.log(&quot;Grasped red cube&quot;)
+    
+    # Lift red cube
+    lift_z = 0.10
+    try:
+        robot.move_to(red_pos[0], red_pos[1], lift_z, yaw=red_yaw, speed=0.10)
+    except Exception as e:
+        robot.log(f&quot;Lift failed: {e}&quot;)
+        robot.release()
+        return False
+    
+    # Move above blue cube (align with blue&#x27;s yaw for placement)
+    # Blue top surface at z=0.03, so place red center at z=0.045
+    place_z = 0.045
+    pre_place_z = 0.08
+    
+    try:
+        robot.move_to(blue_pos[0], blue_pos[1], pre_place_z, yaw=blue_yaw, speed=0.15)
+    except Exception as e:
+        robot.log(f&quot;Move above blue failed: {e}&quot;)
+        robot.release()
+        return False
+    
+    # Descend to placement height
+    try:
+        robot.move_to(blue_pos[0], blue_pos[1], place_z, yaw=blue_yaw, speed=0.05)
+    except Exception as e:
+        robot.log(f&quot;Descend to place failed: {e}&quot;)
+        robot.release()
+        return False
+    
+    # Release
+    robot.release()
+    robot.wait(0.2)
+    
+    # Verify release
+    if robot.holding() is not None:
+        robot.log(&quot;Still holding after release&quot;)
+        return False
+    
+    robot.log(&quot;Stack complete&quot;)
+    return True
+</pre></section>
+</div></body></html>

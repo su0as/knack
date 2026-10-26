@@ -1,0 +1,268 @@
+{
+ "task": "lift",
+ "seed": 100026,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "red_cube_z": 0.0673,
+  "required_z": 0.065
+ },
+ "trace": [
+  {
+   "t": 0.18,
+   "call": "move_to(0.160, 0.000, 0.140)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.16,
+     0.0,
+     0.14
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 0.18,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 2.56,
+   "call": "move_to(0.123, -0.086, 0.070, yaw=0.077, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1231,
+     -0.0864,
+     0.07
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 2.56,
+   "call": "observe()",
+   "result": {
+    "seen": [
+     "blue_cube"
+    ],
+    "not_visible": [
+     "red_cube"
+    ]
+   }
+  },
+  {
+   "t": 3.66,
+   "call": "move_to(0.123, -0.086, 0.017, yaw=0.077, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.123,
+     -0.0863,
+     0.0167
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 3.66,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 4.16,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0271
+   }
+  },
+  {
+   "t": 4.36,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 4.36,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 5.46,
+   "call": "move_to(0.123, -0.086, 0.070, yaw=0.077, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1229,
+     -0.0863,
+     0.0696
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 5.46,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 5.46,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 5.46,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 5.46,
+   "call": "log",
+   "result": "Red cube lifted and held >5 cm above table (z=0.0757)."
+  }
+ ],
+ "n_calls": 14,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 5.96,
+ "wall_time": 2.2,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1238,
+     -0.0864,
+     0.0149
+    ],
+    "yaw": 0.0949,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1819,
+     0.0739,
+     0.0149
+    ],
+    "yaw": -0.1158,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 5.96,
+  "gripper": {
+   "pos": [
+    0.1228,
+    -0.0862,
+    0.0695
+   ],
+   "yaw": 0.0774,
+   "opening": 0.0271,
+   "holding": "red_cube"
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1229,
+     -0.0865,
+     0.0673
+    ],
+    "yaw": 0.078,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1819,
+     0.0739,
+     0.0149
+    ],
+    "yaw": -0.1158,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1238,
+   "y": -0.0864,
+   "yaw": 0.0949,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1819,
+   "y": 0.0739,
+   "yaw": -0.1158,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 6,
+  "lookups": 12,
+  "misses": 1,
+  "detection_rate": 0.9167,
+  "pos_err_mm_median": 2.04,
+  "pos_err_mm_p90": 15.55,
+  "yaw_err_deg_median": 0.21,
+  "by_camera": {
+   "overhead": 11,
+   "front": 0
+  },
+  "ms_per_observe_median": 163.6,
+  "fixtures_mapped": [],
+  "fixture_err_mm": {}
+ }
+}

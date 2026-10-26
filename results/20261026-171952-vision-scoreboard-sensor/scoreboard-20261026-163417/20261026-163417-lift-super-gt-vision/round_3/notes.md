@@ -1,0 +1,4 @@
+- The cubes were grasped and lifted but ended up just under the required 0.065 m height due to small settling/drift. Added a post‑lift verification step: if the cube’s centre is below 0.065 m, perform a small upward correction (dz=0.002 m) at low speed.
+- To improve grasp reliability, we now use the actual observed cube height for the grasp target (instead of a fixed GRASP_Z) and only descend after confirming the approach pose is at SAFE_Z.
+- Kept the existing retry logic for visibility and motion, and maintained slow speeds for approach/descend/lift to reduce errors.
+- Added a brief grasp‑retry loop (up to 2 attempts) with a small retreat and re‑open if grasp fails.

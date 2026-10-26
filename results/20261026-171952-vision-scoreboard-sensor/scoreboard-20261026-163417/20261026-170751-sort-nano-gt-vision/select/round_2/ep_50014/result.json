@@ -1,0 +1,823 @@
+{
+ "task": "sort",
+ "seed": 50014,
+ "error": {
+  "type": "ValueError",
+  "message": "too many values to unpack (expected 2)",
+  "traceback": "  skill.py line 132, in run: tray_x, tray_y = tray\nValueError: too many values to unpack (expected 2)"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "red_cube_tray_dx": 0.0348,
+  "red_cube_tray_dy": 0.0706,
+  "red_cube_z": 0.0149,
+  "red_cube_held": false,
+  "blue_cube_tray_dx": 0.0286,
+  "blue_cube_tray_dy": 0.3182,
+  "blue_cube_z": 0.0149,
+  "blue_cube_held": true,
+  "red_ok": "False",
+  "blue_ok": "False"
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Attempt 1"
+  },
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.199,-0.046,0.030)"
+  },
+  {
+   "t": 3.3,
+   "call": "move_to(0.199, -0.046, 0.030, yaw=-0.300, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2002,
+     -0.045,
+     0.0394
+    ],
+    "error_m": 0.01
+   }
+  },
+  {
+   "t": 3.3,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 5.2,
+   "call": "move_to(0.199, -0.046, 0.020, yaw=-0.300, speed=0.050)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.204,
+     -0.0467,
+     0.0377
+    ],
+    "error_m": 0.0188,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 5.2,
+   "call": "log",
+   "result": "Contact move failed: blocked on contact"
+  },
+  {
+   "t": 5.2,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.098,0.160,0.028)"
+  },
+  {
+   "t": 10.04,
+   "call": "move_to(0.098, 0.160, 0.028, yaw=-0.713, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.098,
+     0.149,
+     0.0311
+    ],
+    "error_m": 0.0116,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 10.04,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 10.24,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 10.24,
+   "call": "log",
+   "result": "Attempt 2"
+  },
+  {
+   "t": 10.24,
+   "call": "observe()",
+   "result": {
+    "seen": [
+     "red_cube"
+    ],
+    "not_visible": [
+     "blue_cube"
+    ]
+   }
+  },
+  {
+   "t": 10.24,
+   "call": "log",
+   "result": "Cube red moved, resetting stability"
+  },
+  {
+   "t": 10.44,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 10.44,
+   "call": "log",
+   "result": "Attempt 3"
+  },
+  {
+   "t": 10.44,
+   "call": "observe()",
+   "result": {
+    "seen": [
+     "red_cube"
+    ],
+    "not_visible": [
+     "blue_cube"
+    ]
+   }
+  },
+  {
+   "t": 10.44,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.192,-0.002,0.029)"
+  },
+  {
+   "t": 14.62,
+   "call": "move_to(0.192, -0.002, 0.029, yaw=0.530, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1548,
+     0.0473,
+     0.0256
+    ],
+    "error_m": 0.0616,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 14.62,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 14.82,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 14.82,
+   "call": "log",
+   "result": "Attempt 4"
+  },
+  {
+   "t": 14.82,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 14.82,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.192,-0.001,0.030)"
+  },
+  {
+   "t": 17.2,
+   "call": "move_to(0.192, -0.001, 0.030, yaw=0.547, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1579,
+     0.0477,
+     0.025
+    ],
+    "error_m": 0.0599,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 17.2,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 17.2,
+   "call": "log",
+   "result": "Cube blue moved, resetting stability"
+  },
+  {
+   "t": 17.4,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 17.4,
+   "call": "log",
+   "result": "Attempt 5"
+  },
+  {
+   "t": 17.4,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 17.4,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.192,-0.001,0.029)"
+  },
+  {
+   "t": 19.76,
+   "call": "move_to(0.192, -0.001, 0.029, yaw=0.526, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1577,
+     0.0483,
+     0.0252
+    ],
+    "error_m": 0.0607,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 19.76,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 19.76,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.086,0.186,0.028)"
+  },
+  {
+   "t": 23.5,
+   "call": "move_to(0.086, 0.186, 0.028, yaw=-0.710, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.0846,
+     0.1527,
+     0.0187
+    ],
+    "error_m": 0.035,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 23.5,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 23.7,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 23.7,
+   "call": "log",
+   "result": "Attempt 6"
+  },
+  {
+   "t": 23.7,
+   "call": "observe()",
+   "result": {
+    "seen": [
+     "red_cube"
+    ],
+    "not_visible": [
+     "blue_cube"
+    ]
+   }
+  },
+  {
+   "t": 23.7,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.192,-0.002,0.030)"
+  },
+  {
+   "t": 27.9,
+   "call": "move_to(0.192, -0.002, 0.030, yaw=0.542, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1441,
+     0.0444,
+     0.0264
+    ],
+    "error_m": 0.0666,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 27.9,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 28.1,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 28.1,
+   "call": "log",
+   "result": "Attempt 7"
+  },
+  {
+   "t": 28.1,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 28.1,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.192,-0.001,0.030)"
+  },
+  {
+   "t": 30.56,
+   "call": "move_to(0.192, -0.001, 0.030, yaw=0.547, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1556,
+     0.0469,
+     0.0248
+    ],
+    "error_m": 0.0608,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 30.56,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 30.56,
+   "call": "log",
+   "result": "Cube blue moved, resetting stability"
+  },
+  {
+   "t": 30.76,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 30.76,
+   "call": "log",
+   "result": "Attempt 8"
+  },
+  {
+   "t": 30.76,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 30.76,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.192,-0.001,0.030)"
+  },
+  {
+   "t": 33.14,
+   "call": "move_to(0.192, -0.001, 0.030, yaw=0.544, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1578,
+     0.0478,
+     0.025
+    ],
+    "error_m": 0.0601,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 33.14,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 33.14,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.083,0.187,0.028)"
+  },
+  {
+   "t": 36.9,
+   "call": "move_to(0.083, 0.187, 0.028, yaw=-0.763, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.0814,
+     0.1541,
+     0.0185
+    ],
+    "error_m": 0.0342,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 36.9,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 37.1,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 37.1,
+   "call": "log",
+   "result": "Attempt 9"
+  },
+  {
+   "t": 37.1,
+   "call": "observe()",
+   "result": {
+    "seen": [
+     "red_cube"
+    ],
+    "not_visible": [
+     "blue_cube"
+    ]
+   }
+  },
+  {
+   "t": 37.1,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.192,-0.001,0.029)"
+  },
+  {
+   "t": 41.34,
+   "call": "move_to(0.192, -0.001, 0.029, yaw=0.527, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1444,
+     0.045,
+     0.0265
+    ],
+    "error_m": 0.0667,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 41.34,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 41.54,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 41.54,
+   "call": "log",
+   "result": "Attempt 10"
+  },
+  {
+   "t": 41.54,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 41.54,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.192,-0.001,0.030)"
+  },
+  {
+   "t": 44.0,
+   "call": "move_to(0.192, -0.001, 0.030, yaw=0.540, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1558,
+     0.0474,
+     0.0248
+    ],
+    "error_m": 0.061,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 44.0,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 44.0,
+   "call": "log",
+   "result": "Cube blue moved, resetting stability"
+  },
+  {
+   "t": 44.2,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 44.2,
+   "call": "log",
+   "result": "Attempt 11"
+  },
+  {
+   "t": 44.2,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 44.2,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.192,-0.001,0.029)"
+  },
+  {
+   "t": 46.58,
+   "call": "move_to(0.192, -0.001, 0.029, yaw=0.536, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1578,
+     0.048,
+     0.025
+    ],
+    "error_m": 0.0604,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 46.58,
+   "call": "log",
+   "result": "Approach move failed: blocked on approach"
+  },
+  {
+   "t": 46.58,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.080,0.200,0.028)"
+  },
+  {
+   "t": 49.04,
+   "call": "move_to(0.080, 0.200, 0.028, yaw=0.714, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0803,
+     0.1994,
+     0.0274
+    ],
+    "error_m": 0.0008
+   }
+  },
+  {
+   "t": 49.04,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 49.32,
+   "call": "move_to(0.080, 0.200, 0.018, yaw=0.714, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.0808,
+     0.1996,
+     0.0193
+    ],
+    "error_m": 0.0018
+   }
+  },
+  {
+   "t": 49.32,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 49.82,
+   "call": "grasp()",
+   "result": {
+    "holding": "blue_cube",
+    "opening": 0.012
+   }
+  },
+  {
+   "t": 49.82,
+   "call": "holding()",
+   "result": "blue_cube"
+  }
+ ],
+ "n_calls": 84,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 50.32,
+ "wall_time": 4.54,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.179,
+     -0.0415,
+     0.0149
+    ],
+    "yaw": -0.3106,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.0827,
+     0.1702,
+     0.0149
+    ],
+    "yaw": -0.7242,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.1386,
+     0.0663,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.0887,
+     -0.1037,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "final_obs": {
+  "time": 50.32,
+  "gripper": {
+   "pos": [
+    0.0805,
+    0.1993,
+    0.0175
+   ],
+   "yaw": -2.429,
+   "opening": 0.0105,
+   "holding": "blue_cube"
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1734,
+     -0.0044,
+     0.0149
+    ],
+    "yaw": 0.5167,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.0601,
+     0.2145,
+     0.0149
+    ],
+    "yaw": 0.4451,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.1386,
+     0.0663,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.0887,
+     -0.1037,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_tray": {
+   "x": 0.1386,
+   "y": 0.0663,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "blue_tray": {
+   "x": 0.0887,
+   "y": -0.1037,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "red_cube": {
+   "x": 0.179,
+   "y": -0.0415,
+   "yaw": -0.3106,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.0827,
+   "y": 0.1702,
+   "yaw": -0.7242,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 11,
+  "lookups": 22,
+  "misses": 4,
+  "detection_rate": 0.8182,
+  "pos_err_mm_median": 10.27,
+  "pos_err_mm_p90": 10.46,
+  "yaw_err_deg_median": 0.75,
+  "by_camera": {
+   "overhead": 18,
+   "front": 0
+  },
+  "ms_per_observe_median": 176.8,
+  "fixtures_mapped": [
+   "blue_tray",
+   "red_tray"
+  ],
+  "fixture_err_mm": {
+   "red_tray": 9.53,
+   "blue_tray": 11.59
+  }
+ }
+}

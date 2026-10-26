@@ -1,0 +1,7 @@
+- The push geometry was wrong: the push target was placed *beyond* the target centre (adding margin along puck→target vector), causing systematic overshoot. Correct geometry: push point = target centre − puck_radius × unit_vector, so the puck's centre arrives at the target when the gripper reaches that point.
+- The clamping logic included a reachability circle that collapsed approach and push points together, then a nudge loop increased push_margin unboundedly. Removed the circle clamp; only clamp to the safe rectangle (2 cm inside hard limits).
+- Yaw must align with the actual push direction (approach → push), not the original puck→target vector. Recompute yaw after clamping.
+- Retraction to the approach point caused collisions because the puck had moved. Now retract to a fixed safe pose (0.15, 0, 0.15).
+- Added missing `max_attempts = 3` and cleaned up the try/except structure.
+- Approach distance set to `puck_radius + 0.03` to ensure the gripper starts clear of the puck.
+- Each attempt re-observes, so updated puck positions are used for the next push.

@@ -1,0 +1,6 @@
+- The scene may miss objects that are occluded; we must check that both target cubes are present before acting.
+- Use the observed centre positions and yaw to compute pick and place poses; the tool‑point height for a cube is its centre height (≈0.015 m).
+- Stacking requires moving the red cube to the top of the blue cube: place_z = blue_z + cube_height/2 + red_height/2.
+- Keep all moves slow (≈0.07 m/s) and wrap `move_to` in a `try/except MotionError` to stay within the reachable band.
+- After each critical step (grasp, place) verify the expected state (`robot.holding()`, `robot.holding()` after release) and retry a few times if the check fails.
+- Log key poses and outcomes for later debugging.

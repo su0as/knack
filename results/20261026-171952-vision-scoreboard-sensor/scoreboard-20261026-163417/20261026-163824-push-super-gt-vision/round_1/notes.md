@@ -1,0 +1,3 @@
+- Fixed a stray backtick before the code block that caused a SyntaxError.
+- Ensured the function ends with a proper return statement.
+- Kept all logic unchanged; only corrected formatting.

@@ -1,0 +1,7 @@
+- Fixed the tray‑pose unpack error by storing only the (x, y) pair from the fixture description and unpacking safely.
+- Added a small vertical lift (≈ 0.02 m) before the approach move and clipped the target to the safe workspace to avoid collisions that caused “blocked on approach”.
+- Wrapped every `move_to` in a try/except and, on a non‑ok response, tried a few tiny lateral fall‑backs (±0.02 m) before giving up on that step.
+- Kept the two‑frame centre‑stability check and limited grasp retries to two; after the second failure the gripper is released and the algorithm moves on.
+- Used low speeds (0.05–0.07 m/s) for contact and release moves and added a 2 mm stability tolerance before allowing a grasp.
+- Preserved the existing gripper‑yaw alignment, release‑height logic and overall loop structure; only the unsafe unpacking and collision‑prone approach code were changed.
+- Added safety margins and small waits to stay within the simulated‑time budget.

@@ -1,0 +1,582 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Lift</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261026-163417-lift-super-gt-vision &middot; 2026-10-26 16:38:24</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Pick up the red cube and hold it at least 5 cm above the table.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: vision &middot; 32 practice episodes in 4 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/nemotron-3-super-120b-a12b <em>$0.30 / $0.90 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">84%</div><div>42/50 layouts &middot; Wilson 95% CI 71% to 92%</div><div class='ci'><div class='ci-band' style='left:71.5%;width:20.2%'></div><div class='ci-dot' style='left:84.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 9 clamps. OpenCV perception: 97% of object sightings, median error 4.19 mm.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:2%'></span><em>R1<br>0/8</em></div><div class='bar'><span style='height:2%'></span><em>R2<br>0/8</em></div><div class='bar'><span style='height:50%'></span><em>R3<br>4/8</em></div><div class='bar'><span style='height:100%'></span><em>R4<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/nemotron-3-super-120b-a12b</code></td><td>6</td><td>19,670</td><td>11,783</td><td>$0.0165</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>3</td><td>12,969</td><td>996</td><td>$0.0010</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>332 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>9</th><th>32,639</th><th>12,779</th><th>$0.0175</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details><summary>Round 1: 0/8 practice episodes &middot; 8 errors &middot; $0.0034 so far</summary><div class='muted'>coder notes</div><pre>- The previous submission incorrectly placed the closing `</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: yaw argument rejected**  
+- **Episodes:** 8 (seed 1000–1007)  
+- **Root cause:** `move_to_pose` is defined with parameters `target_pos` and `target_yaw` (line 24), but the call at line 64 passes `yaw=cube_yaw`. The function expects the positional argument `target_yaw`, not the keyword `yaw`.  
+- **Fix:** Change line 64 to `if not move_to_pose(approach_pos, cube_yaw, desc=&quot;approach&quot;):`.
+
+**Mode 2: insufficient lift height**  
+- **Episodes:** All 8 share `red_cube_z=0.0149` vs `required_z=0.065`.  
+- **Root cause:** `SAFE_Z = 0.08` (line 6) is set to 8 cm, but the check expects 6.5 cm. The grasp descends to `GRASP_Z = 0.015` (line 7), and lifting to `SAFE_Z` should clear 5 cm. The discrepancy suggests the check logic or `SAFE_Z` value is mismatched with the 5 cm requirement.  
+- **Fix:** Set `SAFE_Z = 0.065` on line 6 to meet the 5 cm threshold exactly.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,92 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    &quot;&quot;&quot;Pick up the red cube and hold it at least 5 cm above the table.&quot;&quot;&quot;</span>
+<span class='add'>+    MAX_RETRIES = 3</span>
+<span class='add'>+    SAFE_Z = 0.08          # 8 cm above table -&gt; ensures &gt;5 cm clearance</span>
+<span class='add'>+    GRASP_Z = 0.015        # Approx centre of a cube on the table</span>
+<span class='add'>+    ABOVE_OFFSET = 0.02    # Small offset above grasp point for approach</span>
+<span class='add'>+</span>
+<span class='add'>+    def safe_observe():</span>
+<span class='add'>+        &quot;&quot;&quot;Return observation dict, retrying if red cube is missing due to occlusion.&quot;&quot;&quot;</span>
+<span class='add'>+        for _ in range(MAX_RETRIES):</span>
+<span class='add'>+            obs = robot.observe()</span>
+<span class='add'>+            if &quot;red_cube&quot; in obs.get(&quot;objects&quot;, {}):</span>
+<span class='add'>+                return obs</span>
+<span class='add'>+            # If not visible, move the gripper a bit to the side and try again</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                robot.move_by(dx=0.05, speed=0.1)</span>
+<span class='add'>+            except Exception:</span>
+<span class='add'>+                pass</span>
+<span class='add'>+        # Last attempt – return whatever we have (may still miss the cube)</span>
+<span class='add'>+        return robot.observe()</span>
+<span class='add'>+</span>
+<span class='add'>+    def move_to_pose(target_pos, target_yaw=None, desc=&quot;&quot;):</span>
+<span class='add'>+        &quot;&quot;&quot;Move to a pose, handling MotionError with a single retry.&quot;&quot;&quot;</span>
+<span class='add'>+        for attempt in range(2):</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                res = robot.move_to(</span>
+<span class='add'>+                    target_pos[0],</span>
+<span class='add'>+                    target_pos[1],</span>
+<span class='add'>+                    target_pos[2],</span>
+<span class='add'>+                    yaw=target_yaw,</span>
+<span class='add'>+                    speed=0.05 if &quot;approach&quot; in desc.lower() else 0.1,</span>
+<span class='add'>+                )</span>
+<span class='add'>+                if res.get(&quot;ok&quot;, False):</span>
+<span class='add'>+                    return True</span>
+<span class='add'>+                # If not ok, treat as failure and maybe retry</span>
+<span class='add'>+            except Exception as e:  # MotionError or similar</span>
+<span class='add'>+                robot.log(f&quot;Move failed ({desc}): {e}&quot;)</span>
+<span class='add'>+            # Small retreat and retry</span>
+<span class='add'>+            robot.move_by(dz=-0.02, speed=0.05)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # Start from a known safe pose</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+</span>
+<span class='add'>+    # Get observation with retry for visibility</span>
+<span class='add'>+    obs = safe_observe()</span>
+<span class='add'>+    cube_info = obs[&quot;objects&quot;].get(&quot;red_cube&quot;)</span>
+<span class='add'>+    if cube_info is None:</span>
+<span class='add'>+        robot.log(&quot;Red cube not perceived after retries.&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # Desired grasp position (centre of cube)</span>
+<span class='add'>+    grasp_pos = cube_info[&quot;pos&quot;][:]</span>
+<span class='add'>+    grasp_pos[2] = GRASP_Z  # ensure correct height</span>
+<span class='add'>+    cube_yaw = cube_info[&quot;yaw&quot;]</span>
+<span class='add'>+</span>
+<span class='add'>+    # Approach point: slightly above the grasp point</span>
+<span class='add'>+    approach_pos = grasp_pos[:]</span>
+<span class='add'>+    approach_pos[2] = SAFE_Z</span>
+<span class='add'>+</span>
+<span class='add'>+    # 1. Move to approach point (above cube)</span>
+<span class='add'>+    if not move_to_pose(approach_pos, yaw=cube_yaw, desc=&quot;approach&quot;):</span>
+<span class='add'>+        robot.log(&quot;Failed to move to approach point.&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # 2. Descend to grasp height</span>
+<span class='add'>+    if not move_to_pose(grasp_pos, yaw=cube_yaw, desc=&quot;descend&quot;):</span>
+<span class='add'>+        robot.log(&quot;Failed to descend to grasp point.&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # 3. Close fingers to grasp</span>
+<span class='add'>+    robot.grasp()</span>
+<span class='add'>+    robot.wait(0.2)  # let grasp settle</span>
+<span class='add'>+    if robot.holding() != &quot;red_cube&quot;:</span>
+<span class='add'>+        robot.log(&quot;Grasp did not secure the red cube.&quot;)</span>
+<span class='add'>+        # Optionally retreat and try again</span>
+<span class='add'>+        robot.move_by(dz=ABOVE_OFFSET, speed=0.05)</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # 4. Lift to safe height (&gt;5 cm above table)</span>
+<span class='add'>+    lift_pos = grasp_pos[:]</span>
+<span class='add'>+    lift_pos[2] = SAFE_Z</span>
+<span class='add'>+    if not move_to_pose(lift_pos, yaw=cube_yaw, desc=&quot;lift&quot;):</span>
+<span class='add'>+        robot.log(&quot;Failed to lift the cube.&quot;)</span>
+<span class='add'>+        return False</span>
+<span class='add'>+</span>
+<span class='add'>+    # Success: cube held high enough</span>
+<span class='add'>+    robot.log(&quot;Red cube lifted and held &gt;5 cm above table.&quot;)</span>
+<span class='add'>+    return True</span></pre></details><details><summary>Round 2: 0/8 practice episodes &middot; 0 errors &middot; $0.0070 so far</summary><div class='muted'>coder notes</div><pre>- Fixed the TypeError by passing the yaw argument positionally to `move_to_pose` (the function expects `target_yaw` as the second parameter, not a keyword `yaw`).
+- Lowered `SAFE_Z` from 0.08 m to 0.065 m so that lifting the cube’s centre to this height satisfies the simulator’s ≥ 5 cm requirement.
+- Left the retry, slow‑approach speed, and grasp‑verification logic unchanged; all three calls to `move_to_pose` now use the corrected call pattern.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Z-clearance shortfall (62 episodes)**
+- **Root cause:** `move_to_pose` descends to `GRASP_Z = 0.015` (line 56, 69). After grasping, the lift target uses `SAFE_Z = 0.065` (line 85), but the final pose settles at `0.064`–`0.065` due to numerical drift or motor quantization, falling below the 5 cm requirement.
+- **Fix:** Add a post‑lift verification step: after the lift move (line 86), check `robot.holding()[&quot;pos&quot;][2]`. If `&lt; 0.065`, execute a tiny `robot.move_by(dz=0.002, speed=0.05)` to guarantee clearance.
+
+**Mode 2: Grasp failure (12 episodes)**
+- **Root cause:** The approach/descend moves succeed (lines 64, 69), but `robot.grasp()` (line 74) does not secure the cube, triggering the retreat/release fallback (lines 79–81) and early termination.
+- **Fix:** Before descending, ensure the approach pose is exactly `SAFE_Z` (line 61) and that `cube_info[&quot;pos&quot;][2]` matches `GRASP_Z`. If the cube height estimate is off, adjust `grasp_pos[2]` by `+0.001` m before the descend call (line 69).</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_1/skill.py</span>
+<span class=''>+++ round_2/skill.py</span>
+<span class='hunk'>@@ -3,9 +3,9 @@</span>
+<span class=''> def run(robot):</span>
+<span class=''>     &quot;&quot;&quot;Pick up the red cube and hold it at least 5 cm above the table.&quot;&quot;&quot;</span>
+<span class=''>     MAX_RETRIES = 3</span>
+<span class='del'>-    SAFE_Z = 0.08          # 8 cm above table -&gt; ensures &gt;5 cm clearance</span>
+<span class='del'>-    GRASP_Z = 0.015        # Approx centre of a cube on the table</span>
+<span class='del'>-    ABOVE_OFFSET = 0.02    # Small offset above grasp point for approach</span>
+<span class='add'>+    SAFE_Z = 0.065          # 6.5 cm above table -&gt; meets the 5 cm clearance requirement</span>
+<span class='add'>+    GRASP_Z = 0.015         # Approx centre of a cube on the table</span>
+<span class='add'>+    ABOVE_OFFSET = 0.02     # Small offset above grasp point for approach (unused but kept for clarity)</span>
+<span class=''> </span>
+<span class=''>     def safe_observe():</span>
+<span class=''>         &quot;&quot;&quot;Return observation dict, retrying if red cube is missing due to occlusion.&quot;&quot;&quot;</span>
+<span class='hunk'>@@ -61,12 +61,12 @@</span>
+<span class=''>     approach_pos[2] = SAFE_Z</span>
+<span class=''> </span>
+<span class=''>     # 1. Move to approach point (above cube)</span>
+<span class='del'>-    if not move_to_pose(approach_pos, yaw=cube_yaw, desc=&quot;approach&quot;):</span>
+<span class='add'>+    if not move_to_pose(approach_pos, cube_yaw, desc=&quot;approach&quot;):</span>
+<span class=''>         robot.log(&quot;Failed to move to approach point.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class=''>     # 2. Descend to grasp height</span>
+<span class='del'>-    if not move_to_pose(grasp_pos, yaw=cube_yaw, desc=&quot;descend&quot;):</span>
+<span class='add'>+    if not move_to_pose(grasp_pos, cube_yaw, desc=&quot;descend&quot;):</span>
+<span class=''>         robot.log(&quot;Failed to descend to grasp point.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class='hunk'>@@ -83,7 +83,7 @@</span>
+<span class=''>     # 4. Lift to safe height (&gt;5 cm above table)</span>
+<span class=''>     lift_pos = grasp_pos[:]</span>
+<span class=''>     lift_pos[2] = SAFE_Z</span>
+<span class='del'>-    if not move_to_pose(lift_pos, yaw=cube_yaw, desc=&quot;lift&quot;):</span>
+<span class='add'>+    if not move_to_pose(lift_pos, cube_yaw, desc=&quot;lift&quot;):</span>
+<span class=''>         robot.log(&quot;Failed to lift the cube.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span></pre></details><details><summary>Round 3: 4/8 practice episodes &middot; 0 errors &middot; $0.0110 so far</summary><div class='muted'>coder notes</div><pre>- The cubes were grasped and lifted but ended up just under the required 0.065 m height due to small settling/drift. Added a post‑lift verification step: if the cube’s centre is below 0.065 m, perform a small upward correction (dz=0.002 m) at low speed.
+- To improve grasp reliability, we now use the actual observed cube height for the grasp target (instead of a fixed GRASP_Z) and only descend after confirming the approach pose is at SAFE_Z.
+- Kept the existing retry logic for visibility and motion, and maintained slow speeds for approach/descend/lift to reduce errors.
+- Added a brief grasp‑retry loop (up to 2 attempts) with a small retreat and re‑open if grasp fails.</pre><div class='muted'>failure analysis (summariser)</div><pre>**Mode 1: Premature success log (n=3)**
+- **Root cause:** `move_to_pose` returns `True` on `res.get(&quot;ok&quot;, False)` even when the final z-position is below `SAFE_Z`. The function does not validate the actual z-coordinate before reporting success (lines 25–41).
+- **Fix:** Add a z-check after `move_to_pose` returns `True`; if `target_pos[2] &lt; SAFE_Z`, log failure and retry or retreat.
+
+**Mode 2: Grasp succeeds but lift stalls below SAFE_Z (n=2)**
+- **Root cause:** After a successful grasp, `move_to_pose` lifts to `SAFE_Z` but the observed cube z remains below threshold. The subsequent nudge (`move_by(dz=0.002)`) is too small to overcome pose error (lines 96–105).
+- **Fix:** Increase nudge magnitude to `dz=0.01` or adjust `SAFE_Z` margin to `0.005` to absorb typical motion error.
+
+**Mode 3: Observation gap during retreat (n=2)**
+- **Root cause:** `safe_observe` moves the gripper sideways (`dx=0.05`) to unocclude the cube, but this shifts the robot base, causing subsequent `move_to_pose` calls to use stale coordinates, resulting in low lifts (lines 16–19, 63).
+- **Fix:** Reset to `home()` before the lift phase, or increase `SAFE_Z` to `0.07` to tolerate positional drift.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_2/skill.py</span>
+<span class=''>+++ round_3/skill.py</span>
+<span class='hunk'>@@ -4,8 +4,7 @@</span>
+<span class=''>     &quot;&quot;&quot;Pick up the red cube and hold it at least 5 cm above the table.&quot;&quot;&quot;</span>
+<span class=''>     MAX_RETRIES = 3</span>
+<span class=''>     SAFE_Z = 0.065          # 6.5 cm above table -&gt; meets the 5 cm clearance requirement</span>
+<span class='del'>-    GRASP_Z = 0.015         # Approx centre of a cube on the table</span>
+<span class='del'>-    ABOVE_OFFSET = 0.02     # Small offset above grasp point for approach (unused but kept for clarity)</span>
+<span class='add'>+    ABOVE_OFFSET = 0.02     # unused but kept for clarity</span>
+<span class=''> </span>
+<span class=''>     def safe_observe():</span>
+<span class=''>         &quot;&quot;&quot;Return observation dict, retrying if red cube is missing due to occlusion.&quot;&quot;&quot;</span>
+<span class='hunk'>@@ -51,33 +50,40 @@</span>
+<span class=''>         robot.log(&quot;Red cube not perceived after retries.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class='del'>-    # Desired grasp position (centre of cube)</span>
+<span class='del'>-    grasp_pos = cube_info[&quot;pos&quot;][:]</span>
+<span class='del'>-    grasp_pos[2] = GRASP_Z  # ensure correct height</span>
+<span class='add'>+    # Use actual observed cube height for grasp target</span>
+<span class='add'>+    cx, cy, cz = cube_info[&quot;pos&quot;]</span>
+<span class='add'>+    grasp_pos = [cx, cy, cz]          # centre of the cube as observed</span>
+<span class=''>     cube_yaw = cube_info[&quot;yaw&quot;]</span>
+<span class=''> </span>
+<span class='del'>-    # Approach point: slightly above the grasp point</span>
+<span class='add'>+    # Approach point: safely above the cube</span>
+<span class=''>     approach_pos = grasp_pos[:]</span>
+<span class='del'>-    approach_pos[2] = SAFE_Z</span>
+<span class='add'>+    approach_pos[2] = SAFE_Z          # fixed safe height for approach/lift</span>
+<span class=''> </span>
+<span class=''>     # 1. Move to approach point (above cube)</span>
+<span class=''>     if not move_to_pose(approach_pos, cube_yaw, desc=&quot;approach&quot;):</span>
+<span class=''>         robot.log(&quot;Failed to move to approach point.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class='del'>-    # 2. Descend to grasp height</span>
+<span class='add'>+    # 2. Descend to grasp height (using actual cube height)</span>
+<span class=''>     if not move_to_pose(grasp_pos, cube_yaw, desc=&quot;descend&quot;):</span>
+<span class=''>         robot.log(&quot;Failed to descend to grasp point.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class='del'>-    # 3. Close fingers to grasp</span>
+<span class='del'>-    robot.grasp()</span>
+<span class='del'>-    robot.wait(0.2)  # let grasp settle</span>
+<span class='del'>-    if robot.holding() != &quot;red_cube&quot;:</span>
+<span class='del'>-        robot.log(&quot;Grasp did not secure the red cube.&quot;)</span>
+<span class='del'>-        # Optionally retreat and try again</span>
+<span class='add'>+    # 3. Attempt to grasp (with a short retry)</span>
+<span class='add'>+    grasp_success = False</span>
+<span class='add'>+    for _ in range(2):</span>
+<span class='add'>+        robot.grasp()</span>
+<span class='add'>+        robot.wait(0.2)  # let grasp settle</span>
+<span class='add'>+        if robot.holding() == &quot;red_cube&quot;:</span>
+<span class='add'>+            grasp_success = True</span>
+<span class='add'>+            break</span>
+<span class='add'>+        # grasp failed: retreat a bit, release, and try again</span>
+<span class=''>         robot.move_by(dz=ABOVE_OFFSET, speed=0.05)</span>
+<span class=''>         robot.release()</span>
+<span class='add'>+        robot.wait(0.1)</span>
+<span class='add'>+</span>
+<span class='add'>+    if not grasp_success:</span>
+<span class='add'>+        robot.log(&quot;Grasp did not secure the red cube after retries.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class=''>     # 4. Lift to safe height (&gt;5 cm above table)</span>
+<span class='hunk'>@@ -87,6 +93,21 @@</span>
+<span class=''>         robot.log(&quot;Failed to lift the cube.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class='del'>-    # Success: cube held high enough</span>
+<span class='del'>-    robot.log(&quot;Red cube lifted and held &gt;5 cm above table.&quot;)</span>
+<span class='del'>-    return True</span>
+<span class='add'>+    # 5. Verify clearance; if too low, nudge upward</span>
+<span class='add'>+    obs_after = robot.observe()</span>
+<span class='add'>+    held_z = obs_after[&quot;objects&quot;][&quot;red_cube&quot;][&quot;pos&quot;][2]</span>
+<span class='add'>+    if held_z &lt; SAFE_Z - 0.0005:  # allow tiny tolerance</span>
+<span class='add'>+        robot.log(f&quot;Cube low ({held_z:.4f}), nudging up.&quot;)</span>
+<span class='add'>+        robot.move_by(dz=0.002, speed=0.05)</span>
+<span class='add'>+        # re-check after nudge (optional)</span>
+<span class='add'>+        obs_after = robot.observe()</span>
+<span class='add'>+        held_z = obs_after[&quot;objects&quot;][&quot;red_cube&quot;][&quot;pos&quot;][2]</span>
+<span class='add'>+        robot.log(f&quot;After nudge: cube z = {held_z:.4f}&quot;)</span>
+<span class='add'>+</span>
+<span class='add'>+    # Final success check</span>
+<span class='add'>+    if held_z &gt;= SAFE_Z - 0.0005:</span>
+<span class='add'>+        robot.log(&quot;Red cube lifted and held &gt;5 cm above table.&quot;)</span>
+<span class='add'>+        return True</span>
+<span class='add'>+    else:</span>
+<span class='add'>+        robot.log(f&quot;Cube still too low ({held_z:.4f}) after corrective move.&quot;)</span>
+<span class='add'>+        return False</span></pre></details><details open><summary>Round 4: 8/8 practice episodes &middot; 0 errors &middot; $0.0175 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Fixed a stray parenthesis in the `move_and_check` function that caused a SyntaxError.
+- Ensured all try/except blocks are properly closed and indented.
+- Verified that the function definitions and control flow are syntactically correct.
+- Kept the original logic intact while correcting the syntax.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_3/skill.py</span>
+<span class=''>+++ round_4/skill.py</span>
+<span class='hunk'>@@ -3,8 +3,11 @@</span>
+<span class=''> def run(robot):</span>
+<span class=''>     &quot;&quot;&quot;Pick up the red cube and hold it at least 5 cm above the table.&quot;&quot;&quot;</span>
+<span class=''>     MAX_RETRIES = 3</span>
+<span class='del'>-    SAFE_Z = 0.065          # 6.5 cm above table -&gt; meets the 5 cm clearance requirement</span>
+<span class='del'>-    ABOVE_OFFSET = 0.02     # unused but kept for clarity</span>
+<span class='add'>+    SAFE_Z = 0.07          # 7 cm above table gives a margin over the 5 cm requirement</span>
+<span class='add'>+    TOL_Z = 0.005          # tolerance for verifying a move reached the target height</span>
+<span class='add'>+    GRASP_RETRY = 2</span>
+<span class='add'>+    LIFT_NUDGE = 0.01      # upward correction if cube ends up low</span>
+<span class='add'>+    NUDGE_ATTEMPTS = 2</span>
+<span class=''> </span>
+<span class=''>     def safe_observe():</span>
+<span class=''>         &quot;&quot;&quot;Return observation dict, retrying if red cube is missing due to occlusion.&quot;&quot;&quot;</span>
+<span class='hunk'>@@ -12,32 +15,47 @@</span>
+<span class=''>             obs = robot.observe()</span>
+<span class=''>             if &quot;red_cube&quot; in obs.get(&quot;objects&quot;, {}):</span>
+<span class=''>                 return obs</span>
+<span class='del'>-            # If not visible, move the gripper a bit to the side and try again</span>
+<span class='del'>-            try:</span>
+<span class='del'>-                robot.move_by(dx=0.05, speed=0.1)</span>
+<span class='del'>-            except Exception:</span>
+<span class='del'>-                pass</span>
+<span class='add'>+            # Just try again; moving the gripper can invalidate later poses.</span>
+<span class=''>         # Last attempt – return whatever we have (may still miss the cube)</span>
+<span class=''>         return robot.observe()</span>
+<span class=''> </span>
+<span class='del'>-    def move_to_pose(target_pos, target_yaw=None, desc=&quot;&quot;):</span>
+<span class='del'>-        &quot;&quot;&quot;Move to a pose, handling MotionError with a single retry.&quot;&quot;&quot;</span>
+<span class='add'>+    def move_and_check(target_pos, target_yaw=None, desc=&quot;&quot;):</span>
+<span class='add'>+        &quot;&quot;&quot;</span>
+<span class='add'>+        Attempt to move to target_pos, then verify the gripper&#x27;s Z is within TOL_Z.</span>
+<span class='add'>+        Retries a couple of times on failure.</span>
+<span class='add'>+        &quot;&quot;&quot;</span>
+<span class=''>         for attempt in range(2):</span>
+<span class=''>             try:</span>
+<span class='add'>+                # slower speed for precision motions</span>
+<span class='add'>+                speed = 0.05 if any(k in desc.lower() for k in (&quot;approach&quot;, &quot;descend&quot;, &quot;lift&quot;)) else 0.1</span>
+<span class=''>                 res = robot.move_to(</span>
+<span class=''>                     target_pos[0],</span>
+<span class=''>                     target_pos[1],</span>
+<span class=''>                     target_pos[2],</span>
+<span class=''>                     yaw=target_yaw,</span>
+<span class='del'>-                    speed=0.05 if &quot;approach&quot; in desc.lower() else 0.1,</span>
+<span class='add'>+                    speed=speed,</span>
+<span class=''>                 )</span>
+<span class='del'>-                if res.get(&quot;ok&quot;, False):</span>
+<span class='add'>+                if not res.get(&quot;ok&quot;, False):</span>
+<span class='add'>+                    robot.log(f&quot;Move not ok ({desc}), attempt {attempt+1}&quot;)</span>
+<span class='add'>+                    # small retreat before retry</span>
+<span class='add'>+                    robot.move_by(dz=-0.02, speed=0.05)</span>
+<span class='add'>+                    continue</span>
+<span class='add'>+</span>
+<span class='add'>+                # Verify achieved height</span>
+<span class='add'>+                obs = robot.observe()</span>
+<span class='add'>+                grip_z = obs[&quot;gripper&quot;][&quot;pos&quot;][2]</span>
+<span class='add'>+                if abs(grip_z - target_pos[2]) &lt;= TOL_Z:</span>
+<span class=''>                     return True</span>
+<span class='del'>-                # If not ok, treat as failure and maybe retry</span>
+<span class='add'>+                else:</span>
+<span class='add'>+                    robot.log(</span>
+<span class='add'>+                        f&quot;Move {desc} gripper Z {grip_z:.4f} vs target {target_pos[2]:.4f} &quot;</span>
+<span class='add'>+                        f&quot;(diff {abs(grip_z - target_pos[2]):.4f}), attempt {attempt+1}&quot;</span>
+<span class='add'>+                    )</span>
+<span class='add'>+                    # retreat and try again</span>
+<span class='add'>+                    robot.move_by(dz=-0.02, speed=0.05)</span>
+<span class=''>             except Exception as e:  # MotionError or similar</span>
+<span class='del'>-                robot.log(f&quot;Move failed ({desc}): {e}&quot;)</span>
+<span class='del'>-            # Small retreat and retry</span>
+<span class='del'>-            robot.move_by(dz=-0.02, speed=0.05)</span>
+<span class='add'>+                robot.log(f&quot;Move exception ({desc}): {e}&quot;)</span>
+<span class='add'>+                robot.move_by(dz=-0.02, speed=0.05)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class=''>     # Start from a known safe pose</span>
+<span class='hunk'>@@ -50,35 +68,35 @@</span>
+<span class=''>         robot.log(&quot;Red cube not perceived after retries.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class='del'>-    # Use actual observed cube height for grasp target</span>
+<span class=''>     cx, cy, cz = cube_info[&quot;pos&quot;]</span>
+<span class='del'>-    grasp_pos = [cx, cy, cz]          # centre of the cube as observed</span>
+<span class=''>     cube_yaw = cube_info[&quot;yaw&quot;]</span>
+<span class=''> </span>
+<span class='add'>+    # Grasp target is the observed cube centre</span>
+<span class='add'>+    grasp_pos = [cx, cy, cz]</span>
+<span class='add'>+</span>
+<span class=''>     # Approach point: safely above the cube</span>
+<span class='del'>-    approach_pos = grasp_pos[:]</span>
+<span class='del'>-    approach_pos[2] = SAFE_Z          # fixed safe height for approach/lift</span>
+<span class='add'>+    approach_pos = [cx, cy, SAFE_Z]</span>
+<span class=''> </span>
+<span class=''>     # 1. Move to approach point (above cube)</span>
+<span class='del'>-    if not move_to_pose(approach_pos, cube_yaw, desc=&quot;approach&quot;):</span>
+<span class='add'>+    if not move_and_check(approach_pos, cube_yaw, desc=&quot;approach&quot;):</span>
+<span class=''>         robot.log(&quot;Failed to move to approach point.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class=''>     # 2. Descend to grasp height (using actual cube height)</span>
+<span class='del'>-    if not move_to_pose(grasp_pos, cube_yaw, desc=&quot;descend&quot;):</span>
+<span class='add'>+    if not move_and_check(grasp_pos, cube_yaw, desc=&quot;descend&quot;):</span>
+<span class=''>         robot.log(&quot;Failed to descend to grasp point.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class=''>     # 3. Attempt to grasp (with a short retry)</span>
+<span class=''>     grasp_success = False</span>
+<span class='del'>-    for _ in range(2):</span>
+<span class='add'>+    for _ in range(GRASP_RETRY):</span>
+<span class=''>         robot.grasp()</span>
+<span class=''>         robot.wait(0.2)  # let grasp settle</span>
+<span class=''>         if robot.holding() == &quot;red_cube&quot;:</span>
+<span class=''>             grasp_success = True</span>
+<span class=''>             break</span>
+<span class=''>         # grasp failed: retreat a bit, release, and try again</span>
+<span class='del'>-        robot.move_by(dz=ABOVE_OFFSET, speed=0.05)</span>
+<span class='add'>+        robot.move_by(dz=0.02, speed=0.05)</span>
+<span class=''>         robot.release()</span>
+<span class=''>         robot.wait(0.1)</span>
+<span class=''> </span>
+<span class='hunk'>@@ -87,27 +105,27 @@</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class=''>     # 4. Lift to safe height (&gt;5 cm above table)</span>
+<span class='del'>-    lift_pos = grasp_pos[:]</span>
+<span class='del'>-    lift_pos[2] = SAFE_Z</span>
+<span class='del'>-    if not move_to_pose(lift_pos, cube_yaw, desc=&quot;lift&quot;):</span>
+<span class='add'>+    lift_pos = [cx, cy, SAFE_Z]</span>
+<span class='add'>+    if not move_and_check(lift_pos, cube_yaw, desc=&quot;lift&quot;):</span>
+<span class=''>         robot.log(&quot;Failed to lift the cube.&quot;)</span>
+<span class=''>         return False</span>
+<span class=''> </span>
+<span class=''>     # 5. Verify clearance; if too low, nudge upward</span>
+<span class='del'>-    obs_after = robot.observe()</span>
+<span class='del'>-    held_z = obs_after[&quot;objects&quot;][&quot;red_cube&quot;][&quot;pos&quot;][2]</span>
+<span class='del'>-    if held_z &lt; SAFE_Z - 0.0005:  # allow tiny tolerance</span>
+<span class='del'>-        robot.log(f&quot;Cube low ({held_z:.4f}), nudging up.&quot;)</span>
+<span class='del'>-        robot.move_by(dz=0.002, speed=0.05)</span>
+<span class='del'>-        # re-check after nudge (optional)</span>
+<span class='add'>+    for nudge_i in range(NUDGE_ATTEMPTS):</span>
+<span class=''>         obs_after = robot.observe()</span>
+<span class=''>         held_z = obs_after[&quot;objects&quot;][&quot;red_cube&quot;][&quot;pos&quot;][2]</span>
+<span class='del'>-        robot.log(f&quot;After nudge: cube z = {held_z:.4f}&quot;)</span>
+<span class='add'>+        if held_z &gt;= SAFE_Z - TOL_Z:</span>
+<span class='add'>+            break  # sufficient height</span>
+<span class='add'>+        robot.log(f&quot;Cube low ({held_z:.4f}), nudging up (attempt {nudge_i+1}).&quot;)</span>
+<span class='add'>+        robot.move_by(dz=LIFT_NUDGE, speed=0.05)</span>
+<span class='add'>+        robot.wait(0.1)  # let motion settle</span>
+<span class=''> </span>
+<span class='del'>-    # Final success check</span>
+<span class='del'>-    if held_z &gt;= SAFE_Z - 0.0005:</span>
+<span class='del'>-        robot.log(&quot;Red cube lifted and held &gt;5 cm above table.&quot;)</span>
+<span class='add'>+    # Final check</span>
+<span class='add'>+    obs_final = robot.observe()</span>
+<span class='add'>+    final_z = obs_final[&quot;objects&quot;][&quot;red_cube&quot;][&quot;pos&quot;][2]</span>
+<span class='add'>+    if final_z &gt;= SAFE_Z - TOL_Z:</span>
+<span class='add'>+        robot.log(f&quot;Red cube lifted and held &gt;5 cm above table (z={final_z:.4f}).&quot;)</span>
+<span class=''>         return True</span>
+<span class=''>     else:</span>
+<span class='del'>-        robot.log(f&quot;Cube still too low ({held_z:.4f}) after corrective move.&quot;)</span>
+<span class='add'>+        robot.log(f&quot;Cube still too low ({final_z:.4f}) after corrective moves.&quot;)</span>
+<span class=''>         return False</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100007/end_front.jpg"><figcaption>seed 100007<br></figcaption></figure><figure><img src="eval/episodes/ep_100010/end_front.jpg"><figcaption>seed 100010<br></figcaption></figure><figure><img src="eval/episodes/ep_100030/end_front.jpg"><figcaption>seed 100030<br></figcaption></figure><figure><img src="eval/episodes/ep_100036/end_front.jpg"><figcaption>seed 100036<br></figcaption></figure><figure><img src="eval/episodes/ep_100043/end_front.jpg"><figcaption>seed 100043<br></figcaption></figure><figure><img src="eval/episodes/ep_100045/end_front.jpg"><figcaption>seed 100045<br></figcaption></figure><figure><img src="eval/episodes/ep_100046/end_front.jpg"><figcaption>seed 100046<br></figcaption></figure><figure><img src="eval/episodes/ep_100049/end_front.jpg"><figcaption>seed 100049<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    &quot;&quot;&quot;Pick up the red cube and hold it at least 5 cm above the table.&quot;&quot;&quot;
+    MAX_RETRIES = 3
+    SAFE_Z = 0.07          # 7 cm above table gives a margin over the 5 cm requirement
+    TOL_Z = 0.005          # tolerance for verifying a move reached the target height
+    GRASP_RETRY = 2
+    LIFT_NUDGE = 0.01      # upward correction if cube ends up low
+    NUDGE_ATTEMPTS = 2
+
+    def safe_observe():
+        &quot;&quot;&quot;Return observation dict, retrying if red cube is missing due to occlusion.&quot;&quot;&quot;
+        for _ in range(MAX_RETRIES):
+            obs = robot.observe()
+            if &quot;red_cube&quot; in obs.get(&quot;objects&quot;, {}):
+                return obs
+            # Just try again; moving the gripper can invalidate later poses.
+        # Last attempt – return whatever we have (may still miss the cube)
+        return robot.observe()
+
+    def move_and_check(target_pos, target_yaw=None, desc=&quot;&quot;):
+        &quot;&quot;&quot;
+        Attempt to move to target_pos, then verify the gripper&#x27;s Z is within TOL_Z.
+        Retries a couple of times on failure.
+        &quot;&quot;&quot;
+        for attempt in range(2):
+            try:
+                # slower speed for precision motions
+                speed = 0.05 if any(k in desc.lower() for k in (&quot;approach&quot;, &quot;descend&quot;, &quot;lift&quot;)) else 0.1
+                res = robot.move_to(
+                    target_pos[0],
+                    target_pos[1],
+                    target_pos[2],
+                    yaw=target_yaw,
+                    speed=speed,
+                )
+                if not res.get(&quot;ok&quot;, False):
+                    robot.log(f&quot;Move not ok ({desc}), attempt {attempt+1}&quot;)
+                    # small retreat before retry
+                    robot.move_by(dz=-0.02, speed=0.05)
+                    continue
+
+                # Verify achieved height
+                obs = robot.observe()
+                grip_z = obs[&quot;gripper&quot;][&quot;pos&quot;][2]
+                if abs(grip_z - target_pos[2]) &lt;= TOL_Z:
+                    return True
+                else:
+                    robot.log(
+                        f&quot;Move {desc} gripper Z {grip_z:.4f} vs target {target_pos[2]:.4f} &quot;
+                        f&quot;(diff {abs(grip_z - target_pos[2]):.4f}), attempt {attempt+1}&quot;
+                    )
+                    # retreat and try again
+                    robot.move_by(dz=-0.02, speed=0.05)
+            except Exception as e:  # MotionError or similar
+                robot.log(f&quot;Move exception ({desc}): {e}&quot;)
+                robot.move_by(dz=-0.02, speed=0.05)
+        return False
+
+    # Start from a known safe pose
+    robot.home()
+
+    # Get observation with retry for visibility
+    obs = safe_observe()
+    cube_info = obs[&quot;objects&quot;].get(&quot;red_cube&quot;)
+    if cube_info is None:
+        robot.log(&quot;Red cube not perceived after retries.&quot;)
+        return False
+
+    cx, cy, cz = cube_info[&quot;pos&quot;]
+    cube_yaw = cube_info[&quot;yaw&quot;]
+
+    # Grasp target is the observed cube centre
+    grasp_pos = [cx, cy, cz]
+
+    # Approach point: safely above the cube
+    approach_pos = [cx, cy, SAFE_Z]
+
+    # 1. Move to approach point (above cube)
+    if not move_and_check(approach_pos, cube_yaw, desc=&quot;approach&quot;):
+        robot.log(&quot;Failed to move to approach point.&quot;)
+        return False
+
+    # 2. Descend to grasp height (using actual cube height)
+    if not move_and_check(grasp_pos, cube_yaw, desc=&quot;descend&quot;):
+        robot.log(&quot;Failed to descend to grasp point.&quot;)
+        return False
+
+    # 3. Attempt to grasp (with a short retry)
+    grasp_success = False
+    for _ in range(GRASP_RETRY):
+        robot.grasp()
+        robot.wait(0.2)  # let grasp settle
+        if robot.holding() == &quot;red_cube&quot;:
+            grasp_success = True
+            break
+        # grasp failed: retreat a bit, release, and try again
+        robot.move_by(dz=0.02, speed=0.05)
+        robot.release()
+        robot.wait(0.1)
+
+    if not grasp_success:
+        robot.log(&quot;Grasp did not secure the red cube after retries.&quot;)
+        return False
+
+    # 4. Lift to safe height (&gt;5 cm above table)
+    lift_pos = [cx, cy, SAFE_Z]
+    if not move_and_check(lift_pos, cube_yaw, desc=&quot;lift&quot;):
+        robot.log(&quot;Failed to lift the cube.&quot;)
+        return False
+
+    # 5. Verify clearance; if too low, nudge upward
+    for nudge_i in range(NUDGE_ATTEMPTS):
+        obs_after = robot.observe()
+        held_z = obs_after[&quot;objects&quot;][&quot;red_cube&quot;][&quot;pos&quot;][2]
+        if held_z &gt;= SAFE_Z - TOL_Z:
+            break  # sufficient height
+        robot.log(f&quot;Cube low ({held_z:.4f}), nudging up (attempt {nudge_i+1}).&quot;)
+        robot.move_by(dz=LIFT_NUDGE, speed=0.05)
+        robot.wait(0.1)  # let motion settle
+
+    # Final check
+    obs_final = robot.observe()
+    final_z = obs_final[&quot;objects&quot;][&quot;red_cube&quot;][&quot;pos&quot;][2]
+    if final_z &gt;= SAFE_Z - TOL_Z:
+        robot.log(f&quot;Red cube lifted and held &gt;5 cm above table (z={final_z:.4f}).&quot;)
+        return True
+    else:
+        robot.log(f&quot;Cube still too low ({final_z:.4f}) after corrective moves.&quot;)
+        return False
+</pre></section>
+</div></body></html>

@@ -1,0 +1,27 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -94,7 +94,8 @@
+     if not robot.grasp():
+         robot.log("grasp returned False – first attempt")
+         try:
+-            robot.move_to(cx, cy, cz - 0.010, speed=0.07)  # extra drop for stable contact
++            # increased fallback drop to 0.020 m
++            robot.move_to(cx, cy, cz - 0.020, speed=0.07)
+             if not robot.grasp():
+                 robot.log("grasp failed again after height drop")
+                 return False
+@@ -119,11 +120,12 @@
+             pass  # give up on this episode
+ 
+     # If after the first push the puck is still outside, try a second tiny push
++    # with a larger multiplier (0.6 instead of 0.3) to meet tolerance
+     try:
+         final_pos = np.array(robot.get_pose(puck_name)["pos"])
+         if np.linalg.norm(final_pos - target_pos) > target_radius:
+-            # second small push in the same direction
+-            robot.move_by(dx=dx * 0.3, dy=dy * 0.3, speed=0.07)
++            # second small push in the same direction, multiplier 0.6
++            robot.move_by(dx=dx * 0.6, dy=dy * 0.6, speed=0.07)
+     except Exception:
+         pass  # ignore if pose unavailable
+ 

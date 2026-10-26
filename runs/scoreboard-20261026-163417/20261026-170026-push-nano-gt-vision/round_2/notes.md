@@ -1,0 +1,8 @@
+- Increased `contact_offset` to 0.04 m and added a pre‑grasp height check that lifts the tool point if it would place the fingers below the puck’s side.
+- Wrapped every `move_to` in a try/except; on a block (MotionError or “stopped short”) the code now reduces `cz` by 0.005 m and retries once before giving up.
+- Raised the vertical clamp ceiling from 0.26 m to 0.28 m so the gripper can approach higher without being clamped.
+- The grasp is now attempted unconditionally; if it still fails after the height adjustment the episode aborts – we no longer treat a False return as a permanent error.
+- Push distance is computed as 0.95 × required displacement (slightly more aggressive) and executed with a slow speed (0.07 m/s). A secondary, smaller push (½ scale) is tried if the first move fails.
+- Added a single retry with a small jittered contact pose if the puck ends outside the green zone, giving the skill a second chance without looping endlessly.
+- All coordinates are read at runtime; no hard‑coded values remain. The code still catches any exception from motion calls and logs a clear message.
+- The overall structure (perceive → compute direction → plan contact → move → close → push → release → verify) is unchanged, preserving what already worked.

@@ -1,0 +1,538 @@
+{
+ "task": "sort",
+ "seed": 50013,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": false,
+ "metrics": {
+  "red_cube_tray_dx": 0.0082,
+  "red_cube_tray_dy": 0.0676,
+  "red_cube_z": 0.0149,
+  "red_cube_held": false,
+  "blue_cube_tray_dx": 0.0766,
+  "blue_cube_tray_dy": 0.0099,
+  "blue_cube_z": 0.0149,
+  "blue_cube_held": false,
+  "red_ok": "False",
+  "blue_ok": "False"
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Attempt 1"
+  },
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.142,0.001,0.038)"
+  },
+  {
+   "t": 1.52,
+   "call": "move_to(0.142, 0.001, 0.038, yaw=0.212, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1416,
+     0.0013,
+     0.0374
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 1.52,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.142,0.001,0.023)"
+  },
+  {
+   "t": 1.78,
+   "call": "move_to(0.142, 0.001, 0.023, yaw=0.212, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1413,
+     0.0013,
+     0.0222
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 1.78,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 2.28,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0267
+   }
+  },
+  {
+   "t": 2.28,
+   "call": "holding()",
+   "result": "red_cube"
+  },
+  {
+   "t": 2.28,
+   "call": "log",
+   "result": "Moving to release zone over red tray at (0.139,-0.117,0.035)"
+  },
+  {
+   "t": 5.5,
+   "call": "move_to(0.139, -0.117, 0.035, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1336,
+     -0.0988,
+     0.0285
+    ],
+    "error_m": 0.0203,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 5.5,
+   "call": "log",
+   "result": "Tray approach failed: blocked on tray approach"
+  },
+  {
+   "t": 5.5,
+   "call": "log",
+   "result": "Moving to release zone over red tray at (0.159,-0.117,0.035)"
+  },
+  {
+   "t": 7.46,
+   "call": "move_to(0.159, -0.117, 0.035, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1504,
+     -0.0974,
+     0.0262
+    ],
+    "error_m": 0.0234,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 7.46,
+   "call": "log",
+   "result": "Shifted x+ fallback failed: blocked on tray approach"
+  },
+  {
+   "t": 7.46,
+   "call": "log",
+   "result": "Moving to release zone over red tray at (0.139,-0.097,0.035)"
+  },
+  {
+   "t": 8.7,
+   "call": "move_to(0.139, -0.097, 0.035, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1388,
+     -0.0974,
+     0.0348
+    ],
+    "error_m": 0.0004
+   }
+  },
+  {
+   "t": 8.7,
+   "call": "log",
+   "result": "Moving to release zone over red tray at (0.139,-0.117,0.015)"
+  },
+  {
+   "t": 9.14,
+   "call": "move_to(0.139, -0.117, 0.015, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1386,
+     -0.1164,
+     0.0162
+    ],
+    "error_m": 0.0016
+   }
+  },
+  {
+   "t": 9.14,
+   "call": "log",
+   "result": "Releasing cube"
+  },
+  {
+   "t": 9.54,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 9.54,
+   "call": "holding()"
+  },
+  {
+   "t": 9.54,
+   "call": "log",
+   "result": "Successfully placed red cube"
+  },
+  {
+   "t": 9.54,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.200,0.042,0.037)"
+  },
+  {
+   "t": 12.02,
+   "call": "move_to(0.200, 0.042, 0.037, yaw=0.144, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1997,
+     0.042,
+     0.0373
+    ],
+    "error_m": 0.0
+   }
+  },
+  {
+   "t": 12.02,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.200,0.042,0.022)"
+  },
+  {
+   "t": 12.28,
+   "call": "move_to(0.200, 0.042, 0.022, yaw=0.144, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1993,
+     0.0419,
+     0.0219
+    ],
+    "error_m": 0.0006
+   }
+  },
+  {
+   "t": 12.28,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 12.78,
+   "call": "grasp()",
+   "result": {
+    "holding": "blue_cube",
+    "opening": 0.0058
+   }
+  },
+  {
+   "t": 12.78,
+   "call": "holding()",
+   "result": "blue_cube"
+  },
+  {
+   "t": 12.78,
+   "call": "log",
+   "result": "Moving to release zone over blue tray at (0.100,0.115,0.035)"
+  },
+  {
+   "t": 16.06,
+   "call": "move_to(0.100, 0.115, 0.035, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1231,
+     0.1013,
+     0.0322
+    ],
+    "error_m": 0.027,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 16.06,
+   "call": "log",
+   "result": "Tray approach failed: blocked on tray approach"
+  },
+  {
+   "t": 16.06,
+   "call": "log",
+   "result": "Moving to release zone over blue tray at (0.120,0.115,0.035)"
+  },
+  {
+   "t": 16.38,
+   "call": "move_to(0.120, 0.115, 0.035, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1202,
+     0.1152,
+     0.0348
+    ],
+    "error_m": 0.0003
+   }
+  },
+  {
+   "t": 16.38,
+   "call": "log",
+   "result": "Moving to release zone over blue tray at (0.100,0.115,0.015)"
+  },
+  {
+   "t": 16.82,
+   "call": "move_to(0.100, 0.115, 0.015, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1007,
+     0.1154,
+     0.0162
+    ],
+    "error_m": 0.0013
+   }
+  },
+  {
+   "t": 16.82,
+   "call": "log",
+   "result": "Releasing cube"
+  },
+  {
+   "t": 17.22,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 17.22,
+   "call": "holding()"
+  },
+  {
+   "t": 17.22,
+   "call": "log",
+   "result": "Successfully placed blue cube"
+  },
+  {
+   "t": 17.42,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 17.42,
+   "call": "log",
+   "result": "Skill finished, success=True"
+  }
+ ],
+ "n_calls": 43,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 17.92,
+ "wall_time": 1.61,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1314,
+     0.005,
+     0.0149
+    ],
+    "yaw": 0.201,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1898,
+     0.046,
+     0.0149
+    ],
+    "yaw": 0.1237,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.1388,
+     -0.1114,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.1012,
+     0.1217,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "final_obs": {
+  "time": 17.92,
+  "gripper": {
+   "pos": [
+    0.1009,
+    0.116,
+    0.0162
+   ],
+   "yaw": 2.4259,
+   "opening": 0.0464,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1307,
+     -0.0438,
+     0.0149
+    ],
+    "yaw": 0.0847,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1778,
+     0.1118,
+     0.0149
+    ],
+    "yaw": 0.2481,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.1388,
+     -0.1114,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.1012,
+     0.1217,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_tray": {
+   "x": 0.1388,
+   "y": -0.1114,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "blue_tray": {
+   "x": 0.1012,
+   "y": 0.1217,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "red_cube": {
+   "x": 0.1314,
+   "y": 0.005,
+   "yaw": 0.201,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1898,
+   "y": 0.046,
+   "yaw": 0.1237,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 1,
+  "lookups": 2,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 6.25,
+  "pos_err_mm_p90": 6.4,
+  "yaw_err_deg_median": 0.88,
+  "by_camera": {
+   "overhead": 2,
+   "front": 0
+  },
+  "ms_per_observe_median": 446.1,
+  "fixtures_mapped": [
+   "blue_tray",
+   "red_tray"
+  ],
+  "fixture_err_mm": {
+   "red_tray": 5.88,
+   "blue_tray": 6.34
+  }
+ }
+}

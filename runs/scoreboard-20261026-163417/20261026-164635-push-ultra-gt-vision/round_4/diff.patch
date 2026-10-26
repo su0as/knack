@@ -1,0 +1,27 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -33,8 +33,8 @@
+         approach_y = puck_pos[1] - uy * approach_dist
+         approach_z = 0.0225  # tool‑point height for mid‑puck push
+ 
+-        # Push target: just beyond the target centre
+-        push_margin = puck_radius + 0.02
++        # Push target: just short of the target centre
++        push_margin = 0.5 * puck_radius
+         push_x = target_pos[0] + ux * push_margin
+         push_y = target_pos[1] + uy * push_margin
+         push_z = approach_z
+@@ -58,6 +58,13 @@
+ 
+         approach_x, approach_y = clamp_point(approach_x, approach_y)
+         push_x, push_y = clamp_point(push_x, push_y)
++
++        # If clamping collapsed push point to approach point, nudge push_margin and recompute
++        if math.hypot(push_x - approach_x, push_y - approach_y) < 1e-3:
++            push_margin += 0.02
++            push_x = target_pos[0] + ux * push_margin
++            push_y = target_pos[1] + uy * push_margin
++            push_x, push_y = clamp_point(push_x, push_y)
+ 
+         # Yaw aligned with push direction (fingers close along push axis)
+         push_yaw = math.atan2(uy, ux)

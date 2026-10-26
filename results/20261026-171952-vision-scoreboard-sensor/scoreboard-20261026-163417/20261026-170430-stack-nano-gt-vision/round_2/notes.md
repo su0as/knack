@@ -1,0 +1,6 @@
+- Added a safety margin (+0.02 m) to the place height so the gripper can descend slowly and the red cube settles on the blue one.  
+- Shifted the place pose by half the red cube width (0.015 m) in the direction of the gripper’s closing angle (using `place_yaw`) to eliminate the observed XY mis‑alignment.  
+- Raised the grasp‑verification retry count from 3 to 5 and inserted a short `wait(0.2)` after each release to let the simulation settle before retrying.  
+- Wrapped both `move_to` calls in `try/except MotionError` and added a brief wait after reaching the place pose before releasing.  
+- Kept all moves slow (≈0.07 m/s) and retained the existing perception‑checks and logging style.  
+- These changes address all three failure modes reported while preserving the working parts of the original skill.

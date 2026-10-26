@@ -1,0 +1,39 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -3,9 +3,9 @@
+ def run(robot):
+     """Pick up the red cube and hold it at least 5 cm above the table."""
+     MAX_RETRIES = 3
+-    SAFE_Z = 0.08          # 8 cm above table -> ensures >5 cm clearance
+-    GRASP_Z = 0.015        # Approx centre of a cube on the table
+-    ABOVE_OFFSET = 0.02    # Small offset above grasp point for approach
++    SAFE_Z = 0.065          # 6.5 cm above table -> meets the 5 cm clearance requirement
++    GRASP_Z = 0.015         # Approx centre of a cube on the table
++    ABOVE_OFFSET = 0.02     # Small offset above grasp point for approach (unused but kept for clarity)
+ 
+     def safe_observe():
+         """Return observation dict, retrying if red cube is missing due to occlusion."""
+@@ -61,12 +61,12 @@
+     approach_pos[2] = SAFE_Z
+ 
+     # 1. Move to approach point (above cube)
+-    if not move_to_pose(approach_pos, yaw=cube_yaw, desc="approach"):
++    if not move_to_pose(approach_pos, cube_yaw, desc="approach"):
+         robot.log("Failed to move to approach point.")
+         return False
+ 
+     # 2. Descend to grasp height
+-    if not move_to_pose(grasp_pos, yaw=cube_yaw, desc="descend"):
++    if not move_to_pose(grasp_pos, cube_yaw, desc="descend"):
+         robot.log("Failed to descend to grasp point.")
+         return False
+ 
+@@ -83,7 +83,7 @@
+     # 4. Lift to safe height (>5 cm above table)
+     lift_pos = grasp_pos[:]
+     lift_pos[2] = SAFE_Z
+-    if not move_to_pose(lift_pos, yaw=cube_yaw, desc="lift"):
++    if not move_to_pose(lift_pos, cube_yaw, desc="lift"):
+         robot.log("Failed to lift the cube.")
+         return False
+ 

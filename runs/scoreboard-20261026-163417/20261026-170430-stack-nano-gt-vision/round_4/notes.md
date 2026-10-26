@@ -1,0 +1,6 @@
+- Reduced the XY shift used for the place pose from ~0.015 m (half‑cube size) to a maximum of 0.005 m, keeping the target well inside the robot’s reachable workspace.
+- Clamp the computed place height to ≤ 0.25 m so it never exceeds the robot’s Z limit.
+- Added a small downward pre‑grasp move (≈ 0.005 m) just before closing the fingers to guarantee contact and avoid missed grasps.
+- Increased the pick‑approach speed to 0.12 m/s (still safe) to stay within the episode time budget.
+- Kept the strict grasp‑verification loop and retry logic, but now it benefits from the more reliable approach.
+- Minor comment clean‑up while preserving all previously working functionality.

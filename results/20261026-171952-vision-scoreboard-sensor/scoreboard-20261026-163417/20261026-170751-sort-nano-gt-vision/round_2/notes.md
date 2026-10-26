@@ -1,0 +1,7 @@
+- Clamp the forward approach point to the safe x‑range [0.04, 0.32] and keep the forward offset small (0.01 m) so the target never exceeds the workspace limit.  
+- Require the cube’s centre to stay within 2 mm for two consecutive observations before allowing a grasp; this reduces false‑positive grasp attempts caused by perception noise.  
+- Limit grasp retries to two consecutive failures; after the second failure the gripper is released and the algorithm moves on to avoid endless loops.  
+- Wrap every `move_to` call in a try/except block and treat a non‑ok response as a failure that triggers a simple fallback (small lateral offset of ±0.02 m) before giving up on that step.  
+- Keep the existing gripper‑yaw alignment, low‑speed contact descent, and release‑height logic, preserving what already works.  
+- Add a tiny safety margin to all computed targets and use low speeds (0.05–0.07 m/s) near objects to stay within the time budget.  
+- Preserve the overall loop structure and the final success flag, so existing episode‑level bookkeeping remains unchanged.

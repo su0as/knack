@@ -1,0 +1,205 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Knack skill card: Sort by colour</title>
+<style>
+body{font:14px/1.45 ui-sans-serif,'Segoe UI',Roboto,sans-serif;background:#0b0e12;color:#d9dee5;margin:0;padding:32px}
+.wrap{max-width:980px;margin:auto} h1{font:600 26px ui-monospace,Consolas,monospace;letter-spacing:.04em;color:#fff;margin:0 0 4px}
+.k{color:#c6ff3d} .muted{color:#7d8794} code,pre{font:12px ui-monospace,Consolas,monospace}
+.big{font:700 54px ui-monospace,Consolas,monospace;color:#c6ff3d} .grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+section{border:1px solid #232a33;padding:16px;margin:16px 0;background:#0f1318}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid #232a33;padding:6px 8px;text-align:left}
+.ci{position:relative;height:14px;background:#151a21;border:1px solid #232a33;margin:10px 0}
+.ci-band{position:absolute;top:0;bottom:0;background:#3a4a12} .ci-dot{position:absolute;top:-3px;width:3px;height:20px;background:#c6ff3d}
+.bars{display:flex;gap:10px;align-items:flex-end;height:140px} .bar{width:46px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;text-align:center}
+.bar span{display:block;background:#c6ff3d} .bar em{font:11px ui-monospace,monospace;color:#7d8794;font-style:normal;margin-top:4px}
+figure{display:inline-block;margin:0 8px 8px 0;width:220px} figure img{width:220px;border:1px solid #ff5d3d} figcaption{font-size:11px;color:#7d8794}
+pre{background:#07090c;padding:12px;overflow:auto;max-height:420px;border:1px solid #232a33;white-space:pre-wrap} .warn{color:#ffb020}
+.chip{display:inline-block;border:1px solid #2e3742;padding:3px 8px;margin:0 6px 6px 0;font:11px ui-monospace,Consolas,monospace}
+.chip b{background:#c6ff3d;color:#0b0e12;padding:0 4px;margin-right:6px} .chip em{color:#7d8794;font-style:normal;margin-left:6px}
+details{border-top:1px solid #232a33;padding:8px 0} summary{cursor:pointer;font:12px ui-monospace,Consolas,monospace}
+.diff .add{color:#c6ff3d} .diff .del{color:#ff5d3d} .diff .hunk{color:#8a94a3}
+</style></head><body><div class="wrap">
+<h1><span class="k">KNACK</span> / skill card</h1>
+<div class="muted">20261026-164341-sort-super-gt-vision &middot; 2026-10-26 16:45:29</div>
+
+<section><div class="muted">TASK</div><h2 style="margin:4px 0 0">Put the red cube into the red tray and the blue cube into the blue tray.</h2>
+<p class="muted">0 demonstrations &middot; reward: gt &middot; perception: vision &middot; 8 practice episodes in 1 rounds</p>
+<div><span class='chip'><b>CODER</b>nvidia/nemotron-3-super-120b-a12b <em>$0.30 / $0.90 per M</em></span><span class='chip'><b>SUMMARIZER</b>nvidia/Nemotron-3_5-Lightning <em>$0.06 / $0.24 per M</em></span></div></section>
+<div class="grid"><section><div class="muted">HELD-OUT SUCCESS (gt)</div>
+<div class="big">98%</div><div>49/50 layouts &middot; Wilson 95% CI 90% to 100%</div><div class='ci'><div class='ci-band' style='left:89.5%;width:10.1%'></div><div class='ci-dot' style='left:98.0%'></div></div>
+<p class="muted">Safety layer: 0 halts, 14 clamps. OpenCV perception: 100% of object sightings, median error 4.11 mm.</p></section>
+<section><div class="muted">PRACTICE CURVE</div><div class="bars"><div class='bar'><span style='height:100%'></span><em>R1<br>8/8</em></div></div></section></div>
+<section><div class="muted">RECEIPT</div><table><tr><th>role</th><th>model</th><th>calls</th><th>tokens in</th><th>tokens out</th><th>USD</th></tr><tr><td>coder</td><td><code>nvidia/nemotron-3-super-120b-a12b</code></td><td>1</td><td>1,818</td><td>1,609</td><td>$0.0020</td></tr><tr><td>summarizer</td><td><code>nvidia/Nemotron-3_5-Lightning</code></td><td>0</td><td>0</td><td>0</td><td>$0.0000</td></tr>
+<tr><td>compute</td><td>local</td><td></td><td></td><td>194 s</td><td>$0.0000</td></tr>
+<tr><th>total</th><th></th><th>1</th><th>1,818</th><th>1,609</th><th>$0.0020</th></tr></table></section>
+<section><div class="muted">HOW IT GOT THERE</div><details open><summary>Round 1: 8/8 practice episodes &middot; 0 errors &middot; $0.0020 so far &middot; <b class='k'>best</b></summary><div class='muted'>coder notes</div><pre>- Start with a home pose to ensure a known starting point.
+- For each colour (red, blue) locate the matching cube and tray using their names; if perception fails (LookupError), move the gripper away briefly and re‑try a few times.
+- Approach the cube from above, descend to a grasp pose (tool point ≈ cube centre), close the gripper, and verify that something is held.
+- Transport the cube to the centre of the matching tray, lower to a safe drop height (just above the tray floor), release, and verify the gripper is empty.
+- Use modest speeds for precise motions near objects and default speed for travel moves.
+- All poses are read at runtime; no hard‑coded coordinates.</pre><div class='muted'>code change that went into this round</div><pre class='diff'><span class=''>--- round_0/skill.py</span>
+<span class=''>+++ round_1/skill.py</span>
+<span class='hunk'>@@ -0,0 +1,81 @@</span>
+<span class='add'>+import math</span>
+<span class='add'>+</span>
+<span class='add'>+def run(robot):</span>
+<span class='add'>+    &quot;&quot;&quot;Pick up each coloured cube and place it into the tray of the same colour.&quot;&quot;&quot;</span>
+<span class='add'>+    # Safety: start from a known pose</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+    </span>
+<span class='add'>+    colours = [&quot;red&quot;, &quot;blue&quot;]</span>
+<span class='add'>+    max_attempts = 3   # perception retries</span>
+<span class='add'>+    </span>
+<span class='add'>+    for colour in colours:</span>
+<span class='add'>+        cube_name = f&quot;{colour}_cube&quot;</span>
+<span class='add'>+        tray_name = f&quot;{colour}_tray&quot;</span>
+<span class='add'>+        </span>
+<span class='add'>+        # --- perceive cube -------------------------------------------------</span>
+<span class='add'>+        cube_pose = None</span>
+<span class='add'>+        for _ in range(max_attempts):</span>
+<span class='add'>+            try:</span>
+<span class='add'>+                cube_pose = robot.get_pose(cube_name)</span>
+<span class='add'>+                break</span>
+<span class='add'>+            except LookupError:</span>
+<span class='add'>+                # cube not visible – move gripper out of the way and try again</span>
+<span class='add'>+                robot.move_to(0.2, 0.0, 0.2, speed=0.2)  # a neutral spot</span>
+<span class='add'>+                robot.wait(0.2)</span>
+<span class='add'>+        if cube_pose is None:</span>
+<span class='add'>+            robot.log(f&quot;[{colour}] Could not locate cube after {max_attempts} attempts&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+        </span>
+<span class='add'>+        # --- perceive tray -------------------------------------------------</span>
+<span class='add'>+        try:</span>
+<span class='add'>+            tray_pose = robot.get_pose(tray_name)</span>
+<span class='add'>+        except LookupError:</span>
+<span class='add'>+            robot.log(f&quot;[{colour}] Tray not visible&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+        </span>
+<span class='add'>+        # --- grasp cube ----------------------------------------------------</span>
+<span class='add'>+        # Approach from above</span>
+<span class='add'>+        above = [cube_pose[&quot;pos&quot;][0], cube_pose[&quot;pos&quot;][1], cube_pose[&quot;pos&quot;][2] + 0.05]</span>
+<span class='add'>+        robot.move_to(*above, speed=0.2)</span>
+<span class='add'>+        # Descend to grasp height (tool point ≈ cube centre)</span>
+<span class='add'>+        grasp_pos = [cube_pose[&quot;pos&quot;][0], cube_pose[&quot;pos&quot;][1], cube_pose[&quot;pos&quot;][2]]</span>
+<span class='add'>+        robot.move_to(*grasp_pos, yaw=cube_pose[&quot;yaw&quot;], speed=0.08)</span>
+<span class='add'>+        </span>
+<span class='add'>+        # Close fingers</span>
+<span class='add'>+        if not robot.grasp():</span>
+<span class='add'>+            robot.log(f&quot;[{colour}] Grasp failed&quot;)</span>
+<span class='add'>+            # retreat and try again once</span>
+<span class='add'>+            robot.move_by(dz=0.05, speed=0.1)</span>
+<span class='add'>+            if not robot.grasp():</span>
+<span class='add'>+                robot.log(f&quot;[{colour}] Second grasp attempt failed&quot;)</span>
+<span class='add'>+                return False</span>
+<span class='add'>+        </span>
+<span class='add'>+        # Verify hold</span>
+<span class='add'>+        if robot.holding() != cube_name:</span>
+<span class='add'>+            robot.log(f&quot;[{colour}] Not holding expected object&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+        </span>
+<span class='add'>+        # --- transport to tray ---------------------------------------------</span>
+<span class='add'>+        # Lift up</span>
+<span class='add'>+        robot.move_by(dz=0.08, speed=0.1)</span>
+<span class='add'>+        # Move above tray centre</span>
+<span class='add'>+        above_tray = [tray_pose[&quot;pos&quot;][0], tray_pose[&quot;pos&quot;][1], tray_pose[&quot;pos&quot;][2] + 0.08]</span>
+<span class='add'>+        robot.move_to(*above_tray, speed=0.2)</span>
+<span class='add'>+        # Lower to drop height (just above tray bottom)</span>
+<span class='add'>+        drop_z = tray_pose[&quot;pos&quot;][2] + 0.02  # 2 cm above table, inside tray walls</span>
+<span class='add'>+        drop_pos = [tray_pose[&quot;pos&quot;][0], tray_pose[&quot;pos&quot;][1], drop_z]</span>
+<span class='add'>+        robot.move_to(*drop_pos, yaw=tray_pose[&quot;yaw&quot;], speed=0.08)</span>
+<span class='add'>+        </span>
+<span class='add'>+        # Release</span>
+<span class='add'>+        robot.release()</span>
+<span class='add'>+        robot.wait(0.1)</span>
+<span class='add'>+        if robot.holding() is not None:</span>
+<span class='add'>+            robot.log(f&quot;[{colour}] Failed to release&quot;)</span>
+<span class='add'>+            return False</span>
+<span class='add'>+        </span>
+<span class='add'>+        # Retreat</span>
+<span class='add'>+        robot.move_by(dz=0.08, speed=0.1)</span>
+<span class='add'>+    </span>
+<span class='add'>+    # All cubes placed</span>
+<span class='add'>+    robot.home()</span>
+<span class='add'>+    return True</span></pre></details></section>
+<section><div class="muted">FAILURE GALLERY</div><figure><img src="eval/episodes/ep_100015/end_front.jpg"><figcaption>seed 100015<br></figcaption></figure></section>
+<section><div class="muted">SKILL (best_skill.py)</div><pre>import math
+
+def run(robot):
+    &quot;&quot;&quot;Pick up each coloured cube and place it into the tray of the same colour.&quot;&quot;&quot;
+    # Safety: start from a known pose
+    robot.home()
+    
+    colours = [&quot;red&quot;, &quot;blue&quot;]
+    max_attempts = 3   # perception retries
+    
+    for colour in colours:
+        cube_name = f&quot;{colour}_cube&quot;
+        tray_name = f&quot;{colour}_tray&quot;
+        
+        # --- perceive cube -------------------------------------------------
+        cube_pose = None
+        for _ in range(max_attempts):
+            try:
+                cube_pose = robot.get_pose(cube_name)
+                break
+            except LookupError:
+                # cube not visible – move gripper out of the way and try again
+                robot.move_to(0.2, 0.0, 0.2, speed=0.2)  # a neutral spot
+                robot.wait(0.2)
+        if cube_pose is None:
+            robot.log(f&quot;[{colour}] Could not locate cube after {max_attempts} attempts&quot;)
+            return False
+        
+        # --- perceive tray -------------------------------------------------
+        try:
+            tray_pose = robot.get_pose(tray_name)
+        except LookupError:
+            robot.log(f&quot;[{colour}] Tray not visible&quot;)
+            return False
+        
+        # --- grasp cube ----------------------------------------------------
+        # Approach from above
+        above = [cube_pose[&quot;pos&quot;][0], cube_pose[&quot;pos&quot;][1], cube_pose[&quot;pos&quot;][2] + 0.05]
+        robot.move_to(*above, speed=0.2)
+        # Descend to grasp height (tool point ≈ cube centre)
+        grasp_pos = [cube_pose[&quot;pos&quot;][0], cube_pose[&quot;pos&quot;][1], cube_pose[&quot;pos&quot;][2]]
+        robot.move_to(*grasp_pos, yaw=cube_pose[&quot;yaw&quot;], speed=0.08)
+        
+        # Close fingers
+        if not robot.grasp():
+            robot.log(f&quot;[{colour}] Grasp failed&quot;)
+            # retreat and try again once
+            robot.move_by(dz=0.05, speed=0.1)
+            if not robot.grasp():
+                robot.log(f&quot;[{colour}] Second grasp attempt failed&quot;)
+                return False
+        
+        # Verify hold
+        if robot.holding() != cube_name:
+            robot.log(f&quot;[{colour}] Not holding expected object&quot;)
+            return False
+        
+        # --- transport to tray ---------------------------------------------
+        # Lift up
+        robot.move_by(dz=0.08, speed=0.1)
+        # Move above tray centre
+        above_tray = [tray_pose[&quot;pos&quot;][0], tray_pose[&quot;pos&quot;][1], tray_pose[&quot;pos&quot;][2] + 0.08]
+        robot.move_to(*above_tray, speed=0.2)
+        # Lower to drop height (just above tray bottom)
+        drop_z = tray_pose[&quot;pos&quot;][2] + 0.02  # 2 cm above table, inside tray walls
+        drop_pos = [tray_pose[&quot;pos&quot;][0], tray_pose[&quot;pos&quot;][1], drop_z]
+        robot.move_to(*drop_pos, yaw=tray_pose[&quot;yaw&quot;], speed=0.08)
+        
+        # Release
+        robot.release()
+        robot.wait(0.1)
+        if robot.holding() is not None:
+            robot.log(f&quot;[{colour}] Failed to release&quot;)
+            return False
+        
+        # Retreat
+        robot.move_by(dz=0.08, speed=0.1)
+    
+    # All cubes placed
+    robot.home()
+    return True
+</pre></section>
+</div></body></html>

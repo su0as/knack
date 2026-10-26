@@ -1,0 +1,7 @@
+- Vision noise (~2 mm) means we can’t trust exact coordinates; use a small safety margin when moving to an object.  
+- Align the gripper’s closing direction with the object’s yaw (or yaw + π/2) so the fingers face the object’s faces.  
+- Lower the tool point just enough to touch the cube (≈ object z + 0.01 m) before closing; verify with `robot.holding()`.  
+- When placing, target the centre of the matching tray and lower to just above the tray floor (≈ 0.015 m) before releasing.  
+- Catch `MotionError` for unreachable targets and fall back to a higher or shifted pose.  
+- Keep travel speeds low (≈ 0.07 m/s) near objects and use the default speed for longer moves.  
+- The scene may change mid‑run (e.g., an object disappears); re‑observe after each major step and retry a bounded number of times.

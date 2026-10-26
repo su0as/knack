@@ -1,0 +1,81 @@
+--- round_4/skill.py
++++ round_5/skill.py
+@@ -7,7 +7,7 @@
+     Returns True if both placements succeed.
+     """
+     # ----- safety limits -------------------------------------------------
+-    SAFE_X_MIN, SAFE_X_MAX = 0.04, 0.32
++    SAFE_X_MIN, SAFE_X_MAX = 0.04, 0.35   # expanded x range
+     SAFE_Y_MIN, SAFE_Y_MAX = -0.26, 0.26
+     SAFE_Z_MIN, SAFE_Z_MAX = 0.014, 0.26
+ 
+@@ -18,7 +18,7 @@
+     RELEASE_HEIGHT = 0.015         # m, nominal height of the tray floor
+     RELEASE_Z_ABOVE = RELEASE_HEIGHT + 0.01   # a little above the tray floor
+     LATERAL_FALLBACK = 0.02        # m, small shift for fallbacks
+-    MAX_GRASP_RETRIES = 2
++    MAX_GRASP_RETRIES = 5          # more attempts before giving up
+     MAX_ATTEMPTS = 30
+     LOW_SPEED = 0.05
+     APPROACH_SPEED = 0.05          # slower speed to avoid blocking
+@@ -40,6 +40,7 @@
+     attempts = 0
+     prev_center = {}               # remember previous centre for stability
+     grasp_retries = {"red": 0, "blue": 0}
++    not_visible_streak = {"red": 0, "blue": 0}   # consecutive invisibility
+ 
+     # ----- helper: safe clipping ----------------------------------------
+     def clamp(val, min_val, max_val):
+@@ -51,9 +52,13 @@
+         tries = 0
+         while tries < max_tries:
+             robot.log(f"Moving to approach at ({x:.3f},{y:.3f},{height:.3f})")
+-            resp = robot.move_to(x, y, height,
+-                                 yaw=None, speed=APPROACH_SPEED)
+-            if resp["ok"]:
++            try:
++                resp = robot.move_to(x, y, height,
++                                     yaw=None, speed=APPROACH_SPEED)
++            except Exception as e:          # catches MotionError and any other raise
++                robot.log(f"{description} move raised exception: {e}")
++                resp = {"ok": False}
++            if resp.get("ok"):
+                 return True
+             tries += 1
+             robot.log(f"{description} failed: blocked or error")
+@@ -63,9 +68,13 @@
+                     nx = clamp(x + off_x, SAFE_X_MIN, SAFE_X_MAX)
+                     ny = clamp(y + off_y, SAFE_Y_MIN, SAFE_Y_MAX)
+                     robot.log(f"Trying fallback {off_x:+.2f}/{off_y:+.2f}")
+-                    resp = robot.move_to(nx, ny, height,
+-                                         yaw=None, speed=APPROACH_SPEED)
+-                    if resp["ok"]:
++                    try:
++                        resp = robot.move_to(nx, ny, height,
++                                             yaw=None, speed=APPROACH_SPEED)
++                    except Exception as e:
++                        robot.log(f"Fallback move raised exception: {e}")
++                        resp = {"ok": False}
++                    if resp.get("ok"):
+                         return True
+         return False
+ 
+@@ -76,6 +85,18 @@
+         obs = robot.observe()
+         objs = obs.get("objects", {})
+         fixtures = obs.get("fixtures", {})
++
++        # ----- track visibility loss ---------------------------------------
++        for colour in ("red", "blue"):
++            if not placed[colour]:
++                if colour not in objs or objs[colour]["shape"] != "cube":
++                    not_visible_streak[colour] += 1
++                    if not_visible_streak[colour] >= 3:
++                        robot.log(f"Cube {colour} lost after 3 invisible frames; skipping")
++                        not_visible_streak[colour] = 0
++                        continue
++                else:
++                    not_visible_streak[colour] = 0
+ 
+         # ----- extract cube and tray poses ---------------------------------
+         cube_info = {}

@@ -1,0 +1,260 @@
+{
+ "round": 5,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 3,
+ "errors": 3,
+ "wall_s": 48.4,
+ "usd_cum": 0.01021,
+ "code": "round_5/skill.py",
+ "diff": "round_5/diff.patch",
+ "lines": 236,
+ "notes": "- Raised `MAX_GRASP_RETRIES` from 2 to 5 and added a brief lift before each retry to clear the object.\n- Expanded the safe workspace: `SAFE_X_MAX` increased to 0.35\u202fm and diagonal fallback (\u00b10.02\u202fm) added to escape boundary blocks.\n- Wrapped every `robot.move_to` in a try/except to catch `MotionError` (and any other exception) and treat it as a failed attempt, preventing crashes.\n- Added a visibility\u2011loss guard: if a cube is not seen for 3 consecutive frames, the loop breaks and logs \u201ccube lost\u201d, avoiding endless spins.\n- Kept approach speed at 0.05\u202fm/s for all contact/approach moves and retained low\u2011speed release; only tightened fallback logic and retry limits.\n- Preserved existing stability\u2011center checks, grasp verification, and release\u2011confirmation logic; only refined loop bounds and error handling.\n- Maintained the return\u2011True only when both cubes are confirmed placed, ensuring no regression in successful episodes.",
+ "perception": {
+  "episodes": 8,
+  "lookups": 148,
+  "misses": 25,
+  "detection_rate": 0.8311,
+  "median_of_episode_median_err_mm": 3.61
+ },
+ "episodes": [
+  {
+   "seed": 5000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0187,
+    "red_cube_tray_dy": 0.0778,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.1203,
+    "blue_cube_tray_dy": 0.0284,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0351,
+    "red_cube_tray_dy": 0.1922,
+    "red_cube_z": 0.019,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0746,
+    "blue_cube_tray_dy": 0.0278,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0014,
+    "red_cube_tray_dy": 0.1361,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0346,
+    "blue_cube_tray_dy": 0.081,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 70 s exceeded",
+    "traceback": "  skill.py line 204, in run: if not try_approach(tray_x, tray_y, RELEASE_HEIGHT,\n  skill.py line 72, in try_approach: resp = robot.move_to(nx, ny, height,\nEpisodeTimeout: time budget of 70 s exceeded"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0401,
+    "red_cube_tray_dy": 0.0853,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0434,
+    "blue_cube_tray_dy": 0.1014,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 70 s exceeded",
+    "traceback": "  skill.py line 185, in run: if not try_approach(tray_x, tray_y, RELEASE_Z_ABOVE,\n  skill.py line 72, in try_approach: resp = robot.move_to(nx, ny, height,\nEpisodeTimeout: time budget of 70 s exceeded"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.093,
+    "red_cube_tray_dy": 0.2098,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.1111,
+    "blue_cube_tray_dy": 0.3857,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0163,
+    "red_cube_tray_dy": 0.0237,
+    "red_cube_z": 0.0232,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.1017,
+    "blue_cube_tray_dy": 0.2174,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": true,
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0124,
+    "red_cube_tray_dy": 0.1635,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.1004,
+    "blue_cube_tray_dy": 0.3342,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 5007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 70 s exceeded",
+    "traceback": "  skill.py line 185, in run: if not try_approach(tray_x, tray_y, RELEASE_Z_ABOVE,\n  skill.py line 72, in try_approach: resp = robot.move_to(nx, ny, height,\nEpisodeTimeout: time budget of 70 s exceeded"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0417,
+    "red_cube_tray_dy": 0.2027,
+    "red_cube_z": 0.0189,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0754,
+    "blue_cube_tray_dy": 0.0852,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

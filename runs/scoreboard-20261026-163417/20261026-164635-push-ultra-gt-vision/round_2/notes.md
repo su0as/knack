@@ -1,0 +1,2 @@
+- Fixed bare `except:` on line 67 to `except Exception:` to comply with safety rules.
+- No other changes needed; the push logic and retry structure remain the same.

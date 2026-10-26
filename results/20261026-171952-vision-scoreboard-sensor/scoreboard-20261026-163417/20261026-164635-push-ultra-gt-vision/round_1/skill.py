@@ -1,0 +1,68 @@
+import math
+
+def run(robot):
+    # Get initial observation
+    obs = robot.observe()
+    puck = obs['objects'].get('puck')
+    target = obs['fixtures'].get('target')
+    
+    if not puck or not target:
+        robot.log("Missing puck or target in observation")
+        return False
+    
+    puck_pos = puck['pos']
+    target_pos = target['pos']
+    target_radius = target['radius']
+    puck_radius = puck['size']['radius']
+    
+    # Compute push direction (from puck to target)
+    dx = target_pos[0] - puck_pos[0]
+    dy = target_pos[1] - puck_pos[1]
+    dist = math.hypot(dx, dy)
+    
+    if dist < 1e-3:
+        robot.log("Puck already at target")
+        return True
+    
+    # Unit vector from puck to target
+    ux = dx / dist
+    uy = dy / dist
+    
+    # Approach position: behind puck by ~2*puck_radius + margin
+    approach_dist = 2 * puck_radius + 0.03  # ~9cm behind
+    approach_x = puck_pos[0] - ux * approach_dist
+    approach_y = puck_pos[1] - uy * approach_dist
+    approach_z = 0.0225  # tool point height for mid-puck push
+    
+    # Push target: move to puck center + a bit beyond target
+    push_distance = dist + puck_radius + 0.02  # push through target
+    push_x = puck_pos[0] + ux * push_distance
+    push_y = puck_pos[1] + uy * push_distance
+    push_z = approach_z
+    
+    # Yaw aligned with push direction (fingers perpendicular to push)
+    push_yaw = math.atan2(uy, ux) + math.pi/2  # fingers oriented across push direction
+    
+    # Move to approach position (above, then down)
+    robot.move_to(approach_x, approach_y, 0.15, speed=0.15)
+    robot.move_to(approach_x, approach_y, approach_z, speed=0.05)
+    
+    # Push forward slowly
+    robot.move_to(push_x, push_y, push_z, yaw=push_yaw, speed=0.03)
+    
+    # Retract and re-observe
+    robot.move_to(approach_x, approach_y, 0.15, speed=0.15)
+    robot.wait(0.5)
+    
+    # Verify
+    obs2 = robot.observe()
+    puck2 = obs2['objects'].get('puck')
+    if puck2:
+        px, py, _ = puck2['pos']
+        tx, ty, _ = target_pos
+        final_dist = math.hypot(px - tx, py - ty)
+        robot.log(f"Final puck-target distance: {final_dist:.4f}, target radius: {target_radius}")
+        return final_dist <= target_radius
+    
+    robot.log("Puck not visible after push")
+    return False

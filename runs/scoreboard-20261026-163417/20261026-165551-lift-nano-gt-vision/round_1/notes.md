@@ -1,0 +1,7 @@
+- The scene may miss the target object if it’s occluded; we must check `observe()['objects']` and fall back to `robot.get_pose()` with error handling.
+- The red cube’s centre is at ~z = 0.015 m; to lift it ≥ 5 cm above the table we need a final pose with z ≥ 0.05 m.
+- A safe pre‑grasp pose is a small offset (≈0.02 m) above the cube centre, with the gripper yaw aligned to the cube’s yaw so the fingers close along its faces.
+- Use low speed (0.07 m/s) for approach and lift moves; wrap `move_to` in a try/except for `MotionError` and retry a bounded number of times.
+- After moving to grasp height, call `robot.grasp()` and verify `robot.holding()`; if it fails, back‑off a little and retry once before giving up.
+- Once the object is held, lift it to the target height in one smooth move; if the lift is blocked, abort and return False.
+- Keep the code simple and deterministic – no hard‑coded coordinates, only values derived from the perceived pose.

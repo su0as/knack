@@ -1,0 +1,71 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -23,11 +23,10 @@
+     obs = robot.observe()
+     red = obs.get('objects', {}).get('red_cube')
+     if red is None:
+-        # Fallback to direct pose query if the cube is not in the observation
+         try:
+             pose = robot.get_pose('red_cube')
+             red = {'pos': pose['pos'], 'yaw': pose['yaw']}
+-        except Exception as e:  # MotionError or any other unexpected error
++        except Exception as e:
+             robot.log(f"red_cube pose not available: {e}")
+             return False
+ 
+@@ -36,12 +35,14 @@
+     # ------------------------------------------------------------------
+     obj = _pose_from_observation(red['pos'], red['yaw'])
+ 
+-    # Required final height is >= 0.065 m; we use a safe margin of 0.08 m.
+-    PRE_GRASP_Z = obj.z + 0.08          # 8 cm above the cube centre (collision‑free)
+-    LIFT_Z = 0.08                       # target height after lift
++    # Required final height is >= 0.065 m; we add a safe margin.
++    REQUIRED_HEIGHT = 0.065
++    # Pre‑grasp must be high enough to avoid the table and to give a lift margin.
++    PRE_GRASP_Z = obj.z + 0.12          # 12 cm above cube centre (collision‑free)
++    LIFT_MARGIN = 0.02                  # extra lift after grasp
+     APPROACH_SPEED = 0.07               # low speed for safety
+     LIFT_SPEED = 0.07                   # same speed for the lift
+-    NUDGE_DZ = 0.04                     # larger upward nudge on recovery
++    NUDGE_DZ = 0.04                     # upward nudge on recovery
+     WAIT_AFTER_CLOSE = 0.2              # seconds to let fingers seat
+ 
+     # ------------------------------------------------------------------
+@@ -58,8 +59,6 @@
+             result = robot.move_to(pose.x, pose.y, pose.z,
+                                    yaw=pose.yaw, speed=speed)
+             if not result['ok']:
+-                # The motion layer signals failure via a blocked state;
+-                # treat it as an exception to trigger retry logic.
+                 raise MotionError("move_to blocked")
+             return True
+         except Exception:  # MotionError or any other move‑related exception
+@@ -103,23 +102,19 @@
+         if robot.holding() != 'red_cube':
+             robot.log("Object still not held after recovery")
+             return False
+-        # Give fingers a moment to seat before proceeding
+         robot.wait(WAIT_AFTER_CLOSE)
+ 
+     # ------------------------------------------------------------------
+-    # 6. Anti‑slip delay – let the fingers close fully (already waited above)
++    # 6. Optional lift to guarantee required height
+     # ------------------------------------------------------------------
+-
+-    # ------------------------------------------------------------------
+-    # 7. Lift to the required height (≥ 0.065 m, we use 0.08 m)
+-    # ------------------------------------------------------------------
+-    lift_pose = Pose(pre_grasp.x, pre_grasp.y, LIFT_Z, pre_grasp.yaw)
++    lift_z = pre_grasp.z + LIFT_MARGIN   # ensure we are well above 0.065 m
++    lift_pose = Pose(pre_grasp.x, pre_grasp.y, lift_z, pre_grasp.yaw)
+     if not try_move_to(lift_pose, LIFT_SPEED):
+         robot.log("Lift to required height failed")
+         return False
+ 
+     # ------------------------------------------------------------------
+-    # 8. Success
++    # 7. Success
+     # ------------------------------------------------------------------
+     robot.log("Red cube lifted and held at required height")
+     return True

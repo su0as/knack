@@ -1,0 +1,5 @@
+- The failure analysis shows two main issues: (1) push target often ends up beyond the reachable workspace or too far past the target, causing overshoot; (2) the retry loop works but the push margin is too large.
+- The current code sets `push_margin = puck_radius + 0.02`, which places the push target *beyond* the target centre (since the unit vector points from puck to target). This pushes the puck past the green circle.
+- Fix: reduce `push_margin` to `0.5 * puck_radius` so the push target is just short of the target centre, and add a post-clamp check to ensure the push point isn't collapsed to the approach point.
+- Also define `max_attempts` (was missing) and clean up the try/except structure.
+- Keep the safe workspace clamping and two-attempt retry loop.

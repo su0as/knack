@@ -1,0 +1,163 @@
+--- round_0/skill.py
++++ round_1/skill.py
+@@ -0,0 +1,160 @@
++# skill module
++import math
++import numpy as np
++
++def run(robot):
++    """
++    Sort red cube into red tray and blue cube into blue tray.
++    Returns True if both cubes are successfully placed.
++    """
++    # Helper: get pose with safe fallback
++    def safe_pose(name):
++        try:
++            return robot.get_pose(name)
++        except LookupError:
++            # object hidden; try to move gripper away and re‑observe later
++            return None
++
++    # Main loop runs until both cubes are placed or we give up after a few attempts
++    placed = {"red": False, "blue": False}
++    attempts = 0
++    max_attempts = 30   # safety bound (≈ 3 s at 10 Hz)
++
++    while not all(placed.values()) and attempts < max_attempts:
++        attempts += 1
++        robot.log(f"Attempt {attempts}")
++        obs = robot.observe()
++        objs = obs.get("objects", {})
++        fixtures = obs.get("fixtures", {})
++
++        # Identify cubes and matching trays by colour
++        cube_info = {}
++        for name, data in objs.items():
++            if data["shape"] == "cube":
++                cube_info[data["color"]] = {"pose": data["pos"], "yaw": data["yaw"], "name": name}
++
++        tray_pos = {}
++        for name, data in fixtures.items():
++            if data["kind"] == "tray":
++                tray_pos[data["color"]] = data["pos"]
++
++        # Process each colour that has both cube and tray
++        for colour in ("red", "blue"):
++            if placed[colour]:
++                continue
++            cube = cube_info.get(colour)
++            tray = tray_pos.get(colour)
++            if not cube or not tray:
++                # missing object or tray – skip this iteration
++                continue
++
++            # -------- Pick up the cube ----------
++            # Target pose: align gripper with cube yaw, go slightly above centre
++            target_x, target_y = cube["pose"][0], cube["pose"][1]
++            # Add a small offset to avoid colliding with the table edge
++            offset = 0.015
++            target_z = cube["pose"][2] + offset
++            # Use a low speed for precise approach
++            approach_speed = 0.07
++
++            # Compute a safe approach point a little forward in the gripper direction
++            # (gripper points along world yaw; we want to close towards the cube faces)
++            gripper_yaw = cube["yaw"]  # align closing direction with cube orientation
++            dx = math.cos(gripper_yaw) * 0.02   # 2 cm forward
++            dy = math.sin(gripper_yaw) * 0.02
++            approach_x = target_x + dx
++            approach_y = target_y + dy
++
++            # Move to approach point
++            try:
++                robot.log(f"Moving to approach {colour} cube at ({approach_x:.3f},{approach_y:.3f},{target_z:.3f})")
++                resp = robot.move_to(approach_x, approach_y, target_z,
++                                     yaw=gripper_yaw,
++                                     speed=approach_speed)
++                if not resp["ok"]:
++                    raise MotionError("blocked on approach")
++            except Exception as e:
++                robot.log(f"Approach failed: {e}")
++                continue   # retry next attempt
++
++            # Lower a bit more to make contact
++            contact_z = cube["pose"][2] + 0.005   # just touch the top
++            try:
++                robot.log("Descending to contact")
++                resp = robot.move_to(approach_x, approach_y, contact_z,
++                                     yaw=gripper_yaw,
++                                     speed=0.05)
++                if not resp["ok"]:
++                    raise MotionError("blocked on contact")
++            except Exception as e:
++                robot.log(f"Contact move failed: {e}")
++                continue
++
++            # Close fingers
++            robot.log("Closing grasp")
++            if not robot.grasp():
++                robot.log("Grasp failed, retry")
++                # Release any partial hold and retry
++                robot.release()
++                continue
++
++            # Verify hold
++            held = robot.holding()
++            if held != cube["name"]:
++                robot.log(f"Holding check failed: expected {cube['name']}, got {held}")
++                robot.release()
++                continue
++
++            # -------- Move to target tray ----------
++            # Target above tray centre, then lower to release height
++            tray_x, tray_y = tray[0], tray[1]
++            release_z = 0.015   # just above tray floor (cube centre at 0.015)
++            # Align gripper orientation with tray colour (no special yaw needed)
++            release_yaw = None
++
++            # Move to above tray
++            try:
++                robot.log(f"Moving to release zone over {colour} tray at ({tray_x:.3f},{tray_y:.3f},{release_z+0.02:.3f})")
++                resp = robot.move_to(tray_x, tray_y, release_z + 0.02,
++                                     yaw=release_yaw,
++                                     speed=0.07)
++                if not resp["ok"]:
++                    raise MotionError("blocked on tray approach")
++            except Exception as e:
++                robot.log(f"Tray approach failed: {e}")
++                continue
++
++            # Lower to release height
++            try:
++                robot.log("Lowering to release height")
++                resp = robot.move_to(tray_x, tray_y, release_z,
++                                     yaw=release_yaw,
++                                     speed=0.05)
++                if not resp["ok"]:
++                    raise MotionError("blocked on release descent")
++            except Exception as e:
++                robot.log(f"Release descent failed: {e}")
++                continue
++
++            # Open fingers to release cube
++            robot.log("Releasing cube")
++            robot.release()
++
++            # Verify release (optional)
++            if robot.holding() is not None:
++                robot.log("Release check failed, retry")
++                # Try a small lift and release again
++                robot.move_to(tray_x, tray_y, release_z + 0.02, yaw=release_yaw, speed=0.07)
++                robot.release()
++
++            # Mark colour as placed
++            placed[colour] = True
++            robot.log(f"Successfully placed {colour} cube")
++
++        # Small pause to let simulation settle
++        robot.wait(0.2)
++
++    # Final result
++    success = all(placed.values())
++    robot.log(f"Skill finished, success={success}")
++    return success

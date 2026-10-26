@@ -1,0 +1,260 @@
+{
+ "round": 6,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 2,
+ "errors": 3,
+ "wall_s": 57.8,
+ "usd_cum": 0.0137,
+ "code": "round_6/skill.py",
+ "diff": "round_6/diff.patch",
+ "lines": 242,
+ "notes": "- Raised approach speed to 0.10\u202fm/s (kept contact/release at 0.05\u202fm/s) to reduce blocking while still being gentle.  \n- Added a cap of 3 fallback attempts per `try_approach` to stop endless fallback loops that exhaust the time budget.  \n- Fixed grasp\u2011failure handling: after a failed grasp we now `break` out of the colour loop instead of `continue`, so the current colour is retried on the next while iteration rather than skipping to the next colour.  \n- Increased the invisibility\u2011streak threshold from 3 to 5 frames to avoid prematurely discarding a cube that briefly disappears.  \n- Minor clean\u2011ups: use `break` to restart the while loop after a colour is abandoned, and keep all existing stability, grasp\u2011verification and release logic unchanged.  \n- Preserved all successful behaviours from previous versions (stability\u2011center check, grasp verification, release confirmation, etc.).",
+ "perception": {
+  "episodes": 8,
+  "lookups": 244,
+  "misses": 85,
+  "detection_rate": 0.6516,
+  "median_of_episode_median_err_mm": 6.92
+ },
+ "episodes": [
+  {
+   "seed": 6000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0096,
+    "red_cube_tray_dy": 0.16,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0017,
+    "blue_cube_tray_dy": 0.0128,
+    "blue_cube_z": 0.0189,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": true
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 70 s exceeded",
+    "traceback": "  skill.py line 158, in run: if not try_approach(app_x, app_y, contact_z,\n  skill.py line 60, in try_approach: resp = robot.move_to(x, y, height,\nEpisodeTimeout: time budget of 70 s exceeded"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0872,
+    "red_cube_tray_dy": 0.1342,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.1562,
+    "blue_cube_tray_dy": 0.1444,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0671,
+    "red_cube_tray_dy": 0.0422,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0968,
+    "blue_cube_tray_dy": 0.3522,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.0246,
+    "red_cube_tray_dy": 0.1657,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0365,
+    "blue_cube_tray_dy": 0.363,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": true,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.073,
+    "red_cube_tray_dy": 0.0402,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.066,
+    "blue_cube_tray_dy": 0.029,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 70 s exceeded",
+    "traceback": "  skill.py line 210, in run: if not try_approach(tray_x, tray_y, RELEASE_HEIGHT,\n  skill.py line 75, in try_approach: resp = robot.move_to(nx, ny, height,\nEpisodeTimeout: time budget of 70 s exceeded"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0189,
+    "red_cube_tray_dy": 0.067,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.0835,
+    "blue_cube_tray_dy": 0.1508,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": false,
+   "judge": null,
+   "error": null,
+   "metrics": {
+    "red_cube_tray_dx": 0.1423,
+    "red_cube_tray_dy": 0.1489,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.038,
+    "blue_cube_tray_dy": 0.3181,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 6007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "EpisodeTimeout",
+    "message": "time budget of 70 s exceeded",
+    "traceback": "  skill.py line 237, in run: robot.wait(0.2)\nEpisodeTimeout: time budget of 70 s exceeded"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0016,
+    "red_cube_tray_dy": 0.0774,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.044,
+    "blue_cube_tray_dy": 0.0669,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

@@ -1,0 +1,65 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -32,17 +32,17 @@
+             return False
+ 
+     # ------------------------------------------------------------------
+-    # 2. Compute useful poses and constants
++    # 2. Geometry constants derived from the observed object
+     # ------------------------------------------------------------------
+     obj = _pose_from_observation(red['pos'], red['yaw'])
+ 
+-    # Cube centre is roughly at z = 0.015 m.
+-    # Required final height is >= 0.05 m; we add a safety margin.
++    # Cube centre is roughly at z ≈ 0.015 m.
++    # Required final height is ≥ 0.065 m (5 cm above table); we add a small margin.
+     OFFSET = 0.05                     # pre‑grasp offset to reach ~0.065 m
+     PRE_GRASP_Z = obj.z + OFFSET      # target height before closing fingers
+-    TARGET_Z = PRE_GRASP_Z            # already satisfies the 5 cm requirement
++    LIFT_Z = 0.08                     # required height with safety margin
+     APPROACH_SPEED = 0.07             # low speed for safety
+-    LIFT_SPEED = 0.07
++    LIFT_SPEED = 0.07                 # same speed for the lift
+ 
+     # ------------------------------------------------------------------
+     # 3. Pre‑grasp pose (above the cube)
+@@ -53,7 +53,7 @@
+     # 4. Helper: safe move_to with retry and jitter
+     # ------------------------------------------------------------------
+     def try_move_to(pose, speed):
+-        """Attempt a move_to; return True on success, False on MotionError."""
++        """Attempt a move_to; return True on success, False on any exception."""
+         try:
+             result = robot.move_to(pose.x, pose.y, pose.z,
+                                    yaw=pose.yaw, speed=speed)
+@@ -94,11 +94,10 @@
+     else:
+         # First closure failed – try a small upward nudge and retry once
+         robot.log("First grasp failed, attempting recovery")
+-        robot.move_by(dz=0.01)  # lift a little to clear any contact issue
++        robot.move_by(dz=0.02)  # larger nudge for reliability
+         if not robot.grasp():
+             robot.log("Second grasp also failed")
+             return False
+-        # Verify hold after recovery
+         if robot.holding() != 'red_cube':
+             robot.log("Object still not held after recovery")
+             return False
+@@ -109,12 +108,12 @@
+     robot.wait(0.3)  # 300 ms pause
+ 
+     # ------------------------------------------------------------------
+-    # 7. Lift (if needed) – currently already at required height
++    # 7. Lift to the required height (≥ 0.065 m, we use 0.08 m)
+     # ------------------------------------------------------------------
+-    # The pose we are already at (pre_grasp) meets the height requirement.
+-    # If a small extra lift is desired for extra safety, uncomment:
+-    # hold_pose = Pose(pre_grasp.x, pre_grasp.y, TARGET_Z + 0.001, pre_grasp.yaw)
+-    # try_move_to(hold_pose, LIFT_SPEED)
++    lift_pose = Pose(pre_grasp.x, pre_grasp.y, LIFT_Z, pre_grasp.yaw)
++    if not try_move_to(lift_pose, LIFT_SPEED):
++        robot.log("Lift to required height failed")
++        return False
+ 
+     # ------------------------------------------------------------------
+     # 8. Success

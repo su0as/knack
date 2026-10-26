@@ -1,0 +1,4 @@
+- First attempt at stacking red cube on blue cube
+- Need to observe both cube positions, pick up red, place on blue, release
+- Cubes are 3cm cubes, centers at z=0.015 on table, top of blue at z=0.03, red center at z=0.045 when stacked
+- Will use yaw alignment for grasping, slow speeds near objects, verify holding after grasp

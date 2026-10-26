@@ -1,0 +1,67 @@
+--- round_5/skill.py
++++ round_6/skill.py
+@@ -7,6 +7,8 @@
+     approach_z = 0.0225
+     push_z = 0.0225
+     retract_x, retract_y, retract_z = 0.15, 0.0, 0.15
++    approach_margin = 0.03
++    min_push_distance = 0.02
+ 
+     def clamp_point(x, y):
+         """Clamp to the safe rectangle (2 cm inside hard limits)."""
+@@ -32,15 +34,19 @@
+         dy = target_pos[1] - puck_pos[1]
+         dist = math.hypot(dx, dy)
+ 
++        if dist <= target_radius:
++            robot.log("Puck already inside target")
++            return True
++
+         if dist < 1e-3:
+-            robot.log("Puck already at target")
++            robot.log("Puck and target centres coincide")
+             return True
+ 
+         ux = dx / dist
+         uy = dy / dist
+ 
+         # Approach point: behind the puck (further from target)
+-        approach_dist = puck_radius + 0.03
++        approach_dist = puck_radius + approach_margin
+         approach_x = puck_pos[0] - ux * approach_dist
+         approach_y = puck_pos[1] - uy * approach_dist
+ 
+@@ -52,15 +58,27 @@
+         approach_x, approach_y = clamp_point(approach_x, approach_y)
+         push_x, push_y = clamp_point(push_x, push_y)
+ 
+-        # Yaw aligned with the actual push direction (approach → push)
++        # Ensure minimum push distance by moving approach further back if needed
+         push_dx = push_x - approach_x
+         push_dy = push_y - approach_y
+         push_dist = math.hypot(push_dx, push_dy)
+-        if push_dist < 0.005:
+-            robot.log("Push distance too small after clamping")
+-            robot.wait(0.5)
+-            continue
+-        push_yaw = math.atan2(push_dy, push_dx)
++        if push_dist < min_push_distance:
++            # Increase approach distance and recompute approach point
++            extra = min_push_distance - push_dist + 0.005  # small buffer
++            approach_dist += extra
++            approach_x = puck_pos[0] - ux * approach_dist
++            approach_y = puck_pos[1] - uy * approach_dist
++            approach_x, approach_y = clamp_point(approach_x, approach_y)
++            push_dx = push_x - approach_x
++            push_dy = push_y - approach_y
++            push_dist = math.hypot(push_dx, push_dy)
++            if push_dist < 0.005:
++                robot.log("Push distance still too small after adjustment")
++                robot.wait(0.5)
++                continue
++
++        # Yaw aligned with the original puck→target direction
++        push_yaw = math.atan2(uy, ux)
+ 
+         try:
+             # Move to approach position (high then low)

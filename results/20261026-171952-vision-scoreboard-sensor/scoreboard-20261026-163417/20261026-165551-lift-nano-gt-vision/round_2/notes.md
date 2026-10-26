@@ -1,0 +1,7 @@
+- Increased the pre‑grasp offset to 0.04 m so the arm starts at ≈0.055 m, guaranteeing clearance before the lift.  
+- Raised the target lift height to 0.055 m (5.5 cm) to stay safely above the required 5 cm despite sensor noise.  
+- Inserted a 0.3 s `robot.wait()` after a successful `grasp()` to let the fingers close and avoid slipping.  
+- Added a small retry loop with jitter and `MotionError` handling for every `move_to`, keeping the skill robust to transient collisions.  
+- Used low speed (0.07 m/s) for approach and lift, verified holding after grasp, and retried once if the first grasp fails.  
+- Fallback to `robot.get_pose()` when the cube is not in the observation, with clear logging.  
+- All poses are computed from the perceived object pose; no hard‑coded coordinates remain.

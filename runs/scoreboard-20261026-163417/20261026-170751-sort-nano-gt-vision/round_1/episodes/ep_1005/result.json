@@ -1,0 +1,746 @@
+{
+ "task": "sort",
+ "seed": 1005,
+ "error": {
+  "type": "EpisodeTimeout",
+  "message": "time budget of 70 s exceeded",
+  "traceback": "  skill.py line 71, in run: resp = robot.move_to(approach_x, approach_y, target_z,\nEpisodeTimeout: time budget of 70 s exceeded"
+ },
+ "self_report": null,
+ "success_gt": false,
+ "metrics": {
+  "red_cube_tray_dx": 0.021,
+  "red_cube_tray_dy": 0.2482,
+  "red_cube_z": 0.0149,
+  "red_cube_held": false,
+  "blue_cube_tray_dx": 0.0567,
+  "blue_cube_tray_dy": 0.1341,
+  "blue_cube_z": 0.0149,
+  "blue_cube_held": false,
+  "red_ok": "False",
+  "blue_ok": "False"
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Attempt 1"
+  },
+  {
+   "t": 0.0,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 0.0,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.092,-0.134,0.029)"
+  },
+  {
+   "t": 4.18,
+   "call": "move_to(0.092, -0.134, 0.029, yaw=0.556, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.0963,
+     -0.1369,
+     0.0389
+    ],
+    "error_m": 0.0107,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 4.18,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 4.18,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.206,0.041,0.028)"
+  },
+  {
+   "t": 8.22,
+   "call": "move_to(0.206, 0.041, 0.028, yaw=-0.106, speed=0.070)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2062,
+     0.041,
+     0.0282
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 8.22,
+   "call": "log",
+   "result": "Descending to contact"
+  },
+  {
+   "t": 8.46,
+   "call": "move_to(0.206, 0.041, 0.018, yaw=-0.106, speed=0.050)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.2059,
+     0.0411,
+     0.0178
+    ],
+    "error_m": 0.0005
+   }
+  },
+  {
+   "t": 8.46,
+   "call": "log",
+   "result": "Closing grasp"
+  },
+  {
+   "t": 8.96,
+   "call": "grasp()",
+   "result": {
+    "holding": null,
+    "opening": 0.0035
+   }
+  },
+  {
+   "t": 8.96,
+   "call": "log",
+   "result": "Grasp failed, retry"
+  },
+  {
+   "t": 9.36,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 9.56,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 9.56,
+   "call": "log",
+   "result": "Attempt 2"
+  },
+  {
+   "t": 9.56,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 9.56,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.117,-0.122,0.029)"
+  },
+  {
+   "t": 13.74,
+   "call": "move_to(0.117, -0.122, 0.029, yaw=0.584, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1166,
+     -0.1088,
+     0.0266
+    ],
+    "error_m": 0.0134,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 13.74,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 13.74,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.240,0.072,0.028)"
+  },
+  {
+   "t": 18.38,
+   "call": "move_to(0.240, 0.072, 0.028, yaw=0.400, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2247,
+     -0.0058,
+     0.0185
+    ],
+    "error_m": 0.0803,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 18.38,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 18.58,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 18.58,
+   "call": "log",
+   "result": "Attempt 3"
+  },
+  {
+   "t": 18.58,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 18.58,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.116,-0.122,0.029)"
+  },
+  {
+   "t": 22.36,
+   "call": "move_to(0.116, -0.122, 0.029, yaw=0.588, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.116,
+     -0.1085,
+     0.0249
+    ],
+    "error_m": 0.0141,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 22.36,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 22.36,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.237,0.079,0.028)"
+  },
+  {
+   "t": 27.06,
+   "call": "move_to(0.237, 0.079, 0.028, yaw=0.393, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2232,
+     -0.0035,
+     0.0173
+    ],
+    "error_m": 0.0845,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 27.06,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 27.26,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 27.26,
+   "call": "log",
+   "result": "Attempt 4"
+  },
+  {
+   "t": 27.26,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 27.26,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.116,-0.122,0.029)"
+  },
+  {
+   "t": 31.06,
+   "call": "move_to(0.116, -0.122, 0.029, yaw=0.583, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1159,
+     -0.1084,
+     0.0248
+    ],
+    "error_m": 0.0143,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 31.06,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 31.06,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.237,0.079,0.028)"
+  },
+  {
+   "t": 35.76,
+   "call": "move_to(0.237, 0.079, 0.028, yaw=0.406, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2231,
+     -0.0029,
+     0.0172
+    ],
+    "error_m": 0.0838,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 35.76,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 35.96,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 35.96,
+   "call": "log",
+   "result": "Attempt 5"
+  },
+  {
+   "t": 35.96,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 35.96,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.116,-0.122,0.029)"
+  },
+  {
+   "t": 39.76,
+   "call": "move_to(0.116, -0.122, 0.029, yaw=0.578, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1158,
+     -0.1085,
+     0.0247
+    ],
+    "error_m": 0.0145,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 39.76,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 39.76,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.237,0.079,0.028)"
+  },
+  {
+   "t": 44.46,
+   "call": "move_to(0.237, 0.079, 0.028, yaw=0.398, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2233,
+     -0.0034,
+     0.0172
+    ],
+    "error_m": 0.0842,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 44.46,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 44.66,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 44.66,
+   "call": "log",
+   "result": "Attempt 6"
+  },
+  {
+   "t": 44.66,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 44.66,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.117,-0.122,0.029)"
+  },
+  {
+   "t": 48.46,
+   "call": "move_to(0.117, -0.122, 0.029, yaw=0.578, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.116,
+     -0.1084,
+     0.0246
+    ],
+    "error_m": 0.0145,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 48.46,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 48.46,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.237,0.079,0.028)"
+  },
+  {
+   "t": 53.16,
+   "call": "move_to(0.237, 0.079, 0.028, yaw=0.396, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2233,
+     -0.0034,
+     0.0172
+    ],
+    "error_m": 0.0844,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 53.16,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 53.36,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 53.36,
+   "call": "log",
+   "result": "Attempt 7"
+  },
+  {
+   "t": 53.36,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 53.36,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.116,-0.122,0.029)"
+  },
+  {
+   "t": 57.16,
+   "call": "move_to(0.116, -0.122, 0.029, yaw=0.587, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1159,
+     -0.1084,
+     0.0248
+    ],
+    "error_m": 0.0142,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 57.16,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 57.16,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.237,0.079,0.028)"
+  },
+  {
+   "t": 61.86,
+   "call": "move_to(0.237, 0.079, 0.028, yaw=0.403, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.2231,
+     -0.003,
+     0.0173
+    ],
+    "error_m": 0.084,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 61.86,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 62.06,
+   "call": "wait(0.20)",
+   "result": "ok"
+  },
+  {
+   "t": 62.06,
+   "call": "log",
+   "result": "Attempt 8"
+  },
+  {
+   "t": 62.06,
+   "call": "observe()",
+   "result": "ok"
+  },
+  {
+   "t": 62.06,
+   "call": "log",
+   "result": "Moving to approach red cube at (0.116,-0.122,0.029)"
+  },
+  {
+   "t": 65.86,
+   "call": "move_to(0.116, -0.122, 0.029, yaw=0.594, speed=0.070)",
+   "result": {
+    "ok": false,
+    "pos": [
+     0.1158,
+     -0.1086,
+     0.0248
+    ],
+    "error_m": 0.0141,
+    "note": "stopped short of the target (blocked by contact or joint limit)"
+   }
+  },
+  {
+   "t": 65.86,
+   "call": "log",
+   "result": "Approach failed: name 'MotionError' is not defined"
+  },
+  {
+   "t": 65.86,
+   "call": "log",
+   "result": "Moving to approach blue cube at (0.237,0.079,0.028)"
+  }
+ ],
+ "n_calls": 74,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": "time budget of 70 s exceeded",
+ "sim_time": 70.5,
+ "wall_time": 13.3,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.0733,
+     -0.1434,
+     0.0149
+    ],
+    "yaw": 0.5604,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1839,
+     0.0446,
+     0.0149
+    ],
+    "yaw": -0.1088,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.0763,
+     0.1163,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.1594,
+     -0.0615,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "final_obs": {
+  "time": 70.5,
+  "gripper": {
+   "pos": [
+    0.223,
+    -0.003,
+    0.0172
+   ],
+   "yaw": 0.4179,
+   "opening": 0.0029,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.0973,
+     -0.1319,
+     0.0149
+    ],
+    "yaw": -0.4636,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.2161,
+     0.0727,
+     0.0149
+    ],
+    "yaw": 0.4025,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {
+   "red_tray": {
+    "pos": [
+     0.0763,
+     0.1163,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "red",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   },
+   "blue_tray": {
+    "pos": [
+     0.1594,
+     -0.0615,
+     0.0
+    ],
+    "kind": "tray",
+    "color": "blue",
+    "inner_half_size": 0.044,
+    "wall_height": 0.025
+   }
+  }
+ },
+ "frames": {
+  "start_front": "start_front.jpg",
+  "start_side": "start_side.jpg",
+  "start_overhead": "start_overhead.jpg",
+  "end_front": "end_front.jpg",
+  "end_side": "end_side.jpg",
+  "end_overhead": "end_overhead.jpg"
+ },
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_tray": {
+   "x": 0.0763,
+   "y": 0.1163,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "blue_tray": {
+   "x": 0.1594,
+   "y": -0.0615,
+   "yaw": 0.0,
+   "fp": 0.072
+  },
+  "red_cube": {
+   "x": 0.0733,
+   "y": -0.1434,
+   "yaw": 0.5604,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1839,
+   "y": 0.0446,
+   "yaw": -0.1088,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 8,
+  "lookups": 16,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 3.08,
+  "pos_err_mm_p90": 3.42,
+  "yaw_err_deg_median": 0.32,
+  "by_camera": {
+   "overhead": 16,
+   "front": 0
+  },
+  "ms_per_observe_median": 174.6,
+  "fixtures_mapped": [
+   "blue_tray",
+   "red_tray"
+  ],
+  "fixture_err_mm": {
+   "red_tray": 2.88,
+   "blue_tray": 2.73
+  }
+ }
+}

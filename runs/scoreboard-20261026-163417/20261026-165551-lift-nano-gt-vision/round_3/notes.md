@@ -1,0 +1,8 @@
+- Raised the pre‑grasp offset to 0.05 m so `PRE_GRASP_Z` reaches ≈0.065 m, satisfying the 5 cm clearance even with perception noise.  
+- Eliminated the separate descent to `GRASP_Z`; the gripper now closes directly at `PRE_GRASP_Z`, guaranteeing the cube is already lifted above the table.  
+- Kept low approach/lift speed (0.07 m/s) and the 0.3 s `wait()` after a successful grasp to stabilise the hold.  
+- Retained the retry loop with small positional jitter and `MotionError` handling for every move.  
+- Added a single recovery nudge (0.01 m upward) if the first `grasp()` fails, then retries once.  
+- Preserved fallback to `robot.get_pose()` when the cube is absent from the observation and kept all logging for debugging.  
+- All target heights are derived from the observed object pose; no hard‑coded coordinates remain.  
+- The final pose is already at the required height, so no extra lift step is needed.

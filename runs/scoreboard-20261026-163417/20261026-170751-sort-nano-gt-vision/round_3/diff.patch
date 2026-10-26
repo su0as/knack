@@ -1,0 +1,223 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -12,9 +12,10 @@
+     SAFE_Z_MIN, SAFE_Z_MAX = 0.014, 0.26
+ 
+     # ----- parameters ----------------------------------------------------
+-    FORWARD_OFFSET = 0.01          # m, small enough to stay inside workspace
+-    CONTACT_OFFSET = 0.005         # m, just touch the top of the cube
+-    RELEASE_HEIGHT = 0.015         # m, cube centre height (table surface is 0)
++    FORWARD_OFFSET = 0.01          # m, small forward shift
++    LIFT_OFFSET = 0.02             # m, extra lift to clear the cube
++    CONTACT_OFFSET = 0.015         # m, distance from approach point to contact
++    RELEASE_HEIGHT = 0.015         # m, nominal height of the tray floor
+     LATERAL_FALLBACK = 0.02        # m, small shift if tray approach fails
+     MAX_GRASP_RETRIES = 2
+     MAX_ATTEMPTS = 30
+@@ -24,9 +25,7 @@
+     # ----- state ---------------------------------------------------------
+     placed = {"red": False, "blue": False}
+     attempts = 0
+-    # remember previous centre for stability check
+-    prev_center = {}
+-    # count grasp failures per colour
++    prev_center = {}               # remember previous centre for stability
+     grasp_retries = {"red": 0, "blue": 0}
+ 
+     while not all(placed.values()) and attempts < MAX_ATTEMPTS:
+@@ -46,10 +45,11 @@
+                     "name": name,
+                 }
+ 
++        # store only x,y for trays (fixture pos is [x, y, 0])
+         tray_info = {}
+         for name, data in fixtures.items():
+             if data["kind"] == "tray":
+-                tray_info[data["color"]] = data["pos"]
++                tray_info[data["color"]] = data["pos"][:2]   # (x, y)
+ 
+         # ----- process each colour -----------------------------------------
+         for colour in ("red", "blue"):
+@@ -72,7 +72,6 @@
+                 prev_center[colour] = cur_center
+ 
+             # ----- pick‑up ---------------------------------------------------
+-            # safe approach point (forward a little in gripper direction)
+             g_yaw = cube["yaw"]
+             dx = math.cos(g_yaw) * FORWARD_OFFSET
+             dy = math.sin(g_yaw) * FORWARD_OFFSET
+@@ -81,33 +80,54 @@
+             # clip to safe workspace
+             app_x = max(SAFE_X_MIN, min(SAFE_X_MAX, app_x))
+             app_y = max(SAFE_Y_MIN, min(SAFE_Y_MAX, app_y))
+-            app_z = cube["pose"][2] + 0.015   # lift a bit above the cube
+-            contact_z = app_z - 0.01          # just touch the top
+-
+-            # move to approach point
+-            try:
+-                robot.log(f"Moving to approach {colour} cube at "
+-                          f"({app_x:.3f},{app_y:.3f},{app_z:.3f})")
+-                resp = robot.move_to(app_x, app_y, app_z,
+-                                     yaw=g_yaw, speed=APPROACH_SPEED)
+-                if not resp["ok"]:
+-                    raise Exception("blocked on approach")
+-            except Exception as e:
+-                robot.log(f"Approach move failed: {e}")
+-                continue
+-
+-            # descend to contact
+-            try:
+-                robot.log("Descending to contact")
+-                resp = robot.move_to(app_x, app_y, contact_z,
+-                                     yaw=g_yaw, speed=LOW_SPEED)
+-                if not resp["ok"]:
+-                    raise Exception("blocked on contact")
+-            except Exception as e:
+-                robot.log(f"Contact move failed: {e}")
+-                continue
+-
+-            # close grasp
++            # lift a bit higher to avoid collision
++            app_z = cube["pose"][2] + LIFT_OFFSET
++            contact_z = app_z - CONTACT_OFFSET
++
++            # ---- move to approach point (with fallback) --------------------
++            def try_approach(x, y, height, description):
++                try:
++                    robot.log(f"Moving to approach {colour} cube at "
++                              f"({x:.3f},{y:.3f},{height:.3f})")
++                    resp = robot.move_to(x, y, height,
++                                         yaw=g_yaw, speed=APPROACH_SPEED)
++                    if not resp["ok"]:
++                        raise Exception("blocked on approach")
++                    return True
++                except Exception as e:
++                    robot.log(f"{description} failed: {e}")
++                    return False
++
++            # try nominal position first
++            if not try_approach(app_x, app_y, app_z, "Approach"):
++                # try small lateral fallbacks
++                fallback_offsets = [(LATERAL_FALLBACK, 0), (-LATERAL_FALLBACK, 0),
++                                    (0, LATERAL_FALLBACK), (0, -LATERAL_FALLBACK)]
++                for off_x, off_y in fallback_offsets:
++                    nx, ny = max(SAFE_X_MIN, min(SAFE_X_MAX, app_x + off_x)), \
++                             max(SAFE_Y_MIN, min(SAFE_Y_MAX, app_y + off_y))
++                    if try_approach(nx, ny, app_z,
++                                    f"Approach fallback {off_x:+.2f}/{off_y:+.2f}"):
++                        break
++                else:
++                    # all fallbacks failed – skip this colour
++                    robot.log(f"All approach attempts failed for {colour}; skipping")
++                    continue
++
++            # ---- descend to contact ----------------------------------------
++            if not try_approach(app_x, app_y, contact_z, "Contact"):
++                # fallback lateral shift for contact as well
++                for off_x, off_y in fallback_offsets:
++                    nx, ny = max(SAFE_X_MIN, min(SAFE_X_MAX, app_x + off_x)), \
++                             max(SAFE_Y_MIN, min(SAFE_Y_MAX, app_y + off_y))
++                    if try_approach(nx, ny, contact_z,
++                                    f"Contact fallback {off_x:+.2f}/{off_y:+.2f}"):
++                        break
++                else:
++                    robot.log(f"Contact move failed for {colour}; skipping")
++                    continue
++
++            # ---- close grasp -----------------------------------------------
+             robot.log("Closing grasp")
+             if not robot.grasp():
+                 robot.log("Grasp failed")
+@@ -119,8 +139,9 @@
+                     prev_center[colour] = None
+                     continue
+                 else:
+-                    # retry the whole attempt (next loop iteration will re‑observe)
+-                    continue
++                    # retry the whole attempt on next loop iteration
++                    continue
++
+             # verify that we really hold the intended cube
+             held = robot.holding()
+             if held != cube["name"]:
+@@ -129,16 +150,18 @@
+                 continue
+ 
+             # ----- move to release zone ------------------------------------
+-            tray_x, tray_y = tray
++            # use only the (x, y) part of the tray; clip to safe workspace
++            tray_x = max(SAFE_X_MIN, min(SAFE_X_MAX, tray[0]))
++            tray_y = max(SAFE_Y_MIN, min(SAFE_Y_MAX, tray[1]))
++
+             release_z_above = RELEASE_HEIGHT + 0.02   # a little above the tray floor
+             release_z_target = RELEASE_HEIGHT        # just above the floor
+ 
+-            # try the nominal tray position, then simple fallbacks
+-            def try_approach(x, y, description):
++            def try_place(x, y, height, description):
+                 try:
+                     robot.log(f"Moving to release zone over {colour} tray at "
+-                              f"({x:.3f},{y:.3f},{release_z_above:.3f})")
+-                    resp = robot.move_to(x, y, release_z_above,
++                              f"({x:.3f},{y:.3f},{height:.3f})")
++                    resp = robot.move_to(x, y, height,
+                                          yaw=None, speed=APPROACH_SPEED)
+                     if not resp["ok"]:
+                         raise Exception("blocked on tray approach")
+@@ -148,26 +171,24 @@
+                     return False
+ 
+             # 1) nominal position
+-            if not try_approach(tray_x, tray_y, "Tray approach"):
++            if not try_place(tray_x, tray_y, release_z_above,
++                             "Tray approach"):
+                 # 2) shift a little in x
+-                if not try_approach(max(SAFE_X_MIN, min(SAFE_X_MAX, tray_x + LATERAL_FALLBACK)),
+-                                    tray_y, "Shifted x+ fallback"):
++                if not try_place(max(SAFE_X_MIN, min(SAFE_X_MAX, tray_x + LATERAL_FALLBACK)),
++                                 tray_y, release_z_above,
++                                 "Shifted x+ fallback"):
+                     # 3) shift a little in y
+-                    if not try_approach(tray_x,
+-                                        max(SAFE_Y_MIN, min(SAFE_Y_MAX, tray_y + LATERAL_FALLBACK)),
+-                                        "Shifted y+ fallback"):
++                    if not try_place(tray_x,
++                                     max(SAFE_Y_MIN, min(SAFE_Y_MAX, tray_y + LATERAL_FALLBACK)),
++                                     release_z_above,
++                                     "Shifted y+ fallback"):
+                         robot.log(f"All tray approaches failed for {colour}; skipping")
+                         continue
+ 
+             # lower to release height
+-            try:
+-                robot.log("Lowering to release height")
+-                resp = robot.move_to(tray_x, tray_y, release_z_target,
+-                                     yaw=None, speed=LOW_SPEED)
+-                if not resp["ok"]:
+-                    raise Exception("blocked on release descent")
+-            except Exception as e:
+-                robot.log(f"Release descent failed: {e}")
++            if not try_place(tray_x, tray_y, release_z_target,
++                             "Release descent"):
++                robot.log(f"Release descent failed for {colour}; skipping")
+                 continue
+ 
+             # release the cube
+@@ -178,6 +199,7 @@
+             if robot.holding() is not None:
+                 robot.log("Release check failed, retrying lift")
+                 try:
++                    # lift a bit, release, then lower again
+                     robot.move_to(tray_x, tray_y, release_z_above,
+                                   yaw=None, speed=APPROACH_SPEED)
+                     robot.release()
+@@ -188,8 +210,7 @@
+             # success for this colour
+             placed[colour] = True
+             robot.log(f"Successfully placed {colour} cube")
+-            # reset stability flag so next episode starts fresh
+-            prev_center[colour] = None
++            prev_center[colour] = None   # reset stability flag
+ 
+         # small pause to let the simulation settle
+         robot.wait(0.2)

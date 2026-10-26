@@ -1,0 +1,280 @@
+{
+ "round": 2,
+ "n": 8,
+ "k": 0,
+ "success": 0.0,
+ "gt_k": 0,
+ "self_k": 0,
+ "errors": 8,
+ "wall_s": 9.8,
+ "usd_cum": 0.00327,
+ "code": "round_2/skill.py",
+ "diff": "round_2/diff.patch",
+ "lines": 200,
+ "notes": "- Clamp the forward approach point to the safe x\u2011range [0.04,\u202f0.32] and keep the forward offset small (0.01\u202fm) so the target never exceeds the workspace limit.  \n- Require the cube\u2019s centre to stay within 2\u202fmm for two consecutive observations before allowing a grasp; this reduces false\u2011positive grasp attempts caused by perception noise.  \n- Limit grasp retries to two consecutive failures; after the second failure the gripper is released and the algorithm moves on to avoid endless loops.  \n- Wrap every `move_to` call in a try/except block and treat a non\u2011ok response as a failure that triggers a simple fallback (small lateral offset of \u00b10.02\u202fm) before giving up on that step.  \n- Keep the existing gripper\u2011yaw alignment, low\u2011speed contact descent, and release\u2011height logic, preserving what already works.  \n- Add a tiny safety margin to all computed targets and use low speeds (0.05\u20130.07\u202fm/s) near objects to stay within the time budget.  \n- Preserve the overall loop structure and the final success flag, so existing episode\u2011level bookkeeping remains unchanged.",
+ "perception": {
+  "episodes": 8,
+  "lookups": 16,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "median_of_episode_median_err_mm": 3.48
+ },
+ "episodes": [
+  {
+   "seed": 2000,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "ValueError",
+    "message": "too many values to unpack (expected 2)",
+    "traceback": "  skill.py line 132, in run: tray_x, tray_y = tray\nValueError: too many values to unpack (expected 2)"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0135,
+    "red_cube_tray_dy": 0.0904,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.1145,
+    "blue_cube_tray_dy": 0.0934,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": true,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2001,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "ValueError",
+    "message": "too many values to unpack (expected 2)",
+    "traceback": "  skill.py line 132, in run: tray_x, tray_y = tray\nValueError: too many values to unpack (expected 2)"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0417,
+    "red_cube_tray_dy": 0.1485,
+    "red_cube_z": 0.0149,
+    "red_cube_held": false,
+    "blue_cube_tray_dx": 0.1149,
+    "blue_cube_tray_dy": 0.137,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": true,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2002,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "ValueError",
+    "message": "too many values to unpack (expected 2)",
+    "traceback": "  skill.py line 132, in run: tray_x, tray_y = tray\nValueError: too many values to unpack (expected 2)"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0718,
+    "red_cube_tray_dy": 0.1204,
+    "red_cube_z": 0.0149,
+    "red_cube_held": true,
+    "blue_cube_tray_dx": 0.0623,
+    "blue_cube_tray_dy": 0.1013,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2003,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "ValueError",
+    "message": "too many values to unpack (expected 2)",
+    "traceback": "  skill.py line 132, in run: tray_x, tray_y = tray\nValueError: too many values to unpack (expected 2)"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0244,
+    "red_cube_tray_dy": 0.1375,
+    "red_cube_z": 0.0149,
+    "red_cube_held": true,
+    "blue_cube_tray_dx": 0.072,
+    "blue_cube_tray_dy": 0.1417,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2004,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "ValueError",
+    "message": "too many values to unpack (expected 2)",
+    "traceback": "  skill.py line 132, in run: tray_x, tray_y = tray\nValueError: too many values to unpack (expected 2)"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.076,
+    "red_cube_tray_dy": 0.0799,
+    "red_cube_z": 0.0166,
+    "red_cube_held": true,
+    "blue_cube_tray_dx": 0.0669,
+    "blue_cube_tray_dy": 0.0887,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2005,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "ValueError",
+    "message": "too many values to unpack (expected 2)",
+    "traceback": "  skill.py line 132, in run: tray_x, tray_y = tray\nValueError: too many values to unpack (expected 2)"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0369,
+    "red_cube_tray_dy": 0.1271,
+    "red_cube_z": 0.015,
+    "red_cube_held": true,
+    "blue_cube_tray_dx": 0.0236,
+    "blue_cube_tray_dy": 0.2301,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2006,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "ValueError",
+    "message": "too many values to unpack (expected 2)",
+    "traceback": "  skill.py line 132, in run: tray_x, tray_y = tray\nValueError: too many values to unpack (expected 2)"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0526,
+    "red_cube_tray_dy": 0.1284,
+    "red_cube_z": 0.0147,
+    "red_cube_held": true,
+    "blue_cube_tray_dx": 0.0098,
+    "blue_cube_tray_dy": 0.2322,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  },
+  {
+   "seed": 2007,
+   "reward": false,
+   "success_gt": false,
+   "self_report": null,
+   "judge": null,
+   "error": {
+    "type": "ValueError",
+    "message": "too many values to unpack (expected 2)",
+    "traceback": "  skill.py line 132, in run: tray_x, tray_y = tray\nValueError: too many values to unpack (expected 2)"
+   },
+   "metrics": {
+    "red_cube_tray_dx": 0.0337,
+    "red_cube_tray_dy": 0.1128,
+    "red_cube_z": 0.0149,
+    "red_cube_held": true,
+    "blue_cube_tray_dx": 0.0464,
+    "blue_cube_tray_dy": 0.2634,
+    "blue_cube_z": 0.0149,
+    "blue_cube_held": false,
+    "red_ok": "False",
+    "blue_ok": "False"
+   },
+   "frames": {
+    "start_front": "start_front.jpg",
+    "start_side": "start_side.jpg",
+    "start_overhead": "start_overhead.jpg",
+    "end_front": "end_front.jpg",
+    "end_side": "end_side.jpg",
+    "end_overhead": "end_overhead.jpg"
+   }
+  }
+ ]
+}

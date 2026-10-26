@@ -1,0 +1,60 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -57,7 +57,7 @@
+             puck_radius = 0.03  # safe default ~3 cm
+ 
+     # ---------- 4. Plan contact pose ----------
+-    contact_offset = 0.01  # smaller offset to sit on the side of the puck
++    contact_offset = 0.05  # larger offset to stay clear of fixtures/edges
+     contact_pos = puck_pos - push_dir_u * (puck_radius + contact_offset)
+ 
+     # safety clamp (original limits)
+@@ -88,11 +88,11 @@
+         return False
+ 
+     # ---------- 6. Close fingers to make contact ----------
+-    # try up to two grasp attempts (original height, then a small drop)
++    # Two grasp attempts: first at full height, second after a tiny drop
+     if not robot.grasp():
+         robot.log("grasp returned False – first attempt")
+         try:
+-            robot.move_to(cx, cy, cz - 0.002, speed=0.07)
++            robot.move_to(cx, cy, cz - 0.004, speed=0.07)  # extra drop for stable contact
+             if not robot.grasp():
+                 robot.log("grasp failed again after height drop")
+                 return False
+@@ -101,18 +101,30 @@
+             return False
+ 
+     # ---------- 7. Push towards the target ----------
+-    # Full displacement will place the puck centre exactly at the target centre
+-    dx = push_dir_u[0] * push_dist_norm
+-    dy = push_dir_u[1] * push_dist_norm
++    # Scale down displacement to compensate for slip (empirically 0.7)
++    push_scale = 0.7
++    dx = push_dir_u[0] * push_dist_norm * push_scale
++    dy = push_dir_u[1] * push_dist_norm * push_scale
++
+     try:
+         robot.move_by(dx=dx, dy=dy, speed=0.07)
+     except Exception as e:
+         robot.log("first push move failed:", e)
+-        # fallback: smaller push (half distance)
++        # fallback: smaller push (half of scaled distance)
+         try:
+             robot.move_by(dx=dx * 0.5, dy=dy * 0.5, speed=0.07)
+         except Exception:
+             pass  # give up on this episode
++
++    # If after the first push the puck is still outside, try a second tiny push
++    # (only if we have not yet succeeded)
++    try:
++        final_pos = np.array(robot.get_pose(puck_name)["pos"])
++        if np.linalg.norm(final_pos - target_pos) > target_radius:
++            # second small push in the same direction
++            robot.move_by(dx=dx * 0.3, dy=dy * 0.3, speed=0.07)
++    except Exception:
++        pass  # ignore if pose unavailable
+ 
+     # ---------- 8. Release the puck ----------
+     robot.release()

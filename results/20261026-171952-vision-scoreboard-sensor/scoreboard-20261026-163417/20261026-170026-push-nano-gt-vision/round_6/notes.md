@@ -1,0 +1,5 @@
+- Increased the fallback drop depth from 0.010 m to 0.020 m after the first failed grasp to guarantee contact (Mode 1 fix).  
+- Replaced the second‑push multiplier from 0.3 to 0.6 (line 126) so the final displacement meets the 0.035 m tolerance (Mode 2 fix).  
+- Kept the contact_offset at 0.08 m and the height‑drop for the second grasp attempt at 0.010 m; all safety clamps, perception‑at‑runtime, retry‑with‑jitter and error handling remain unchanged.  
+- Updated inline comments to reflect the new drop and push values for future debugging.  
+- Preserved the deterministic 5 mm x‑jitter retry and bounded retry loops; no hard‑coded coordinates are used.

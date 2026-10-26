@@ -1,0 +1,5 @@
+- First version: simple pick-and-place using perceived poses.
+- Home, observe, grasp red cube (align yaw, move down, grasp, lift).
+- Move above blue cube, lower to stacking height (blue top + half red size), release.
+- Verify stacking by checking red cube's position relative to blue cube after release.
+- No error handling or retries yet; will add in later versions based on results.

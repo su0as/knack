@@ -1,0 +1,5 @@
+- Clamped approach and push targets to safe workspace (x∈[0.06,0.30], y∈[-0.24,0.24]) and a 0.24 m reachability radius to eliminate safety halts.
+- Push target now set to target_pos + small margin (puck_radius+0.02) instead of puck_pos + large push_distance, keeping the push near the target circle.
+- Reduced approach distance to 2·puck_radius+0.05 for better reachability.
+- Added a helper `clamp_point` that enforces both rectangle and circle constraints on every target point.
+- Retained the two‑attempt retry loop with post‑push verification; fixed bare `except:` to `except Exception:`.

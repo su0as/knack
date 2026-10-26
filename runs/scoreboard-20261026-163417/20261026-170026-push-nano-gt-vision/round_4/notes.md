@@ -1,0 +1,5 @@
+- Fixed contact‑blocked approach: raised `contact_offset` from 0.01 → 0.05 m so the contact pose stays clear of fixtures and edges.  
+- Strengthened grasp reliability: added a small extra height drop (0.004 m) before the second grasp attempt and kept the existing bounded retry loop.  
+- Addressed push undershoot: scaled the planned push displacement by **0.7** to compensate for slip while still moving the puck toward the target centre; a second tiny push (½ scale) is applied if the first push does not bring the puck inside the zone.  
+- Preserved all existing safety clamps, perception‑at‑runtime, retry‑loop structure, and error handling; no hard‑coded coordinates remain.  
+- Kept the overall perceive → plan → contact → push → release → verify pipeline unchanged apart from the above targeted tweaks.

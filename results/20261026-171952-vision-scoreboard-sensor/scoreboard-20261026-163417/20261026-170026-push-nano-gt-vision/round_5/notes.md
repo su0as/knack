@@ -1,0 +1,6 @@
+- Raised `contact_offset` from 0.05 → 0.08 m to keep the contact point clear of fixture edges and joint limits (Mode 1 fix).  
+- Increased the height‑drop used for the second grasp attempt from 0.004 → 0.010 m so the fingers can re‑engage from a better angle (Mode 2 fix).  
+- Kept the existing push‑scale (0.7) and the bounded second‑push fallback to compensate for slip while preserving the overall perceive→plan→contact→push pipeline.  
+- Maintained all safety clamps, perception‑at‑runtime, retry‑loop structure, and error handling; no hard‑coded coordinates remain.  
+- Carried forward the successful retry‑with‑jitter logic and the deterministic 5 mm x‑jitter for a final attempt.  
+- Updated comments to reflect the new offset and drop values for future debugging.

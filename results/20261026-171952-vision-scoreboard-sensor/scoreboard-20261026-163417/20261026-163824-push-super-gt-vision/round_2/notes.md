@@ -1,0 +1,3 @@
+- Reduced OVERSHOOT from 0.02 to 0.005 to avoid hitting workspace/joint limits during the push, addressing the observed overshoot/blocked motion failure.
+- Kept the rest of the logic unchanged; the existing retry loop and verification already handle cases where the puck ends just outside the target.
+- No changes to perception or error handling were needed because those modes did not appear in the recent failures.

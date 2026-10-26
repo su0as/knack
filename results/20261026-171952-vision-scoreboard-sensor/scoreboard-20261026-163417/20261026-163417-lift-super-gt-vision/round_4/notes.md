@@ -1,0 +1,4 @@
+- Fixed a stray parenthesis in the `move_and_check` function that caused a SyntaxError.
+- Ensured all try/except blocks are properly closed and indented.
+- Verified that the function definitions and control flow are syntactically correct.
+- Kept the original logic intact while correcting the syntax.

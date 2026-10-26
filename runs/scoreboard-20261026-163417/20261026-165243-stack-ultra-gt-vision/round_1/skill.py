@@ -1,0 +1,91 @@
+import math
+
+def run(robot):
+    # Observe initial scene
+    obs = robot.observe()
+    objects = obs.get("objects", {})
+    
+    red = objects.get("red_cube")
+    blue = objects.get("blue_cube")
+    
+    if not red or not blue:
+        robot.log("Missing cubes in observation")
+        return False
+    
+    red_pos = red["pos"]
+    red_yaw = red["yaw"]
+    blue_pos = blue["pos"]
+    blue_yaw = blue["yaw"]
+    
+    robot.log(f"Red at {red_pos}, yaw={red_yaw:.3f}")
+    robot.log(f"Blue at {blue_pos}, yaw={blue_yaw:.3f}")
+    
+    # Approach red cube from above, align with its yaw
+    # Pre-grasp position: above the cube
+    pre_grasp_z = 0.08  # well above cube
+    try:
+        robot.move_to(red_pos[0], red_pos[1], pre_grasp_z, yaw=red_yaw, speed=0.15)
+    except Exception as e:
+        robot.log(f"Move to pre-grasp failed: {e}")
+        return False
+    
+    # Descend to grasp height (cube center at z=0.015)
+    grasp_z = 0.015
+    try:
+        robot.move_to(red_pos[0], red_pos[1], grasp_z, yaw=red_yaw, speed=0.05)
+    except Exception as e:
+        robot.log(f"Descend to grasp failed: {e}")
+        return False
+    
+    # Grasp
+    if not robot.grasp():
+        robot.log("Failed to grasp red cube")
+        return False
+    
+    # Verify holding
+    if robot.holding() != "red_cube":
+        robot.log("Not holding red cube after grasp")
+        return False
+    
+    robot.log("Grasped red cube")
+    
+    # Lift red cube
+    lift_z = 0.10
+    try:
+        robot.move_to(red_pos[0], red_pos[1], lift_z, yaw=red_yaw, speed=0.10)
+    except Exception as e:
+        robot.log(f"Lift failed: {e}")
+        robot.release()
+        return False
+    
+    # Move above blue cube (align with blue's yaw for placement)
+    # Blue top surface at z=0.03, so place red center at z=0.045
+    place_z = 0.045
+    pre_place_z = 0.08
+    
+    try:
+        robot.move_to(blue_pos[0], blue_pos[1], pre_place_z, yaw=blue_yaw, speed=0.15)
+    except Exception as e:
+        robot.log(f"Move above blue failed: {e}")
+        robot.release()
+        return False
+    
+    # Descend to placement height
+    try:
+        robot.move_to(blue_pos[0], blue_pos[1], place_z, yaw=blue_yaw, speed=0.05)
+    except Exception as e:
+        robot.log(f"Descend to place failed: {e}")
+        robot.release()
+        return False
+    
+    # Release
+    robot.release()
+    robot.wait(0.2)
+    
+    # Verify release
+    if robot.holding() is not None:
+        robot.log("Still holding after release")
+        return False
+    
+    robot.log("Stack complete")
+    return True

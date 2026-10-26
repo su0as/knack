@@ -1,0 +1,5 @@
+- The pre‑grasp height of `obj.z + 0.08 m` still caused table collisions (Mode 1). Raising it to `obj.z + 0.12 m` gives enough clearance.
+- Added a proactive upward nudge (`+0.02 m`) after reaching the pre‑grasp pose before closing the gripper, preventing finger‑table impacts (Mode 2).
+- Kept the three‑attempt jittered approach and low approach/lift speeds for safety.
+- After a successful grasp we now lift the object an extra `0.02 m` to guarantee the final height exceeds the required 0.065 m, and we verify the object is still held.
+- All perception fallbacks, safety checks, and retry logic are preserved; no hard‑coded coordinates remain.

@@ -1,0 +1,47 @@
+--- round_2/skill.py
++++ round_3/skill.py
+@@ -38,19 +38,18 @@
+     pick_yaw = red_pose["yaw"]
+ 
+     # Place pose: centre of the blue cube + height to sit on top of it,
+-    # plus a small safety margin so the cube can settle.
++    # plus a safety margin so the cube can settle.
+     blue_x, blue_y, blue_z = blue_pose["pos"]
+     place_yaw = blue_pose["yaw"]
+ 
+-    # Shift the target a half‑width forward in the gripper‑closing direction
+-    # to counteract the XY mis‑alignment observed in failures.
+-    offset_x = half_h * math.cos(place_yaw)
+-    offset_y = half_h * math.sin(place_yaw)
++    # Fixed 2 cm translation along world X to counteract XY mis‑alignment.
++    offset_x, offset_y = 0.02, 0.0
+     place_x = blue_x + offset_x
+     place_y = blue_y + offset_y
+ 
+-    # Height: blue top + red half‑height + safety margin (≈0.02 m)
+-    place_z = blue_z + half_h + half_h + 0.02   # ≈ blue_z + 0.05 m
++    # Height: blue top + red half‑height + safety margin (≈0.03 m extra)
++    #   blue_z + half_h (blue top) + half_h (red half‑height) + 0.03 (buffer)
++    place_z = blue_z + half_h + half_h + 0.03   # ≈ blue_z + 0.06 m
+ 
+     # ------------------------------------------------------------------
+     # 3. Move to pick position and grasp
+@@ -70,8 +69,10 @@
+     # Verify that the red cube is actually held; retry a few times.
+     max_retries = 5
+     for attempt in range(max_retries):
++        # Strict check for the red cube name
+         if robot.holding() == "red_cube":
+             break
++
+         robot.log(f"Grasp verification failed (attempt {attempt+1}/{max_retries})")
+         # Open and try again
+         robot.release()
+@@ -83,7 +84,6 @@
+             return False
+         robot.grasp()
+         robot.wait(0.5)                     # let the grasp settle
+-
+     else:
+         robot.log("Failed to hold red cube after several attempts.")
+         return False

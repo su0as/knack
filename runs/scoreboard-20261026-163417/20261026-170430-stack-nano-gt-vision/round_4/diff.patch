@@ -1,0 +1,73 @@
+--- round_3/skill.py
++++ round_4/skill.py
+@@ -1,7 +1,5 @@
+ # skill module
+ import math
+-import numpy as np
+-from collections import defaultdict
+ 
+ # Custom exception from the simulator – we can catch it to avoid halting the skill
+ class MotionError(Exception):
+@@ -38,27 +36,31 @@
+     pick_yaw = red_pose["yaw"]
+ 
+     # Place pose: centre of the blue cube + height to sit on top of it,
+-    # plus a safety margin so the cube can settle.
++    # plus a small safety margin so the cube can settle.
+     blue_x, blue_y, blue_z = blue_pose["pos"]
+     place_yaw = blue_pose["yaw"]
+ 
+-    # Fixed 2 cm translation along world X to counteract XY mis‑alignment.
+-    offset_x, offset_y = 0.02, 0.0
++    # Use a small constant offset (≤ 0.005 m) to counteract XY mis‑alignment.
++    OFFSET_MAX = 0.005
++    offset_x = OFFSET_MAX * math.cos(place_yaw)
++    offset_y = OFFSET_MAX * math.sin(place_yaw)
+     place_x = blue_x + offset_x
+     place_y = blue_y + offset_y
+ 
+     # Height: blue top + red half‑height + safety margin (≈0.03 m extra)
+-    #   blue_z + half_h (blue top) + half_h (red half‑height) + 0.03 (buffer)
+-    place_z = blue_z + half_h + half_h + 0.03   # ≈ blue_z + 0.06 m
++    base_place_z = blue_z + half_h + half_h + 0.03   # ≈ blue_z + 0.06 m
++    # Clamp to stay inside the robot’s Z workspace (max ≈0.26 m)
++    place_z = min(base_place_z, 0.25)
+ 
+     # ------------------------------------------------------------------
+-    # 3. Move to pick position and grasp
++    # 3. Move to pick position, lower slightly, then grasp
+     # ------------------------------------------------------------------
+     try:
+         robot.log(
+             f"Moving to pick pose: ({pick_x:.3f}, {pick_y:.3f}, {pick_z:.3f}, yaw={pick_yaw:.3f})"
+         )
+-        robot.move_to(pick_x, pick_y, pick_z, yaw=pick_yaw, speed=0.07)
++        # Slightly lower the tool point to ensure finger contact before closing.
++        robot.move_to(pick_x, pick_y, pick_z - 0.005, yaw=pick_yaw, speed=0.12)
+     except MotionError:
+         robot.log("Pick pose unreachable – aborting.")
+         return False
+@@ -69,21 +71,20 @@
+     # Verify that the red cube is actually held; retry a few times.
+     max_retries = 5
+     for attempt in range(max_retries):
+-        # Strict check for the red cube name
+         if robot.holding() == "red_cube":
+             break
+-
+         robot.log(f"Grasp verification failed (attempt {attempt+1}/{max_retries})")
+         # Open and try again
+         robot.release()
+         robot.wait(0.2)                     # give simulation a moment to settle
+         try:
+-            robot.move_to(pick_x, pick_y, pick_z, yaw=pick_yaw, speed=0.07)
++            robot.move_to(pick_x, pick_y, pick_z - 0.005, yaw=pick_yaw, speed=0.12)
+         except MotionError:
+             robot.log("Re‑approach to pick pose failed – aborting.")
+             return False
+         robot.grasp()
+         robot.wait(0.5)                     # let the grasp settle
++
+     else:
+         robot.log("Failed to hold red cube after several attempts.")
+         return False

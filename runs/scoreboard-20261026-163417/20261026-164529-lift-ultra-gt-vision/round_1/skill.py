@@ -1,0 +1,59 @@
+import math
+
+def run(robot):
+    # 1. Perceive scene to find red cube
+    obs = robot.observe()
+    if "red_cube" not in obs["objects"]:
+        robot.log("red_cube not visible")
+        return False
+    
+    cube = obs["objects"]["red_cube"]
+    cx, cy, cz = cube["pos"]
+    cyaw = cube["yaw"]
+    
+    # 2. Move above cube first (approach), then down to grasp height
+    # Approach at safe height (z=0.15) then descend to cube center z=0.015
+    try:
+        # Move above cube
+        robot.move_to(cx, cy, 0.15, yaw=cyaw, speed=0.15)
+        # Descend to grasp height (cube center)
+        robot.move_to(cx, cy, 0.015, yaw=cyaw, speed=0.05)
+    except Exception as e:
+        robot.log(f"Move failed: {e}")
+        return False
+    
+    # 3. Grasp
+    grasped = robot.grasp()
+    if not grasped:
+        robot.log("First grasp failed, retry once")
+        # Small lift and retry
+        robot.move_by(dz=0.01, speed=0.05)
+        robot.move_by(dz=-0.01, speed=0.05)
+        grasped = robot.grasp()
+        if not grasped:
+            robot.log("Second grasp failed")
+            return False
+    
+    # 4. Verify holding
+    if robot.holding() != "red_cube":
+        robot.log("Not holding red_cube after grasp")
+        return False
+    
+    # 5. Lift to at least 5 cm above table (z >= 0.05)
+    # Current tool point at ~0.015, lift to 0.08 for margin
+    try:
+        robot.move_to(cx, cy, 0.08, yaw=cyaw, speed=0.10)
+    except Exception as e:
+        robot.log(f"Lift failed: {e}")
+        return False
+    
+    # 6. Final verification
+    final_obs = robot.observe()
+    if robot.holding() == "red_cube":
+        gripper_pos = final_obs["gripper"]["pos"]
+        if gripper_pos[2] >= 0.05:
+            robot.log("Success: red cube held above 5 cm")
+            return True
+    
+    robot.log("Final verification failed")
+    return False

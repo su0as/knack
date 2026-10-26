@@ -1,0 +1,7 @@
+- The puck can’t be grasped (its diameter 0.06 m > max gripper opening 0.05 m), so we must push it with the closed fingers.
+- We need a reliable contact pose: place the gripper tool point just behind the puck (in the opposite direction of the desired push) at a height that touches the puck’s side.
+- After closing the fingers to make contact, move the gripper along the vector that points from the puck to the green zone centre. Use a modest speed (≈0.07 m/s) and a short relative displacement that is a large fraction of the required displacement.
+- Verify the puck’s new pose after the push; if it isn’t inside the green circle, retry once more before giving up.
+- All positions are read at runtime with `robot.observe()` / `robot.get_pose()`. No hard‑coded coordinates.
+- Catch `MotionError` when a target is out of reach and fall back to a safer approach.
+- Keep moves near the object slow and use the default speed for longer translations.

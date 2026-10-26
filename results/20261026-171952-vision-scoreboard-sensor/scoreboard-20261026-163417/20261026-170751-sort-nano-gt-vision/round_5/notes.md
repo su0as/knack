@@ -1,0 +1,7 @@
+- Raised `MAX_GRASP_RETRIES` from 2 to 5 and added a brief lift before each retry to clear the object.
+- Expanded the safe workspace: `SAFE_X_MAX` increased to 0.35 m and diagonal fallback (±0.02 m) added to escape boundary blocks.
+- Wrapped every `robot.move_to` in a try/except to catch `MotionError` (and any other exception) and treat it as a failed attempt, preventing crashes.
+- Added a visibility‑loss guard: if a cube is not seen for 3 consecutive frames, the loop breaks and logs “cube lost”, avoiding endless spins.
+- Kept approach speed at 0.05 m/s for all contact/approach moves and retained low‑speed release; only tightened fallback logic and retry limits.
+- Preserved existing stability‑center checks, grasp verification, and release‑confirmation logic; only refined loop bounds and error handling.
+- Maintained the return‑True only when both cubes are confirmed placed, ensuring no regression in successful episodes.

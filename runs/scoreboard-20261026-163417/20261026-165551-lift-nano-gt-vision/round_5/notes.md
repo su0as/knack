@@ -1,0 +1,6 @@
+- Raised the pre‑grasp height to `obj.z + 0.08 m` to keep the gripper clear of the table and other objects (fixes Mode 1 collisions).
+- Increased the recovery nudge to `dz=0.04 m` and added a short `wait(0.2)` after the first failed closure so the fingers can seat properly before retrying (fixes Mode 2 slip).
+- Kept the three‑attempt jittered approach and low approach/lift speeds (0.07 m/s) for safety.
+- After a successful grasp, waited 0.2 s, then lifted the cube to a fixed `LIFT_Z = 0.08 m` (≥ 0.065 m required height) using a vertical‑only move.
+- Verified the object is being held after each closure and logged any failure; return `True` only after the lift completes without error.
+- Preserved all perception fallback, safety checks, and jitter logic; no hard‑coded coordinates remain.

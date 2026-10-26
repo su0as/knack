@@ -1,0 +1,6 @@
+- Start with a home pose to ensure a known starting point.
+- For each colour (red, blue) locate the matching cube and tray using their names; if perception fails (LookupError), move the gripper away briefly and re‑try a few times.
+- Approach the cube from above, descend to a grasp pose (tool point ≈ cube centre), close the gripper, and verify that something is held.
+- Transport the cube to the centre of the matching tray, lower to a safe drop height (just above the tray floor), release, and verify the gripper is empty.
+- Use modest speeds for precise motions near objects and default speed for travel moves.
+- All poses are read at runtime; no hard‑coded coordinates.
