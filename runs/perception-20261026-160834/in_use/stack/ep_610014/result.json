@@ -1,0 +1,271 @@
+{
+ "task": "stack",
+ "seed": 610014,
+ "error": null,
+ "self_report": true,
+ "returned": "True",
+ "success_gt": true,
+ "metrics": {
+  "xy_offset": 0.0014,
+  "z_gap": 0.0297,
+  "red_held": false,
+  "blue_z": 0.0147
+ },
+ "trace": [
+  {
+   "t": 0.0,
+   "call": "get_pose('red_cube')",
+   "result": {
+    "pos": [
+     0.1498,
+     0.0138,
+     0.0149
+    ],
+    "yaw": -0.7764
+   }
+  },
+  {
+   "t": 0.4,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 0.9,
+   "call": "move_to(0.150, 0.014, 0.080, yaw=-0.776)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1498,
+     0.0138,
+     0.0799
+    ],
+    "error_m": 0.0001
+   }
+  },
+  {
+   "t": 1.72,
+   "call": "move_to(0.150, 0.014, 0.016, yaw=-0.776, speed=0.080)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1496,
+     0.0138,
+     0.0159
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 2.22,
+   "call": "grasp()",
+   "result": {
+    "holding": "red_cube",
+    "opening": 0.0274
+   }
+  },
+  {
+   "t": 2.76,
+   "call": "move_to(0.150, 0.014, 0.090, yaw=-0.776)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1498,
+     0.0138,
+     0.0898
+    ],
+    "error_m": 0.0002
+   }
+  },
+  {
+   "t": 2.76,
+   "call": "get_pose('blue_cube')",
+   "result": {
+    "pos": [
+     0.1063,
+     -0.089,
+     0.0149
+    ],
+    "yaw": -0.5787
+   }
+  },
+  {
+   "t": 3.88,
+   "call": "move_to(0.106, -0.089, 0.090, yaw=-0.579)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.106,
+     -0.0889,
+     0.0894
+    ],
+    "error_m": 0.0007
+   }
+  },
+  {
+   "t": 4.44,
+   "call": "move_to(0.106, -0.089, 0.047, yaw=-0.579, speed=0.080)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1057,
+     -0.0885,
+     0.0463
+    ],
+    "error_m": 0.001
+   }
+  },
+  {
+   "t": 4.84,
+   "call": "release()",
+   "result": "open"
+  },
+  {
+   "t": 5.22,
+   "call": "move_to(0.106, -0.089, 0.090, yaw=-0.579)",
+   "result": {
+    "ok": true,
+    "pos": [
+     0.1063,
+     -0.089,
+     0.0901
+    ],
+    "error_m": 0.0001
+   }
+  }
+ ],
+ "n_calls": 11,
+ "printed": [],
+ "safety_events": [],
+ "safety_summary": {
+  "clamp": 0,
+  "halt": 0
+ },
+ "halted": null,
+ "sim_time": 5.72,
+ "wall_time": 0.77,
+ "initial_obs": {
+  "time": 0.0,
+  "gripper": {
+   "pos": [
+    0.16,
+    0.0,
+    0.14
+   ],
+   "yaw": 1.5708,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1498,
+     0.0138,
+     0.0149
+    ],
+    "yaw": -0.7764,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1063,
+     -0.089,
+     0.0149
+    ],
+    "yaw": -0.5787,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "final_obs": {
+  "time": 5.72,
+  "gripper": {
+   "pos": [
+    0.1063,
+    -0.089,
+    0.09
+   ],
+   "yaw": -0.5787,
+   "opening": 0.05,
+   "holding": null
+  },
+  "objects": {
+   "red_cube": {
+    "pos": [
+     0.1049,
+     -0.0893,
+     0.0444
+    ],
+    "yaw": -0.5775,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "red"
+   },
+   "blue_cube": {
+    "pos": [
+     0.1063,
+     -0.089,
+     0.0147
+    ],
+    "yaw": -0.5787,
+    "shape": "cube",
+    "size": [
+     0.03,
+     0.03,
+     0.03
+    ],
+    "color": "blue"
+   }
+  },
+  "fixtures": {}
+ },
+ "frames": {},
+ "gif": null,
+ "render_error": null,
+ "layout": {
+  "red_cube": {
+   "x": 0.1498,
+   "y": 0.0138,
+   "yaw": -0.7764,
+   "fp": 0.0225
+  },
+  "blue_cube": {
+   "x": 0.1063,
+   "y": -0.089,
+   "yaw": -0.5787,
+   "fp": 0.0225
+  }
+ },
+ "perception": {
+  "calls": 2,
+  "lookups": 4,
+  "misses": 0,
+  "detection_rate": 1.0,
+  "pos_err_mm_median": 0.01,
+  "pos_err_mm_p90": 8.95,
+  "yaw_err_deg_median": 0.0,
+  "by_camera": {
+   "overhead": 4,
+   "front": 0
+  },
+  "ms_per_observe_median": 292.1,
+  "fixtures_mapped": [],
+  "fixture_err_mm": {}
+ }
+}
