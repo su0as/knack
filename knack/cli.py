@@ -166,6 +166,9 @@ def cmd_exp(a):
     elif a.which == "judge":
         res = ex.judge_eval(a.paths or [a.runs], n=a.n_judge, budget_usd=a.budget, out_root=a.runs)
         _print_json({k: v for k, v in res.items() if k != "rows"})
+    elif a.which == "perception":
+        ex.perception_bench(tasks=a.tasks.split(",") if a.tasks != "lift,place,push,stack,tray" else None, n=a.n_judge if a.n_judge != 100 else 30,
+                            workers=a.workers, out_root=a.runs)
     elif a.which == "figures":
         ex.figures(a.paths, a.out)
     elif a.which == "gain":
@@ -330,7 +333,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(fn=cmd_pilot, budget=0.9, eval=50)
 
     p = sub.add_parser("exp", help="experiments: scoreboard | ablation | judge | plots")
-    p.add_argument("which", choices=["scoreboard", "ablation", "judge", "plots", "gain", "figures"])
+    p.add_argument("which", choices=["scoreboard", "ablation", "judge", "plots", "gain", "figures", "perception"])
     p.add_argument("paths", nargs="*")
     p.add_argument("--models", default="nano,super,ultra,deepseek-flash")
     p.add_argument("--tasks", default="lift,place,push,stack,tray")

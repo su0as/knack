@@ -64,6 +64,7 @@ class VisionPerception:
         self.yaw_errors_deg: list[float] = []
         self.by_camera = {c: 0 for c in CAMERAS}
         self.last_error: str | None = None
+        self.observe_ms: list[float] = []
 
     # ------------------------------------------------------------------ capture
     def _r(self):
@@ -188,6 +189,15 @@ class VisionPerception:
 
     def observe(self) -> dict:
         """{"objects": {name: entry}, "fixtures": {name: xyz}}. Missing objects are not visible."""
+        import time as _t
+
+        t0 = _t.perf_counter()
+        try:
+            return self._observe()
+        finally:
+            self.observe_ms.append((_t.perf_counter() - t0) * 1000.0)
+
+    def _observe(self) -> dict:
         self.calls += 1
         if self.fixtures is None:
             self.map_fixtures()
@@ -222,6 +232,7 @@ class VisionPerception:
             "pos_err_mm_median": round(float(np.nanmedian(e)), 2), "pos_err_mm_p90": round(float(np.nanpercentile(e, 90)), 2),
             "yaw_err_deg_median": round(float(np.nanmedian(y)), 2),
             "by_camera": dict(self.by_camera),
+            "ms_per_observe_median": round(float(np.median(self.observe_ms)), 1) if self.observe_ms else None,
             "fixtures_mapped": sorted((self.fixtures or {}).keys()),
             "fixture_err_mm": {n: round(float(np.linalg.norm(p - self.env.fixture_pos(n)) * 1000.0), 2)
                                for n, p in (self.fixtures or {}).items()},
@@ -234,3 +245,59 @@ class VisionPerception:
             except Exception:
                 pass
             self._renderer = None
+
+
+def annotate(env, out_dir, cam: str = "overhead", size=(640, 480)) -> dict:
+    """Write the perception pipeline's intermediate images for one scene: RGB, depth, colour masks, and the
+    detections drawn on the image (contour, rotated box, label with estimated vs true position)."""
+    import cv2
+    from pathlib import Path
+
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    v = VisionPerception(env, size=size)
+    seen = v.observe()
+    rgb, depth = v.capture(cam)
+    bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)
+    cv2.imwrite(str(out / f"{cam}_rgb.png"), bgr)
+    d = depth.copy()
+    near, far = np.percentile(d, 1), np.percentile(d, 99)
+    dn = np.clip((d - near) / max(1e-6, far - near), 0, 1)
+    cv2.imwrite(str(out / f"{cam}_depth.png"), cv2.applyColorMap((255 * (1 - dn)).astype(np.uint8), cv2.COLORMAP_VIRIDIS))
+    masks = np.zeros_like(bgr)
+    ann = bgr.copy()
+    colors = sorted({o.color for o in env.obj_spec.values()} | {f.color for f in env.fixture_spec.values()})
+    for c in colors:
+        m = v.color_mask(rgb, c)
+        tint = {"red": (60, 60, 230), "blue": (230, 120, 40), "green": (80, 200, 80), "yellow": (40, 210, 240),
+                "orange": (40, 140, 250), "purple": (200, 80, 150)}.get(c, (255, 255, 255))
+        masks[m > 0] = tint
+        cnts, _ = cv2.findContours(m, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cv2.drawContours(ann, [k for k in cnts if cv2.contourArea(k) >= MIN_PIXELS], -1, tint, 2)
+    cv2.imwrite(str(out / f"{cam}_masks.png"), masks)
+    f = 0.5 * v.h / math.tan(math.radians(float(env.model.cam_fovy[v.cam_id[cam]])) / 2)
+    R = env.data.cam_xmat[v.cam_id[cam]].reshape(3, 3)
+    t = env.data.cam_xpos[v.cam_id[cam]]
+
+    def project(p):
+        pc = R.T @ (np.asarray(p) - t)
+        return int(round(v.w / 2 + f * pc[0] / -pc[2] - 0.5)), int(round(v.h / 2 - f * pc[1] / -pc[2] - 0.5))
+
+    rows = []
+    for name, det in seen["objects"].items():
+        true, _ = env.object_pose(name)
+        err = float(np.linalg.norm(np.array(det["pos"]) - true) * 1000)
+        u, w = project(det["pos"])
+        cv2.drawMarker(ann, (u, w), (255, 255, 255), cv2.MARKER_CROSS, 14, 2)
+        cv2.putText(ann, f"{name} {err:.1f}mm", (u + 8, w - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1, cv2.LINE_AA)
+        rows.append({"name": name, "est": [round(x, 4) for x in det["pos"]], "true": [round(float(x), 4) for x in true],
+                     "err_mm": round(err, 2), "pixels": det["pixels"], "camera": det["camera"]})
+    for name, pos in seen["fixtures"].items():
+        u, w = project(pos)
+        cv2.circle(ann, (u, w), 5, (255, 255, 255), 2)
+        cv2.putText(ann, name, (u + 8, w + 14), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.imwrite(str(out / f"{cam}_detections.png"), ann)
+    strip = np.concatenate([bgr, cv2.imread(str(out / f"{cam}_depth.png")), masks, ann], axis=1)
+    cv2.imwrite(str(out / f"{cam}_pipeline.png"), strip)
+    v.close()
+    return {"objects": rows, "summary": v.summary()}

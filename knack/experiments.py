@@ -386,3 +386,76 @@ def figures(patterns: list[str], out_dir: str = "docs/figures") -> list[str]:
     for w in written:
         print(w)
     return written
+
+
+def perception_bench(tasks=None, n: int = 30, workers=None, out_root: str = "runs") -> dict:
+    """OpenCV 5 perception accuracy, measured against simulator ground truth.
+    static: one observe() at the start of each layout (nothing occluded).
+    in-use: every observe()/get_pose() while the hand-written reference skill runs (gripper occlusion, held objects)."""
+    import math as _m
+
+    import numpy as np
+
+    from .oracles import ORACLES
+    from .runner import LocalRunner
+    from .sim import SimEnv
+    from .tasks import TASKS
+    from .vision import VisionPerception, annotate
+
+    tasks = list(tasks or TASKS)
+    out = Path(out_root) / f"perception-{_stamp()}"
+    out.mkdir(parents=True, exist_ok=True)
+    report = {"n_layouts": n, "tasks": {}}
+    for tid in tasks:
+        errs, yaws, misses, lookups, fix, ms = [], [], 0, 0, [], []
+        for i in range(n):
+            env = SimEnv(TASKS[tid], 600_000 + i, realism="vision")
+            v = VisionPerception(env)
+            seen = v.observe()
+            for name, det in seen["objects"].items():
+                true, tyaw = env.object_pose(name)
+                errs.append(float(np.linalg.norm(np.array(det["pos"]) - true) * 1000))
+                if env.obj_spec[name].shape == "cube":
+                    yaws.append(abs(_m.degrees((det["yaw"] - tyaw + _m.pi / 4) % (_m.pi / 2) - _m.pi / 4)))
+            s = v.summary()
+            misses += s["misses"]
+            lookups += s["lookups"]
+            fix += list(s["fixture_err_mm"].values())
+            ms += v.observe_ms
+            if i == 0:
+                annotate(env, out / "images" / tid)
+            v.close()
+            env.close()
+        specs = [{"task": tid, "seed": 610_000 + i, "code": ORACLES[tid], "render": {"live": False, "keyframes": False},
+                  "realism": "vision"} for i in range(n)]
+        res = LocalRunner(workers=workers).run_batch(specs, out / "in_use" / tid)
+        ps = [r.get("perception") for r in res if r.get("perception")]
+        in_lookups = sum(p["lookups"] for p in ps)
+        in_misses = sum(p["misses"] for p in ps)
+        e = np.array(errs) if errs else np.array([np.nan])
+        report["tasks"][tid] = {
+            "static": {"objects": len(errs) + misses, "detected": len(errs), "detection_rate": round(len(errs) / max(1, len(errs) + misses), 4),
+                       "pos_err_mm_median": round(float(np.nanmedian(e)), 2), "pos_err_mm_p90": round(float(np.nanpercentile(e, 90)), 2),
+                       "pos_err_mm_max": round(float(np.nanmax(e)), 2),
+                       "yaw_err_deg_median": round(float(np.median(yaws)), 2) if yaws else None,
+                       "fixture_err_mm_median": round(float(np.median(fix)), 2) if fix else None,
+                       "ms_per_observe_median": round(float(np.median(ms)), 1)},
+            "in_use": {"episodes": len(ps), "lookups": in_lookups, "misses": in_misses,
+                       "detection_rate": round(1 - in_misses / in_lookups, 4) if in_lookups else None,
+                       "pos_err_mm_median_of_episode_medians": round(float(np.median([p["pos_err_mm_median"] for p in ps])), 2) if ps else None,
+                       "reference_skill_success": sum(bool(r.get("success_gt")) for r in res), "n": n},
+        }
+        print(tid, json.dumps(report["tasks"][tid]))
+    (out / "perception_bench.json").write_text(json.dumps(report, indent=1), encoding="utf-8")
+    lines = ["# OpenCV 5 perception benchmark (simulated RGB-D, ground truth from the simulator)", "",
+             f"{n} random layouts per scene. Static = first look, nothing occluded. In use = every look while the reference skill runs.", "",
+             "| scene | static detection | median error | p90 error | max error | yaw error | fixtures | ms per look | in-use detection | in-use median error |",
+             "|---|---|---|---|---|---|---|---|---|---|"]
+    for tid, r in report["tasks"].items():
+        s, u = r["static"], r["in_use"]
+        lines.append(f"| {tid} | {s['detection_rate']:.0%} | {s['pos_err_mm_median']} mm | {s['pos_err_mm_p90']} mm | {s['pos_err_mm_max']} mm | "
+                     f"{s['yaw_err_deg_median']} deg | {s['fixture_err_mm_median']} mm | {s['ms_per_observe_median']} | "
+                     f"{(u['detection_rate'] or 0):.0%} of {u['lookups']} | {u['pos_err_mm_median_of_episode_medians']} mm |")
+    (out / "perception_bench.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    print("\n".join(lines))
+    return report
