@@ -108,11 +108,36 @@ the cases the skill has to handle by looking again. One look costs about 180 ms 
 
 ### 5.2 Skills learned with OpenCV perception
 
-[[vision scoreboard table]]
+Three Nemotron coder models, four scenes, perception entirely through the OpenCV 5 pipeline with the sensor model above
+(`results/*-vision-scoreboard-sensor`). Up to 6 practice rounds of 8 layouts, then a held-out evaluation on 50 unseen
+layouts with the 95% Wilson interval. Cost is the total Token Factory bill for the whole run.
+
+| coder | lift | push | stack | sort | total cost |
+|---|---|---|---|---|---|
+| Nemotron 3.5 Super | 42/50 (71% to 92%) | 48/50 (87% to 99%) | 50/50 (93% to 100%) | 49/50 (90% to 100%) | $0.038 |
+| Nemotron 3 Ultra | 50/50 (93% to 100%) | 28/50 (42% to 69%) | 50/50 (93% to 100%) | 49/50 (90% to 100%) | $0.135 |
+| Nemotron 3 Nano 30B | 0/50 | 0/50 | 49/50 (90% to 100%) | 0/50 | $0.036 |
+
+Perception during those 600 held-out episodes (from each run's `eval.json`): median position error 3.8 to 5.5 mm per
+run; detection 99% to 100% of looks for every run except one (Nano sort, 72%: its skill kept asking for cubes while the
+gripper was on top of them, 467 misses in 1,682 looks, and the skill never succeeded).
 
 ### 5.3 What practice adds
 
-[[gain table for vision runs]]
+Practice-round success (8 layouts per round, practice reward = ground truth) for the runs that did not solve the task
+on the first try:
+
+| run | round 1 | round 2 | round 3 | round 4 | round 5 | round 6 | held-out |
+|---|---|---|---|---|---|---|---|
+| Super, lift | 0/8 | 0/8 | 4/8 | 8/8 | | | 42/50 |
+| Ultra, push | 0/8 | 0/8 | 1/8 | 5/8 | 5/8 | 4/8 | 28/50 |
+| Nano, stack | 0/8 | 2/8 | 0/8 | 8/8 | | | 49/50 |
+
+The Super lift run is the clearest example of OpenCV output changing the program. Its round 2 trace analysis found 62
+episodes ending millimetres short of the 5 cm target and 12 failed grasps; the final skill wraps every look in a
+`safe_observe()` that looks again when the cube is missing from the camera view (occlusion), verifies the achieved
+height after each move from a fresh observation and corrects it, and retries a grasp from a re-observed pose. None of
+that was in the first version.
 
 ## 6. Failure cases and limitations
 
