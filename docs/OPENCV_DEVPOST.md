@@ -34,7 +34,7 @@ You type a task ("put the red cube in the red tray and the blue cube in the blue
 Same-coloured fixtures (a blue tray wall looks like a blue cube) needed size gating and geometric rejection. A perfect render made perception look unrealistically good (under 0.3 mm), so we added a sensor model and calibration error. Practice scores on 8 layouts are noisy, which is why the best version is re-checked before evaluation.
 
 ### What we learned
-Most first-try failures are not perception failures; they are the program not checking what it sees. The rewrites that work add looks: verify the grasp, look again when occluded, check the height after lifting.
+Most first-try failures are not perception failures; they are the program not using what the camera tells it. The rewrites that work trust the measurement more and check more: grasp at the measured position, re-observe after every move, retry from a fresh look.
 
 ### What's next
 Real-camera validation on an SO-101 arm with the same OpenCV steps and a homography; OpenCV 5's DNN engine for objects outside a known colour palette.

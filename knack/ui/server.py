@@ -107,6 +107,18 @@ class Handler(BaseHTTPRequestHandler):
             return self._file(STATIC / "index.html", STATIC)
         if path.startswith("/static/"):
             return self._file(STATIC / path[len("/static/"):], STATIC)
+        if path == "/api/health":
+            import platform
+
+            runs = [d for d in self.runs_root.glob("*") if d.is_dir()] if self.runs_root.exists() else []
+            try:
+                import cv2
+
+                cv = cv2.__version__
+            except Exception:  # pragma: no cover
+                cv = None
+            return self._json({"ok": True, "opencv": cv, "machine": platform.machine(), "python": platform.python_version(),
+                               "runs": len(runs), "public": self.public, "passcode_set": bool(self.passcode)})
         if path == "/api/tasks":
             return self._json([t.to_dict() for t in TASKS.values()])
         if path == "/api/models":

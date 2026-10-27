@@ -15,7 +15,8 @@ sudo -u knack python3 -m venv /opt/knack/.venv
 sudo -u knack /opt/knack/.venv/bin/pip install -q boto3 awscli
 sudo -u knack /opt/knack/.venv/bin/aws s3 cp "s3://$BUCKET/src/knack.tar.gz" /tmp/knack.tar.gz --region $REGION
 sudo -u knack tar -xzf /tmp/knack.tar.gz -C /opt/knack --strip-components=1
-sudo -u knack /opt/knack/.venv/bin/pip install -q -e /opt/knack
+sudo -u knack /opt/knack/.venv/bin/pip install -q -r /opt/knack/requirements-lock.txt
+sudo -u knack /opt/knack/.venv/bin/pip install -q --no-deps -e /opt/knack
 param() { /opt/knack/.venv/bin/python -c "import boto3,sys;print(boto3.client('ssm',region_name='$REGION').get_parameter(Name=sys.argv[1],WithDecryption=True)['Parameter']['Value'])" "$1"; }
 umask 077
 cat > /etc/knack.env <<ENV
