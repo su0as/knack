@@ -134,11 +134,12 @@ on the first try:
 | Nano, stack | 0/8 | 2/8 | 0/8 | 8/8 | | | 49/50 |
 
 The Super lift run shows how camera output reshapes the program. Version 1 already looked again when the cube
-was hidden, but it threw away the camera's height estimate and grasped at a hard-coded 15 mm. Its round 2 analysis,
-which receives each episode's camera record ("N/M object sightings, median error X mm") alongside the failure, reported
-lifts ending millimetres short and failed grasps. The final version grasps at the camera-measured cube centre
+was hidden, but it threw away the camera's height estimate and grasped at a hard-coded 15 mm. Its round 2 and 3 analyses,
+which receive each failed episode's camera record (for example `seed 3002: FAIL | red_cube_z=0.0612, required 0.065 |
+camera: 4/4 object sightings, median error 5.81 mm`), reported lifts ending millimetres short, moves reported as done
+without checking height, and a look-again helper that moved the gripper sideways and lost the pose. The final version grasps at the camera-measured cube centre
 (x, y and z), re-observes after every move to check the gripper reached the commanded height, nudges upward when the
-lift ends low, and retries the grasp from a fresh observation. Diff: `round_1/skill.py` vs `best_skill.py` in the run
+lift ends low, retries the grasp from a fresh observation, and looks again in place instead of moving away. Diff: `round_1/skill.py` vs `best_skill.py` in the run
 folder.
 
 ## 6. Failure cases and limitations
