@@ -44,7 +44,7 @@ opencv, python, mujoco, numpy, aws-ec2, aws-graviton, aws-s3, aws-systems-manage
 
 ## Links
 - Code: https://github.com/su0as/knack
-- Live demo: [[http://<EC2 public IP>/]]
+- Live demo: http://13.212.24.5/ (AWS EC2 t4g.small, ap-southeast-1)
 - Technical report: docs/OPENCV_REPORT.md (PDF attached)
 - Video: [[YouTube URL]]
 
