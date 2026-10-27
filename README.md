@@ -22,6 +22,8 @@ Built for the Nebius x NVIDIA Global AI Hackathon (Physical AI track). Runs on *
 > pipeline (`knack/vision.py`: HSV masks, connected components, back-projection, `minAreaRect`) with a sensor-noise model.
 > Perception benchmark: 100% first-look detection, about 4 mm median error over 180 layouts. Skills learned with it:
 > Nemotron Super 42/50 lift, 48/50 push, 50/50 stack, 49/50 sort for $0.038 in total.
+> Photoreal stress test (AI-generated images, labelled as such): the same thresholds found 23 of 24 objects on a wooden
+> table with glare, shadow, distractors and occlusion ([`docs/photo_check/`](docs/photo_check/README.md)).
 >
 > ```
 > pip install -r requirements-lock.txt && pip install --no-deps -e .

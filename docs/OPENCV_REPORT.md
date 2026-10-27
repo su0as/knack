@@ -142,9 +142,22 @@ without checking height, and a look-again helper that moved the gripper sideways
 lift ends low, retries the grasp from a fresh observation, and looks again in place instead of moving away. Diff: `round_1/skill.py` vs `best_skill.py` in the run
 folder.
 
+### 5.4 Photoreal stress test (AI-generated images, not real captures)
+
+![Photoreal stress test](figures/photoreal_stress_test.png)
+
+To check that the colour pipeline is not tuned only to clean renders, we ran it, with the simulator's HSV ranges
+unchanged, on six photorealistic AI-generated overhead images of red and blue blocks on a light-brown wooden table
+(`knack/photo_check.py`, `docs/photo_check/`). These are not camera captures and are reported as a stress test only.
+Conditions: wood hue close to red and orange, plastic glare under warm light, hard shadow, distractors (orange pencil,
+pink eraser, cardboard coaster, yellow note, white mug), red and blue touching, and a cube half inside a gripper.
+Result: 23 of 24 objects found and no false detections; the eraser and a blue cable produced small mask blobs that size
+gating rejected. The miss is a navy cube deep in shadow, below the value threshold; it is reported as missing, not
+guessed. Without depth or calibration this is image-space detection only, so no metric error is claimed.
+
 ## 6. Failure cases and limitations
 
-- Simulated cameras: even with the sensor model, rendered images are cleaner than a real camera (no motion blur, no
+- Simulated cameras: the photoreal stress test (5.4) uses AI-generated images, not captures. Even with the sensor model, rendered images are cleaner than a real camera (no motion blur, no
   specular highlights, no lighting changes). Real-camera validation on an SO-101 arm is the next step; the overhead
   pipeline for the real arm (`knack/real/vision.py`) uses the same OpenCV steps with a homography.
 - Colour-based segmentation assumes a known palette. Unknown objects would need a learned detector (OpenCV 5's DNN
