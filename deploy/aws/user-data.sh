@@ -3,17 +3,19 @@
 # Secrets come from SSM Parameter Store (SecureString), never from this file. No SSH port: use Session Manager.
 set -euxo pipefail
 REGION=ap-southeast-1
-REPO=${KNACK_REPO:-https://github.com/su0as/knack}
-BUCKET=${KNACK_BUCKET:-}
+BUCKET=__BUCKET__          # set at launch: private S3 bucket holding the source tarball and run summaries
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -q
-apt-get install -y -q python3-venv python3-pip git libosmesa6 libgl1 unzip curl
+apt-get install -y -q python3-venv python3-pip libosmesa6 libgl1 curl
+# small instance: add 2 GiB swap so parallel MuJoCo episodes cannot OOM the console
+if [ ! -f /swapfile ]; then fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile && echo '/swapfile none swap sw 0 0' >> /etc/fstab; fi
 useradd -m -s /bin/bash knack || true
-mkdir -p /opt /var/lib/knack/runs && chown -R knack:knack /var/lib/knack
-if [ ! -d /opt/knack ]; then git clone --depth 1 "$REPO" /opt/knack; fi
-chown -R knack:knack /opt/knack
+mkdir -p /opt/knack /var/lib/knack/runs && chown -R knack:knack /var/lib/knack /opt/knack
 sudo -u knack python3 -m venv /opt/knack/.venv
-sudo -u knack /opt/knack/.venv/bin/pip install -q -e /opt/knack boto3 awscli
+sudo -u knack /opt/knack/.venv/bin/pip install -q boto3 awscli
+sudo -u knack /opt/knack/.venv/bin/aws s3 cp "s3://$BUCKET/src/knack.tar.gz" /tmp/knack.tar.gz --region $REGION
+sudo -u knack tar -xzf /tmp/knack.tar.gz -C /opt/knack --strip-components=1
+sudo -u knack /opt/knack/.venv/bin/pip install -q -e /opt/knack
 param() { /opt/knack/.venv/bin/python -c "import boto3,sys;print(boto3.client('ssm',region_name='$REGION').get_parameter(Name=sys.argv[1],WithDecryption=True)['Parameter']['Value'])" "$1"; }
 umask 077
 cat > /etc/knack.env <<ENV
@@ -61,4 +63,4 @@ UNIT
 systemctl daemon-reload
 systemctl enable --now knack-ui.service knack-sync.timer
 # One demo practice run on this instance (capped at $0.10 of Token Factory calls), so the console has a live AWS run.
-sudo -u knack bash -c 'set -a; . /etc/knack.env; set +a; cd /var/lib/knack && /opt/knack/.venv/bin/python -m knack learn lift --coder super --realism vision --rounds 6 --n 8 --eval 50 --budget 0.10 --runs /var/lib/knack/runs > /var/lib/knack/first-run.log 2>&1' &
+sudo -u knack bash -c 'set -a; . /etc/knack.env; set +a; cd /var/lib/knack && /opt/knack/.venv/bin/python -m knack learn lift --coder super --realism vision --rounds 6 --n 8 --eval 50 --budget 0.10 --workers 2 --runs /var/lib/knack/runs > /var/lib/knack/first-run.log 2>&1' &

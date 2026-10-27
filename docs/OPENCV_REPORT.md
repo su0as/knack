@@ -65,7 +65,7 @@ OpenCV output changes later actions at two levels:
 
 ```mermaid
 flowchart LR
-  J[Judge's browser] -->|HTTP 80| EC2[EC2 t4g.medium, Graviton, Ubuntu 24.04 arm64<br/>Knack console + practice runs<br/>OpenCV 5 + MuJoCo, OSMesa]
+  J[Judge's browser] -->|HTTP 80| EC2[EC2 t4g.small, Graviton, Ubuntu 24.04 arm64<br/>Knack console + practice runs<br/>OpenCV 5 + MuJoCo, OSMesa]
   EC2 -->|GetParameter| SSM[(SSM Parameter Store<br/>SecureString: model key, passcode)]
   EC2 -->|sync every 10 min| S3[(S3 bucket: run summaries)]
   EC2 -->|HTTPS| TF[Nebius Token Factory<br/>coder and summariser models]
