@@ -13,6 +13,23 @@ Built for the Nebius x NVIDIA Global AI Hackathon (Physical AI track). Runs on *
 
 > Status (23 Oct 2026): first live results are in (below). Every number comes from a file on the [`results` branch](https://github.com/su0as/knack/tree/results/results), written by the [`live` workflow](.github/workflows/live.yml) on a GitHub-hosted runner calling Nebius Token Factory. Nothing here is projected or estimated.
 
+> **OpenCV AI Competition 2026 judges, start here.**
+> Live demo on AWS Graviton: **http://13.212.24.5/** (health: `/api/health` shows OpenCV 5.0.0 on aarch64) ·
+> Video: **https://youtu.be/OfWh_G895_4** · Technical report: [`docs/OPENCV_REPORT.md`](docs/OPENCV_REPORT.md) ·
+> AWS deploy: [`deploy/aws/`](deploy/aws/README.md) · Pinned dependencies: [`requirements-lock.txt`](requirements-lock.txt)
+>
+> In vision mode (`--realism vision`) the robot never reads simulator state: every look goes through an OpenCV 5 RGB-D
+> pipeline (`knack/vision.py`: HSV masks, connected components, back-projection, `minAreaRect`) with a sensor-noise model.
+> Perception benchmark: 100% first-look detection, about 4 mm median error over 180 layouts. Skills learned with it:
+> Nemotron Super 42/50 lift, 48/50 push, 50/50 stack, 49/50 sort for $0.038 in total.
+>
+> ```
+> pip install -r requirements-lock.txt && pip install --no-deps -e .
+> python -m knack oracle all --realism vision        # reference skills through the OpenCV pipeline, no API key
+> python -m knack exp perception --n-judge 10        # perception accuracy vs ground truth, writes pipeline images
+> python -m knack learn lift --coder super --realism vision --rounds 6 --eval 50   # needs NEBIUS_API_KEY
+> ```
+
 ---
 
 ## The problem
