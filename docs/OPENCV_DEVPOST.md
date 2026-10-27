@@ -46,7 +46,7 @@ opencv, python, mujoco, numpy, aws-ec2, aws-graviton, aws-s3, aws-systems-manage
 - Code: https://github.com/su0as/knack
 - Live demo: http://13.212.24.5/ (AWS EC2 t4g.small, ap-southeast-1)
 - Technical report: docs/OPENCV_REPORT.md (PDF attached)
-- Video: [[YouTube URL]]
+- Video: https://youtu.be/OfWh_G895_4
 
 ## Testing instructions (for judges)
 Open the live demo link. Pick any run from the run picker to replay it: code per round, practice frames, failure analysis and the held-out evaluation. To start a new practice run, choose a task, set PERCEPTION to "camera + OpenCV 5", press Learn, and enter passcode [[passcode]] when asked. A run takes a few minutes. To run locally: `pip install -e .` then `python -m knack oracle all --realism vision` (no API key needed) or `python -m knack ui`.

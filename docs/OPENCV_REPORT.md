@@ -1,7 +1,7 @@
 # Knack: robots that learn a skill by practising, seeing the scene through OpenCV 5
 
 Technical report for the OpenCV AI Competition 2026 (powered by AWS). Team: Suhas Suren (NTU Singapore, MSc Robotics).
-Code: https://github.com/su0as/knack. Live demo on AWS: http://13.212.24.5/. Every number below is read from a file in the repository (`results` branch);
+Code: https://github.com/su0as/knack. Live demo on AWS: http://13.212.24.5/. Video: https://youtu.be/OfWh_G895_4. Every number below is read from a file in the repository (`results` branch);
 the source is named next to each table.
 
 ## 1. Problem and users
