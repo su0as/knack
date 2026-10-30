@@ -1,0 +1,61 @@
+--- round_1/skill.py
++++ round_2/skill.py
+@@ -3,8 +3,11 @@
+ def run(robot):
+     """Pick up the red cube and hold it at least 5 cm above the table."""
+     MAX_RETRIES = 3
+-    GRASP_HEIGHT = 0.015   # approx centre of cube on table (finger pads around middle)
+-    LIFT_HEIGHT = 0.05     # 5 cm lift
++    # Approximate height of the cube centre when resting on the table.
++    # We will use the measured centre height directly, so this is only a reference.
++    GRASP_HEIGHT_REF = 0.015
++    # Lift a little more than 5 cm to guarantee clearance despite controller undershoot.
++    LIFT_HEIGHT = 0.055   # 5.5 cm
+ 
+     # Helper: try to get the pose of the red cube, returning None if not visible
+     def get_red_pose():
+@@ -25,8 +28,8 @@
+             robot.wait(0.2)
+             continue
+ 
+-        # 2. Move above the cube
+-        above_pos = [pose['pos'][0], pose['pos'][1], 0.10]  # 10 cm clearance
++        # 2. Move above the cube (10 cm clearance)
++        above_pos = [pose['pos'][0], pose['pos'][1], 0.10]
+         move_res = robot.move_to(above_pos[0], above_pos[1], above_pos[2],
+                                  yaw=pose['yaw'], speed=0.15)
+         if not move_res['ok']:
+@@ -34,8 +37,8 @@
+             robot.move_by(dz=-0.02, speed=0.1)
+             continue
+ 
+-        # 3. Descend to grasp height
+-        grasp_pos = [pose['pos'][0], pose['pos'][1], GRASP_HEIGHT]
++        # 3. Descend to grasp height – use the actual measured centre height
++        grasp_pos = [pose['pos'][0], pose['pos'][1], pose['pos'][2]]
+         move_res = robot.move_to(grasp_pos[0], grasp_pos[1], grasp_pos[2],
+                                  yaw=pose['yaw'], speed=0.08)
+         if not move_res['ok']:
+@@ -46,17 +49,18 @@
+ 
+         # 4. Attempt to grasp
+         robot.grasp()
+-        robot.wait(0.2)  # let fingers close
++        robot.wait(0.1)  # let fingers close fully
+         if robot.holding() != 'red_cube':
+             # Grasp failed – open fingers, lift a bit and try again
+             robot.release()
+             robot.move_by(dz=0.03, speed=0.1)
+             continue
+ 
+-        # 5. Lift the cube 5 cm above the table
+-        lift_pos = [pose['pos'][0], pose['pos'][1], GRASP_HEIGHT + LIFT_HEIGHT]
++        # 5. Lift the cube – target height = measured centre + LIFT_HEIGHT
++        lift_pos = [pose['pos'][0], pose['pos'][1],
++                    pose['pos'][2] + LIFT_HEIGHT]
+         move_res = robot.move_to(lift_pos[0], lift_pos[1], lift_pos[2],
+-                                 yaw=pose['yaw'], speed=0.15)
++                                 yaw=pose['yaw'], speed=0.08)
+         if not move_res['ok']:
+             # Something went wrong while lifting; release and retry
+             robot.release()
