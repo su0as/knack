@@ -120,7 +120,8 @@ def audio(tl, out):
         k += 1
     pad = lowpass(pad, 1400)
     # intro: darker until the 8/8 moment, then open up
-    open_ = np.clip((t - 21.4) / 0.4, 0, 1)
+    E = tl["E"]
+    open_ = np.clip((t - (E["flip"] - 0.15)) / 0.4, 0, 1)
     music += pad * (0.55 + 0.45 * open_)
     # pulse (kick + hat + pluck arp) in the console and closing sections
     S = tl["scenes"]
@@ -178,25 +179,25 @@ def audio(tl, out):
         tt = 0.4 + (1 - (1 - p) ** (1 / 3)) * 2.3
         add(sfx, tt, click(0.035))
     for i in range(8):
-        add(sfx, 10.55 + i * 0.11, blip(196, 0.16, 0.10))
-    add(sfx, 10.95, boom(0.22))
+        add(sfx, E["r1badge"] + i * 0.11, blip(196, 0.16, 0.10))
+    add(sfx, E["r1badge"] + 0.4, boom(0.22))
     add(sfx, W(tl, "v02", "less") - 0.05, blip(147, 0.3, 0.12))
-    riser_s, riser_e = 19.6, 21.5
+    riser_s, riser_e = E["flip"] - 1.9, E["flip"] - 0.05
     m = int((riser_e - riser_s) * SR)
     rz = rng.standard_normal(m)
     rz = (lowpass(rz, 4000) - lowpass(rz, 400)) * np.linspace(0, 1, m) ** 2 * 0.07
     add(sfx, riser_s, rz.astype(np.float32))
     for i in range(8):
-        add(sfx, 21.15 + i * 0.05, blip(880 + i * 60, 0.1, 0.07))
-    add(sfx, 21.55, chime(0.17))
-    add(sfx, 21.55, boom(0.25))
+        add(sfx, E["r2badge"] + i * 0.05, blip(880 + i * 60, 0.1, 0.07))
+    add(sfx, E["flip"], chime(0.17))
+    add(sfx, E["flip"], boom(0.25))
     for i in range(0, 50, 3):
-        add(sfx, 23.3 + (i / 50) * 2.0, blip(1200 + i * 12, 0.05, 0.03))
-    add(sfx, 25.3, chime(0.15))
-    add(sfx, 26.8, blip(660, 0.15, 0.06))
-    add(sfx, 29.55, boom(0.38))
-    add(sfx, 29.6, chime(0.10))
-    for x in (17.35, 22.6, 33.1, S["console"][0] - 0.2, S["findings"][0] - 0.2, S["close"][0] - 0.2):
+        add(sfx, E["sq"][0] + (i / 50) * (E["sq"][1] - E["sq"][0]), blip(1200 + i * 12, 0.05, 0.03))
+    add(sfx, E["big"], chime(0.15))
+    add(sfx, E["cost"], blip(660, 0.15, 0.06))
+    add(sfx, E["title"][0] + 0.15, boom(0.38))
+    add(sfx, E["title"][0] + 0.2, chime(0.10))
+    for x in (E["rw"][0] - 0.05, E["held"][0] - 0.1, S["problem"][0] - 0.1, S["console"][0] - 0.2, S["findings"][0] - 0.2, S["close"][0] - 0.2):
         add(sfx, x, whoosh())
     nb = W(tl, "v06", "neither")
     add(sfx, nb, blip(220, 0.18, 0.08))
@@ -232,7 +233,8 @@ def frames(tl, video_only):
     N = int(tl["total"] * FPS)
     stills = BUILD / "stills"
     stills.mkdir(exist_ok=True)
-    keep = {int(x * FPS) for x in (1.5, 6.0, 10.9, 15.0, 19.5, 21.8, 26.5, 31.0, 40.0, 50.0, 62.0, 80.0, 89.0, 92.5, 97.5, 112.0, 124.0, 128.0, 133.0, 140.0, 146.0)}
+    E = tl["E"]
+    keep = {int(x * FPS) for x in (1.5, 6.0, E["r1badge"] + 1, E["close"][0] + 2, E["flip"] + 0.4, E["cost"] + 1, 45.0, 70.0, 95.0, 105.0, 112.0, 128.0, 138.0, 150.0, 160.0)}
     ff = subprocess.Popen(["ffmpeg", "-y", "-v", "error", "-f", "image2pipe", "-framerate", str(FPS), "-c:v", "mjpeg", "-i", "-",
                            "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-pix_fmt", "yuv420p", str(video_only)], stdin=subprocess.PIPE)
     with sync_playwright() as p:

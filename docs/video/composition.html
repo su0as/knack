@@ -220,16 +220,16 @@ function seek(t) {
     $("type").style.transform = `translateY(${-eo(seg(t, 3.0, 3.7)) * 40}px)`;
   }
   // grid: round 1 then round 2
-  const gOn = Math.max(vis(t, 3.25, 12.0, 0.45), vis(t, 20.2, 22.7, 0.25));
+  const E = TL.E; const gOn = Math.max(vis(t, E.g1[0], E.g1[1], 0.45), vis(t, E.g2[0], E.g2[1], 0.25));
   $("grid").style.opacity = gOn;
   if (gOn > 0) {
-    const r2 = t > 18;
+    const r2 = t > E.close[1];
     const seeds = r2 ? R2 : R1, round = r2 ? "r2" : "r1";
-    const p0 = r2 ? 20.2 : 3.2, p1 = r2 ? 21.2 : 10.6;
+    const p0 = r2 ? E.r2play[0] : E.r1play[0], p1 = r2 ? E.r2play[1] : E.r1play[1];
     tiles.forEach((d, i) => {
       const s = seeds[i]; const p = seg(t, p0, p1);
       setImg(d.querySelector("img"), tileSrc(round, s, p));
-      const tb = (r2 ? 21.15 : 10.55) + i * (r2 ? 0.05 : 0.11);
+      const tb = (r2 ? E.r2badge : E.r1badge) + i * (r2 ? 0.05 : 0.11);
       const shown = t >= tb;
       const bd = d.querySelector(".badge");
       bd.textContent = shown ? (r2 ? "PASS" : "FAIL") : "RUN";
@@ -239,41 +239,41 @@ function seek(t) {
       d.querySelector(".mz").textContent = shown ? (((r2 ? Z2 : Z1)[s] - 0.015) * 100).toFixed(2) + " cm" : "";
       d.querySelector(".mz").style.color = r2 ? "var(--lime)" : "var(--red)";
     });
-    const k = r2 ? (t >= 21.55 ? 8 : 0) : 0;
+    
     $("gr").textContent = r2 ? "ROUND 2 · REWRITTEN SKILL" : "ROUND 1 · FIRST TRY";
-    $("gv").textContent = (r2 ? Math.min(8, Math.floor(seg(t, 21.15, 21.55) * 8.99)) : 0) + "/8";
-    $("gv").style.color = r2 ? (t >= 21.15 ? "var(--lime)" : "var(--fg)") : (t >= 10.55 ? "var(--red)" : "var(--fg)");
-    const pop = r2 ? eo(seg(t, 21.55, 21.85)) : eo(seg(t, 10.9, 11.2));
+    $("gv").textContent = (r2 ? Math.min(8, Math.floor(seg(t, E.r2badge, E.flip) * 8.99)) : 0) + "/8";
+    $("gv").style.color = r2 ? (t >= E.r2badge ? "var(--lime)" : "var(--fg)") : (t >= E.r1badge ? "var(--red)" : "var(--fg)");
+    const pop = r2 ? eo(seg(t, E.flip, E.flip + 0.3)) : eo(seg(t, E.r1badge + 0.35, E.r1badge + 0.65));
     $("gv").style.transform = `scale(${1 + 0.25 * Math.sin(Math.PI * pop)})`;
   }
   // close-up with ruler
-  if (on("close", 11.9, 17.5, 0.35) > 0) {
-    const n = A.replay["hero_r1_" + A.heroCam]; setImg($("closeimg"), `${B}replay/hero_r1/${A.heroCam}/${pad(Math.min(n - 1, Math.floor(seg(t, 11.9, 15.0) * (n - 1))), 4)}.jpg`);
-    $("closeimg").style.transform = `scale(${1 + 0.06 * seg(t, 11.9, 17.5)})`;
+  if (on("close", TL.E.close[0], TL.E.close[1], 0.35) > 0) {
+    const n = A.replay["hero_r1_" + A.heroCam]; setImg($("closeimg"), `${B}replay/hero_r1/${A.heroCam}/${pad(Math.min(n - 1, Math.floor(seg(t, TL.E.close[0], TL.E.close[0] + 3.0) * (n - 1))), 4)}.jpg`);
+    $("closeimg").style.transform = `scale(${1 + 0.06 * seg(t, TL.E.close[0], TL.E.close[1])})`;
     const y = window._ry; const v = 3.0 + (A.heroCm - 3.0) * eo(seg(t, W("v02","four") - .3, W("v02","three") + .2));
     $("rbar").style.height = (560 - y(v)) + "px"; $("rv").style.top = y(v) + 26 + "px"; $("rv").textContent = v.toFixed(2) + " cm";
     const lm = W("v02","less"); $("miss").textContent = "−" + ((5 - A.heroCm) * 10).toFixed(1) + " mm"; $("miss").style.opacity = seg(t, lm - .1, lm + .2); $("miss").style.transform = `scale(${1 + .3 * Math.sin(Math.PI * seg(t, lm - .1, lm + .4))})`;
   }
   // rewrite: failure summary then diff
-  if (on("rewrite", 17.4, 20.4, 0.3) > 0) {
-    $("sumbox").style.opacity = seg(t, 17.5, 17.9);
-    $("diffbox").style.opacity = seg(t, 19.1, 19.4);
-    $("diffbox").scrollTop = eio(seg(t, 19.3, 20.4)) * 260;
+  if (on("rewrite", TL.E.rw[0], TL.E.rw[1], 0.3) > 0) {
+    $("sumbox").style.opacity = seg(t, TL.E.sumIn, TL.E.sumIn + 0.4);
+    $("diffbox").style.opacity = seg(t, TL.E.diffIn, TL.E.diffIn + 0.3);
+    $("diffbox").scrollTop = eio(seg(t, TL.E.diffIn + 0.2, TL.E.rw[1])) * 260;
   }
   // held-out
-  if (on("held", 22.7, 29.4, 0.3) > 0) {
-    const f = Math.floor(eo(seg(t, 23.3, 25.3)) * 50);
+  if (on("held", TL.E.held[0], TL.E.held[1], 0.3) > 0) { const H = TL.E;
+    const f = Math.floor(eo(seg(t, H.sq[0], H.sq[1])) * 50);
     [...$("sqs").children].forEach((s, i) => { s.style.background = i < f ? "var(--lime)" : "#151b22"; s.style.transform = i === f - 1 ? "scale(1.15)" : "none"; });
-    $("hbig").style.opacity = seg(t, 25.3, 25.5); $("hbig").style.transform = `scale(${1 + .18 * Math.sin(Math.PI * seg(t, 25.3, 25.8))})`;
-    $("hci").style.opacity = seg(t, 25.9, 26.3); $("hcost").style.opacity = seg(t, 26.8, 27.2);
+    $("hbig").style.opacity = seg(t, H.big, H.big + 0.2); $("hbig").style.transform = `scale(${1 + .18 * Math.sin(Math.PI * seg(t, H.big, H.big + 0.5))})`;
+    $("hci").style.opacity = seg(t, H.ci, H.ci + 0.4); $("hcost").style.opacity = seg(t, H.cost, H.cost + 0.4);
   }
   // title
-  if (on("title", 29.4, 33.2, 0.4) > 0) {
-    $("title").querySelector(".logo").style.letterSpacing = (60 - 30 * eo(seg(t, 29.6, 30.6))) + "px";
-    $("title").querySelector(".tg").style.opacity = seg(t, 30.7, 31.1);
+  if (on("title", TL.E.title[0], TL.E.title[1], 0.4) > 0) {
+    $("title").querySelector(".logo").style.letterSpacing = (60 - 30 * eo(seg(t, TL.E.title[0] + 0.2, TL.E.title[0] + 1.2))) + "px";
+    $("title").querySelector(".tg").style.opacity = seg(t, TL.E.tag - 0.1, TL.E.tag + 0.3);
   }
   // problem
-  if (on("problem", 33.2, 45.6, 0.35) > 0) {
+  if (on("problem", S.problem[0], S.problem[1], 0.35) > 0) {
     const c1 = W("v06","days"), c2 = W("v06","hundred"), nb = W("v06","neither"), pr = W("v06","practise");
     $("c1").style.opacity = seg(t, c1 - .3, c1); $("c1").style.transform = `translateY(${(1 - eo(seg(t, c1 - .3, c1 + .2))) * 40}px)`;
     $("c2").style.opacity = seg(t, c2 - .3, c2); $("c2").style.transform = `translateY(${(1 - eo(seg(t, c2 - .3, c2 + .2))) * 40}px)`;
@@ -348,7 +348,7 @@ function seek(t) {
     html = `<span class="box">` + chunks[ci].map((i) => `<span class="${s + ws[i].t <= t + 0.02 ? "on" : ""}">${ws[i].p || ws[i].w}</span>`).join(" ") + `</span>`;
   }
   $("cap").innerHTML = html;
-  $("cap").style.opacity = (t > 29.4 && t < 33.2) || t > KN ? 0 : 1;
+  $("cap").style.opacity = (t > TL.E.title[0] && t < TL.E.title[1]) || t > KN ? 0 : 1;
   return Promise.all(imgs.map((im) => im.complete && im.naturalWidth ? Promise.resolve() : (im.decode ? im.decode().catch(() => {}) : Promise.resolve())));
 }
 window.seek = seek;
