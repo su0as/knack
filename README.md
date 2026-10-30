@@ -13,6 +13,18 @@ Built for the Nebius x NVIDIA Global AI Hackathon (Physical AI track). Runs on *
 
 > Status (23 Oct 2026): first live results are in (below). Every number comes from a file on the [`results` branch](https://github.com/su0as/knack/tree/results/results), written by the [`live` workflow](.github/workflows/live.yml) on a GitHub-hosted runner calling Nebius Token Factory. Nothing here is projected or estimated.
 
+> **Nebius x NVIDIA Global AI Hackathon judges (Physical AI track), start here.**
+> Video (under 3 min): **https://youtu.be/IlJnqjoxPX8** · Every model call: **NVIDIA Nemotron on Nebius Token Factory** (OpenAI SDK, `base_url` swap, `knack/llm.py`).
+> Coder `nvidia/nemotron-3-super-120b-a12b` or `nvidia/Nemotron-3-Ultra-550b-a55b` writes and rewrites the skill · trace summariser `nvidia/Nemotron-3_5-Lightning` · optional vision judge `nvidia/Nemotron-3.5-Super-VL`.
+> Live run in the video: lift with OpenCV camera perception, 0/8, 0/8, 0/8, 1/8, 5/8, regression to 0/8, rollback to round 5, **48/50 held-out for $0.025**. Hero run: 0/8, 8/8, **50/50 for $0.0082**.
+> Feedback on Token Factory, AI Cloud and the Nemotron models: [`docs/FEEDBACK.md`](docs/FEEDBACK.md) · submission text: [`docs/DEVPOST.md`](docs/DEVPOST.md) · how the video was made from real runs: [`docs/video/`](docs/video).
+>
+> ```
+> pip install -e . && export NEBIUS_API_KEY=...        # Token Factory key
+> python -m knack ui                                    # console at http://127.0.0.1:8765, press PRACTISE
+> python -m knack learn lift --coder super --realism real --rounds 6 --eval 50   # command-line run, prints the skill card
+> ```
+
 > **OpenCV AI Competition 2026 judges, start here.**
 > Live demo on AWS Graviton: **http://13.212.24.5/** (health: `/api/health` shows OpenCV 5.0.0 on aarch64) ·
 > Video: **https://youtu.be/OfWh_G895_4** · Technical report: [`docs/OPENCV_REPORT.md`](docs/OPENCV_REPORT.md) ·
