@@ -58,7 +58,7 @@ def main():
             print(name, res, flush=True)
     for name, code, s in (("hero_r1", r1, 1000), ("hero_r2", best, 2000)):
         for cam in ("front", "side"):
-            res = episode(code, s, (1280, 960), 1 / 25, cam, OUT / name / cam)
+            res = episode(code, s, (640, 480), 1 / 25, cam, OUT / name / cam)
             report[f"{name}/{cam}"] = res
             print(name, cam, res, flush=True)
     (OUT / "report.json").write_text(json.dumps(report, indent=1))

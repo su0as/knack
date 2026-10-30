@@ -6,6 +6,10 @@ on:
         description: footage | render
         required: true
         default: footage
+      console_run:
+        description: run id holding the console artifact (defaults to footage_run)
+        required: false
+        default: ""
       footage_run:
         description: run id of a footage stage (for render)
         required: false
@@ -19,7 +23,7 @@ permissions:
   actions: read
 jobs:
   replay:
-    if: inputs.stage == 'footage'
+    if: inputs.stage == 'footage' || inputs.stage == 'replay'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
@@ -68,7 +72,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with: { name: replay, path: docs/video/build/replay, run-id: "${{ inputs.footage_run }}", github-token: "${{ github.token }}" }
       - uses: actions/download-artifact@v4
-        with: { name: console, path: docs/video/build/console_art, run-id: "${{ inputs.footage_run }}", github-token: "${{ github.token }}" }
+        with: { name: console, path: docs/video/build/console_art, run-id: "${{ inputs.console_run || inputs.footage_run }}", github-token: "${{ github.token }}" }
       - run: python docs/video/render.py
       - uses: actions/upload-artifact@v4
         with: { name: video, path: "docs/video/build/knack_nebius.mp4\ndocs/video/build/stills", retention-days: 7 }

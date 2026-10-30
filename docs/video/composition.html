@@ -1,0 +1,341 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Knack demo composition</title>
+<style>
+:root{--bg:#07090c;--lime:#d4ff3a;--red:#ff5a4a;--fg:#eef1f4;--mute:#8b94a1;--line:#1d232b}
+*{box-sizing:border-box}html,body{margin:0;background:#000;overflow:hidden}
+body{font-family:Inter,"Helvetica Neue",Arial,sans-serif;color:var(--fg)}
+.mono{font-family:"JetBrains Mono",Menlo,"DejaVu Sans Mono",monospace}
+#stage{position:relative;width:1920px;height:1080px;background:var(--bg);overflow:hidden}
+.sc{position:absolute;inset:0;opacity:0}
+.k{font:700 22px "JetBrains Mono",monospace;letter-spacing:5px;color:var(--lime)}
+.abs{position:absolute}
+/* typed sentence */
+#type .q{position:absolute;left:0;right:0;top:400px;text-align:center;font-weight:800;font-size:78px;line-height:1.15;padding:0 140px}
+#type .cur{display:inline-block;width:6px;height:72px;background:var(--lime);vertical-align:-8px;margin-left:6px}
+#type .tag{position:absolute;left:0;right:0;top:330px;text-align:center}
+/* grid */
+.grid{position:absolute;left:50px;top:200px;display:grid;grid-template-columns:repeat(4,440px);gap:20px}
+.tile{position:relative;width:440px;height:374px;background:#0c1015;border:3px solid #222a33;border-radius:10px;overflow:hidden}
+.tile img{width:440px;height:330px;object-fit:cover;display:block}
+.tile .lb{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font:600 19px "JetBrains Mono",monospace;color:var(--mute)}
+.badge{font:800 19px "JetBrains Mono",monospace;padding:3px 10px;border-radius:5px;color:#07090c}
+.cnt{position:absolute;left:50px;top:62px;display:flex;align-items:baseline;gap:28px}
+.cnt .r{font:700 30px "JetBrains Mono",monospace;letter-spacing:4px;color:var(--mute)}
+.cnt .v{font-weight:900;font-size:110px;line-height:1}
+.note{position:absolute;right:56px;top:84px;font:500 22px "JetBrains Mono",monospace;color:var(--mute);text-align:right}
+/* close-up */
+#close img{position:absolute;left:0;top:0;width:1440px;height:1080px;object-fit:cover}
+#close .panel{position:absolute;left:1440px;top:0;width:480px;height:1080px;background:#0b0e12;border-left:1px solid var(--line);padding:70px 46px}
+.ruler{position:relative;height:560px;margin-top:40px;border-left:3px solid #39424d}
+.ruler .tick{position:absolute;left:-3px;width:26px;border-top:3px solid #39424d}
+.ruler .tl{position:absolute;left:34px;font:600 22px "JetBrains Mono",monospace;color:var(--mute);transform:translateY(-50%)}
+.ruler .bar{position:absolute;left:0;bottom:0;width:110px;background:var(--red);opacity:.9}
+.ruler .goal{position:absolute;left:-30px;width:390px;border-top:4px dashed var(--lime)}
+/* code panels */
+.codebox{position:absolute;background:#0c1015;border:1px solid var(--line);border-radius:12px;padding:26px 30px;font:21px/1.5 "JetBrains Mono",monospace;white-space:pre;overflow:hidden}
+.add{color:#9fe870}.del{color:#ff8a7a}.dim{color:#5d6773}
+/* held-out */
+#held .sq{position:absolute;width:56px;height:56px;border-radius:8px;background:#151b22}
+#held .big{position:absolute;left:1000px;top:250px;font-weight:900;font-size:220px;line-height:1;color:var(--lime)}
+/* title */
+#title .logo{position:absolute;left:0;right:0;top:380px;text-align:center;font:800 190px "JetBrains Mono",monospace;letter-spacing:30px;color:var(--lime)}
+#title .tg{position:absolute;left:0;right:0;top:620px;text-align:center;font-size:48px;font-weight:600}
+/* problem cards */
+.card{position:absolute;top:300px;width:520px;height:420px;border-radius:18px;background:#0e1318;border:1px solid var(--line);padding:46px}
+.card .h{font:700 24px "JetBrains Mono",monospace;letter-spacing:4px;color:var(--mute)}
+.card .n{font-weight:900;font-size:120px;margin-top:40px;line-height:1}
+.card .s{font-size:30px;color:#c9d0d8;margin-top:22px}
+.strike{position:absolute;height:8px;background:var(--red);border-radius:4px;transform-origin:left center}
+/* console */
+#console .vp{position:absolute;inset:0;overflow:hidden}
+#console .cimg{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
+#console .hl{position:absolute;border:5px solid var(--lime);border-radius:12px;box-shadow:0 0 0 4000px rgba(0,0,0,.45)}
+#console .live{position:absolute;right:30px;top:1000px;font:700 20px "JetBrains Mono",monospace;background:#07090ccc;border:1px solid #333;border-radius:8px;padding:8px 14px}
+#console .call{position:absolute;left:40px;top:40px;background:#07090cf0;border:2px solid var(--lime);border-radius:14px;padding:18px 26px;max-width:900px}
+#console .call .a{font:700 18px "JetBrains Mono",monospace;letter-spacing:3px;color:var(--lime)}
+#console .call .b{font-size:38px;font-weight:800;margin-top:6px}
+#console .call .c{font:500 20px "JetBrains Mono",monospace;color:#c9d0d8;margin-top:6px}
+/* findings */
+.barwrap{position:absolute;left:120px;top:330px;width:1000px}
+.brow{display:flex;align-items:center;gap:24px;margin-bottom:46px}
+.brow .lab{width:260px;font:600 26px "JetBrains Mono",monospace;color:var(--mute)}
+.brow .trk{flex:1;height:84px;background:#121820;border-radius:10px;position:relative}
+.brow .fill{position:absolute;left:0;top:0;bottom:0;border-radius:10px}
+.brow .pct{position:absolute;right:-150px;top:8px;font-weight:900;font-size:60px}
+.verdict{position:absolute;left:1180px;width:640px;border-radius:16px;padding:26px 30px;border:2px solid}
+.verdict .a{font:700 20px "JetBrains Mono",monospace;letter-spacing:3px}
+.verdict .b{font-size:46px;font-weight:900;margin-top:8px}
+.verdict .c{font:500 21px "JetBrains Mono",monospace;color:#c9d0d8;margin-top:8px}
+/* close */
+.chip{position:absolute;left:120px;width:1680px;border:1px solid var(--line);background:#0e1318;border-radius:14px;padding:22px 30px;display:flex;justify-content:space-between;align-items:center;font:500 28px "JetBrains Mono",monospace}
+.chip b{color:var(--lime);font-weight:700}
+#end .logo{position:absolute;left:0;right:0;top:330px;text-align:center;font:800 170px "JetBrains Mono",monospace;letter-spacing:26px;color:var(--lime)}
+#end .tg{position:absolute;left:0;right:0;top:540px;text-align:center;font-size:54px;font-weight:700}
+#end .url{position:absolute;left:0;right:0;top:680px;text-align:center;font:600 36px "JetBrains Mono",monospace;color:#c9d0d8}
+#end .cr{position:absolute;left:0;right:0;top:800px;text-align:center;font:500 24px "JetBrains Mono",monospace;color:var(--mute)}
+/* captions */
+#cap{position:absolute;left:0;right:0;bottom:46px;text-align:center;pointer-events:none}
+#cap span.box{display:inline-block;background:rgba(7,9,12,.82);border-radius:12px;padding:12px 26px;font-size:38px;font-weight:600;color:#cfd5dc;max-width:1600px}
+#cap .on{color:var(--lime)}
+#bug{position:absolute;right:40px;top:30px;font:600 18px "JetBrains Mono",monospace;color:#5d6773;letter-spacing:2px}
+</style></head>
+<body><div id="stage">
+
+<div class="sc" id="type"><div class="tag k">TASK · ONE SENTENCE · ZERO DEMONSTRATIONS</div><div class="q"><span id="typed"></span><span class="cur" id="cur"></span></div></div>
+
+<div class="sc" id="grid">
+  <div class="cnt"><span class="r" id="gr">ROUND 1</span><span class="v" id="gv">0/8</span></div>
+  <div class="note" id="gn">real physics · real skill code · OpenCV 5 perception<br>replay sped up</div>
+  <div class="grid" id="tiles"></div>
+</div>
+
+<div class="sc" id="close"><img id="closeimg"><div class="panel">
+  <div class="k">ROUND 1 · EVERY ARM</div>
+  <div style="font-size:30px;font-weight:700;margin-top:18px">Cube height when the skill finished</div>
+  <div class="ruler" id="ruler"></div>
+  <div class="mono" id="miss" style="font-size:44px;font-weight:800;color:var(--red);margin-top:30px">−0.7 mm</div>
+</div></div>
+
+<div class="sc" id="rewrite">
+  <div class="abs k" style="left:80px;top:70px">ROUND 1 → TRACE MODEL → ROUND 2</div>
+  <div class="codebox" id="sumbox" style="left:80px;top:140px;width:1760px;height:330px;font-size:23px;white-space:normal"></div>
+  <div class="codebox" id="diffbox" style="left:80px;top:500px;width:1760px;height:500px"></div>
+</div>
+
+<div class="sc" id="held"><div class="abs k" style="left:120px;top:150px">HELD-OUT · 50 LAYOUTS NEVER PRACTISED</div><div id="sqs"></div>
+  <div class="big" id="hbig">50/50</div>
+  <div class="abs mono" id="hci" style="left:1010px;top:490px;font-size:30px;color:#c9d0d8">95% CI 93% to 100%</div>
+  <div class="abs" id="hcost" style="left:1006px;top:600px"><div class="k" style="color:var(--mute)">TOTAL MODEL COST</div><div style="font-weight:900;font-size:120px">$0.0082</div><div class="mono" style="font-size:24px;color:var(--mute)">5 calls · 15,016 in · 5,719 out tokens</div></div>
+</div>
+
+<div class="sc" id="title"><div class="logo">KNACK</div><div class="tg">Robots that learn by practising.</div></div>
+
+<div class="sc" id="problem">
+  <div class="abs k" style="left:120px;top:170px">THE PROBLEM</div>
+  <div class="card" id="c1" style="left:120px"><div class="h">HAND-CODING</div><div class="n">days</div><div class="s">of an engineer writing and tuning robot code</div></div>
+  <div class="card" id="c2" style="left:700px"><div class="h">DEMONSTRATIONS</div><div class="n">100+</div><div class="s">human teleoperated recordings per skill</div></div>
+  <div class="strike" id="s1" style="left:150px;top:540px;width:460px"></div>
+  <div class="strike" id="s2" style="left:730px;top:540px;width:460px"></div>
+  <div class="card" id="c3" style="left:1280px;border-color:var(--lime)"><div class="h" style="color:var(--lime)">KNACK</div><div class="n" style="color:var(--lime)">practice</div><div class="s">one sentence in, measured skill out, zero demonstrations</div></div>
+</div>
+
+<div class="sc" id="console"><div class="vp"><img class="cimg" id="cimg"></div><div class="hl" id="hl"></div>
+  <div class="call" id="call"><div class="a" id="ca"></div><div class="b" id="cb"></div><div class="c" id="cc"></div></div>
+  <div class="live" id="live"></div></div>
+
+<div class="sc" id="findings">
+  <div class="abs k" style="left:120px;top:120px" id="f1k">FINDING 1 · PRACTICE PAYS OFF UNDER NOISY PERCEPTION</div>
+  <div class="abs" style="left:120px;top:175px;font-size:44px;font-weight:800" id="f1t">Push task · Nemotron 3 Super · camera-grade noise</div>
+  <div class="barwrap" id="bars">
+    <div class="brow"><div class="lab">first try</div><div class="trk"><div class="fill" id="b1" style="background:#5d6773"></div><div class="pct" id="p1">6%</div></div></div>
+    <div class="brow"><div class="lab">after practice</div><div class="trk"><div class="fill" id="b2" style="background:var(--lime)"></div><div class="pct" id="p2" style="color:var(--lime)">82%</div></div></div>
+    <div class="mono" style="font-size:22px;color:var(--mute)" id="bnote">50 held-out layouts each · a repeat run went 24% → 64%</div>
+  </div>
+  <div id="judge" style="position:absolute;inset:0;opacity:0">
+    <div class="abs k" style="left:120px;top:120px">FINDING 2 · DON'T TRUST A JUDGE YOU HAVEN'T MEASURED</div>
+    <img id="jimg" style="position:absolute;left:120px;top:190px;width:1000px;height:750px;object-fit:cover;border-radius:14px;border:1px solid var(--line)">
+    <div class="verdict" id="v1" style="top:200px;border-color:var(--lime)"><div class="a" style="color:var(--lime)">VISION-LANGUAGE JUDGE</div><div class="b">“success”</div><div class="c">approves lifts that end a millimetre short</div></div>
+    <div class="verdict" id="v2" style="top:440px;border-color:var(--red)"><div class="a" style="color:var(--red)">GROUND TRUTH</div><div class="b">4.93 cm &lt; 5.00 cm</div><div class="c">fail</div></div>
+    <div class="verdict" id="v3" style="top:680px;border-color:#5d6773"><div class="a" style="color:var(--mute)">SKILL TRAINED AGAINST THE JUDGE</div><div class="b" style="color:var(--red)">0 / 50</div><div class="c">on ground truth, held-out layouts</div></div>
+  </div>
+  <div id="trust" style="position:absolute;inset:0;opacity:0;background:var(--bg)"><div style="position:absolute;left:0;right:0;top:420px;text-align:center;font-size:96px;font-weight:900">Knack measures.<br><span style="color:var(--lime)">It doesn't trust.</span></div></div>
+</div>
+
+<div class="sc" id="closing">
+  <div class="abs k" style="left:120px;top:150px">EVERY MODEL CALL · NVIDIA NEMOTRON ON NEBIUS TOKEN FACTORY</div>
+  <div class="chip" id="ch1" style="top:220px"><span>CODER &nbsp;<b>nvidia/nemotron-3-super-120b-a12b</b></span><span>4 calls · $0.0078</span></div>
+  <div class="chip" id="ch2" style="top:330px"><span>TRACES <b>nvidia/Nemotron-3_5-Lightning</b></span><span>1 call · $0.0004</span></div>
+  <div class="chip" id="ch3" style="top:440px"><span>SKILL &nbsp;<b>plain Python · no model in the loop</b></span><span>50/50 held-out</span></div>
+  <div class="chip" id="ch4" style="top:600px;border-color:#39424d"><span>OPEN SOURCE &nbsp;<b>github.com/su0as/knack</b> · MIT</span><span>every number in results/</span></div>
+  <div class="chip" id="ch5" style="top:710px;border-color:#39424d"><span>NEXT &nbsp;<b>same skill API on a real low-cost arm</b></span><span>knack/real/</span></div>
+</div>
+
+<div class="sc" id="end"><div class="logo">KNACK</div><div class="tg">Practice, not demonstrations.</div><div class="url">github.com/su0as/knack</div>
+  <div class="cr">Suhas Suren · NTU Singapore · Nebius × NVIDIA Global AI Hackathon · Physical AI</div></div>
+
+<div id="cap"></div>
+<div id="bug">KNACK · NEBIUS TOKEN FACTORY · NVIDIA NEMOTRON</div>
+</div>
+<script>
+const TL = window.TL, A = window.ASSETS, B = window.BASE || "build/";
+const $ = (id) => document.getElementById(id);
+const C = (x) => x < 0 ? 0 : x > 1 ? 1 : x;
+const seg = (t, a, b) => C((t - a) / (b - a));
+const eo = (x) => 1 - Math.pow(1 - C(x), 3);
+const eio = (x) => { x = C(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const vis = (t, a, b, f = 0.35) => Math.min(seg(t, a, a + f), 1 - seg(t, b - f, b));
+const W = (k, word, n = 1) => { const ws = TL.words[k]; let c = 0; for (const w of ws) { if (w.w.toLowerCase().replace(/[^a-z0-9.\-']/g, '') === word.toLowerCase()) { c++; if (c === n) return TL.starts[k] + w.t; } } return TL.starts[k]; };
+const pad = (n, l) => String(n).padStart(l, "0");
+const imgs = [];
+function setImg(el, src) { if (el.getAttribute("src") !== src) { el.setAttribute("src", src); } imgs.push(el); }
+
+// ---------- static build ----------
+const SENT = "Pick up the red cube and hold it at least 5 cm above the table.";
+const R1 = [1000,1001,1002,1003,1004,1005,1006,1007], R2 = [2000,2001,2002,2003,2004,2005,2006,2007];
+const Z1 = {1000:.0643,1001:.0644,1002:.0641,1003:.0644,1004:.0645,1005:.0642,1006:.0645,1007:.0644};
+const Z2 = {2000:.0679,2001:.069,2002:.0693,2003:.0697,2004:.069,2005:.0692,2006:.0694,2007:.069};
+const tiles = [];
+for (let i = 0; i < 8; i++) { const d = document.createElement("div"); d.className = "tile"; d.innerHTML = `<img><div class="lb"><span class="sd"></span><span class="mz"></span><span class="badge"></span></div>`; $("tiles").appendChild(d); tiles.push(d); }
+for (let i = 0; i < 50; i++) { const s = document.createElement("div"); s.className = "sq"; s.style.left = (120 + (i % 10) * 76) + "px"; s.style.top = (230 + Math.floor(i / 10) * 76) + "px"; $("sqs").appendChild(s); }
+{ const r = $("ruler"); const H = 560, lo = 3.0, hi = 6.0; const y = (cm) => H - (cm - lo) / (hi - lo) * H;
+  for (const cm of [3, 4, 5, 6]) { r.insertAdjacentHTML("beforeend", `<div class="tick" style="top:${y(cm)}px"></div><div class="tl" style="top:${y(cm)}px">${cm}.00 cm</div>`); }
+  r.insertAdjacentHTML("beforeend", `<div class="bar" id="rbar"></div><div class="goal" id="rgoal" style="top:${y(5)}px"></div><div class="tl" id="rgl" style="top:${y(5) - 34}px;left:130px;color:var(--lime);font-weight:800">target 5.00</div><div class="tl" id="rv" style="left:130px;color:var(--red);font-weight:800;font-size:30px"></div>`);
+  window._ry = y; }
+const SUM = (A.summary || "").replace(/\*\*/g, "").split("\n").filter(Boolean).slice(0, 3).join("\n");
+$("sumbox").textContent = SUM;
+$("diffbox").innerHTML = (A.diff || []).map((l) => `<div class="${l[0] === "+" ? "add" : l[0] === "-" ? "del" : "dim"}">${l.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</div>`).join("");
+
+function frame(list, p) { return list[Math.min(list.length - 1, Math.max(0, Math.floor(p * (list.length - 1))))]; }
+function tileSrc(round, seed, p) { const n = A.replay[round][seed]; return `${B}replay/${round}/${seed}/${pad(Math.min(n - 1, Math.floor(p * (n - 1))), 4)}.jpg`; }
+
+// ---------- console callouts ----------
+const CALLS = [
+  [W("v07","nemotron"), W("v07","writes")-0.1, "chips", "CODER", "NVIDIA Nemotron 3 Super", "served by Nebius Token Factory · writes skill.py"],
+  [W("v07","writes"), W("v07","eight")-0.1, "code", "CODER OUTPUT", "The robot's program", "plain Python against a small robot API"],
+  [W("v07","eight"), W("v07","seeing")-0.1, "grid", "PRACTISE", "8 simulated arms in parallel", "MuJoCo physics · random layouts every round"],
+  [W("v07","seeing"), W("v07","nemotron",2)-0.1, "round", "PERCEPTION", "Sees only through OpenCV 5", "RGB-D cameras · HSV masks · minAreaRect"],
+  [W("v07","nemotron",2), W("v07","super",2)-0.1, "analysis", "TRACES", "NVIDIA Nemotron 3.5 Lightning", "explains every failure, cites the lines"],
+  [W("v07","super",2), W("v07","the",1) > 0 ? W("v07","result")-0.1 : 0, "curve", "REWRITE", "Keep what works, roll back regressions", "best version re-checked on 16 fresh layouts"],
+  [W("v07","result"), TL.starts.v08, "code", "OUTPUT", "Plain Python skill", "no model in the control loop"],
+  [W("v08","every"), W("v08","the",2)-0.1, "grid", "LIVE", "Every tile is a real physics episode", ""],
+  [W("v08","header"), W("v08","when")-0.1, "chips", "RECEIPT, LIVE", "Tokens and dollars per model", ""],
+  [W("v08","when"), W("v08","and",2)-0.1, "analysis", "TRACES", "Why it failed, line by line", ""],
+  [W("v08","and",2), W("v08","round")-0.1, "code", "REWRITE", "The exact diff", ""],
+  [W("v08","round"), W("v08","then")-0.1, "curve", "PRACTICE CURVE", "Round by round", ""],
+];
+function region(name) { return (A.regions || {})[name] || [0, 0, 1920, 1080]; }
+
+function seek(t) {
+  imgs.length = 0;
+  const S = TL.scenes;
+  const on = (id, a, b, f) => { const o = vis(t, a, b, f); $(id).style.opacity = o; return o; };
+  // typed sentence
+  if (on("type", S.type[0], S.type[1], 0.3) > 0) {
+    const n = Math.round(eo(seg(t, 0.4, 2.7)) * SENT.length);
+    $("typed").textContent = SENT.slice(0, n);
+    $("cur").style.opacity = (Math.floor(t * 2.5) % 2) ? 1 : 0.15;
+    $("type").style.transform = `translateY(${-eo(seg(t, 5.6, 6.5)) * 40}px)`;
+  }
+  // grid: round 1 then round 2
+  const gOn = Math.max(vis(t, 3.0, 12.0, 0.4), vis(t, 20.2, 22.7, 0.25));
+  $("grid").style.opacity = gOn;
+  if (gOn > 0) {
+    const r2 = t > 18;
+    const seeds = r2 ? R2 : R1, round = r2 ? "r2" : "r1";
+    const p0 = r2 ? 20.2 : 3.2, p1 = r2 ? 21.2 : 10.6;
+    tiles.forEach((d, i) => {
+      const s = seeds[i]; const p = seg(t, p0, p1);
+      setImg(d.querySelector("img"), tileSrc(round, s, p));
+      const tb = (r2 ? 21.15 : 10.55) + i * (r2 ? 0.05 : 0.11);
+      const shown = t >= tb;
+      const bd = d.querySelector(".badge");
+      bd.textContent = shown ? (r2 ? "PASS" : "FAIL") : "RUN";
+      bd.style.background = shown ? (r2 ? "var(--lime)" : "var(--red)") : "#e0b84a";
+      d.style.borderColor = shown ? (r2 ? "var(--lime)" : "var(--red)") : "#222a33";
+      d.querySelector(".sd").textContent = "seed " + s;
+      d.querySelector(".mz").textContent = shown ? (((r2 ? Z2 : Z1)[s] - 0.015) * 100).toFixed(2) + " cm" : "";
+      d.querySelector(".mz").style.color = r2 ? "var(--lime)" : "var(--red)";
+    });
+    const k = r2 ? (t >= 21.55 ? 8 : 0) : 0;
+    $("gr").textContent = r2 ? "ROUND 2 · REWRITTEN SKILL" : "ROUND 1 · FIRST TRY";
+    $("gv").textContent = (r2 ? Math.min(8, Math.floor(seg(t, 21.15, 21.55) * 8.99)) : 0) + "/8";
+    $("gv").style.color = r2 ? (t >= 21.15 ? "var(--lime)" : "var(--fg)") : (t >= 10.55 ? "var(--red)" : "var(--fg)");
+    const pop = r2 ? eo(seg(t, 21.55, 21.85)) : eo(seg(t, 10.9, 11.2));
+    $("gv").style.transform = `scale(${1 + 0.25 * Math.sin(Math.PI * pop)})`;
+  }
+  // close-up with ruler
+  if (on("close", 11.9, 17.5, 0.35) > 0) {
+    const n = A.replay.hero_r1_side; setImg($("closeimg"), `${B}replay/hero_r1/side/${pad(n - 1, 4)}.jpg`);
+    $("closeimg").style.transform = `scale(${1 + 0.06 * seg(t, 11.9, 17.5)})`;
+    const y = window._ry; const v = 3.0 + (4.93 - 3.0) * eo(seg(t, 13.2, 14.6));
+    $("rbar").style.height = (560 - y(v)) + "px"; $("rv").style.top = y(v) + 22 + "px"; $("rv").textContent = v.toFixed(2) + " cm";
+    $("miss").style.opacity = seg(t, 15.8, 16.1); $("miss").style.transform = `scale(${1 + .3 * Math.sin(Math.PI * seg(t, 15.8, 16.3))})`;
+  }
+  // rewrite: failure summary then diff
+  if (on("rewrite", 17.4, 20.4, 0.3) > 0) {
+    $("sumbox").style.opacity = seg(t, 17.5, 17.9);
+    $("diffbox").style.opacity = seg(t, 19.1, 19.4);
+    $("diffbox").scrollTop = eio(seg(t, 19.3, 20.4)) * 260;
+  }
+  // held-out
+  if (on("held", 22.7, 29.4, 0.3) > 0) {
+    const f = Math.floor(eo(seg(t, 23.3, 25.3)) * 50);
+    [...$("sqs").children].forEach((s, i) => { s.style.background = i < f ? "var(--lime)" : "#151b22"; s.style.transform = i === f - 1 ? "scale(1.15)" : "none"; });
+    $("hbig").style.opacity = seg(t, 25.3, 25.5); $("hbig").style.transform = `scale(${1 + .18 * Math.sin(Math.PI * seg(t, 25.3, 25.8))})`;
+    $("hci").style.opacity = seg(t, 25.9, 26.3); $("hcost").style.opacity = seg(t, 26.8, 27.2);
+  }
+  // title
+  if (on("title", 29.4, 33.2, 0.4) > 0) {
+    $("title").querySelector(".logo").style.letterSpacing = (60 - 30 * eo(seg(t, 29.6, 30.6))) + "px";
+    $("title").querySelector(".tg").style.opacity = seg(t, 30.7, 31.1);
+  }
+  // problem
+  if (on("problem", 33.2, 45.6, 0.35) > 0) {
+    const c1 = W("v06","days"), c2 = W("v06","hundred"), nb = W("v06","neither"), pr = W("v06","practise");
+    $("c1").style.opacity = seg(t, c1 - .3, c1); $("c1").style.transform = `translateY(${(1 - eo(seg(t, c1 - .3, c1 + .2))) * 40}px)`;
+    $("c2").style.opacity = seg(t, c2 - .3, c2); $("c2").style.transform = `translateY(${(1 - eo(seg(t, c2 - .3, c2 + .2))) * 40}px)`;
+    $("s1").style.transform = `scaleX(${eo(seg(t, nb - .1, nb + .25))})`; $("s2").style.transform = `scaleX(${eo(seg(t, nb + .1, nb + .45))})`;
+    $("c3").style.opacity = seg(t, pr - .5, pr - .1); $("c3").style.transform = `scale(${0.92 + 0.08 * eo(seg(t, pr - .5, pr))})`;
+  }
+  // console
+  if (on("console", S.console[0], S.console[1], 0.4) > 0) {
+    const cs = A.console; const c0 = S.console[0], cEnd = cs.mapEnd;
+    let src;
+    if (t < cEnd) { src = `${B}console_art/console/${pad(Math.min(cs.n - 1, Math.floor(seg(t, c0, cEnd) * (cs.n - 1))), 5)}.jpg`; }
+    else { src = `${B}console_art/console/${cs.final}`; }
+    setImg($("cimg"), src);
+    let call = null; for (const c of CALLS) if (t >= c[0] && t < c[1]) call = c;
+    // card zoom near the end
+    let reg = [0, 0, 1920, 1080], hl = null;
+    if (call) { hl = region(call[2]); }
+    if (t >= W("v08","then") && t < S.console[1]) { hl = region("card"); }
+    const z = hl ? 1.0 : 1.0;
+    $("cimg").style.transform = `scale(${z})`;
+    const hlEl = $("hl");
+    if (hl) { hlEl.style.opacity = 1; hlEl.style.left = hl[0] + "px"; hlEl.style.top = hl[1] + "px"; hlEl.style.width = hl[2] + "px"; hlEl.style.height = hl[3] + "px"; } else hlEl.style.opacity = 0;
+    const ca = $("call");
+    if (call) { ca.style.opacity = 1; $("ca").textContent = call[3]; $("cb").textContent = call[4]; $("cc").textContent = call[5]; const r = hl; const right = r[0] + r[2] / 2 < 960; ca.style.left = right ? "auto" : "40px"; ca.style.right = right ? "40px" : "auto"; ca.style.top = (r[1] > 600 ? 60 : 760) + "px"; }
+    else if (t >= W("v08","then")) { ca.style.opacity = 1; $("ca").textContent = "SKILL CARD"; $("cb").textContent = "Held-out success · 95% CI · receipt"; $("cc").textContent = ""; ca.style.left = "auto"; ca.style.right = "40px"; ca.style.top = "60px"; }
+    else ca.style.opacity = 0;
+    $("live").textContent = `LIVE RUN · real Token Factory calls · sped up ${cs.speed}×`;
+  }
+  // findings
+  if (on("findings", S.findings[0], S.findings[1], 0.35) > 0) {
+    const sw = W("v09","second");
+    const f1 = 1 - seg(t, sw - .2, sw + .2);
+    ["f1k","f1t","bars"].forEach((id) => $(id).style.opacity = f1 * seg(t, 107.5, 108.0));
+    $("b1").style.width = eo(seg(t, W("v09","six") - .2, W("v09","six") + .4)) * 6 + "%"; $("p1").style.opacity = seg(t, W("v09","six"), W("v09","six") + .2);
+    $("b2").style.width = eo(seg(t, W("v09","eighty-two") - .3, W("v09","eighty-two") + .7)) * 82 + "%"; $("p2").style.opacity = seg(t, W("v09","eighty-two"), W("v09","eighty-two") + .3);
+    $("bnote").style.opacity = seg(t, 117.2, 117.6);
+    const jt = W("v09","so");
+    $("judge").style.opacity = seg(t, sw - .2, sw + .2) * (1 - seg(t, jt - .2, jt + .1));
+    setImg($("jimg"), `${B}replay/hero_r1/side/${pad(A.replay.hero_r1_side - 1, 4)}.jpg`);
+    $("v1").style.opacity = seg(t, W("v09","approved") - .2, W("v09","approved") + .1);
+    $("v2").style.opacity = seg(t, W("v09","millimetre") - .2, W("v09","millimetre") + .1);
+    $("v3").style.opacity = seg(t, W("v09","zero") - .3, W("v09","zero"));
+    $("trust").style.opacity = seg(t, jt - .2, jt + .1);
+  }
+  // closing chips
+  if (on("closing", 132.0, 143.7, 0.35) > 0) {
+    const tt = [W("v10","every"), W("v10","model")+.2, W("v10","skill"), W("v10","every",2), W("v10","next")];
+    ["ch1","ch2","ch3","ch4","ch5"].forEach((id, i) => { const p = eo(seg(t, tt[i] - .25, tt[i] + .15)); $(id).style.opacity = p; $(id).style.transform = `translateX(${(1 - p) * -60}px)`; });
+  }
+  if (on("end", 143.6, 160, 0.4) > 0) { $("end").querySelector(".tg").style.opacity = seg(t, W("v10","practice") - .1, W("v10","practice") + .2); $("end").querySelector(".url").style.opacity = seg(t, 146.0, 146.4); $("end").querySelector(".cr").style.opacity = seg(t, 146.6, 147.0); }
+  $("bug").style.opacity = (t > 45.6 && t < 107.2) || t > 143.5 || t < 3 ? 0 : 1;
+  // captions
+  let html = "";
+  for (const k of Object.keys(TL.starts)) {
+    const s = TL.starts[k], ws = TL.words[k]; const e = s + TL.dur[k];
+    if (t < s - 0.05 || t > e + 0.35) continue;
+    const chunks = []; let cur = [];
+    ws.forEach((w, i) => { cur.push(i); const end = /[.!?:,]$/.test(w.w) || cur.length >= 7; if (end && cur.length >= 3 || cur.length >= 9) { chunks.push(cur); cur = []; } });
+    if (cur.length) chunks.push(cur);
+    let ci = 0; chunks.forEach((c, j) => { if (s + ws[c[0]].t <= t + 0.05) ci = j; });
+    html = `<span class="box">` + chunks[ci].map((i) => `<span class="${s + ws[i].t <= t + 0.02 ? "on" : ""}">${ws[i].w}</span>`).join(" ") + `</span>`;
+  }
+  $("cap").innerHTML = html;
+  $("cap").style.opacity = (t > 29.4 && t < 33.2) || t > 143.6 ? 0 : 1;
+  return Promise.all(imgs.map((im) => im.complete && im.naturalWidth ? Promise.resolve() : (im.decode ? im.decode().catch(() => {}) : Promise.resolve())));
+}
+window.seek = seek;
+</script></body></html>
