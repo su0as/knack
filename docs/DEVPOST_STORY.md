@@ -5,7 +5,15 @@ Type one sentence. **NVIDIA Nemotron on Nebius Token Factory** writes a Python p
 - **Fresh live run in the video:** 0/8, 0/8, 0/8, 1/8, 5/8, then a regression to 0/8. Knack **rolled back** to round 5, re-checked it 16/16 on fresh layouts, and scored **48/50 held-out** (95% CI 87% to 99%) for **$0.025** in 4 minutes.
 
 ## Problem and audience
-Teaching a robot arm a new tabletop task costs days of hand-written code or 50 to 200 teleoperated demonstrations. Robotics students, small labs, classrooms and makers with a low-cost arm (SO-101 class) have neither, and no way to know how reliable a skill is before trusting it. Knack gives them a working skill, a measured success rate and a receipt.
+Low-cost open robot arms (SO-101 class) are now in university labs, classrooms and maker spaces, but giving one a new tabletop skill still means days of hand-written code or dozens of teleoperated demonstrations per task, and nobody tells you how reliable the result is before you trust it. Knack's user is the person who has the arm and a task sentence: a robotics student, a lab TA, a maker. What they get, as demonstrated in the video: a plain-Python skill, its success rate on 50 layouts it never practised on with a 95% confidence interval, and a receipt, in minutes, for cents.
+
+## Try it in two minutes
+```
+pip install -e .              # CPU only, no GPU needed
+export NEBIUS_API_KEY=...     # Nebius Token Factory key
+python -m knack ui            # console at 127.0.0.1:8765: pick a scene, type the task, press PRACTISE
+```
+No install: browse every recorded run, frame by frame, in the live console on AWS: http://13.212.24.5/
 
 ## Which model does what (all on Nebius Token Factory)
 | Role | Model | Why |
