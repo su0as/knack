@@ -86,5 +86,5 @@ Nebius Token Factory, Nebius AI Cloud (Serverless Jobs), NVIDIA Nemotron 3 Ultra
 ## Links
 
 - Code (MIT): https://github.com/su0as/knack
-- Video: https://youtu.be/IlJnqjoxPX8
+- Video: https://youtu.be/RDPkWpc0J7M
 - Feedback on Nebius and NVIDIA tools: `docs/FEEDBACK.md`
