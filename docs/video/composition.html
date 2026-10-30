@@ -50,7 +50,7 @@ body{font-family:Inter,"Helvetica Neue",Arial,sans-serif;color:var(--fg)}
 #console .vp{position:absolute;inset:0;overflow:hidden}
 #console .cimg{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
 #console .hl{position:absolute;border:5px solid var(--lime);border-radius:12px;box-shadow:0 0 0 4000px rgba(0,0,0,.45)}
-#console .live{position:absolute;right:30px;top:952px;font:700 20px "JetBrains Mono",monospace;background:#07090ccc;border:1px solid #333;border-radius:8px;padding:8px 14px}
+#console .live{position:absolute;left:40px;top:918px;font:700 20px "JetBrains Mono",monospace;background:#07090ccc;border:1px solid #333;border-radius:8px;padding:8px 14px}
 #console .call{position:absolute;left:40px;top:40px;background:#07090cf0;border:2px solid var(--lime);border-radius:14px;padding:18px 26px;max-width:900px}
 #console .call .a{font:700 18px "JetBrains Mono",monospace;letter-spacing:3px;color:var(--lime)}
 #console .call .b{font-size:38px;font-weight:800;margin-top:6px}
@@ -213,14 +213,14 @@ function seek(t) {
   const S = TL.scenes;
   const on = (id, a, b, f) => { const o = vis(t, a, b, f); $(id).style.opacity = o; return o; };
   // typed sentence
-  if (on("type", S.type[0], S.type[1], 0.3) > 0) {
+  if (on("type", S.type[0], S.type[1], 0.45) > 0) {
     const n = Math.round(eo(seg(t, 0.4, 2.7)) * SENT.length);
     $("typed").textContent = SENT.slice(0, n);
     $("cur").style.opacity = (Math.floor(t * 2.5) % 2) ? 1 : 0.15;
-    $("type").style.transform = `translateY(${-eo(seg(t, 5.6, 6.5)) * 40}px)`;
+    $("type").style.transform = `translateY(${-eo(seg(t, 3.0, 3.7)) * 40}px)`;
   }
   // grid: round 1 then round 2
-  const gOn = Math.max(vis(t, 3.0, 12.0, 0.4), vis(t, 20.2, 22.7, 0.25));
+  const gOn = Math.max(vis(t, 3.25, 12.0, 0.45), vis(t, 20.2, 22.7, 0.25));
   $("grid").style.opacity = gOn;
   if (gOn > 0) {
     const r2 = t > 18;

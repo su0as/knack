@@ -1,7 +1,6 @@
 # Devpost submission draft: Knack
 
-Draft for nebiusglobalaihackathon.devpost.com, Physical AI track. Every `[[...]]` is a placeholder
-that must be filled from a file in `runs/` before submitting. Do not round up, do not estimate.
+Submission text for nebiusglobalaihackathon.devpost.com, Physical AI track. Every number comes from a file in `results/` or `docs/video/hero/`.
 
 ---
 
@@ -21,7 +20,7 @@ Teaching a cheap robot arm a new tabletop task costs either days of hand-tuned c
 4. Each episode is scored by the simulator's ground truth, or by **Nemotron 3.5 Super VL** looking at camera frames, which abstains when unsure.
 5. **Nemotron 3.5 Lightning** reads the long execution traces and groups the failures into modes, citing code lines.
 6. Ultra rewrites the skill. Repeat until the target or the round limit.
-7. The best version is evaluated on 100 unseen layouts and you get a **skill card**: held-out success with a Wilson 95% interval, the code diff of every round, a failure gallery and a dollar receipt per model.
+7. The best versions are re-checked on 16 fresh layouts, and the winner is evaluated on 50 unseen layouts and you get a **skill card**: held-out success with a Wilson 95% interval, the code diff of every round, a failure gallery and a dollar receipt per model.
 
 The learned skill is plain Python. It runs locally with no model in the control loop, inside a deterministic safety layer (workspace box, joint and speed limits, elbow clearance, table-force limit) that the AI-written code cannot catch or override.
 
@@ -35,7 +34,9 @@ The learned skill is plain Python. It runs locally with no model in the control 
 | Vision judge | `nvidia/Nemotron-3.5-Super-VL` | reward that works without simulator ground truth, which is what a real robot needs |
 | Baseline | `deepseek-ai/DeepSeek-V4.1-Flash` | the model RAX used, as an outside reference |
 
-## Results (fill from runs/, never from memory)
+## Results
+
+- **In the video (real runs, replayed and captured):** lift with OpenCV 5 camera perception, Nemotron 3 Super as coder. Hero run on AWS: round 1 0/8 (every lift ended 4.91 to 4.95 cm against a 5 cm target), round 2 8/8, held-out 50/50, $0.0082 in Token Factory calls. Fresh live run captured for the video: 0/8, 0/8, 0/8, 1/8, 5/8, then a regression to 0/8; Knack rolled back to round 5, re-checked it 16/16 and scored 48/50 held-out (95% CI 87% to 99%) for $0.025 in 4 minutes.
 
 - Pilot gate (Super and Ultra on lift, place, push; 4 rounds): **PASS**. Super 100% / 100% / 80%, Ultra 100% / 100% / 90% held-out on 50 unseen layouts each (`results/20261023-090645-pilot`).
 - Model scoreboard (standard perception): **Nemotron 3 Ultra solved all six scenes at 90-100% held-out for $0.004 to $0.065 per verified skill**, mostly on the first try. Super: 64-100%. Nano (3B active): 100% on tray, 64% on stack, 0% on sort. DeepSeek V4.1 Flash: 100% on stack, tray, sort (`results/20261023-093859-scoreboard-hard`).
@@ -70,7 +71,7 @@ The learned skill is plain Python. It runs locally with no model in the control 
 
 ## Limitations
 
-Published in `docs/LIMITATIONS.md`: simplified arm, easy perception in sim, guardrail sandbox rather than a security boundary, real-arm and Serverless Jobs paths [[tested / untested]], vision judge can be wrong (measured, not assumed).
+Published in `docs/LIMITATIONS.md`: simplified arm, easy perception in sim, guardrail sandbox rather than a security boundary, real-arm and Serverless Jobs paths written but not yet run (Serverless was blocked at AI Cloud billing), vision judge can be wrong (measured, not assumed).
 
 ## What's next
 
@@ -85,5 +86,5 @@ Nebius Token Factory, Nebius AI Cloud (Serverless Jobs), NVIDIA Nemotron 3 Ultra
 ## Links
 
 - Code (MIT): https://github.com/su0as/knack
-- Video: [[YouTube URL, public]]
+- Video: [[VIDEO]]
 - Feedback on Nebius and NVIDIA tools: `docs/FEEDBACK.md`

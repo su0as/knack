@@ -1,6 +1,6 @@
 # Feedback: Nebius Token Factory, Nebius AI Cloud, NVIDIA models
 
-Draft, started 23 Oct 2026. Each item says what we did, what happened and how to reproduce it. Items marked TODO get filled in from real runs.
+Started 23 Oct 2026, final 30 Oct 2026. Each item says what we did, what happened and how to reproduce it.
 
 ## Nebius Token Factory
 
@@ -41,14 +41,14 @@ What needs work
 1. **Hackathon credits do not cover AI Cloud.** The promo credits apply to Token Factory only, so Serverless Jobs are real spend for participants. A small AI Cloud credit would let Physical AI teams use the jobs product the track is built around.
 2. **Minimum job timeout is 1 hour** (`--timeout` minimum `1h`). Fine for billing (jobs are billed while running), but surprising for 3-minute batch jobs.
 3. **Injected files are limited to 64 KiB**, so a source tarball cannot be injected; Knack uploads it to Object Storage instead, which adds a bucket and access-key setup step before the first job.
-4. TODO: time from `nebius ai job create` to the container starting, and log availability.
+4. Not measured: we never got past billing, so no job ran. The Serverless backend (`knack/nebius.py`, async job create, results to Object Storage) is written and unit-tested against the CLI's documented flags only.
 
 ## NVIDIA models
 
-| Model | Used for | Notes (TODO from runs) |
+| Model | Used for | Notes from runs |
 |---|---|---|
 | Nemotron 3 Ultra 550B-A55B | coder | Pilot: solved lift and place in round 1 and push at 90% held-out. Always returned a valid ```python block. Once regressed itself from 88% to 0% over three rewrites, which is why Knack now reverts to the best version. |
 | Nemotron 3 Super 120B-A12B | cheaper coder | Pilot: 100% / 100% / 80% held-out on lift / place / push for $0.004 to $0.011 per skill, at a third of Ultra's price. Fewer reasoning tokens than Ultra (median 384 vs 1,466). |
-| Nemotron 3 Nano 30B-A3B | scoreboard | can a 3B-active model program a robot at all? |
+| Nemotron 3 Nano 30B-A3B | scoreboard | Yes, sometimes: camera-grade lift 0% to 88% after practice for about a cent, tray 100%, stack 98% with OpenCV perception; but 0% on push and sort. The cheapest verified skill (tray, 50/50, $0.0007) was Nano's. |
 | Nemotron 3.5 Lightning | trace summariser | With thinking off: short, line-cited failure modes in about 4 s, for example "Mode 1: Height shortfall (6 episodes). Root cause: lift_z computed as cube_pos[2] + 0.05 (line 28)...". Episode counts inside a mode are sometimes off by one or two. With thinking on and a 4000-token cap: no answer at all (see item 8 above). |
-| Nemotron 3.5 Super VL | vision judge | accuracy and abstention vs ground truth, false-success rate |
+| Nemotron 3.5 Super VL | vision judge | Stack: agreed with ground truth on 52/52 episodes, and a skill trained only on its verdicts scored 49/50. Lift: 28/28 false successes on lifts 1 mm short (confidence 0.95), and the skill trained on it scored 0/50. About $0.001 per judged episode. Works when the criterion is visible; gets gamed when it is not. |
